@@ -55,7 +55,7 @@ function Ubicaciones() {
                     <i className    ="fa-solid fa-plus"></i>
                     Nueva Ubicación
                 </button>
-                <Link to={"/ubicaciones/categorias_ubicacion"} ><button className="btn-azul">
+                <Link to={"/ubicaciones/categorias_ubicacion"} ><button className="btn-2">
                     <i className="fa-solid fa-list"></i>
                     Categoria ubicaciones
                 </button></Link>

@@ -45,14 +45,15 @@ function CategoriasUbicacion() {
                 </table>
                 <br/>
                 <div className="btn-container">
-                    <Link to={"/ubicaciones"}><button className="btn-azul">
-                        <i className="fa-solid fa-list"></i>
-                        Volver a Ubicaciones
-                    </button></Link>
+                   
                     <button id="abrirModal" className="btn-azul">
                         <i className="fa-solid fa-plus"></i>
                         Nueva Categoria
                     </button>
+                     <Link to={"/ubicaciones"}><button className="btn-2">
+                        <i className="fa-solid fa-list"></i>
+                        Volver a Ubicaciones
+                    </button></Link>
                 </div>
         </div>
     );

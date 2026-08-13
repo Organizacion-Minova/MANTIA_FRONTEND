@@ -1,0 +1,129 @@
+/* combinacion de ambos */
+:root{
+
+     /* =========================================
+       TIPOGRAFÍA MANTIA
+       ========================================= */
+
+    --fuente-principal: 'Archivo', sans-serif;
+    --fuente-secundaria: 'Barlow', sans-serif;
+
+    --principal:
+    linear-gradient(
+        120deg,
+        #063B38 0%,
+        #075E55 42%,
+        #078F7B 72%,
+        #10BFA5 100%
+    );
+
+    --secundario: #19C3A6;
+
+    --sidebar: #063B38;
+
+    --fondo: #E8F0EE;
+
+    --contenedor: #FFFFFF;
+    --blanco :#FFFFFF;
+
+    --texto: #12201E;
+
+    --texto2: #50615D;
+
+    --borde-contenedor: #CFDEDA;
+
+    --sombra-contenedor:
+        0 3px 12px rgba(6, 59, 56, .08);
+
+    --sombra-contenedor-hover:
+        0 8px 24px rgba(6, 59, 56, .14);
+    --acento-mantia: #A3D65C;
+    -rojo:             #FF0000;
+    --amarillo:         #FFD800;
+    --verde:            #00B333;
+    --verde:            #639922;
+    --rojo:             #E24B4A;
+}
+/*======================
+   MODO OSCURO NENAS
+                    */
+html.dark-theme{
+    --principal: #142140;
+    --secundario: #294A70;
+    --sidebar: #101C33;
+    --accesibilidad: #24364D;
+    --fondo: #1A2433;
+    --contenedor: #35455c68;
+    --texto: #F5F7FA;
+    --texto2: #B8C3D1;
+  
+    --Azul-difuminado:
+        linear-gradient(
+            135deg,
+            var(--principal),
+            var(--secundario)
+        );
+
+    --hover-principal: rgba(255,255,255,.08);
+    
+}
+
+/*======================
+   MODO ALTO CONTRASTE
+   =========================*/
+
+html.alto-contraste{
+    --principal:#000E5C; --secundario:#2457D6; --sidebar:#000428;
+     --accesibilidad:#002E8A; --fondo:#FFFFFF; --contenedor:#ffffff5d;
+    --texto:#000000;--texto2:#111111;--hover-principal:#D9E7FF;
+}
+
+html.alto-contraste *{text-shadow:none !important;}
+
+/* html.alto-contraste *:focus{
+
+    outline:.1875rem solid #FFD800;
+
+    outline-offset:.125rem;
+
+} */
+
+
+/*======================
+   Convivencia de oscurin y contraste
+   =========================*/
+html.dark-theme.alto-contraste{
+    --principal:#000000;
+    --secundario:#0047CC;
+    --sidebar:#000000;
+    --fondo:#000000;
+    --contenedor:#111111;
+    --texto:#FFFFFF;
+    --texto2:#F5F5F5;
+    --hover-principal:#1F5FFF;
+}
+
+html{
+    font-size:16px;/* Tamaño de fuente de donde parte para aumentar fuente*/
+}
+
+*, *::before, *::after {  
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; 
+}
+
+body{
+    width: 100%;
+    height: 100vh;
+    font-family: var(--fuente-principal);
+    color: var(--texto);
+    
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: var(--fuente-secundaria);
+}
