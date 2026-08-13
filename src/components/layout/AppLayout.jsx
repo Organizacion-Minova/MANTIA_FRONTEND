@@ -1,8 +1,9 @@
 //este componente es el dueño layout (estructura principal) de la aplicación,
 //  que contiene el header, el sidebar, el contenido y el footer
-import "../../styles/layout.css";
 import { useState } from "react";
-
+import { Outlet } from "react-router-dom";
+import { Link } from "react-router-dom";
+import "../../styles/global.css";
 function AppLayout() {
     const [cerrado, setCerrado] = useState(false);
     const [herramientasAbierto, setHerramientasAbierto] = useState(false);
@@ -98,10 +99,10 @@ function AppLayout() {
                         </a>
                     </li>
                     <li>
-                        <a href="/ubicaciones">
+                        <Link to="/ubicaciones">
                             <i className="fa-solid fa-map-marker-alt"></i>
                             <span>Ubicaciones</span>
-                        </a>
+                        </Link>
                     </li>
                     <li>
                         <a href="/empresa">
@@ -132,7 +133,7 @@ function AppLayout() {
             
 
             <main id="contenido" className="contenido">
-                <h1>Contenido de la página aquí</h1>
+                <Outlet/>
             </main>
 
             <button className="btn-accesibilidad">
@@ -151,7 +152,7 @@ function AppLayout() {
 
                 <div className="infoFooter">
                     <br /><strong>CONTACTANOS</strong>
-                    <br />mantia@gmail.com
+                    <br />mantiadso@gmail.com
                 </div>
             </footer>
         </div>
