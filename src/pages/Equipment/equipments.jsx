@@ -1,3 +1,5 @@
+import { Boton } from "../../components/common/Button";
+
 import { Link } from "react-router-dom";
 import { PageWelcome, Searcher } from "../../components/common/welcome";
 function Equipos(){
@@ -34,10 +36,11 @@ function Equipos(){
                 </tbody>
             </table>
             <br />
-            <button id="abrirModal" className="btn-azul">
-                <i className="fa-solid fa-plus"></i>
-                Nuevo equipo 
-            </button>
+            <Boton
+                clase="btn-azul"
+                icono="fa-solid fa-plus"
+                texto="Nueva Equipo"
+            />
         </div>
     )
 }

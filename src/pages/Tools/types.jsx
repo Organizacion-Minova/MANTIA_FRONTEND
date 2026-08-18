@@ -1,3 +1,4 @@
+import { Boton } from "../../components/common/Button";
 import { Link } from "react-router-dom";
 import { PageWelcome, Searcher } from "../../components/common/welcome"; 
 
@@ -30,9 +31,11 @@ export function Consumibles(){
                 </tbody>
             </table>
             <br/>
-            <button class="btn-azul" id="abrirModal">
-                <i class="fa-solid fa-plus"></i> Agregar tipo herramienta
-            </button>
+            <Boton
+                clase="btn-azul"
+                icono="fa-solid fa-plus"
+                texto="Agregar tipo herramienta"
+            />
         </div>
     );
     
@@ -65,9 +68,11 @@ export function No_Consumibles(){
                 </tbody>
             </table>
             <br/>
-            <button class="btn-azul" id="abrirModal">
-                <i class="fa-solid fa-plus"></i> Agregar tipo herramienta
-            </button>
+            <Boton
+                clase="btn-azul"
+                icono="fa-solid fa-plus"
+                texto="Agregar tipo herramienta"
+            />
         </div>
     )
 }

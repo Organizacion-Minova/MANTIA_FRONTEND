@@ -1,3 +1,4 @@
+import { Boton } from "../../components/common/Button";
 function PageWelcome({ titulo, descripcion }) {
     const fechaActual = new Date().toLocaleDateString("es-CO", {
         weekday: "long",
@@ -36,11 +37,11 @@ function Searcher() {
                     placeholder="Buscar por nombre, descripción, categoría"
                 />
             </div>
-
-            <button className="btn-buscar">
-                <i className="fa-solid fa-magnifying-glass"></i>
-                Buscar
-            </button>
+            <Boton
+                clase="btn-buscar"
+                icono="fa-solid fa-magnifying-glass"
+                texto="Buscar"
+            />
         </div>
     );
 }

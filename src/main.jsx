@@ -8,7 +8,7 @@ import Maquinas from "./pages/Machines/machines";
 import Empresas from "./pages/Companies/companies"
 import CategoriasMaquinas from './pages/Machines/categoriesmachines';
 import Equipos from './pages/Equipment/equipments';
-import { Consumibles,No_Consumibles } from './pages/Tools/types_consumables';
+import { Consumibles,No_Consumibles } from './pages/Tools/types';
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>

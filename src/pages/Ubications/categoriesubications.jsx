@@ -1,3 +1,4 @@
+import { Boton, BotonLink } from "../../components/common/Button";
 import { Link } from "react-router-dom";
 import { PageWelcome, Searcher } from "../../components/common/welcome";
 
@@ -28,15 +29,18 @@ function CategoriasUbicacion() {
                 </table>
                 <br/>
                 <div className="btn-container">
-                   
-                    <button id="abrirModal" className="btn-azul">
-                        <i className="fa-solid fa-plus"></i>
-                        Nueva Categoria
-                    </button>
-                     <Link to={"/ubications"}><button className="btn-2">
-                        <i className="fa-solid fa-list"></i>
-                        Volver a Ubicaciones
-                    </button></Link>
+                    <Boton
+                        clase="btn-azul"
+                        icono="fa-solid fa-plus"
+                        texto="Nueva Categoria"
+                    />
+                    <BotonLink
+                        link="/ubications"
+                        clase="btn-2"
+                        icono="fa-solid fa-list"
+                        texto="Volver a Ubicaciones"
+                    />
+
                 </div>
         </div>
     );

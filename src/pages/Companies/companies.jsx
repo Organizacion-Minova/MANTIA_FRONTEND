@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { PageWelcome,Searcher } from "../../components/common/welcome";
+import { Boton } from "../../components/common/Button";
 
 function Empresas(){
     return(
@@ -33,10 +34,11 @@ function Empresas(){
                 </tbody>
             </table>
             <br/>
-            <button className="btn-azul">
-                <i className="fa-solid fa-plus"></i>
-                Nueva Empresa
-            </button>   
+            <Boton
+                clase="btn-azul"
+                texto="Nueva Empresa"
+                icono="fa-solid fa-plus"
+            />
         </div>
     )
 }
