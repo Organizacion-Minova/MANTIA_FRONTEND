@@ -1,3 +1,4 @@
+
 /* combinacion de ambos */
 :root{
 
@@ -32,16 +33,17 @@
 
     --borde-contenedor: #CFDEDA;
 
+    --hover-principal: rgba(25, 195, 166, .16);
+
     --sombra-contenedor:
         0 3px 12px rgba(6, 59, 56, .08);
 
     --sombra-contenedor-hover:
         0 8px 24px rgba(6, 59, 56, .14);
     --acento-mantia: #A3D65C;
-    -rojo:             #FF0000;
+   
     --amarillo:         #FFD800;
     --verde:            #00B333;
-    --verde:            #639922;
     --rojo:             #E24B4A;
 }
 /*======================
@@ -107,12 +109,25 @@ html{
     font-size:16px;/* Tamaño de fuente de donde parte para aumentar fuente*/
 }
 
+.contenido{
+    margin-top: 4rem;
+    margin-left: 14.75rem;
+    padding: 2rem;
+    transition: padding-left 0,5s ease;
+}
+
+.contenido.cerrado{
+    margin-left: 5rem;
+    
+}
+
 *, *::before, *::after {  
     margin: 0;
     padding: 0;
     box-sizing: border-box; 
 }
 
+html,
 body{
     width: 100%;
     height: 100vh;

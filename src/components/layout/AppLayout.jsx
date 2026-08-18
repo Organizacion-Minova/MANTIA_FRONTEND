@@ -28,7 +28,7 @@ function AppLayout() {
                 </div>
 
                 <div className="centro">
-                    <h2>SISTEMA DE MANTENIMIENTO E INVENTARIO</h2>
+                    <h2>MANTENIMIENTO E INVENTARIO DE ACTIVOS</h2>
                 </div>
 
                 <nav className="derecha">
@@ -133,9 +133,9 @@ function AppLayout() {
             </aside>
             
 
-            <main id="contenido" className="contenido">
+            <div id="contenido" className="contenido">
                 <Outlet/>
-            </main>
+            </div>
 
             <button className="btn-accesibilidad">
                 Accesibilidad (pendiente)
