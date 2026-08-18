@@ -5,6 +5,8 @@ import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
 import "../../styles/global.css";
 import "../../styles/variables.css";
+import "../../styles/Tables/table.css";
+import "../../styles/Components.modules.css"
 function AppLayout() {
     const [cerrado, setCerrado] = useState(false);
     const [herramientasAbierto, setHerramientasAbierto] = useState(false);
@@ -73,43 +75,43 @@ function AppLayout() {
 
                         <ul className="submenu">
                             <li>
-                                <a href="/herramientas/consumibles">
+                                <Link to="/tools/consumables">
                                     <i className="fa-solid fa-wrench"></i>
                                     <span>Consumibles</span>
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <a href="/herramientas/no-consumibles">
+                                <Link to="/tools/noconsumables">
                                     <i className="fa-solid fa-tools"></i>
                                     <span>No consumibles</span>
-                                </a>
+                                </Link>
                             </li>
                         </ul>
                     </li>
 
                     <li>
-                        <a href="/equipos">
+                        <Link to="/equipment">
                             <i className="fa-solid fa-gears"></i>
                             <span>Equipos</span>
-                        </a>
+                        </Link>
                     </li>
                     <li>
-                        <a href="/maquinas">
+                        <Link to="/machines">
                             <i className="fa-solid fa-industry"></i>
                             <span>Maquinas</span>
-                        </a>
+                        </Link>
                     </li>
                     <li>
-                        <Link to="/ubicaciones">
+                        <Link to="/ubications">
                             <i className="fa-solid fa-map-marker-alt"></i>
                             <span>Ubicaciones</span>
                         </Link>
                     </li>
                     <li>
-                        <a href="/empresa">
+                        <Link to="/companies">
                             <i className="fa-solid fa-clipboard-check"></i>
                             <span>Empresas</span>
-                        </a>
+                        </Link>
                     </li>
                     <li>
                         <a href="/acerca-de">
