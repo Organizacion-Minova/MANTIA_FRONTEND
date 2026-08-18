@@ -1,0 +1,16 @@
+table{
+    width:100%;
+    border-collapse:collapse;
+    text-align: center;
+    background-color: var(--blanco);
+    
+}
+
+table th{
+    padding:0.9375rem ;
+    border:2px solid var(--secundario);
+}
+table td{
+    padding:0.9375rem ;
+    border:2px solid var(--secundario);
+}

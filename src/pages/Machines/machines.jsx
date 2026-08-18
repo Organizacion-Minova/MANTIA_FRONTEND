@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Boton,BotonLink } from "../../components/common/Button";
 import {PageWelcome,Searcher} from "../../components/common/welcome";
 
 function Maquinas(){
@@ -38,13 +38,17 @@ function Maquinas(){
             </table>
             <br/>
             <div className="btn-container">
-                <button className="btn-azul">
-                    <i className="fa-solid fa-plus"></i>
-                    Nueva Máquina
-                </button>
-                <Link to="/machines/categories_machines"><button type="submit" className="btn-2">
-                    <i className="fa-solid fa-list"></i> Categorias maquinas
-                </button></Link>
+                <Boton
+                    clase="btn-azul"
+                    icono="fa-solid fa-plus"
+                    texto="Nueva Máquina"
+                />
+                <BotonLink
+                    link="/machines/categories_machines"
+                    clase="btn-2"
+                    icono="fa-solid fa-list"
+                    texto="Categorias Maquinas"
+                />
             </div>
         </div>
     );

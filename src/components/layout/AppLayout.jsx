@@ -7,6 +7,7 @@ import "../../styles/global.css";
 import "../../styles/variables.css";
 import "../../styles/Tables/table.css";
 import "../../styles/Components.modules.css"
+import "../../styles/Tables/form.css";
 function AppLayout() {
     const [cerrado, setCerrado] = useState(false);
     const [herramientasAbierto, setHerramientasAbierto] = useState(false);
