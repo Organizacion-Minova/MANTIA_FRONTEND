@@ -1,31 +1,14 @@
 import { Link } from "react-router-dom";
-import { useFechaActual } from "../../hooks/useFechaActual";
+import { PageWelcome, Searcher } from "../../components/common/welcome";
 
 function CategoriasUbicacion() {
-    const fechaActual = useFechaActual();
     return (
         <div className="">
-            <div className="welcome">
-                <div>
-                    <h1>CATEGORIAS UBICACIONES</h1>
-                    <p>Este es el formato de las categorias de las ubicaciones.</p>
-                </div>
-                <div className="date">
-                    <i className="fa-regular fa-calendar"></i>
-                    <span id="fecha"> {fechaActual}</span>
-                </div>
-            </div>
-            <br/>
-            <div className="search-main">
-                <div className="search-wrapper">
-                    <i className="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="q" placeholder="Buscar por nombre, descripción, categoria"
-                    />
-                </div>
-                <button className="btn-buscar">
-                    <i className="fa-solid fa-magnifying-glass"></i> Buscar
-                </button>
-            </div>
+            <PageWelcome
+                titulo="CATEGORIAS UBICACIONES"
+                descripcion="Este es el formato de las categorias de las ubicaciones."
+            />
+            <Searcher/>
             <br/>
             <table>
                     <thead>
@@ -50,7 +33,7 @@ function CategoriasUbicacion() {
                         <i className="fa-solid fa-plus"></i>
                         Nueva Categoria
                     </button>
-                     <Link to={"/ubicaciones"}><button className="btn-2">
+                     <Link to={"/ubications"}><button className="btn-2">
                         <i className="fa-solid fa-list"></i>
                         Volver a Ubicaciones
                     </button></Link>

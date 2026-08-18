@@ -1,3 +1,4 @@
+
 /* ======================
    ESTRUCTURA GENERAL
 ====================== */
@@ -450,34 +451,7 @@ footer{grid-area: footer;}
         ESTILOS CONTENIDO PAGINAS
 =========================================================================================== */
 
-main{
-    margin-top: 4rem;
-    margin-left: 14.75rem;
-    padding: 2rem;
-    transition: padding-left 0,5s ease;
-}
 
-main.cerrado{
-    margin-left: 5rem;
-    
-}
-.welcome {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-     box-shadow: var(--sombra-contenedor);
-    border-radius: 20%;
-}
-.welcome h1 { color: var(--texto);text-transform: uppercase; }
-.welcome p  { color: var(--texto2); }
-
-.date {
-    background: var(--contenedor);
-    color: var(--texto);
-    padding: 15px 25px;
-    border-radius: 12px;
-}
 
 /* .overlay-panel {
     position: absolute;

@@ -16,7 +16,11 @@ main.cerrado{
     margin-bottom: 30px;
     
 }
-.welcome h1 { color: var(--texto);text-transform: uppercase; }
+.welcome h1 { 
+    color: var(--texto);
+    text-transform: uppercase;
+
+}
 .welcome p  { color: var(--texto2); }
 
 .date {
@@ -31,8 +35,6 @@ main.cerrado{
     margin-bottom: 20px;
     flex-wrap: wrap;
 }
-
-/* Este boton se usa para la opcion mas probable a escoger por el usuario */
 .btn-azul {
     background:    var(--secundario);
     color:         var(--fondo);
@@ -52,7 +54,6 @@ main.cerrado{
     text-decoration: none;
     width:         fit-content;
 }
-/* ESTE BOTON SE USA PARA OPCION SECUNDARIA */
 .btn-2{
     background:    var(--fondo);
     color:        var(--secundario);
