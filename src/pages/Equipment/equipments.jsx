@@ -1,7 +1,5 @@
-import { Boton } from "../../components/common/Button";
-
-import { Link } from "react-router-dom";
-import { PageWelcome, Searcher } from "../../components/common/welcome";
+import { Boton,BotonLink } from "../../components/common/Button";
+import { PageWelcome,Searcher } from "../../components/common/welcome";
 function Equipos(){
     return(
         <div className="">
@@ -25,13 +23,26 @@ function Equipos(){
                 </thead>
                 <tbody>
                     <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>Alfis</td>
+                        <td>666</td>
+                        <td>Su aguela</td>
+                        <td>lobo chiviado</td>
+                        <td>Casa xleox</td>
+                        <td>pasable</td>
+
+                        <td>
+
+                            <BotonLink
+                                link="/Equipment/card_equipment"
+                                clase="btn-azul"
+                                icono="fa-solid fa-eye"
+                            />
+                            <Boton
+                                clase="btn-2"
+                                icono="fa-solid fa-edit"
+                            />
+                           
+                        </td>
                     </tr>
                 </tbody>
             </table>

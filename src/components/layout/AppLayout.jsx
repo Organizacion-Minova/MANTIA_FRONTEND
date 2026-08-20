@@ -136,9 +136,9 @@ function AppLayout() {
             </aside>
             
 
-            <div id="contenido" className="contenido">
+            <main id="contenido" className={`contenido ${cerrado ? "cerrado" : ""}`}>
                 <Outlet/>
-            </div>
+            </main>
 
             <button className="btn-accesibilidad">
                 Accesibilidad (pendiente)

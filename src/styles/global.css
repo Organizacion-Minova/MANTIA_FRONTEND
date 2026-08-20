@@ -188,7 +188,7 @@ footer{grid-area: footer;}
 .topbar{ 
     display:flex;
     justify-content:space-between;
-    padding:0.45rem 2rem 0.45rem 1.27rem;
+    padding:0.45rem 2rem 0.45rem 0.7rem;
     border-bottom:3px solid var(--acento-mantia);
     position:fixed; top: 0; left: 0;
     background:var(--principal);
@@ -217,8 +217,7 @@ footer{grid-area: footer;}
 .izquierda{
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 1.4rem;
+    justify-content: left;
     height: 100%;
 }
 
