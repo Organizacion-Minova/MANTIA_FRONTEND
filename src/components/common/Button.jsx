@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export function Boton( {clase, texto, onclick, icono} ){
     return(
-        <button className={clase} on>
+        <button className={clase} >
             <i className={icono}></i>
             {texto}
         </button> 

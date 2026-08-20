@@ -24,9 +24,8 @@
 
     --fondo: #E8F0EE;
 
-    --contenedor: #FFFFFF;
-    --blanco :#FFFFFF;
-
+    --blanco: #FFFFFF;
+  
     --texto: #12201E;
 
     --texto2: #50615D;
@@ -111,13 +110,13 @@ html{
 
 .contenido{
     margin-top: 4rem;
-    margin-left: 14.75rem;
-    padding: 2rem;
+    /* margin-left: 14.75rem;
+    padding: 2rem; */
     transition: padding-left 0,5s ease;
 }
 
 .contenido.cerrado{
-    margin-left: 5rem;
+    margin-left: 4rem;
     
 }
 

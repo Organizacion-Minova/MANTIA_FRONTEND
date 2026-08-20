@@ -25,14 +25,24 @@ function Maquinas(){
                 </thead>
                 <tbody>
                     <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>Dante</td>
+                        <td>666</td>
+                        <td>que es eso</td>
+                        <td>Cazador de demonios</td>
+                        <td>Capcom</td>
+                        <td>Infierno</td>
+                        <td>Papucho</td>
+                        <td>
+                            <BotonLink
+                            link="/machines/card_machine"
+                            clase="btn-azul"
+                            icono="fa-solid fa-eye"
+                        />
+                        <Boton
+                            clase="btn-2"
+                            icono="fa-solid fa-edit"
+                        />
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -46,8 +56,8 @@ function Maquinas(){
                 <BotonLink
                     link="/machines/categories_machines"
                     clase="btn-2"
-                    icono="fa-solid fa-list"
                     texto="Categorias Maquinas"
+                    icono="fa-solid fa-list"
                 />
             </div>
         </div>
