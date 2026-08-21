@@ -1,0 +1,122 @@
+.analisis-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.panel-filtros-horizontal {
+    background: var(--blanco);
+    padding: 1.25rem;
+    border-radius: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+    align-items: flex-end;
+    box-shadow: var(--sombra-contenedor);
+}
+
+.control-input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.control-input select, 
+.control-input input {
+    padding: 0.6rem;
+    border: 1px solid var(--borde-contenedor);
+    border-radius: 6px;
+    background: var(--blanco);
+    color: var(--texto);
+    font-size: 0.9rem;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+    cursor: default;
+}
+
+.grid-multigas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 1.25rem;
+    width: 100%;
+}
+
+.card-mini-grafica {
+    background: var(--blanco);
+    border: 1px solid var(--borde-contenedor);
+    border-radius: 10px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    box-shadow: var(--sombra-contenedor);
+    transition: transform 0.2s ease;
+    cursor: pointer;
+}
+
+.card-mini-grafica:hover {
+    transform: translateY(-2px);
+    border-color: var(--secundario);
+}
+
+.card-mini-grafica h3 {
+    font-family: var(--fuente-principal);
+    font-size: 0.95rem;
+    color: var(--texto);
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-mini-grafica h3 span {
+    font-family: var(--fuente-principal);
+    font-size: 0.78rem;
+    color: var(--texto2);
+    font-weight: 400;
+}
+
+.card-mini-grafica h3 i {
+    font-size: 0.85rem;
+    color: var(--secundario);
+    opacity: 0.6;
+}
+
+.contenedor-canvas-mini {
+    position: relative;
+    width: 100%;
+    height: 200px;
+}
+
+.card-firma {
+    justify-content: center;
+    background: var(--blanco);
+    border: 1px solid var(--borde-contenedor);
+    border-radius: 10px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 10rem;
+}
+
+.form-dropzone-container {
+    margin-top: 0.5rem;
+    border: 2px dashed var(--borde-contenedor);
+    padding: 1.5rem 0.5rem !important;
+}
+
+.form-dropzone-icon {
+    width: 2rem !important;
+    height: 2rem !important;
+}
+
+.form-dropzone-text-group {
+    margin-top: 0rem !important;
+    font-size: 0.7rem !important;
+}
+
+.form-dropzone-help {
+    font-size: 0.7rem !important;
+}
