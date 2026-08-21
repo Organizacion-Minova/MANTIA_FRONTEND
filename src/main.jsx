@@ -28,7 +28,7 @@ createRoot(document.getElementById('root')).render(
           <Route path='machines/categoriesmachines' element={<CategoriasMaquinas/>}/> 
           <Route path='machines/cardMachine' element={<CardMachine/>}/> 
           <Route path='equipment' element={<Equipos/>}/>
-          <Route path='equipments/cardEquipment' element={<CardEquipment/>}/>
+          <Route path='equipment/cardequipment' element={<CardEquipment/>}/>
           <Route path='companies' element={<Empresas />}/>
           <Route path='tools/consumables' element={<Consumibles/>}/>
           <Route path='tools/noconsumables' element={<No_Consumibles/>}/>
