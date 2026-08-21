@@ -33,7 +33,7 @@ function Equipos(){
                         <td>
 
                             <BotonLink
-                                link="/Equipment/card_equipment"
+                                link="/equipment/cardequipment"
                                 clase="btn-azul"
                                 icono="fa-solid fa-eye"
                             />
