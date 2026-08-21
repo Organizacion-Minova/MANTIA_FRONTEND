@@ -26,7 +26,7 @@ function PageWelcome({ titulo, descripcion }) {
     );
 }
 
-function Searcher() {
+function Searcher({placeholder="Buscar por nombre, descripción, categoría"}) {
     return (
         <div className="search-main">
             <div className="search-wrapper">
@@ -34,7 +34,7 @@ function Searcher() {
                 <input
                     type="text"
                     id="q"
-                    placeholder="Buscar por nombre, descripción, categoría"
+                    placeholder={placeholder}
                 />
             </div>
             <Boton

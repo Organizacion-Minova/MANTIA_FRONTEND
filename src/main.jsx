@@ -12,8 +12,9 @@ import Equipos from './pages/Equipment/equipments';
 import {CardEquipment} from './pages/Equipment/card_Equipment';
 import { Consumibles,No_Consumibles } from './pages/Tools/types';
 import { UsoDiario } from './pages/Forms/daily_use';
-//import Gases from './pages/Gases/gases';
-//import CompararGases from './pages/Gases/comparegases';
+import Gases from './pages/Gases/gases';
+import CompararGases from './pages/Gases/comparegases';
+import { FormatoGases } from './pages/Gases/gasformat.jsx';
 import Login from './pages/login/login.jsx'
 import ResetPassword from './pages/login/ResetPassword.jsx'
 import Register from './pages/login/Register.jsx'
@@ -33,8 +34,9 @@ createRoot(document.getElementById('root')).render(
           <Route path='tools/consumables' element={<Consumibles/>}/>
           <Route path='tools/noconsumables' element={<No_Consumibles/>}/>
           <Route path='dailyuse' element={<UsoDiario/>}/>
-          {/* <Route path='gases' element={<Gases/>}/>
-          <Route path='gases/compare_gases' element={<CompararGases/>}/> */}
+          <Route path='gases' element={<Gases/>}/>
+          <Route path='gases/compare_gases' element={<CompararGases/>}/>
+          <Route path='gases/gas_format' element={<FormatoGases/>}/>
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/ResetPassword" element={<ResetPassword />} />
