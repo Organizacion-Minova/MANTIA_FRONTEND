@@ -1,4 +1,4 @@
-table{
+.form{
     width:100%;
     border-collapse:collapse;
     text-align: center;
@@ -6,11 +6,11 @@ table{
     
 }
 
-table th{
+.form th{
     padding:0.9375rem ;
     border:2px solid var(--secundario);
 }
-table td{
+.form td{
     padding:0.9375rem ;
     border:2px solid var(--secundario);
 }

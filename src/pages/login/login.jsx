@@ -4,6 +4,8 @@ import "../../styles/variables.css";
 import loginImage from "../../assets/img/Mantia2..png";
 import "../../styles/global.css";
 import "../../styles/components.modules.css";
+import { Boton } from "../../components/common/Button";
+import { Link } from "react-router-dom";
 import AuthScene from "./AuthScene";
 
 const Login = () => {
@@ -74,21 +76,21 @@ const Login = () => {
                                     required
                                 />
                             </div>
-
-                            <button type="submit" className="btn-buscar">
-                                Iniciar Sesión
-                            </button>
+                            <Boton
+                                clase="btn-azul"
+                                texto="Iniciar Sesión"
+                            />
 
                             <div className="links-footer">
                                 <span>
                                     ¿No recuerdas tu contraseña?{" "}
-                                    <a href="/ResetPassword">
+                                    <Link to="/ResetPassword">
                                         Restablecer
-                                    </a>
+                                    </Link>
                                 </span>
                                 <span>
                                     ¿No tienes una cuenta?{" "}
-                                    <a href="/register">Registrarme</a>
+                                    <Link to="/register">Registrarme</Link>
                                 </span>
                             </div>
                         </form>

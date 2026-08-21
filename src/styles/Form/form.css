@@ -10,7 +10,7 @@
 
 .form-container {
     position: relative;
-    background-color: var(--contenedor);
+    background-color: var(--blanco);
     padding: 2rem;
     border-radius: 0.75rem;
     box-shadow: var(--sombra-contenedor-hover);
@@ -196,7 +196,7 @@
     color: var(--texto);
     border: 1px solid var(--borde-contenedor);
     box-sizing: border-box;
-    resize: vertical;
+    resize: none;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 

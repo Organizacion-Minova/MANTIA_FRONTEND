@@ -38,7 +38,7 @@ function Ubicaciones() {
                     texto="Nueva Ubicación"
                 />
                 <BotonLink
-                    link="/ubications/categories_ubications"
+                    link="/ubications/categoriesubications"
                     clase="btn-2"
                     icono="fa-solid fa-list"
                     texto="Categoría Ubicaciones"

@@ -3,6 +3,7 @@ import "../../styles/animations/login.css";
 import "../../styles/variables.css";
 import "../../styles/global.css";
 import "../../styles/components.modules.css";
+import { Boton } from "../../components/common/Button";
 
 const AuthScene = ({ children }) => {
     return (
@@ -94,9 +95,10 @@ const AuthScene = ({ children }) => {
 
             {children}
 
-            <button type="button" className="btn-azul">
-                ☀️ Modo Día
-            </button>
+            <Boton
+                clase="btn-azul-2"
+                texto="☀️ Modo Día"
+            />
         </div>
     );
 };

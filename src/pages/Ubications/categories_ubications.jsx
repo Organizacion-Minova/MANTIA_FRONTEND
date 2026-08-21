@@ -1,5 +1,4 @@
 import { Boton, BotonLink } from "../../components/common/Button";
-import { Link } from "react-router-dom";
 import { PageWelcome, Searcher } from "../../components/common/welcome";
 
 function CategoriasUbicacion() {

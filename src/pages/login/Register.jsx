@@ -4,6 +4,7 @@ import "../../styles/variables.css";
 import "../../styles/global.css";
 import "../../styles/components.modules.css";
 import "../../styles/animations/login.css";
+import { Boton } from "../../components/common/Button";
 import loginImage from "../../assets/img/Mantia2..png";
 import AuthScene from "./AuthScene";
 
@@ -167,9 +168,11 @@ const Register = () => {
                                 />
                             </div>
 
-                            <button type="button" className="btn-buscar">
-                                Crear mi cuenta
-                            </button>
+
+                            <Boton
+                                clase="btn-azul"
+                                texto="Crear mi cuenta"
+                            />
 
                             <div className="links-footer">
                                 <span>

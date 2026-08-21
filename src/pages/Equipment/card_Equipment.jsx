@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { PageWelcome, Searcher } from "../../components/common/welcome"; 
 import { Boton,BotonLink } from "../../components/common/Button";
 
@@ -13,7 +12,7 @@ export function CardEquipment() {
             <section className="cards">
                 <div className="card">
                     <div className="cont-img">
-                        <img src="<?php echo htmlspecialchars($imagenEquipo); ?>" alt="Imagen del equipo"/>
+                        <img src="src/assets/img/Mantia - logo.png" alt="Imagen del equipo"/>
                     </div>
                 </div>
             
@@ -35,11 +34,11 @@ export function CardEquipment() {
                     <button className="btn-azul"><i className="fas fa-calendar-alt"></i> Calibración</button>
                     <button className="btn-azul"><i className="fas fa-stethoscope"></i> Diagnóstico</button>
                     <BotonLink
-                                link="/equipment"
-                                clase="btn-2"
-                                icono="fa-solid fa-arrow-left"
-                                texto="Regresar"
-                            />
+                        link="/equipment"
+                        clase="btn-2"
+                        icono="fa-solid fa-arrow-left"
+                        texto="Regresar"
+                    />
 
                 </div>
 

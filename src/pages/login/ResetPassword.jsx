@@ -4,6 +4,8 @@ import "../../styles/variables.css";
 import "../../styles/global.css";
 import "../../styles/components.modules.css";
 import "../../styles/animations/login.css";
+import { Link } from "react-router-dom";
+import { Boton } from "../../components/common/Button";
 import loginImage from "../../assets/img/Mantia2..png";
 import AuthScene from "./AuthScene";
 
@@ -58,16 +60,16 @@ const ResetPassword = () => {
                                     placeholder="••••••••"
                                 />
                             </div>
-
-                            <button type="button" className="btn-buscar">
-                                Actualizar Contraseña
-                            </button>
+                            <Boton
+                                clase="btn-azul"
+                                texto="Actualizar Contraseña"
+                            />
 
                             <div className="links-footer">
                                 <span>
-                                    <a href="/login">
+                                    <Link to="/login">
                                         Volver al Inicio de Sesión
-                                    </a>
+                                    </Link>
                                 </span>
                             </div>
                         </form>
