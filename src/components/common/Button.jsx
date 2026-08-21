@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 
-export function Boton( {clase, texto, onclick, icono} ){
+export function Boton( {clase, texto, onClick, icono} ){
     return(
-        <button className={clase} >
+        <button type="submit" className={clase} onClick={onClick}>
             <i className={icono}></i>
             {texto}
         </button> 

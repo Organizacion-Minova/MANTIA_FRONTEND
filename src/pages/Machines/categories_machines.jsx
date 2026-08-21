@@ -1,7 +1,40 @@
+import { useState } from "react";
 import { Boton,BotonLink } from "../../components/common/Button";
 import { PageWelcome, Searcher } from "../../components/common/welcome";
+import { Form, Text, Textarea } from '../../components/common/forms';
+function Formulario({onCancel}){
+    return(
+        <Form
+            titulo="Agregar nueva categoria"
+            descripcion="Ingrese los datos de la nueva categoria"
+            onCancel={onCancel}
+            textoBoton="Guardar"
+            iconoBoton="fa-solid fa-floppy-disk"
+        >
+            <div className="col-span-6">
+                <Text
+                    label="Nombre de la categoria:"
+                    id="nombre"
+                    name="nombre"
+                    placeholder="Ingrese el nombre de la categoria"
+                    required
 
+                />
+            </div>
+            <div className="col-span-6">
+                <Textarea
+                    label="Descripcion"
+                    id="descripcion"
+                    name="descripcion"
+                    rows={4}
+                    required
+                />
+            </div>
+        </Form>
+    )
+}
 function CategoriasMaquinas(){
+    const [mostrarFormulario, setMostrarFormulario] = useState(false);
     return(
         <div className="">
             <PageWelcome
@@ -32,6 +65,7 @@ function CategoriasMaquinas(){
                     clase="btn-azul"
                     icono="fa-solid fa-plus"
                     texto="Nueva Categoria"
+                    onClick={() => setMostrarFormulario(true)}
                 />
                 <BotonLink
                     link="/machines"
@@ -40,6 +74,9 @@ function CategoriasMaquinas(){
                     texto="Maquinas"
                 />
             </div>
+            {mostrarFormulario && (
+                <Formulario onCancel={() => setMostrarFormulario(false)} />
+            )}
         </div>
     )
 }

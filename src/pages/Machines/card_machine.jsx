@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { PageWelcome} from "../../components/common/welcome"; 
 import { Boton,BotonLink } from "../../components/common/Button";
 
@@ -13,7 +12,7 @@ export function CardMachine() {
                 <section className="cards">
                     <div className="card">
                         <div className="cont-img">
-                            <img src="<?php echo htmlspecialchars($imagenmaquina); ?>" alt="Imagen de la máquina"/>
+                            <img src="src/assets/img/Mantia - logo.png" alt="Imagen de la máquina"/>
                         </div>
                     </div>
                     <div className="card" style={{ listStyle: 'none', fontSize: '1.25rem' }}>
@@ -50,11 +49,11 @@ export function CardMachine() {
                         <button className="btn-azul"><i className="fas fa-cog"></i> Pre operacional</button>
                         <a href="agregar_inspeccion.php"><button className="btn-azul"><i className="fas fa-search"></i> Inspeccion</button></a>
                         <BotonLink
-                                                        link="/machines"
-                                                        clase="btn-2"
-                                                        icono="fa-solid fa-arrow-left"
-                                                        texto="Regresar"
-                                                    />
+                            link="/machines"
+                            clase="btn-2"
+                            icono="fa-solid fa-arrow-left"
+                            texto="Regresar"
+                        />
                     </div>
                 </section>
         </div>

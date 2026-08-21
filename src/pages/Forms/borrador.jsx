@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Form, Text, Textarea, Select, Dropzone, Checkbox, Date, Time, DateTime, Radio } from '../Forms/uso_diario';
+import { Form, Text, Textarea, Select, Dropzone, Checkbox, Date, Time, DateTime, Radio } from '../../components/common/forms';
 
 
-function PlantillaFormulario() {
+function PlantillaFormulario({ onCancel }) {
     const [formData, setFormData] = useState({
         campoTexto: '',
         campoSeleccion: '',
@@ -32,17 +32,12 @@ function PlantillaFormulario() {
     };
 
 
-    const handleCancel = () => {
-        alert('Operación cancelada');
-    };
-
-
     return (
         <Form
         titulo="Título del Formulario"
         descripcion="Escribe aquí la descripción o instrucciones del formulario."
         onSubmit={handleSubmit}
-        onCancel={handleCancel}
+        onCancel={onCancel}
         textoBoton="Guardar"
         iconoBoton="fa-solid fa-floppy-disk"
         >
