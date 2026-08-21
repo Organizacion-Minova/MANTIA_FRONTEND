@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7831a3d11751141d9382c1e138dd3e87b86fc025
 /* ======================
    ESTRUCTURA GENERAL
 ====================== */
@@ -187,7 +191,7 @@ footer{grid-area: footer;}
 .topbar{ 
     display:flex;
     justify-content:space-between;
-    padding:0.45rem 2rem 0.45rem 1.27rem;
+    padding:0.45rem 2rem 0.45rem 0.7rem;
     border-bottom:3px solid var(--acento-mantia);
     position:fixed; top: 0; left: 0;
     background:var(--principal);
@@ -216,8 +220,7 @@ footer{grid-area: footer;}
 .izquierda{
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 1.4rem;
+    justify-content: left;
     height: 100%;
 }
 
@@ -450,34 +453,6 @@ footer{grid-area: footer;}
         ESTILOS CONTENIDO PAGINAS
 =========================================================================================== */
 
-main{
-    margin-top: 4rem;
-    margin-left: 14.75rem;
-    padding: 2rem;
-    transition: padding-left 0,5s ease;
-}
-
-main.cerrado{
-    margin-left: 5rem;
-    
-}
-.welcome {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-     box-shadow: var(--sombra-contenedor);
-    border-radius: 20%;
-}
-.welcome h1 { color: var(--texto);text-transform: uppercase; }
-.welcome p  { color: var(--texto2); }
-
-.date {
-    background: var(--contenedor);
-    color: var(--texto);
-    padding: 15px 25px;
-    border-radius: 12px;
-}
 
 /* .overlay-panel {
     position: absolute;

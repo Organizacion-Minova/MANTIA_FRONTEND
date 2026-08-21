@@ -5,6 +5,9 @@ import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
 import "../../styles/global.css";
 import "../../styles/variables.css";
+import "../../styles/Tables/table.css";
+import "../../styles/Components.modules.css"
+import "../../styles/Tables/form.css";
 function AppLayout() {
     const [cerrado, setCerrado] = useState(false);
     const [herramientasAbierto, setHerramientasAbierto] = useState(false);
@@ -23,7 +26,7 @@ function AppLayout() {
                 </div>
                     </div>
                     <div className="logo">
-                        <img src="/img/Mantia - logo.png" alt="MANTIA" />
+                        <img src="/src/assets/img/Mantia - logo.png" alt="MANTIA" />
                     </div>
                 </div>
 
@@ -73,69 +76,69 @@ function AppLayout() {
 
                         <ul className="submenu">
                             <li>
-                                <a href="/herramientas/consumibles">
+                                <Link to="/tools/consumables">
                                     <i className="fa-solid fa-wrench"></i>
                                     <span>Consumibles</span>
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <a href="/herramientas/no-consumibles">
+                                <Link to="/tools/noconsumables">
                                     <i className="fa-solid fa-tools"></i>
                                     <span>No consumibles</span>
-                                </a>
+                                </Link>
                             </li>
                         </ul>
                     </li>
 
                     <li>
-                        <a href="/equipos">
+                        <Link to="/equipment">
                             <i className="fa-solid fa-gears"></i>
                             <span>Equipos</span>
-                        </a>
+                        </Link>
                     </li>
                     <li>
-                        <a href="/maquinas">
+                        <Link to="/machines">
                             <i className="fa-solid fa-industry"></i>
                             <span>Maquinas</span>
-                        </a>
+                        </Link>
                     </li>
                     <li>
-                        <Link to="/ubicaciones">
+                        <Link to="/ubications">
                             <i className="fa-solid fa-map-marker-alt"></i>
                             <span>Ubicaciones</span>
                         </Link>
                     </li>
                     <li>
-                        <a href="/empresa">
+                        <Link to="/companies">
                             <i className="fa-solid fa-clipboard-check"></i>
                             <span>Empresas</span>
-                        </a>
+                        </Link>
                     </li>
                     <li>
-                        <Link to="/acerca-de">
+                        <a href="/acerca-de">
                             <i className="fa-solid fa-info-circle"></i>
                             <span>Acerca de</span>
-                        </Link>
+                        </a>
                     </li>
                     <li>
-                        <Link to="/ayuda">
+                        <a href="/ayuda">
                             <i className="fa-solid fa-circle-question"></i>
                             <span>Ayuda</span>
-                        </Link>
+                        </a>
                     </li>
                     <li>
-                        <a href="/iniciar-sesion">
+                        <Link to="/login">
                             <i className="fa-solid fa-right-from-bracket"></i>
                             <span>Iniciar sesión</span>
-                        </a>
+                        </Link>
                     </li>
                 </ul>
             </aside>
             
 
-            <div id="contenido" className="contenido">
+            <main id="contenido" className={`contenido ${cerrado ? "cerrado" : ""}`}>
                 <Outlet/>
-            </div>
+            </main>
 
             <button className="btn-accesibilidad">
                 Accesibilidad (pendiente)
@@ -143,17 +146,17 @@ function AppLayout() {
 
             <footer className="footer">
                 <div className="secFooterPrincipal">
-                    <img className="logoSenaFooter" src="/img/logo-sena-blanco.png" alt="SENA" />
-                    <img className="logoSmaqFooter" src="/img/Mantia - logo.png" alt="MANTIA" />
+                    <img className="logoSenaFooter" src="/src/assets/img/logo-sena-blanco.png" alt="SENA" />
+                    <img className="logoSmaqFooter" src="/src/assets/img/Mantia - logo.png" alt="MANTIA" />
                     <div className="descripcion-logos">
-                        <br />Mantenimiento e inventario de activos
-                        <br /> Copyright © 2026. Todos los derechos reservados.
+                        <br/>Mantenimiento e inventario de activos
+                        <br/> Copyright © 2026. Todos los derechos reservados.
                     </div>
                 </div>
 
                 <div className="infoFooter">
-                    <br /><strong>CONTACTANOS</strong>
-                    <br />mantiadso@gmail.com
+                    <br/><strong>CONTACTANOS</strong>
+                    <br/>mantiadso@gmail.com
                 </div>
             </footer>
         </div>
