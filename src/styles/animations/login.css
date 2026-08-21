@@ -105,7 +105,11 @@
 }
 
 .card-login {
+<<<<<<< HEAD
     background: var(--fondo);
+=======
+    background: var(--contenedor);
+>>>>>>> 52e0b55a30a01eb0d6a46d89c814b7ad7211c3fe
     border-radius: 16px;
     padding: 32px 28px;
     text-align: center;
@@ -238,7 +242,11 @@
 }
 
 /* ---------- BOTÓN MODO DÍA / NOCHE ---------- */
+<<<<<<< HEAD
 .btn-azul-2 {
+=======
+.btn-azul {
+>>>>>>> 52e0b55a30a01eb0d6a46d89c814b7ad7211c3fe
     position: fixed;
     bottom: 20px;
     right: 20px;
@@ -246,7 +254,11 @@
     padding: 10px 18px;
     border: none;
     border-radius: 999px;
+<<<<<<< HEAD
     background: var(--secundario);
+=======
+    background: rgba(15, 23, 42, 0.55);
+>>>>>>> 52e0b55a30a01eb0d6a46d89c814b7ad7211c3fe
     backdrop-filter: blur(4px);
     color: #fff;
     font-family: inherit;
@@ -255,9 +267,15 @@
     cursor: pointer;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
     transition: background 0.2s ease, transform 0.2s ease;
+<<<<<<< HEAD
 } 
 
  .btn-azul-2:hover {
+=======
+}
+
+.btn-azul:hover {
+>>>>>>> 52e0b55a30a01eb0d6a46d89c814b7ad7211c3fe
     background: rgba(15, 23, 42, 0.75);
     transform: translateY(-1px);
 }
