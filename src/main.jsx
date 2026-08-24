@@ -11,6 +11,8 @@ import CategoriasMaquinas from './pages/Machines/categories_machines.jsx';
 import Equipos from './pages/Equipment/equipments';
 import {CardEquipment} from './pages/Equipment/card_Equipment';
 import { Consumibles,No_Consumibles } from './pages/Tools/types';
+import ToolsConsumables from './pages/Tools/toolsconsumables'
+import ToolsNoConsumables from './pages/Tools/toolsnoconsumables';
 import { UsoDiario } from './pages/Forms/daily_use';
 import Gases from './pages/Gases/gases';
 import CompararGases from './pages/Gases/comparegases';
@@ -18,6 +20,10 @@ import { FormatoGases } from './pages/Gases/gasformat.jsx';
 import Login from './pages/login/login.jsx'
 import ResetPassword from './pages/login/ResetPassword.jsx'
 import Register from './pages/login/Register.jsx'
+import AcercaDe from "./pages/Others/acerca_de.jsx";
+import Ayuda from "./pages/Others/ayuda.jsx";
+import MantiaInicio from "./pages/Index/index.jsx";
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
@@ -31,16 +37,21 @@ createRoot(document.getElementById('root')).render(
           <Route path='equipment' element={<Equipos/>}/>
           <Route path='equipment/cardequipment' element={<CardEquipment/>}/>
           <Route path='companies' element={<Empresas />}/>
-          <Route path='tools/consumables' element={<Consumibles/>}/>
-          <Route path='tools/noconsumables' element={<No_Consumibles/>}/>
+          <Route path='types/consumables' element={<Consumibles/>}/>
+          <Route path='types/noconsumables' element={<No_Consumibles/>}/>
+          <Route path='types/consumables/tools' element={<ToolsConsumables/>}/>
+          <Route path='types/noconsumables/tools' element={<ToolsNoConsumables/>}/>
           <Route path='dailyuse' element={<UsoDiario/>}/>
           <Route path='gases' element={<Gases/>}/>
           <Route path='gases/compare_gases' element={<CompararGases/>}/>
           <Route path='gases/gas_format' element={<FormatoGases/>}/>
+          <Route path='acercade' element={<AcercaDe />} />
+          <Route path='ayuda' element={<Ayuda />} />
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/ResetPassword" element={<ResetPassword />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/" element={<MantiaInicio />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,

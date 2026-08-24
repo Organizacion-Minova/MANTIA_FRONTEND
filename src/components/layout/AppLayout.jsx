@@ -76,13 +76,13 @@ function AppLayout() {
 
                         <ul className="submenu">
                             <li>
-                                <Link to="/tools/consumables">
+                                <Link to="/types/consumables">
                                     <i className="fa-solid fa-wrench"></i>
                                     <span>Consumibles</span>
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/tools/noconsumables">
+                                <Link to="/types/noconsumables">
                                     <i className="fa-solid fa-tools"></i>
                                     <span>No consumibles</span>
                                 </Link>

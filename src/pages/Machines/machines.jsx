@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Boton,BotonLink } from "../../components/common/Button";
 import {PageWelcome,Searcher} from "../../components/common/welcome";
 import { Form, Text, Textarea, Dropzone, Select, Date } from '../../components/common/forms';
-function Formulario({ onCancel }){
+function Formulario({onCancel}){
     return(
         <Form
             titulo="Agregar nueva maquina"
@@ -144,7 +144,7 @@ function Formulario({ onCancel }){
                     id="caracteristicas"
                     name="caracteristicas"
                     placeholder="Características de la maquina"
-                    rows="5"
+                    rows="4"
                     required
                 />
             </div>
