@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useFechaActual } from "../../hooks/useFechaActual";
 import "../../styles/Components.modules.css";
 
 /* ---------- pequeños bloques reutilizables de la página ----------
@@ -119,7 +118,6 @@ const preguntas = [
 ];
 
 function Ayuda() {
-    const fechaActual = useFechaActual();
     const [busqueda, setBusqueda] = useState("");
     const [categoriaActiva, setCategoriaActiva] = useState(null);
     const [abierta, setAbierta] = useState(null);
