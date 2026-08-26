@@ -1,16 +1,25 @@
 //este componente es el dueño layout (estructura principal) de la aplicación,
 //  que contiene el header, el sidebar, el contenido y el footer
 import { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import "../../styles/global.css";
 import "../../styles/variables.css";
 import "../../styles/Tables/table.css";
 import "../../styles/Components.modules.css"
 import "../../styles/Tables/form.css";
-function AppLayout() {
+import { useAuth } from "../../context/AuthContext.jsx";
+
+function AppLayout({ children }) {
     const [cerrado, setCerrado] = useState(false);
     const [herramientasAbierto, setHerramientasAbierto] = useState(false);
+    const { isAuthenticated, usuario, logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate("/login");
+    };
     return (
         <div className="app-layout">
             <header className="topbar">
@@ -46,7 +55,7 @@ function AppLayout() {
                             alt="Foto de perfil"
                         />
                         <div>
-                            <h4>PAPOI</h4>
+                            <h4>{usuario?.nombre || "PAPOI"}</h4>
                             <span className="role-tag">
                                 <i className="fa-solid fa-shield-halved"></i> PAPOI
                             </span>
@@ -65,81 +74,92 @@ function AppLayout() {
                         </a>
                     </li>
 
-                    <li className={`menu-desplegable ${herramientasAbierto ? "activo" : ""}`}>
-                        
-                        <a  className="menu-titulo"
-                            onClick={() => setHerramientasAbierto(!herramientasAbierto)}
-                        >
-                            <i className="fa-solid fa-screwdriver-wrench"></i>
-                            <span>Herramientas</span>
-                        </a>
+                    {isAuthenticated && (
+                        <>
+                            <li className={`menu-desplegable ${herramientasAbierto ? "activo" : ""}`}>
 
-                        <ul className="submenu">
+                                <a  className="menu-titulo"
+                                    onClick={() => setHerramientasAbierto(!herramientasAbierto)}
+                                >
+                                    <i className="fa-solid fa-screwdriver-wrench"></i>
+                                    <span>Herramientas</span>
+                                </a>
+
+                                <ul className="submenu">
+                                    <li>
+                                        <Link to="/tools/consumables">
+                                            <i className="fa-solid fa-wrench"></i>
+                                            <span>Consumibles</span>
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link to="/tools/noconsumables">
+                                            <i className="fa-solid fa-tools"></i>
+                                            <span>No consumibles</span>
+                                        </Link>
+                                    </li>
+                                </ul>
+                            </li>
+
                             <li>
-                                <Link to="/tools/consumables">
-                                    <i className="fa-solid fa-wrench"></i>
-                                    <span>Consumibles</span>
+                                <Link to="/equipment">
+                                    <i className="fa-solid fa-gears"></i>
+                                    <span>Equipos</span>
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/tools/noconsumables">
-                                    <i className="fa-solid fa-tools"></i>
-                                    <span>No consumibles</span>
+                                <Link to="/machines">
+                                    <i className="fa-solid fa-industry"></i>
+                                    <span>Maquinas</span>
                                 </Link>
                             </li>
-                        </ul>
-                    </li>
+                            <li>
+                                <Link to="/ubications">
+                                    <i className="fa-solid fa-map-marker-alt"></i>
+                                    <span>Ubicaciones</span>
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/companies">
+                                    <i className="fa-solid fa-clipboard-check"></i>
+                                    <span>Empresas</span>
+                                </Link>
+                            </li>
+                        </>
+                    )}
 
                     <li>
-                        <Link to="/equipment">
-                            <i className="fa-solid fa-gears"></i>
-                            <span>Equipos</span>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/machines">
-                            <i className="fa-solid fa-industry"></i>
-                            <span>Maquinas</span>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/ubications">
-                            <i className="fa-solid fa-map-marker-alt"></i>
-                            <span>Ubicaciones</span>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/companies">
-                            <i className="fa-solid fa-clipboard-check"></i>
-                            <span>Empresas</span>
-                        </Link>
-                    </li>
-                    <li>
-                        <a href="/acerca-de">
+                        <Link to="/acercade">
                             <i className="fa-solid fa-info-circle"></i>
                             <span>Acerca de</span>
-                        </a>
+                        </Link>
                     </li>
                     <li>
-                        <a href="/ayuda">
+                        <Link to="/ayuda">
                             <i className="fa-solid fa-circle-question"></i>
                             <span>Ayuda</span>
-                        </a>
+                        </Link>
                     </li>
                     <li>
-                        <Link to="/login">
-                            <i className="fa-solid fa-right-from-bracket"></i>
-                            <span>Iniciar sesión</span>
-                        </Link>
+                        {isAuthenticated ? (
+                            <a onClick={handleLogout} style={{ cursor: "pointer" }}>
+                                <i className="fa-solid fa-right-from-bracket"></i>
+                                <span>Cerrar sesión</span>
+                            </a>
+                        ) : (
+                            <Link to="/login">
+                                <i className="fa-solid fa-right-from-bracket"></i>
+                                <span>Iniciar sesión</span>
+                            </Link>
+                        )}
                     </li>
                 </ul>
             </aside>
             
 
             <main id="contenido" className={`contenido ${cerrado ? "cerrado" : ""}`}>
-                <Outlet/>
-            </main>
-
+            {children ?? <Outlet/>}
+                </main>
             <button className="btn-accesibilidad">
                 Accesibilidad (pendiente)
             </button>

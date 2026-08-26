@@ -177,3 +177,107 @@ main.cerrado{
     margin-bottom:1rem;
 }
 
+/* ============================================================
+   PÁGINAS PÚBLICAS INTERNAS (Acerca de / Ayuda dentro de PublicLayout)
+   ============================================================ */
+.public-page {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 6.5rem 1.5rem 4rem;
+}
+
+/* Dentro de AppLayout (ya logueado) el topbar es fijo y .contenido ya
+   deja el margen de arriba necesario (margin-top: 4rem). El padding-top
+   de 6.5rem de .public-page es solo para cuando el header de PublicLayout
+   flota (position: absolute) sobre el contenido; si se suman los dos,
+   queda un hueco enorme en blanco. Aquí se anula ese extra. */
+.contenido .public-page {
+    padding-top: 2rem;
+}
+
+.public-page .mt-block {
+    margin-bottom: 3.5rem;
+}
+
+.public-page .mt-block-last {
+    margin-bottom: 0;
+}
+
+.public-page h2 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--texto);
+    margin-bottom: 0.4rem;
+    padding-left: 1rem;
+    position: relative;
+}
+
+.public-page h2::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.15rem;
+    bottom: 0.15rem;
+    width: 0.28rem;
+    border-radius: 0.2rem;
+    background: var(--secundario);
+}
+
+.public-page .mt-block > p {
+    padding-left: 1rem;
+    line-height: 1.6;
+}
+
+.public-page h3 {
+    font-size: 1.05rem;
+    color: var(--texto);
+    margin-bottom: 0.5rem;
+}
+
+.public-page .date {
+    padding: 1.85rem 1.75rem;
+    border: 0.0625rem solid var(--borde-contenedor);
+    border-radius: 1.1rem;
+    background: var(--blanco);
+}
+
+.public-page .date:hover {
+    border-color: var(--secundario);
+}
+
+/* Tarjetas de valores (¿Qué es MANTIA? / Misión / Visión / Seguridad) */
+.public-page .date h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.public-page .date p {
+    line-height: 1.55;
+    font-size: 0.92rem;
+}
+
+/* Bloque de Contáctanos: separa cada fila con una línea sutil */
+.public-page .contact-row {
+    border-bottom: 0.0625rem solid var(--fondo);
+}
+
+.public-page .contact-row:last-child {
+    border-bottom: none;
+}
+
+.public-page .btn-container {
+    justify-content: center;
+    margin-top: 1rem;
+    padding-top: 2.5rem;
+    border-top: 0.0625rem solid var(--borde-contenedor);
+}
+
+@media (max-width: 40rem) {
+    .public-page {
+        padding: 6rem 1rem 3rem;
+    }
+
+    .public-page .date {
+        padding: 1.5rem 1.35rem;
+    }
+}

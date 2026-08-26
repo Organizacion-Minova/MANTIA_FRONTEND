@@ -1,7 +1,7 @@
 import "../../styles/variables.css";
 import "../../styles/index.css";
 import { useState, useEffect, useRef } from "react";
-
+import { Link } from "react-router-dom";
 
 const slides = [
   {
@@ -30,7 +30,11 @@ const slides = [
   },
 ];
 
-const navLinks = ["Inicio", "Acerca de", "Ayuda"];
+const navLinks = [
+  { texto: "Inicio", ruta: "/" },
+  { texto: "Acerca de", ruta: "/acercade" },
+  { texto: "Ayuda", ruta: "/ayuda" },
+];
 
 const icons = {
   chevLeft: "M15 6l-6 6 6 6",
@@ -116,17 +120,17 @@ export default function MantiaInicio() {
       alt="MANTIA"
       className="mt-logo-img"
       />
-        <div className="mt-right-nav">
-          <nav className="mt-navlinks">
-            {navLinks.map((l, i) => (
-              <a key={l} href="#" className={i === 0 ? "active" : ""}>{l}</a>
-            ))}
-          </nav>
-          <button className="mt-login-btn">
-            <Icon name="login" size={15} />
-            Iniciar sesión
-          </button>
-        </div>
+<div className="mt-right-nav">
+  <nav className="mt-navlinks">
+    {navLinks.map((l, i) => (
+      <Link key={l.texto} to={l.ruta} className={i === 0 ? "active" : ""}>{l.texto}</Link>
+    ))}
+  </nav>
+  <Link to="/login" className="mt-login-btn">
+    <Icon name="login" size={15} />
+    Iniciar sesión
+  </Link>
+</div>
       </header>
 
       <main className="mt-main">
@@ -203,19 +207,19 @@ export default function MantiaInicio() {
           <div className="mt-footer-col">
             <h4>Enlaces rápidos</h4>
             <ul className="mt-footer-linklist">
-              {navLinks.map((l) => (
-                <li key={l}>
-                  <a href="#">
-                    <Icon name="chevRight" size={12} />
-                    {l}
-                  </a>
-                </li>
-              ))}
+            {navLinks.map((l) => (
+            <li key={l.texto}>
+            <Link to={l.ruta}>
+            <Icon name="chevRight" size={12} />
+            {l.texto}
+            </Link>
+            </li>
+                ))}
               <li>
-                <a href="#">
+                <Link to="/login">
                   <Icon name="chevRight" size={12} />
                   Iniciar sesión
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -254,106 +258,12 @@ export default function MantiaInicio() {
           </div>
         </div>
 
-        <div className="mt-footer-scene">
-          <div className="mt-mining-particles" aria-hidden="true">
-            {[
-              [8, 12, 0], [16, 28, .8], [25, 8, 1.4], [34, 24, 2.1],
-              [46, 10, .4], [58, 32, 1.7], [67, 14, 2.7], [77, 27, 1.1],
-              [86, 9, 2.4], [94, 22, .6]
-            ].map(([left, bottom, delay], i) => (
-              <span
-                key={i}
-                className="mt-mining-particle"
-                style={{
-                  left: `${left}%`,
-                  bottom: `${bottom}%`,
-                  "--particle-delay": `${delay}s`,
-                  "--particle-duration": `${4.2 + (i % 4) * .7}s`,
-                  "--particle-x": `${i % 2 ? -22 : 28}px`
-                }}
-              />
-            ))}
-          </div>
-
-          <svg viewBox="0 0 1400 220" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
-            <polygon className="mt-scene-layer mt-scene-mountains-back"
-              points="0,220 0,140 180,70 380,150 560,60 780,140 980,80 1180,150 1400,90 1400,220"
-              fill="rgba(6,32,30,0.35)" />
-
-            <polygon className="mt-scene-layer mt-scene-mountains-front"
-              points="0,220 0,175 220,110 460,180 700,100 940,175 1180,120 1400,170 1400,220"
-              fill="rgba(4,22,20,0.55)" />
-
-            <g className="mt-scene-layer mt-scene-portal" transform="translate(850,115)">
-              <rect x="-10" y="-14" width="114" height="16" fill="#3c2a1a" />
-              <circle className="mt-dust" cx="35" cy="20" r="4" fill="rgba(255,255,255,0.3)" style={{ animationDelay: "0s", animationPlayState: footerInView ? "running" : "paused" }} />
-              <circle className="mt-dust" cx="46" cy="16" r="3" fill="rgba(255,255,255,0.25)" style={{ animationDelay: "1s", animationPlayState: footerInView ? "running" : "paused" }} />
-              <circle className="mt-dust" cx="55" cy="22" r="3.5" fill="rgba(255,255,255,0.28)" style={{ animationDelay: "2s", animationPlayState: footerInView ? "running" : "paused" }} />
-            </g>
-
-            <g className="mt-scene-layer mt-scene-rail">
-              <line x1="0" y1="200" x2="1400" y2="200" stroke="rgba(255,255,255,0.3)" strokeWidth="3" />
-              {Array.from({ length: 46 }).map((_, i) => (
-                <rect key={i} x={i * 31} y="197" width="10" height="8" fill="rgba(255,255,255,0.22)" />
-              ))}
-            </g>
-
-            <g className="mt-hauler" transform="translate(0,153)">
-              <path d="M0 28h74l18 12h26v20H0z" fill="#0b2421" stroke="rgba(163,214,92,.65)" strokeWidth="2"/>
-              <path d="M75 28h20l15 12H75z" fill="#173d38"/>
-              <rect x="14" y="10" width="46" height="20" rx="3" fill="#163631" stroke="rgba(255,255,255,.18)"/>
-              <circle className="mt-hauler-wheel" cx="23" cy="62" r="9" fill="#071613" stroke="rgba(255,255,255,.35)" strokeWidth="2"/>
-              <circle className="mt-hauler-wheel" cx="96" cy="62" r="9" fill="#071613" stroke="rgba(255,255,255,.35)" strokeWidth="2"/>
-            </g>
-
-            <g className="mt-excavator" transform="translate(1080,115)">
-              <rect x="0" y="49" width="94" height="18" rx="5" fill="#0a1f1d" stroke="rgba(163,214,92,.7)" strokeWidth="2"/>
-              <circle cx="18" cy="70" r="10" fill="#071613" stroke="rgba(255,255,255,.3)" strokeWidth="2"/>
-              <circle cx="76" cy="70" r="10" fill="#071613" stroke="rgba(255,255,255,.3)" strokeWidth="2"/>
-              <rect x="23" y="25" width="47" height="25" rx="4" fill="#183c36"/>
-              <path d="M35 25V7h30l8 18z" fill="#214941" stroke="rgba(163,214,92,.65)" strokeWidth="2"/>
-              <circle className="mt-warning-light" cx="53" cy="4" r="3.2" fill="#FFD84D"/>
-
-              <g className="mt-excavator-arm">
-                <path d="M38 31L12 -18" stroke="#739C45" strokeWidth="12" strokeLinecap="round"/>
-                <path d="M12 -18L-18 -35" stroke="#8DB957" strokeWidth="9" strokeLinecap="round"/>
-                <g className="mt-excavator-bucket">
-                  <path d="M-18 -35l-18 9 9 18 18-4z" fill="#536E35" stroke="#A3D65C" strokeWidth="2"/>
-                </g>
-              </g>
-
-              <circle className="mt-ore" cx="8" cy="-1" r="3" fill="#A3D65C"/>
-              <circle className="mt-ore" cx="16" cy="-7" r="2.5" fill="#7E9F50"/>
-              <circle className="mt-ore" cx="24" cy="-2" r="3" fill="#A3D65C"/>
-            </g>
-
-            <g opacity=".48">
-              <line className="mt-conveyor-belt" x1="420" y1="177" x2="760" y2="145"
-                    stroke="rgba(163,214,92,.55)" strokeWidth="4"/>
-              <circle cx="420" cy="177" r="7" fill="#071613" stroke="rgba(255,255,255,.25)" />
-              <circle cx="760" cy="145" r="7" fill="#071613" stroke="rgba(255,255,255,.25)" />
-            </g>
-
-            <g className="mt-cart-group" style={{ animationPlayState: footerInView ? "running" : "paused" }}>
-              <g transform="translate(0,168)">
-                <rect x="0" y="0" width="52" height="26" rx="3" fill="#0a1f1d" stroke="var(--acento-mantia)" strokeWidth="2" />
-                <g className="mt-wheel" style={{ transformOrigin: "12px 30px", animationPlayState: footerInView ? "running" : "paused" }}>
-                  <circle cx="12" cy="30" r="6" fill="#0a1f1d" stroke="rgba(255,255,255,0.45)" strokeWidth="2" />
-                  <line x1="12" y1="25" x2="12" y2="35" stroke="rgba(255,255,255,0.5)" strokeWidth="1.2" />
-                </g>
-                <g className="mt-wheel" style={{ transformOrigin: "40px 30px", animationPlayState: footerInView ? "running" : "paused" }}>
-                  <circle cx="40" cy="30" r="6" fill="#0a1f1d" stroke="rgba(255,255,255,0.45)" strokeWidth="2" />
-                  <line x1="40" y1="25" x2="40" y2="35" stroke="rgba(255,255,255,0.5)" strokeWidth="1.2" />
-                </g>
-              </g>
-            </g>
-          </svg>
+        <div className="mt-footer-cta">
+          <Link to="/login" className="mt-login-btn">
+            <Icon name="login" size={15} />
+            Iniciar sesión
+          </Link>
         </div>
-
-        <a className="mt-login-btn mt-footer-pill" href="#">
-          Ir al inicio
-          <Icon name="external" size={13} />
-        </a>
 
         <div className="mt-footer-bottom">
           © {new Date().getFullYear()} MANTIA · Proyecto formativo SENA · Todos los derechos reservados
