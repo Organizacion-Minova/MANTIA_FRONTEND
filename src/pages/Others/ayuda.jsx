@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import "../../styles/Components.modules.css";
+import { useAuth } from "../../context/AuthContext.jsx";
+import AppLayout from "../../components/layout/AppLayout.jsx";
+import PublicLayout from "../../components/layout/PublicLayout.jsx";
 
-/* ---------- pequeños bloques reutilizables de la página ----------
-   Mismo criterio que en acerca_de.jsx: sin clases CSS nuevas, solo
-   variables y clases existentes en variables.css / global.css /
-   Components.modules.css, organizadas con layout y estado en React. */
+/* ---------- pequeños bloques reutilizables de la página ---------- */
 
 function Circulo({ icono, tamano = "2.5rem" }) {
     return (
@@ -59,7 +59,7 @@ function TarjetaCategoria({ icono, nombre, activa, onClick }) {
 
 function FilaContacto({ icono, titulo, texto }) {
     return (
-        <div style={{ display: "flex", alignItems: "center", gap: "0.9rem", padding: "0.6rem 0" }}>
+        <div className="contact-row" style={{ display: "flex", alignItems: "center", gap: "0.9rem", padding: "0.85rem 0" }}>
             <Circulo icono={icono} />
             <div>
                 <strong style={{ display: "block", color: "var(--texto)" }}>{titulo}</strong>
@@ -117,12 +117,34 @@ const preguntas = [
     },
 ];
 
+const preguntasPublicas = [
+    {
+        id: "pub1",
+        categoria: "general",
+        pregunta: "¿Qué es MANTIA?",
+        respuesta: "MANTIA es un sistema de mantenimiento e inventario de activos para el sector minero, que centraliza el control de máquinas, equipos, herramientas y ubicaciones.",
+    },
+    {
+        id: "pub2",
+        categoria: "general",
+        pregunta: "¿Cómo inicio sesión?",
+        respuesta: "Presiona el botón 'Iniciar sesión' en la parte superior y usa las credenciales que te asignó tu administrador.",
+    },
+    preguntas.find((p) => p.id === "p5"),
+    preguntas.find((p) => p.id === "p6"),
+];
+
 function Ayuda() {
+
+    const { isAuthenticated } = useAuth();
+    const Layout = isAuthenticated ? AppLayout : PublicLayout;
     const [busqueda, setBusqueda] = useState("");
     const [categoriaActiva, setCategoriaActiva] = useState(null);
     const [abierta, setAbierta] = useState(null);
 
-    const preguntasFiltradas = preguntas.filter((p) => {
+    const preguntasBase = isAuthenticated ? preguntas : preguntasPublicas;
+
+    const preguntasFiltradas = preguntasBase.filter((p) => {
         const coincideTexto = (p.pregunta + p.respuesta).toLowerCase().includes(busqueda.toLowerCase());
         const coincideCategoria = !categoriaActiva || p.categoria === categoriaActiva;
         return coincideTexto && coincideCategoria;
@@ -133,7 +155,8 @@ function Ayuda() {
     const alternarCategoria = (id) => setCategoriaActiva(categoriaActiva === id ? null : id);
 
     return (
-        <div>
+        <Layout>
+        <div className="public-page">
             <div
                 style={{
                     background: "var(--principal)",
@@ -168,7 +191,7 @@ function Ayuda() {
                 <div style={{ marginTop: "1.5rem", display: "inline-flex" }}>
                     <div className="date" style={{ boxShadow: "0 0.25rem 1rem rgba(0,0,0,.18)" }}>
                         <i className="fa-regular fa-calendar"></i>
-                        <span id="fecha"> {fechaActual}</span>
+                    
                     </div>
                 </div>
             </div>
@@ -193,21 +216,25 @@ function Ayuda() {
 
             <br />
 
-            <h2>Explora por tema</h2>
-            <br />
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(13rem, 1fr))", gap: "1rem" }}>
-                {categorias.map((c) => (
-                    <TarjetaCategoria
-                        key={c.id}
-                        icono={c.icono}
-                        nombre={c.nombre}
-                        activa={categoriaActiva === c.id}
-                        onClick={() => alternarCategoria(c.id)}
-                    />
-                ))}
-            </div>
+            {isAuthenticated && (
+                <>
+                    <h2>Explora por tema</h2>
+                    <br />
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(13rem, 1fr))", gap: "1rem" }}>
+                        {categorias.map((c) => (
+                            <TarjetaCategoria
+                                key={c.id}
+                                icono={c.icono}
+                                nombre={c.nombre}
+                                activa={categoriaActiva === c.id}
+                                onClick={() => alternarCategoria(c.id)}
+                            />
+                        ))}
+                    </div>
 
-            <br /><br />
+                    <br /><br />
+                </>
+            )}
 
             <h2>Preguntas frecuentes</h2>
             <br />
@@ -263,7 +290,7 @@ function Ayuda() {
                     <i className="fa-solid fa-headset"></i>
                     Contactar soporte
                 </a>
-                <Link to="/acerca-de">
+                <Link to="/acercade">
                     <button className="btn-2">
                         <i className="fa-solid fa-info-circle"></i>
                         Acerca de MANTIA
@@ -272,6 +299,7 @@ function Ayuda() {
             </div>
             <br />
         </div>
+        </Layout>
     );
 }
 
