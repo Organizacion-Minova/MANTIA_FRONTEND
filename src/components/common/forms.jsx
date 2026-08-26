@@ -1,4 +1,3 @@
-import React from 'react';
 import { PhotoIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import { ChevronDownIcon } from '@heroicons/react/16/solid';
 import { Boton } from '../../components/common/Button.jsx';

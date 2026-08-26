@@ -1,0 +1,173 @@
+.grid-contenedor-5{
+    display:grid;
+    gap:20px;
+
+    grid-template:
+        "bienvenida" 
+        "secciones" 
+        "secciones2" 
+        / 1fr;
+}
+
+/* ===== TABLET ===== */
+@media (max-width:991px){
+
+    .grid-contenedor-5{
+        grid-template:
+        "bienvenida"
+        "secciones"
+        "secciones2"
+        / 1fr;
+        .welcome{
+            flex-direction:column;
+            align-items:center;
+            text-align:center;
+            gap:1rem;
+        }
+        .cards{
+            grid-template-columns:auto
+        }
+        .cards2{
+            grid-template-columns: 1fr;
+        }
+        .cards2 table{
+            min-width:700px;
+        }
+    }
+}   
+
+/* ===== MOVIL ===== */
+@media (max-width:990px){
+
+    .grid-contenedor-5{
+        grid-template: 
+        "bienvenida"
+        "secciones"
+        "secciones2"
+        auto;
+        .welcome{
+            flex-direction:column;
+            align-items:center;
+            text-align:center;
+            gap:1rem;
+        }
+        .cards{
+            grid-template-columns:auto
+        }
+        .cards2{
+            grid-template-columns: auto;
+        }
+        .cards2{
+            overflow-x:auto;
+            -webkit-overflow-scrolling:touch;
+        }
+    }
+}
+
+.nivel-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 0.25rem 0.625rem;
+  border-radius: 1.25rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.badge-grave {
+  background: rgba(255,0,0,.12);
+  color: var(--rojo);
+  border: 1px solid rgba(255,0,0,.25);
+}
+
+.badge-importante {
+  background: rgba(255,216,0,.20);
+  color: #a88600;
+  border: 1px solid rgba(255,216,0,.45);
+}
+
+.badge-bien {
+  background: rgba(0,179,51,.12);
+  color: var(--verde);
+  border: 1px solid rgba(0,179,51,.25);
+}
+
+.btn-atender,
+.btn-escalar,
+.btn-ver-detalle {
+  position: relative;
+  border: none;
+  border-radius: 0.875rem;
+  padding: 0.8125rem 1.125rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  transition: transform .15s ease, background .2s ease, box-shadow .2s ease;
+  white-space: nowrap;
+}
+
+.btn-atender:active,
+.btn-escalar:active,
+.btn-ver-detalle:active {
+  transform: scale(0.97);
+}
+
+/* círculo de fondo para el icono */
+.btn-atender .icono,
+.btn-escalar .icono,
+.btn-ver-detalle .icono {
+  width: 1.375rem;
+  height: 1.375rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8125rem;
+  flex-shrink: 0;
+}
+
+/* Atender */
+.btn-atender {
+  background: rgba(99, 153, 34, .12);
+  color: var(--verde);
+  box-shadow: inset 0 0 0 1px rgba(99, 153, 34, .18);
+}
+.btn-atender .icono {
+  background: rgba(99, 153, 34, .18);
+}
+.btn-atender:hover {
+  box-shadow: inset 0 0 0 1px rgba(99, 153, 34, .32), 0 2px 8px rgba(99, 153, 34, .18);
+}
+
+/* Escalar */
+.btn-escalar {
+  background: rgba(226, 75, 74, .08);
+  color: var(--rojo);
+  box-shadow: inset 0 0 0 1px rgba(226, 75, 74, .18);
+}
+.btn-escalar .icono {
+  background: rgba(226, 75, 74, .18);
+}
+.btn-escalar:hover {
+  box-shadow: inset 0 0 0 1px rgba(226, 75, 74, .32), 0 2px 8px rgba(226, 75, 74, .18);
+}
+
+/* Ver detalle */
+.btn-ver-detalle {
+  background: rgba(57, 138, 221, .10);
+  color: var(--secundario);
+  box-shadow: inset 0 0 0 1px rgba(57, 138, 221, .18);
+}
+.btn-ver-detalle .icono {
+  background: rgba(57, 138, 221, .18);
+}
+.btn-ver-detalle:hover {
+  box-shadow: inset 0 0 0 1px rgba(57, 138, 221, .32), 0 2px 8px rgba(57, 138, 221, .18);
+}

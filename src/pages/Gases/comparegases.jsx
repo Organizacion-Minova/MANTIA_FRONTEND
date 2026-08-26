@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Boton, BotonLink } from "../../components/common/Button";
-import { PageWelcome, Searcher } from "../../components/common/welcome";
+import { PageWelcome } from "../../components/common/welcome";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -92,12 +92,12 @@ function CompararGases() {
     const metaAmpliada = gasAmpliadoKey ? limitesGases[gasAmpliadoKey] : null;
 
     return (
-        <div>
+        <div className="grid-contenedor-5">
             <PageWelcome
                 titulo="COMPARACIÓN DE GASES"
                 descripcion="Este es el análisis comparativo de gases."
             />
-            <div className="analisis-layout">
+            <section className="cards">
                 <div className="panel-filtros-horizontal">
                     <div className="control-input">
                         <label>Ubicación</label>
@@ -120,7 +120,8 @@ function CompararGases() {
                         <input readOnly />
                     </div>
                 </div>
-
+            </section>
+            <section className="cards2">
                 {metaAmpliada ? (
                     <div id="vistaAmpliada" className='card-mini-grafica'>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -165,8 +166,7 @@ function CompararGases() {
                         })}
                     </div>
                 )}
-            </div>
-            <br />
+            </section>
             <div className="btn-container">
                 <BotonLink
                     link="/gases"
