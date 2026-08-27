@@ -87,13 +87,13 @@ function AppLayout({ children }) {
 
                                 <ul className="submenu">
                                     <li>
-                                        <Link to="/tools/consumables">
+                                        <Link to="/types/consumables">
                                             <i className="fa-solid fa-wrench"></i>
                                             <span>Consumibles</span>
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link to="/tools/noconsumables">
+                                        <Link to="/types/noconsumables">
                                             <i className="fa-solid fa-tools"></i>
                                             <span>No consumibles</span>
                                         </Link>
@@ -129,13 +129,13 @@ function AppLayout({ children }) {
                     )}
 
                     <li>
-                        <Link to="/acercade">
+                        <Link to="/about">
                             <i className="fa-solid fa-info-circle"></i>
                             <span>Acerca de</span>
                         </Link>
                     </li>
                     <li>
-                        <Link to="/ayuda">
+                        <Link to="/help">
                             <i className="fa-solid fa-circle-question"></i>
                             <span>Ayuda</span>
                         </Link>

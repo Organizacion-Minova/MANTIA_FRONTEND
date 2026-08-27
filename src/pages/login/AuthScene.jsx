@@ -5,23 +5,6 @@ import "../../styles/global.css";
 import "../../styles/components.modules.css";
 import { Boton } from "../../components/common/Button";
 
-/**
- * NOTA para integrar en tu proyecto:
- * - Se agregó un estado `esDeDia` que controla el ciclo día/noche.
- * - Asumo que <Boton /> reenvía props extra como onClick al <button> interno
- *   (spread de props). Si no es así, solo agrega onClick={...} dentro de Boton.
- * - Agregué un <style> embebido con las animaciones (camión, ruedas,
- *   carretera, transición día/noche) para no depender de que edites
- *   login.css a ciegas. Si prefieres, puedes mover ese bloque a tu CSS.
- *
- * Cambios de esta versión (más sobria, mismo movimiento):
- * - Paleta desaturada (cielo, montañas, naranja del camión ya no son "caramelo").
- * - Luna/sol con un solo halo, sin efecto "brillo mágico".
- * - Grúas más esbeltas y con menos repetición de patrón (menos "juguete").
- * - Camión con cabina angulosa tipo carga real, sin faro redondo tipo "ojo".
- * - Montañas con curvas más planas (menos onda "amigable").
- */
-
 const AuthScene = ({ children }) => {
     const [esDeDia, setEsDeDia] = useState(false);
 

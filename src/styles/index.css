@@ -1,22 +1,4 @@
-.mt-app {
-  --principal: linear-gradient(120deg, #063B38 0%, #075E55 42%, #078F7B 72%, #10BFA5 100%);
-  --principal-solido: #075E55;
-  --secundario: #19C3A6;
-  --sidebar: #063B38;
-  --fondo: #E8F0EE;
-  --contenedor: #FFFFFF;
-  --blanco: #FFFFFF;
-  --texto: #12201E;
-  --texto2: #50615D;
-  --borde-contenedor: #CFDEDA;
-  --sombra-contenedor: 0 3px 12px rgba(6, 59, 56, .08);
-  --sombra-contenedor-hover: 0 8px 24px rgba(6, 59, 56, .14);
-  --acento-mantia: #A3D65C;
 
-  font-family: 'Segoe UI', Inter, sans-serif;
-  background: var(--fondo);
-  min-height: 100vh;
-}
 
 .mt-header {
   position: absolute; top: 0; left: 0; right: 0;
