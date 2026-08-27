@@ -546,7 +546,7 @@ function AcercaDe() {
         Escríbenos
             </a>
 
-                <Link to="/ayuda">
+                <Link to="/help">
                     <button className="btn-2">
                         <i className="fa-solid fa-circle-question"></i>
                         Ir a Ayuda

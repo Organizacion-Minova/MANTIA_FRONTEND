@@ -290,7 +290,7 @@ function Ayuda() {
                     <i className="fa-solid fa-headset"></i>
                     Contactar soporte
                 </a>
-                <Link to="/acercade">
+                <Link to="/about">
                     <button className="btn-2">
                         <i className="fa-solid fa-info-circle"></i>
                         Acerca de MANTIA

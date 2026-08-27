@@ -32,8 +32,8 @@ const slides = [
 
 const navLinks = [
   { texto: "Inicio", ruta: "/" },
-  { texto: "Acerca de", ruta: "/acercade" },
-  { texto: "Ayuda", ruta: "/ayuda" },
+  { texto: "Acerca de", ruta: "/about" },
+  { texto: "Ayuda", ruta: "/help" },
 ];
 
 const icons = {

@@ -43,11 +43,23 @@ export function CardMachine() {
                 </section>
                 <section className="middle">
                     <div className="btn-container">
-                        <button className="btn-azul" type="button"> 
-                            <i className="fas fa-home"></i> Uso diario
-                        </button>
-                        <button className="btn-azul"><i className="fas fa-cog"></i> Pre operacional</button>
-                        <a href="agregar_inspeccion.php"><button className="btn-azul"><i className="fas fa-search"></i> Inspeccion</button></a>
+                        <BotonLink
+                            link="/dailyuse"
+                            clase="btn-azul"
+                            icono="fas fa-home"
+                            texto="Uso diario"
+                        />
+                        <Boton
+                            clase="btn-azul"
+                            icono="fas fa-cog"
+                            texto="Pre operacional"
+                        />
+                        <BotonLink
+                            link="/machines/cardMachine/inspection"
+                            clase="btn-azul"
+                            icono="fas fa-search"
+                            texto="Inspeccion"
+                        />
                         <BotonLink
                             link="/machines"
                             clase="btn-2"
