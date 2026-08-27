@@ -1,4 +1,3 @@
-
 /* ======================
    ESTRUCTURA GENERAL
 ====================== */
@@ -892,3 +891,158 @@ footer{
 
 
 
+
+/* ========================================================================================
+   ESTILOS PAGINA AYUDA (cards, pasos, faq, badges de estado)
+=========================================================================================== */
+
+.grid-contenedor-2{
+    display:flex;
+    flex-direction:column;
+    gap:1.5rem;
+}
+
+.cards,
+.cards2,
+.middle{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));
+    gap:1.25rem;
+    margin-bottom:1.5rem;
+}
+
+.card{
+    background:var(--contenedor);
+    border:1px solid var(--borde-contenedor);
+    border-radius:0.9rem;
+    box-shadow:var(--sombra-contenedor);
+    padding:1.25rem;
+    transition:box-shadow .2s, transform .2s;
+}
+
+.card:hover{
+    box-shadow:var(--sombra-contenedor-hover);
+    transform:translateY(-0.125rem);
+}
+
+.card-title{
+    display:flex;
+    align-items:center;
+    gap:0.75rem;
+    margin-bottom:0.75rem;
+}
+
+.card-title h3{
+    color:var(--texto);
+    font-size:1rem;
+}
+
+.card > p{
+    color:var(--texto2);
+    font-size:0.875rem;
+    margin-bottom:0.75rem;
+}
+
+.icon{
+    width:2.25rem;
+    height:2.25rem;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    font-size:0.95rem;
+}
+
+.icon.blue{
+    background:var(--hover-principal);
+    color:var(--secundario);
+}
+
+.steps{
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    gap:0.6rem;
+}
+
+.steps li{
+    display:flex;
+    align-items:flex-start;
+    gap:0.6rem;
+    font-size:0.8125rem;
+    color:var(--texto2);
+}
+
+.step-num{
+    flex-shrink:0;
+    width:1.35rem;
+    height:1.35rem;
+    border-radius:50%;
+    background:var(--secundario);
+    color:var(--blanco);
+    font-size:0.688rem;
+    font-weight:700;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* ===== FAQ (acordeon) ===== */
+
+.faq-item{
+    border-bottom:1px solid var(--borde-contenedor);
+    padding:0.9rem 0;
+    cursor:pointer;
+}
+
+.faq-item:last-child{
+    border-bottom:none;
+}
+
+.faq-question{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    color:var(--texto);
+    font-weight:600;
+    font-size:0.875rem;
+}
+
+.faq-question .arrow{
+    color:var(--texto2);
+    transition:transform .25s ease;
+}
+
+.faq-item.activo .faq-question .arrow{
+    transform:rotate(180deg);
+}
+
+.faq-answer{
+    max-height:0;
+    overflow:hidden;
+    color:var(--texto2);
+    font-size:0.813rem;
+    line-height:1.5;
+    transition:max-height .3s ease, margin-top .3s ease;
+}
+
+.faq-item.activo .faq-answer{
+    max-height:20rem;
+    margin-top:0.75rem;
+}
+
+/* ===== Badges de estado (usados en la FAQ de "Equipos") ===== */
+
+.badge{
+    display:inline-block;
+    padding:0.15rem 0.6rem;
+    border-radius:20px;
+    font-size:0.75rem;
+    font-weight:700;
+}
+
+.badge-activo{ background:rgba(0,179,51,.12); color:var(--verde); }
+.badge-mantto{ background:rgba(255,216,0,.20); color:#a88600; }
+.badge-fuera{ background:rgba(226,75,74,.12); color:var(--rojo); }
+.badge-inactivo{ background:rgba(80,97,93,.14); color:var(--texto2); }
