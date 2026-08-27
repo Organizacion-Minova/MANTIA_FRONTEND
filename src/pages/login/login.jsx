@@ -28,7 +28,7 @@ const Login = () => {
         }
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         setError("");
 
@@ -38,7 +38,7 @@ const Login = () => {
         }
 
         try {
-            login(email, password);
+            await login(email, password);
             navigate("/machines");
         } catch (err) {
             setError(err.message);

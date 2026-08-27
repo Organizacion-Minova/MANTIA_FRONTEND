@@ -1,43 +1,44 @@
 import { createContext, useContext, useState } from "react";
+import { login as loginRequest, logout as logoutRequest, getUser } from "../api/auth";
 
-// 1. Creamos el "canal" de contexto. Empieza en null porque
-//    todavía no tiene ningún valor real.
 const AuthContext = createContext(null);
 
-// 2. Usuario de prueba fijo (sin base de datos por ahora).
-const USUARIO_PRUEBA = {
-    email: "admin@mantia.com",
-    password: "admin123",
-    nombre: "Administrador MANTIA",
-};
-
-// 3. El Provider es un componente que ENVUELVE tu app y le
-//    inyecta el valor del contexto a todo lo que esté adentro.
 export function AuthProvider({ children }) {
     const [usuario, setUsuario] = useState(null);
 
-    const isAuthenticated = !!usuario; // true si usuario no es null
+    const isAuthenticated = !!usuario;
 
-    function login(email, password) {
-        if (email !== USUARIO_PRUEBA.email || password !== USUARIO_PRUEBA.password) {
-            throw new Error("Credenciales incorrectas.");
+    async function login(email, password) {
+        try {
+            const data = await loginRequest(email, password);
+            setUsuario(data);
+        } catch (err) {
+            if (err.response?.status === 401) {
+                throw new Error("Credenciales incorrectas.");
+            }
+            throw new Error("No se pudo conectar con el servidor.");
         }
-        setUsuario({ nombre: USUARIO_PRUEBA.nombre, email });
     }
 
-    function logout() {
+    async function logout() {
+        await logoutRequest();
         setUsuario(null);
     }
 
-    // 4. Todo lo que pongas aquí es lo que van a poder leer
-    //    los demás componentes con useAuth().
-    const value = { usuario, isAuthenticated, login, logout };
+    async function cargarUsuarioActual() {
+        try {
+            const data = await getUser();
+            setUsuario(data);
+        } catch {
+            setUsuario(null);
+        }
+    }
+
+    const value = { usuario, isAuthenticated, login, logout, cargarUsuarioActual };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-// 5. Hook de conveniencia: en vez de que cada componente escriba
-//    useContext(AuthContext), escriben useAuth().
 export function useAuth() {
     return useContext(AuthContext);
 }
