@@ -1,4 +1,4 @@
-![Vista previa de MANTIA](/src/assets/img/Mantia%20-%20logo.png)
+![Vista previa de MANTIA](/src/assets/img/Mantia%20-%20logo_readme.png)
 
 Sistema web de gestión de inventario y mantenimiento para elementos utilizados en entornos mineros: máquinas, equipos, herramientas, ubicaciones, usuarios, alertas, uso diario e inspecciones.
 
