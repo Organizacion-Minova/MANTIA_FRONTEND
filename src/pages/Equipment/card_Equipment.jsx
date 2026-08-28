@@ -3,7 +3,7 @@ import { Boton,BotonLink } from "../../components/common/Button";
 
 export function CardEquipment() {
      return(
-        <div className="page-layout">
+        <div className="cards-grid">
        
             <PageWelcome
                 titulo="Equipo"
@@ -30,9 +30,21 @@ export function CardEquipment() {
                 </div>
             </section>
                 <div className="btn-container" >
-                    <button className="btn-azul"><i className="fas fa-wind"></i> Medición gases</button>
-                    <button className="btn-azul"><i className="fas fa-calendar-alt"></i> Calibración</button>
-                    <button className="btn-azul"><i className="fas fa-stethoscope"></i> Diagnóstico</button>
+                    <Boton
+                        clase="btn-azul"
+                        texto="Medición gases"
+                        icono="fas fa-wind"
+                    />
+                    <Boton
+                        clase="btn-azul"
+                        texto="Calibración"
+                        icono="fas fa-calendar-alt"
+                    />
+                    <Boton
+                        clase="btn-azul"
+                        texto="Diagnóstico"
+                        icono="fas fa-stethoscope"
+                    />
                     <BotonLink
                         link="/equipment"
                         clase="btn-2"

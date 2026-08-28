@@ -164,50 +164,52 @@ function Formulario({ onCancel }){
 function Maquinas(){
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     return(
-        <div className="">
-            <PageWelcome
-                titulo="MAQUINAS"
-                descripcion="Este es el formato de las máquinas."
-            />
-            <Searcher/>
-            <br/>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Código</th>
-                        <th>Número de serie</th>
-                        <th>Tipo</th>
-                        <th>Marca</th>
-                        <th>Ubicación</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Dante</td>
-                        <td>666</td>
-                        <td>que es eso</td>
-                        <td>Cazador de demonios</td>
-                        <td>Capcom</td>
-                        <td>Infierno</td>
-                        <td>Papucho</td>
-                        <td>
-                        <BotonLink
-                            link="/machines/cardmachine"
-                            clase="btn-azul"
-                            icono="fa-solid fa-eye"
-                        />
-                        <Boton
-                            clase="btn-2"
-                            icono="fa-solid fa-edit"
-                        />
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <br/>
+        <div className="list-grid">
+            <header className="bienvenida">
+                <PageWelcome
+                    titulo="MAQUINAS"
+                    descripcion="Este es el formato de las máquinas."
+                />
+                <Searcher/>
+            </header>
+            <div className="table-responsive">
+                <table className="table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Código</th>
+                            <th>Número de serie</th>
+                            <th>Tipo</th>
+                            <th>Marca</th>
+                            <th>Ubicación</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Dante</td>
+                            <td>666</td>
+                            <td>que es eso</td>
+                            <td>Cazador de demonios</td>
+                            <td>Capcom</td>
+                            <td>Infierno</td>
+                            <td>Papucho</td>
+                            <td>
+                            <BotonLink
+                                link="/machines/cardmachine"
+                                clase="btn-azul"
+                                icono="fa-solid fa-eye"
+                            />
+                            <Boton
+                                clase="btn-2"
+                                icono="fa-solid fa-edit"
+                            />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <div className="btn-container">
                 <Boton
                     clase="btn-azul"

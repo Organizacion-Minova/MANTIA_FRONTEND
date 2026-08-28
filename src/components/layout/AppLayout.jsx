@@ -8,6 +8,11 @@ import "../../styles/variables.css";
 import "../../styles/Tables/table.css";
 import "../../styles/Components.modules.css"
 import "../../styles/Tables/form.css";
+import "../../styles/grid_content.css";
+import "../../styles/accessibility.css";
+import AccessibilityPanel from "../accessibility/AccessibilityPanel";
+
+
 function AppLayout() {
     const [cerrado, setCerrado] = useState(false);
     const [herramientasAbierto, setHerramientasAbierto] = useState(false);
@@ -137,12 +142,12 @@ function AppLayout() {
             
 
             <main id="contenido" className={`contenido ${cerrado ? "cerrado" : ""}`}>
-                <Outlet/>
+                <Outlet />
+                
             </main>
+            <AccessibilityPanel />
 
-            <button className="btn-accesibilidad">
-                Accesibilidad (pendiente)
-            </button>
+            
 
             <footer className="footer">
                 <div className="secFooterPrincipal">

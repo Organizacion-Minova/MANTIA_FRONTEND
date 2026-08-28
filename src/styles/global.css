@@ -1,33 +1,23 @@
-<<<<<<< HEAD
-=======
-
->>>>>>> 7831a3d11751141d9382c1e138dd3e87b86fc025
 /* ======================
    ESTRUCTURA GENERAL
 ====================== */
 .topbar{grid-area: topbar;}
 .sidebar{grid-area: sidebar;}
 #contenido{grid-area: contenido;}
-.btn-accesibilidad{grid-area : accesibilidad;}
-footer{grid-area: footer;}
+.footer{grid-area: footer;}
 
 /* ===== DESKTOP ===== */
 
 .app-layout{
-     background-color: var(--fondo);
+    background-color: var(--fondo);
     min-height:100vh;
     display:grid;
 
     grid-template:
         "topbar topbar" auto
         "sidebar contenido" 1fr
-        "accesibilidad accesibilidad"auto
         "footer footer" auto
         / auto 1fr;
-
-        .sidebar .submenu{
-            padding-left: 0;
-         }  
 }
 
 /* ===== TABLET ===== */
@@ -39,7 +29,6 @@ footer{grid-area: footer;}
         grid-template:
             "topbar topbar" auto
             "sidebar contenido" 1fr
-            "accesibilidad accesibilidad"auto
             "footer footer" auto
             / auto 1fr;
 
@@ -69,20 +58,18 @@ footer{grid-area: footer;}
     .app-layout{
 
         grid-template:
-            "topbar topbar" auto
+            "topbar topbar" 
             "sidebar contenido" 1fr
-            "accesibilidad accesibilidad"auto
             "footer footer" auto
             / auto 1fr;
 
         
         .topbar{
-               display:grid;
-
+               display:grid;               
               grid-template-columns:
                  auto  auto;
               align-items:center;
-        } 
+              padding:0rem 0.8rem;      } 
           .centro{
             display: none;
           }
@@ -92,7 +79,7 @@ footer{grid-area: footer;}
         }
         .sidebar {
            width:0; 
-           background-color: var(--principal);
+           background-color: var(--sidebar);
            
           }
         
@@ -285,7 +272,6 @@ footer{grid-area: footer;}
                 } 
 
 .sidebar .active i {
-    color: #19C3A6;
     color: var(--acento-mantía);
 }
 
@@ -297,6 +283,9 @@ footer{grid-area: footer;}
 .flecha { transition: 0.3s; }
 .menu-desplegable.activo .flecha { transform: rotate(180deg); }
 
+ .sidebar .submenu{
+            padding-left: 0;
+         }  
 
 /* Sidebar cerrado estilos */
 .sidebar.cerrado{ 

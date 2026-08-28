@@ -3,7 +3,7 @@ import { Boton,BotonLink } from "../../components/common/Button";
 
 export function CardMachine() {
     return (
-        <div className="page-layout">
+        <div className="cards-grid">
 
             <PageWelcome
                 titulo="Maquina"
@@ -41,13 +41,23 @@ export function CardMachine() {
                             <li><strong>CARACTERÍSTICAS:</strong> <span id="eb_caracteristicas"></span></li>
                     </div>
                 </section>
-                <section className="middle">
+                
                     <div className="btn-container">
-                        <button className="btn-azul" type="button"> 
-                            <i className="fas fa-home"></i> Uso diario
-                        </button>
-                        <button className="btn-azul"><i className="fas fa-cog"></i> Pre operacional</button>
-                        <a href="agregar_inspeccion.php"><button className="btn-azul"><i className="fas fa-search"></i> Inspeccion</button></a>
+                        <Boton
+                            clase="btn-azul"
+                            icono="fas fa-pen-to-square"
+                            texto="Uso diario"
+                        />
+                        <Boton
+                            clase="btn-azul"
+                            icono="fas fa-cog"
+                            texto="Pre operacional"
+                        />
+                        <Boton
+                            clase="btn-azul"
+                            icono="fas fa-search"
+                            texto="Inspeccion"
+                        />
                         <BotonLink
                             link="/machines"
                             clase="btn-2"
@@ -55,7 +65,6 @@ export function CardMachine() {
                             texto="Regresar"
                         />
                     </div>
-                </section>
         </div>
     )
 }

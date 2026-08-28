@@ -2,14 +2,17 @@ import { Boton,BotonLink } from "../../components/common/Button";
 import { PageWelcome,Searcher } from "../../components/common/welcome";
 function Equipos(){
     return(
-        <div className="">
-            <PageWelcome
-                titulo="Equipos"
-                descripcion="Este es el formato de los equipos"
-            />
-            <Searcher/>
-            <br />
-            <table>
+        <div className="list-grid">
+            <header className="bienvenida">
+                <PageWelcome
+                    titulo="Equipos"
+                    descripcion="Este es el formato de los equipos"
+                />
+                <Searcher/>
+            </header>
+         <div class="table-responsive">
+            <table className="table">
+                
                 <thead>
                     <tr>
                         <th>Nombre</th>
@@ -31,7 +34,6 @@ function Equipos(){
                         <td>pasable</td>
 
                         <td>
-
                             <BotonLink
                                 link="/equipment/cardequipment"
                                 clase="btn-azul"
@@ -41,17 +43,19 @@ function Equipos(){
                                 clase="btn-2"
                                 icono="fa-solid fa-edit"
                             />
-                           
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <br />
-            <Boton
-                clase="btn-azul"
-                icono="fa-solid fa-plus"
-                texto="Nueva Equipo"
-            />
+            </div>
+     
+            <div className="btn-container">
+                <Boton
+                    clase="btn-azul"
+                    icono="fa-solid fa-plus"
+                    texto="Nueva Equipo"
+                />
+            </div>
         </div>
     )
 }

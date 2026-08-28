@@ -23,7 +23,7 @@
     --sidebar: #063B38;
 
     --fondo: #E8F0EE;
-
+    
     --blanco: #FFFFFF;
   
     --texto: #12201E;
@@ -47,36 +47,172 @@
 }
 /*======================
    MODO OSCURO NENAS
-                    */
-html.dark-theme{
-    --principal: #142140;
-    --secundario: #294A70;
-    --sidebar: #101C33;
-    --accesibilidad: #24364D;
-    --fondo: #1A2433;
-    --contenedor: #35455c68;
-    --texto: #F5F7FA;
-    --texto2: #B8C3D1;
-  
-    --Azul-difuminado:
+                   */
+
+
+/* html.dark-theme {
+
+    --principal: linear-gradient(
+        120deg,
+        #041F20 0%,
+        #063F3C 42%,
+        #087D6D 72%,
+        #0FAE96 100%
+    );
+
+    --secundario: #24C7AA;
+
+    --sidebar: #06191B;
+
+    --accesibilidad: #263534F2;
+
+    --fondo: #10191A;
+
+    --contenedor: #172223;
+
+    --blanco: #F4FAF8;
+
+    --texto: #EDF7F4;
+
+    --texto2: #A9BAB6;
+
+    --rojo: #FF6B67;
+
+    --amarillo: #F2C14E;
+
+    --verde: #4FD17B;
+
+    --verde2: #8DBA4A;
+
+    --hover-principal: rgba(36, 199, 170, .14);
+
+    --borde-contenedor: #2B3A3A;
+
+    --sombra-contenedor:
+        0 4px 16px rgba(0, 0, 0, .28);
+
+    --sombra-contenedor-hover:
+        0 8px 26px rgba(0, 0, 0, .40);
+} */
+
+html.dark-theme {
+
+    /* =========================================
+       TIPOGRAFÍA
+       ========================================= */
+
+    --fuente-principal: 'Archivo', sans-serif;
+    --fuente-secundaria: 'Barlow', sans-serif;
+
+
+    /* =========================================
+       IDENTIDAD AURORA
+       ========================================= */
+
+    --principal:
         linear-gradient(
-            135deg,
-            var(--principal),
-            var(--secundario)
+            115deg,
+            #151A27 0%,
+            #19313A 32%,
+            #165B58 67%,
+            #15927F 100%
         );
 
-    --hover-principal: rgba(255,255,255,.08);
-    
-}
+    --secundario: #148F80;
 
+    --sidebar: #11151E;
+
+
+    /* =========================================
+       SUPERFICIES
+       ========================================= */
+
+    --fondo: #151820;
+
+    --contenedor: #20252D;
+
+    --blanco: #F4F7F6;
+
+
+    /* =========================================
+       TEXTO
+       ========================================= */
+
+    --texto: #F1F5F4;
+
+    --texto2: #AAB5B5;
+
+
+    /* =========================================
+       ESTRUCTURA
+       ========================================= */
+
+    --borde-contenedor: #343B40;
+
+
+    /* =========================================
+       INTERACCIÓN
+       ========================================= */
+
+    --hover-principal: rgba(20, 143, 128, .16);
+
+
+    /* =========================================
+       SOMBRAS
+       ========================================= */
+
+    --sombra-contenedor:
+        0 4px 16px rgba(0, 0, 0, .30);
+
+    --sombra-contenedor-hover:
+        0 8px 28px rgba(0, 0, 0, .42);
+
+
+    /* =========================================
+       ACENTO MANTIA
+       ========================================= */
+
+    /* --acento-mantia: #3F8F82; */
+  
+    /* --acento-mantia: #4E9F94; */
+    --acento-mantia: #3F8F82;
+
+    /* =========================================
+       ESTADOS
+       ========================================= */
+
+    --amarillo: #E8B84B;
+
+    --verde: #4FC879;
+
+    --rojo: #EB6864;
+}
 /*======================
    MODO ALTO CONTRASTE
    =========================*/
 
 html.alto-contraste{
-    --principal:#000E5C; --secundario:#2457D6; --sidebar:#000428;
-     --accesibilidad:#002E8A; --fondo:#FFFFFF; --contenedor:#ffffff5d;
-    --texto:#000000;--texto2:#111111;--hover-principal:#D9E7FF;
+     --principal: #003C37;
+    --secundario: #00A890;
+    --sidebar: #00201E;
+    --fondo: #FFFFFF;
+    --blanco: #FFFFFF;
+    --texto: #000000;
+    --texto2: #263330;
+    --borde-contenedor: #7A8C88;
+
+    --hover-principal: rgba(0, 168, 144, .24);
+
+    --sombra-contenedor:
+        0 3px 12px rgba(0, 32, 30, .22);
+
+    --sombra-contenedor-hover:
+        0 8px 24px rgba(0, 32, 30, .32);
+
+    --acento-mantia: #5A9E00;
+    --amarillo: #E5B800;
+    --verde: #008A29;
+    --rojo: #C62828;
 }
 
 html.alto-contraste *{text-shadow:none !important;}
@@ -89,19 +225,25 @@ html.alto-contraste *{text-shadow:none !important;}
 
 } */
 
-
 /*======================
    Convivencia de oscurin y contraste
    =========================*/
 html.dark-theme.alto-contraste{
-    --principal:#000000;
-    --secundario:#0047CC;
-    --sidebar:#000000;
-    --fondo:#000000;
-    --contenedor:#111111;
-    --texto:#FFFFFF;
-    --texto2:#F5F5F5;
-    --hover-principal:#1F5FFF;
+    --principal: #005B50;
+    --secundario: #00CDB5;
+    --sidebar: #000E0D;
+    --fondo: #000000;
+    --contenedor: #101817;
+    --blanco: #FFFFFF;
+    --texto: #FFFFFF;
+    --texto2: #D0DDDA;
+    --borde-contenedor: #5A6B68;
+    --hover-principal: rgba(0, 205, 181, .28);
+    --sombra-contenedor:
+        0 4px 16px rgba(0, 0, 0, .60);
+    --sombra-contenedor-hover:
+        0 8px 28px rgba(0, 0, 0, .80);
+    --acento-mantia: #9BEA35;
 }
 
 html{
@@ -128,7 +270,6 @@ html{
 
 html,
 body{
-    width: 100%;
     height: 100vh;
     font-family: var(--fuente-principal);
     color: var(--texto);
