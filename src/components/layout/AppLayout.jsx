@@ -16,7 +16,7 @@ import { useAuth } from "../../context/AuthContext.jsx";
 
 
 function AppLayout({ children }) {
-    
+    const { usuario, isAuthenticated, handleLogout } = useAuth();
     const [cerrado, setCerrado] = useState(false);
     const [herramientasAbierto, setHerramientasAbierto] = useState(false);
     const [openAlertas, setOpenAlertas] = useState(false);

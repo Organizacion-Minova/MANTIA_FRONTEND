@@ -24,7 +24,6 @@ npm install
 ```
 
 
-
 ### Dependencias principales instaladas manualmente
 
 Si necesitas reinstalar alguna dependencia específica:
