@@ -3,7 +3,7 @@ import { Boton,BotonLink } from "../../components/common/Button";
 
 export function CardMachine() {
     return (
-        <div className="page-layout">
+        <div className="cards-grid">
 
             <PageWelcome
                 titulo="Maquina"
@@ -41,7 +41,7 @@ export function CardMachine() {
                             <li><strong>CARACTERÍSTICAS:</strong> <span id="eb_caracteristicas"></span></li>
                     </div>
                 </section>
-                <section className="middle">
+                
                     <div className="btn-container">
                         <BotonLink
                             link="/dailyuse"
@@ -67,7 +67,6 @@ export function CardMachine() {
                             texto="Regresar"
                         />
                     </div>
-                </section>
         </div>
     )
 }
