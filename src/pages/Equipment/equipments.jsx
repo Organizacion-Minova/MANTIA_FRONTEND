@@ -116,17 +116,14 @@ function Formulario({onCancel}){
 function Equipos(){
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     return(
-        <div className="list-grid">
-            <header className="bienvenida">
-                <PageWelcome
-                    titulo="Equipos"
-                    descripcion="Este es el formato de los equipos"
-                />
-                <Searcher/>
-            </header>
-         <div class="table-responsive">
-            <table className="table">
-                
+        <div className="">
+            <PageWelcome
+                titulo="Equipos"
+                descripcion="Este es el formato de los equipos"
+            />
+            <Searcher/>
+            <br />
+            <table>
                 <thead>
                     <tr>
                         <th>Nombre</th>
@@ -148,6 +145,7 @@ function Equipos(){
                         <td>pasable</td>
 
                         <td>
+
                             <BotonLink
                                 link="/equipment/cardequipment"
                                 clase="btn-azul"
@@ -157,6 +155,7 @@ function Equipos(){
                                 clase="btn-2"
                                 icono="fa-solid fa-edit"
                             />
+                           
                         </td>
                     </tr>
                 </tbody>
@@ -173,7 +172,6 @@ function Equipos(){
                 <Formulario onCancel={() => setMostrarFormulario(false)} />
             )}
         </div>
-        </div>
-    )}
-
+    )
+}
 export default Equipos;
