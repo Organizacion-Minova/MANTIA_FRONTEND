@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { Boton, BotonLink } from "../../components/common/Button";
 import "../../styles/global.css";
 import "../../styles/variables.css";
 import "../../styles/Tables/table.css";
@@ -13,15 +14,12 @@ import { useAuth } from "../../context/AuthContext.jsx";
 function AppLayout({ children }) {
     const [cerrado, setCerrado] = useState(false);
     const [herramientasAbierto, setHerramientasAbierto] = useState(false);
-    const { isAuthenticated, usuario, logout } = useAuth();
-    const navigate = useNavigate();
+    const [openAlertas, setOpenAlertas] = useState(false);
+    const [openPerfil, setOpenPerfil] = useState(false);
+    const [removeBellBadge, setRemoveBellBadge] = useState(false);
 
-    const handleLogout = () => {
-        logout();
-        navigate("/login");
-    };
     return (
-        <div className="app-layout">
+        <div className="app-layout" onClick={() => {setOpenPerfil(false); setOpenAlertas(false);}}>
             <header className="topbar">
                 <div className="izquierda">
                     <div
@@ -44,12 +42,12 @@ function AppLayout({ children }) {
                 </div>
 
                 <nav className="derecha">
-                    <button className="bell-btn" id="btnCampana" title="Alertas">
+                    <button className="bell-btn" id="btnCampana" title="Alertas" onClick={(e) => { e.stopPropagation(); setOpenAlertas(!openAlertas); setOpenPerfil(false);}}>
                         <i className="fa-solid fa-bell"></i>
-                        <span className="bell-badge" id="bellBadge">5</span>
-                    </button>
+                        <span className={`bell-badge ${removeBellBadge ? "remove" : ""}`} id="bellBadge">5</span>
+                    </button>  
 
-                    <button className="profile-btn" id="btnPerfil">
+                    <button className="profile-btn" id="btnPerfil" onClick={(e) => { e.stopPropagation(); setOpenPerfil(!openPerfil); setOpenAlertas(false);}}>
                         <img
                             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDnLesNChl-l86u_LACs0pBkjqaot3ramr_A&s"
                             alt="Foto de perfil"
@@ -62,7 +60,70 @@ function AppLayout({ children }) {
                         </div>
                     </button>
 
-                    {/* Aquí el equipo conectará overlayAlertas y overlayPerfil (Tailwind) */}
+                    {/* OVERLAY ALERTAS */}
+                    <div className={`overlay-panel ${openAlertas ? "open" : ""}`} id="overlayAlertas">
+                        <div className="alerts-header">
+                            <h3>
+                                <i className="fa-solid fa-bell"></i>
+                                Alertas del sistema
+                            </h3>
+                            <Boton
+                                clase="mark-all"
+                                texto="Marcar todas como leídas"
+                                title="Eliminar"
+                                onClick={(e) => { e.stopPropagation(); setRemoveBellBadge(!removeBellBadge);}}
+                            />
+                        </div>
+                        <div className="alerts-footer">
+                            <BotonLink
+                                link="/Alerts"
+                                clase="btn-azul"
+                                icono="fa-solid fa-triangle-exclamation"
+                                texto="Alertas"
+                            />
+                        </div>
+                    </div>
+
+                    {/* OVERLAY PERFIL */}
+                    <div className={`overlay-panel ${openPerfil ? "open" : ""}`} id="overlayPerfil">
+                        <div className="perfil-header">
+                            <img 
+                                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDnLesNChl-l86u_LACs0pBkjqaot3ramr_A&s" 
+                                alt="Perfil"
+                                className="perfil-avatar"
+                            />
+                            <h3>PAPOI</h3>
+                            <span>Superadministrador</span>
+                        </div>
+                        <div className="perfil-info">
+                            <p>
+                                <i className="fa-solid fa-envelope"></i>
+                                papoi@gmail.com
+                            </p>
+                        </div>
+                        <div className="perfil-actions">
+                            <BotonLink
+                                link="/Profile"
+                                clase="btn-azul"
+                                icono="fa-solid fa-user"
+                                texto="Ver mi perfil"
+                            />
+                            <BotonLink
+                                link=""
+                                clase="btn-azul"
+                                icono="fa-solid fa-shield-halved"
+                                texto="Panel Superadmin"
+                            />
+                        </div>
+                        <div className="perfil-footer">
+                            <BotonLink
+                                link="/login"
+                                clase="btn-azul"
+                                icono="fa-solid fa-right-from-bracket"
+                                texto="Cerrar Sesion"
+                            />
+                        </div>
+                    </div>
                 </nav>
             </header>
             <aside className={`sidebar ${cerrado ? "cerrado" : ""}`} id="sidebar">
