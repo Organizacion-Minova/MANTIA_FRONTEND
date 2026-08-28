@@ -409,6 +409,10 @@
     pointer-events: none;
 }
 
+.bell-badge.remove {
+    display: none;
+}
+
  .profile-btn {
     display: flex;
     align-items: center;
@@ -442,13 +446,13 @@
         ESTILOS CONTENIDO PAGINAS
 =========================================================================================== */
 
-
-/* .overlay-panel {
+/* Overlay Alertas */
+.overlay-panel {
     position: absolute;
     top: calc(100% + 8px);
     background: var(--contenedor);
     border-radius: 16px;
-    box-shadow: 0 8px 40px rgba(1,4,64,.22);
+    box-shadow: var(--sombra-contenedor);
     z-index: 9999;
     opacity: 0;
     transform: translateY(-8px) scale(.97);
@@ -456,6 +460,7 @@
     transition: opacity .22s ease, transform .22s ease;
     overflow: hidden;
 }
+
 .overlay-panel.open {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -472,8 +477,9 @@
     justify-content: space-between;
     align-items: center;
     padding: 16px 18px 12px;
-    border-bottom: 1px solid #e8e8e8;
+    border-bottom: 1px solid var(--borde-contenedor);
 }
+
 .alerts-header h3 {
     font-size: 0.875rem;
     font-weight: 700;
@@ -482,7 +488,8 @@
     align-items: center;
     gap: 8px;
 }
-.alerts-header h3 i { color: var(--texto2); }
+
+.alerts-header h3 i { color: var(--texto); }
 .alerts-header .mark-all {
     font-size: 0.688rem;
     color: var(--texto2);
@@ -491,9 +498,10 @@
     cursor: pointer;
     font-weight: 600;
 }
+
 .alerts-header .mark-all:hover { text-decoration: underline; }
 
-.alerts-list {
+/*.alerts-list {
     max-height: 320px;
     overflow-y: auto;
 }
@@ -556,14 +564,72 @@
 .prio-critica .prio-pill { background: rgba(255,0,0,.10);   color: var(--rojo); }
 .prio-alta    .prio-pill { background: rgba(255,122,0,.10); color: #FF7A00; }
 .prio-media   .prio-pill { background: rgba(255,216,0,.20); color: #a88600; }
-.prio-baja    .prio-pill { background: rgba(0,179,51,.10);  color: var(--verde); }
+.prio-baja    .prio-pill { background: rgba(0,179,51,.10);  color: var(--verde); }*/
 
 .alerts-footer {
     padding: 12px 18px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--borde-contenedor);
     text-align: center; 
 }
-    */
+
+/* Overlay Perfil */
+#overlayPerfil {
+    right: 0;
+    width: 280px;
+}
+
+.perfil-header {
+    background: var(--principal);
+    padding: 22px 20px 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.perfil-header h3 { color: var(--blanco); font-size: 16px; font-weight: 700; }
+
+.perfil-avatar {
+    width: 66px; height: 66px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--secundario);
+}
+
+.perfil-info {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--borde-contenedor);
+}
+
+.perfil-info p {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--texto);
+    margin-bottom: 8px;
+}
+
+/*.perfil-info-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    font-size: 12px;
+    color: var(--texto2);
+}
+.perfil-info-row i { width: 16px; text-align: center; color: var(--principal); font-size: 13px; }*/
+
+.perfil-actions {
+    padding: 14px 18px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.perfil-footer {
+    padding: 10px 18px 14px;
+    border-top: 1px solid var(--borde-contenedor);
+}
+
 /* .btn-ver-alertas {
     display: inline-flex;
     align-items: center;
@@ -622,200 +688,6 @@ footer{
     justify-content:center;
     line-height:1.4;
 }
-
-/* ==============================
-   BOTÓN DE ACCESIBILIDAD
-   ============================== */
-
-/* 
-.btn-accesibilidad {
-    position: fixed;
-    bottom: 1.25rem;
-    right: 1.25rem;
-    background: var(--secundario);
-    color: var(--blanco);
-   
-    padding: 0.5rem;
-    border-radius: 50%;
-    border: none;
-    font-size: 2rem;
-    cursor: pointer;
-    z-index: 50;
-}
-
-
-/* ==============================
-   HEADER DEL PANEL
-   ============================== 
-.header-accesibilidad {
- 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    border-bottom: 1px solid var(--principal);
-    padding: 10px;
-}
-
-.header-accesibilidad img {
-    display: flex;
-   
-    border-radius: 20%;
-}
-
-.header-accesibilidad #cerrarAccesibilidad:hover {
-    background: var(--rojo);
-}
-
-.texto-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    color: var(--texto);
-}
-
-
-/* ==============================
-   PANEL DE ACCESIBILIDAD
-   ============================== 
-
-.contenedor-btns{
-    display: grid;
-    grid-template-columns: 50% 1fr;
-    gap: 0.6rem;
-}
-
-.panel-accesibilidad {
-    position: fixed;
-    bottom: 5rem;
-    right: 1.25rem;
-    width: auto;
-    height: auto;
-    background: var(--accesibilidad);
-    border: 1px solid var(--principal);
-    border-radius: 10px;
-    padding: 15px;
-    display: none;
-    z-index: 50;
-}
-
-.panel-accesibilidad.activo {
-    display: block;
-}
-
-.panel-accesibilidad button {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-    background: var(--Azul-difuminado);
-    color: var(--blanco);
-    font-weight: bold;
-    width: 100%;
-    margin: 0.3rem 0;
-    padding: 0.9rem;
-    border-radius: 0.375rem;
-    cursor: pointer;
-}
-
-
-/* ==============================
-   SECCION DE TAMAÑO DE TEXTO
-   ============================== 
-.contenedor-texto {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background: var(--Azul-difuminado);
-    color: var(--blanco);
-    font-weight: bold;
-    width: 100%;
-    margin: 0.3rem 0;
-    padding: 0.9rem;
-  
-    border-radius: 0.375rem;
-    cursor: pointer
-    
-}
-.contenedor-texto:hover{transform: translateY(-0.125rem); }
-
-
-
-/*contenedor de aumentar y disminuir
-.grupo-botones {
-    display:grid;
-    grid-template-columns:auto auto auto;
-
-    gap:1rem;
-
-    justify-content:center;
-
-    max-height:0;
-    opacity:0;
-
-    overflow:hidden;
-
-    transition:
-        max-height .25s ease,
-        opacity .2s ease,
-        margin-top .2s ease;
-}
-
-/*mostrar botones - y + cuando este activo
-.contenedor-texto.activo .grupo-botones{ max-height:4rem; opacity:1; margin-top:.75rem;}
-
-
-/*botones de aumentar y disminuir
-.btn-texto {
-    width: 0.6rem;
-    height: 0.6rem;
-    border-radius: 0.375rem;
-
-    cursor: pointer;
-    color: var(--blanco);
-    font-size: 1.1rem;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-}
-/* indicador de tamaño de texto 
-.nivel-texto{
-    width:auto;
-    text-align:center;
-    font-weight:bold;
-    color:var(--blanco);
-    font-size:0.9rem;
-}
-
-#accesibilidad button{
-
-    transition:
-        background .25s,
-        transform .2s,
-        color .2s;
-
-}
-
-#accesibilidad button.activo{
-
-    background: var(--verde);
-
-    color: var(--blanco);
-
-    border-color: var(--verde);
-
-}
-
-#accesibilidad button.activo i{
-
-    color: var(--blanco);
-
-} */
-
 
 
 

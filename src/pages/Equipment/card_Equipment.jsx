@@ -1,4 +1,4 @@
-import { PageWelcome, Searcher } from "../../components/common/welcome"; 
+import { PageWelcome } from "../../components/common/welcome"; 
 import { Boton,BotonLink } from "../../components/common/Button";
 
 export function CardEquipment() {
@@ -30,20 +30,21 @@ export function CardEquipment() {
                 </div>
             </section>
                 <div className="btn-container" >
-                    <Boton
+                    <BotonLink
+                        link="/gases"
                         clase="btn-azul"
-                        texto="Medición gases"
                         icono="fas fa-wind"
+                        texto="Medición gases"
                     />
                     <Boton
                         clase="btn-azul"
-                        texto="Calibración"
                         icono="fas fa-calendar-alt"
+                        texto="Calibración"
                     />
-                    <Boton
+                    <Boton 
                         clase="btn-azul"
-                        texto="Diagnóstico"
                         icono="fas fa-stethoscope"
+                        texto="Diagnóstico"
                     />
                     <BotonLink
                         link="/equipment"

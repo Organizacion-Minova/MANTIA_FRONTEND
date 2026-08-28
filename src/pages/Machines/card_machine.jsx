@@ -43,9 +43,10 @@ export function CardMachine() {
                 </section>
                 
                     <div className="btn-container">
-                        <Boton
+                        <BotonLink
+                            link="/dailyuse"
                             clase="btn-azul"
-                            icono="fas fa-pen-to-square"
+                            icono="fas fa-home"
                             texto="Uso diario"
                         />
                         <Boton
@@ -53,7 +54,8 @@ export function CardMachine() {
                             icono="fas fa-cog"
                             texto="Pre operacional"
                         />
-                        <Boton
+                        <BotonLink
+                            link="/machines/cardMachine/inspection"
                             clase="btn-azul"
                             icono="fas fa-search"
                             texto="Inspeccion"

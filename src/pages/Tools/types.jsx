@@ -1,8 +1,71 @@
-import { Boton } from "../../components/common/Button";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Boton, BotonLink } from "../../components/common/Button";
 import { PageWelcome, Searcher } from "../../components/common/welcome"; 
-
+import { Form, Text, Textarea } from "../../components/common/forms";
+function FormConsumibles({onCancel}){
+    return(
+        <Form
+            titulo="Agregar nueva categoria consumibles"
+            descripcion="Ingrese los datos de la nueva categoria"
+            onCancel={onCancel}
+            textoBoton="Guardar"
+            iconoBoton="fa-solid fa-floppy-disk"
+        >
+            <div className="col-span-6">
+                <Text
+                    label="Nombre de la categoria:"
+                    id="nombre"
+                    name="nombre"
+                    placeholder="Ingrese el nombre de la categoria"
+                    required
+                />
+            </div>
+            <div className="col-span-6">
+                <Textarea
+                    label="Descripción:"
+                    id="descripcion"
+                    name="descripcion"
+                    rows="4"
+                    placeholder="Descripcion"
+                    required
+                />
+            </div>
+        </Form>
+    )
+}
+function FormNoConsumibles({onCancel}){
+    return(
+        <Form
+            titulo="Agregar nueva categoria consumibles"
+            descripcion="Ingrese los datos de la nueva categoria"
+            onCancel={onCancel}
+            textoBoton="Guardar"
+            iconoBoton="fa-solid fa-floppy-disk"
+        >
+            <div className="col-span-6">
+                <Text
+                    label="Nombre de la categoria:"
+                    id="nombre"
+                    name="nombre"
+                    placeholder="Ingrese el nombre de la categoria"
+                    required
+                />
+            </div>
+            <div className="col-span-6">
+                <Textarea
+                    label="Descripción:"
+                    id="descripcion"
+                    name="descripcion"
+                    rows="4"
+                    placeholder="Descripcion"
+                    required
+                />
+            </div>
+        </Form>
+    )
+}
 export function Consumibles(){
+    const [mostrarFormulario, setMostrarFormulario] = useState(false);
     return(
         <div className="list-grid">
             <header className="bienvenida">
@@ -37,13 +100,20 @@ export function Consumibles(){
                     clase="btn-azul"
                     icono="fa-solid fa-plus"
                     texto="Agregar tipo herramienta"
+                    onClick={() => setMostrarFormulario(true)}
                 />
             </div>
+            {mostrarFormulario && (
+                <FormConsumibles onCancel={() => setMostrarFormulario(false)} />
+            )}
         </div>
     );
     
+                
+    
 }
 export function No_Consumibles(){
+    const [mostrarFormulario, setMostrarFormulario] = useState(false);
     return(
         <div className="list-grid">
             <header className="bienvenida">
@@ -78,8 +148,12 @@ export function No_Consumibles(){
                     clase="btn-azul"
                     icono="fa-solid fa-plus"
                     texto="Agregar tipo herramienta"
+                    onClick={() => setMostrarFormulario(true)}
                 />
             </div>
+            {mostrarFormulario && (
+                <FormNoConsumibles onCancel={() => setMostrarFormulario(false)} />
+            )}
         </div>
     )
 }

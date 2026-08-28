@@ -1,22 +1,4 @@
-.mt-app {
-  --principal: linear-gradient(120deg, #063B38 0%, #075E55 42%, #078F7B 72%, #10BFA5 100%);
-  --principal-solido: #075E55;
-  --secundario: #19C3A6;
-  --sidebar: #063B38;
-  --fondo: #E8F0EE;
-  --contenedor: #FFFFFF;
-  --blanco: #FFFFFF;
-  --texto: #12201E;
-  --texto2: #50615D;
-  --borde-contenedor: #CFDEDA;
-  --sombra-contenedor: 0 3px 12px rgba(6, 59, 56, .08);
-  --sombra-contenedor-hover: 0 8px 24px rgba(6, 59, 56, .14);
-  --acento-mantia: #A3D65C;
 
-  font-family: 'Segoe UI', Inter, sans-serif;
-  background: var(--fondo);
-  min-height: 100vh;
-}
 
 .mt-header {
   position: absolute; top: 0; left: 0; right: 0;
@@ -53,6 +35,14 @@
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 .mt-login-btn:hover { transform: translateY(-2px); box-shadow: var(--sombra-contenedor-hover); }
+
+/* Header con fondo propio para páginas internas (Ayuda, Acerca de) que no
+   tienen una imagen/hero oscuro de fondo ocupando todo el ancho. Sin esto,
+   los links en blanco del header quedan sin contraste sobre el fondo claro. */
+.mt-header.mt-header-solid {
+  background: var(--principal);
+  box-shadow: var(--sombra-contenedor);
+}
 
 .mt-main { padding: 0; }
 .mt-app main.mt-main { margin: 0; padding: 0; }
@@ -107,220 +97,6 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== ANIMACIONES MINERAS ADICIONALES ===== */
-
-.mt-footer-full::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(circle at 15% 30%, rgba(163,214,92,.08), transparent 24%),
-    radial-gradient(circle at 78% 15%, rgba(25,195,166,.07), transparent 22%);
-  opacity: 0;
-  transition: opacity 1s ease;
-}
-
-.mt-footer-full.in-view::before {
-  opacity: 1;
-}
-
-/* Pequeñas partículas luminosas, como polvo mineral suspendido */
-.mt-mining-particles {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 1;
-}
-
-.mt-mining-particle {
-  position: absolute;
-  bottom: 8%;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: rgba(163,214,92,.55);
-  box-shadow: 0 0 8px rgba(163,214,92,.35);
-  opacity: 0;
-}
-
-.mt-footer-full.in-view .mt-mining-particle {
-  animation: mtParticleFloat var(--particle-duration, 5s) ease-in-out infinite;
-  animation-delay: var(--particle-delay, 0s);
-}
-
-@keyframes mtParticleFloat {
-  0% { transform: translate3d(0, 12px, 0) scale(.5); opacity: 0; }
-  20% { opacity: .65; }
-  70% { opacity: .35; }
-  100% { transform: translate3d(var(--particle-x, 30px), -95px, 0) scale(1.2); opacity: 0; }
-}
-
-/* Luz de seguridad en la zona de operación */
-.mt-warning-light {
-  animation: mtWarningLight 1.2s ease-in-out infinite;
-  transform-origin: center;
-}
-
-@keyframes mtWarningLight {
-  0%, 100% { opacity: .45; }
-  50% { opacity: 1; filter: drop-shadow(0 0 7px rgba(255,216,77,.75)); }
-}
-
-/* Excavadora: brazo y cuchara con movimiento suave */
-.mt-excavator {
-  opacity: 0;
-  transform: translateY(12px);
-}
-
-.mt-footer-full.in-view .mt-excavator {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity .8s ease .55s, transform .8s cubic-bezier(.22,.9,.32,1) .55s;
-}
-
-.mt-excavator-arm {
-  transform-box: fill-box;
-  transform-origin: 12% 90%;
-  animation: mtExcavatorArm 4.8s ease-in-out infinite;
-}
-
-@keyframes mtExcavatorArm {
-  0%, 18% { transform: rotate(0deg); }
-  45% { transform: rotate(-7deg); }
-  65% { transform: rotate(4deg); }
-  82%, 100% { transform: rotate(0deg); }
-}
-
-.mt-excavator-bucket {
-  transform-box: fill-box;
-  transform-origin: 12% 20%;
-  animation: mtExcavatorBucket 4.8s ease-in-out infinite;
-}
-
-@keyframes mtExcavatorBucket {
-  0%, 38% { transform: rotate(0deg); }
-  52% { transform: rotate(-18deg); }
-  68% { transform: rotate(12deg); }
-  82%, 100% { transform: rotate(0deg); }
-}
-
-/* Camión minero circulando en segundo plano */
-.mt-hauler {
-  opacity: 0;
-}
-
-.mt-footer-full.in-view .mt-hauler {
-  opacity: .82;
-  animation: mtHaulerMove 18s linear infinite;
-}
-
-@keyframes mtHaulerMove {
-  0% { transform: translateX(-230px); }
-  42% { transform: translateX(560px); }
-  50% { transform: translateX(590px); }
-  92% { transform: translateX(1510px); }
-  100% { transform: translateX(1580px); }
-}
-
-.mt-hauler-wheel {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: mtWheel .8s linear infinite;
-}
-
-/* Piedras que caen suavemente sobre la tolva */
-.mt-ore {
-  opacity: 0;
-}
-
-.mt-footer-full.in-view .mt-ore {
-  animation: mtOreDrop 2.6s ease-in infinite running;
-}
-
-.mt-ore:nth-child(2) { animation-delay: .7s; }
-.mt-ore:nth-child(3) { animation-delay: 1.35s; }
-.mt-ore:nth-child(4) { animation-delay: 1.9s; }
-
-@keyframes mtOreDrop {
-  0% { transform: translateY(-16px) scale(.7); opacity: 0; }
-  25% { opacity: .8; }
-  75% { opacity: .75; }
-  100% { transform: translateY(34px) scale(1); opacity: 0; }
-}
-
-/* Movimiento de la cinta transportadora */
-.mt-conveyor-belt {
-  stroke-dasharray: 10 9;
-  animation: mtConveyorMove .8s linear infinite;
-}
-
-@keyframes mtConveyorMove {
-  to { stroke-dashoffset: -38; }
-}
-
-/*
-  Carrito minero (vagón + ruedas + polvo): antes dependía de que una regla
-  CSS más específica (.mt-footer-full.in-view .mt-cart-group) le ganara
-  a la regla base y cambiara animation-play-state de paused a running.
-  Esa "guerra de especificidad" es frágil y dejó de funcionar.
-  Ahora la animación corre normal por CSS y es React (footerInView) quien
-  decide, vía style inline, si está en "running" o "paused" — un inline
-  style siempre gana, sin ambigüedad.
-*/
-.mt-cart-group {
-  animation: mtCart 13s cubic-bezier(.45,.05,.55,.95) infinite;
-}
-@keyframes mtCart {
-  0%   { transform: translate(-60px, 0); }
-  8%   { transform: translate(-40px, -1px); }
-  48%  { transform: translate(700px, -3px); }
-  52%  { transform: translate(720px, -3px); }
-  92%  { transform: translate(1460px, -1px); }
-  100% { transform: translate(1500px, 0); }
-}
-.mt-wheel {
-  animation: mtWheel 0.7s linear infinite;
-  transform-origin: center;
-}
-@keyframes mtWheel { to { transform: rotate(360deg); } }
-
-.mt-dust {
-  animation: mtDust 3s ease-out infinite;
-  transform-box: fill-box;
-  transform-origin: center;
-}
-@keyframes mtDust {
-  0%   { transform: translateY(0) scale(0.6); opacity: 0; }
-  22%  { opacity: 0.7; }
-  100% { transform: translateY(-46px) scale(1.5); opacity: 0; }
-}
-
-.mt-footer-bottom {
-  position: relative; z-index: 2;
-  text-align: center; font-size: 0.75rem; color: rgba(255,255,255,0.6);
-  padding: 1rem 1rem 1.2rem 1rem;
-  border-top: 1px solid rgba(255,255,255,0.08);
-  background: rgba(2, 15, 14, 0.3);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .mt-warning-light,
-  .mt-excavator-arm,
-  .mt-excavator-bucket,
-  .mt-hauler,
-  .mt-hauler-wheel,
-  .mt-ore,
-  .mt-conveyor-belt,
-  .mt-mining-particle,
-  .mt-cart-group,
-  .mt-wheel,
-  .mt-dust {
-    animation: none !important;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .mt-slide-content { animation: none; }
 }
@@ -367,7 +143,8 @@
   background: rgba(6,59,56,0.6); padding: 0.25rem 0.65rem; border-radius: 6px;
 }
 
-/* ===== FOOTER MEJORADO Y ELEGANTE ===== */
+/* ===== FOOTER ===== */
+
 .mt-footer-full {
   position: relative;
   margin-top: 0;
@@ -379,20 +156,30 @@
 
 .mt-footer-top {
   display: grid;
-  grid-template-columns: 1.3fr 0.8fr 1fr 1fr;
-  gap: 0;
-  padding: 3.4rem 3.5rem 2rem 3.5rem;
-  position: relative; z-index: 2;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0 1rem;
+  width: 100%;
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 3.4rem 1.5rem 2.6rem;
+  position: relative;
+  z-index: 2;
 }
 
 .mt-footer-col {
   width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
   box-sizing: border-box;
   opacity: 0;
   transform: translateY(22px);
   transition: opacity 0.7s cubic-bezier(.19,.72,.24,1), transform 0.7s cubic-bezier(.19,.72,.24,1);
-  padding: 0 1.8rem;
+  padding: 0 1.5rem;
   border-left: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 .mt-footer-col:first-child { padding-left: 0; border-left: none; }
 
@@ -401,28 +188,12 @@
 .mt-footer-full.in-view .mt-footer-top .mt-footer-col:nth-child(3) { opacity: 1; transform: none; transition-delay: 0.21s; }
 .mt-footer-full.in-view .mt-footer-top .mt-footer-col:nth-child(4) { opacity: 1; transform: none; transition-delay: 0.29s; }
 
-/* --- Logo real dentro de una placa blanca para que se lea sobre el fondo oscuro --- */
-.mt-footer-logo-badge {
-  display: inline-flex;
-  align-items: center;
-  background: var(--blanco);
-  border-radius: 12px;
-  padding: 0.55rem 1rem;
-  margin-bottom: 1.25rem;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
-}
-.mt-footer-logo-img {
-  display: block;
-  height: 26px;
-  width: auto;
-}
 .mt-footer-logo-row {
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-
 .mt-footer-logo-img {
   width: 150px;
   height: auto;
@@ -434,9 +205,10 @@
 .mt-footer-tagline {
   font-size: 0.86rem; color: rgba(255,255,255,0.78);
   max-width: 32ch; line-height: 1.65; margin-bottom: 1.5rem;
+  text-align: center;
 }
 
-.mt-footer-icons { display: flex; gap: 0.65rem; }
+.mt-footer-icons { display: flex; justify-content: center; gap: 0.65rem; width: 100%; }
 .mt-footer-icon-btn {
   width: 38px; height: 38px; border-radius: 10px;
   background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
@@ -446,16 +218,17 @@
 .mt-footer-icon-btn:hover { background: var(--acento-mantia); color: var(--sidebar); border-color: var(--acento-mantia); transform: translateY(-2px); }
 
 .mt-footer-col h4 {
+  width: 100%;
   font-size: 0.78rem; font-weight: 800; text-transform: uppercase;
   letter-spacing: 0.09em; color: var(--acento-mantia); margin-bottom: 1.35rem;
-  display: flex; align-items: center; gap: 0.5rem;
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
 }
 .mt-footer-col h4 svg { flex-shrink: 0; opacity: 0.9; }
 
 /* Columna "Enlaces rápidos" */
 .mt-footer-linklist {
-  list-style: none; margin: 0; padding: 0;
-  display: flex; flex-direction: column; gap: 0.85rem;
+  list-style: none; margin: 0; padding: 0; width: 100%;
+  display: flex; flex-direction: column; align-items: center; gap: 0.85rem;
 }
 .mt-footer-linklist a {
   display: inline-flex; align-items: center; gap: 0.45rem;
@@ -466,8 +239,9 @@
 .mt-footer-linklist a svg { opacity: 0; transition: opacity 0.15s ease; flex-shrink: 0; }
 .mt-footer-linklist a:hover svg { opacity: 1; }
 
-.mt-footer-contact-list { display: flex; flex-direction: column; gap: 1.1rem; }
-.mt-footer-contact-row { display: flex; align-items: flex-start; gap: 0.85rem; }
+.mt-footer-contact-list { display: flex; flex-direction: column; gap: 1.1rem; width: 100%; }
+.mt-footer-contact-row { display: flex; align-items: flex-start; gap: 0.85rem; width: 100%; }
+.mt-footer-contact-row div { text-align: left; }
 .mt-footer-contact-icon {
   width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
   background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
@@ -477,40 +251,44 @@
 .mt-footer-contact-row div strong { display: block; font-size: 0.85rem; color: var(--blanco); margin-bottom: 0.15rem; }
 .mt-footer-contact-row div span { font-size: 0.78rem; color: rgba(255,255,255,0.65); line-height: 1.4; }
 
-.mt-footer-pill {
-  position: absolute; bottom: 1.5rem; right: 2rem; z-index: 3;
-  opacity: 0; transform: translateY(10px) scale(0.92);
-}
-.mt-footer-full.in-view .mt-footer-pill {
-  opacity: 1; transform: none;
-  transition: opacity 0.6s ease 0.6s, transform 0.6s cubic-bezier(.34,1.56,.64,1) 0.6s, box-shadow 0.2s ease;
-}
-
-/* ---- escena minera ---- */
-.mt-footer-scene { position: relative; height: 175px; z-index: 1; }
-.mt-footer-scene svg { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; display: block; }
-
-.mt-scene-layer {
+/* Franja de llamado a la acción, entre las columnas y el copyright */
+.mt-footer-cta {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  padding: 0 1.5rem 2.4rem;
   opacity: 0;
-  transform: translateY(26px);
-  transition: opacity 0.8s cubic-bezier(.22,.9,.32,1), transform 0.8s cubic-bezier(.22,.9,.32,1);
+  transform: translateY(10px);
 }
-.mt-footer-full.in-view .mt-scene-mountains-back { opacity: 1; transform: none; transition-delay: 0.1s; }
-.mt-footer-full.in-view .mt-scene-mountains-front { opacity: 1; transform: none; transition-delay: 0.2s; }
-.mt-footer-full.in-view .mt-scene-portal { opacity: 1; transform: none; transition-delay: 0.34s; }
-.mt-footer-full.in-view .mt-scene-rail { opacity: 1; transform: none; transition-delay: 0.5s; }
+.mt-footer-full.in-view .mt-footer-cta {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.6s ease 0.35s, transform 0.6s cubic-bezier(.34,1.2,.64,1) 0.35s;
+}
 
-/* Activación de las animaciones mineras al entrar al footer */
-.mt-footer-full.in-view .mt-warning-light,.mt-footer-full.in-view .mt-excavator-arm,.mt-footer-full.in-view .mt-excavator-bucket,.mt-footer-full.in-view .mt-hauler-wheel,.mt-footer-full.in-view .mt-conveyor-belt,.mt-footer-full.in-view .mt-cart-group,.mt-footer-full.in-view .mt-wheel,.mt-footer-full.in-view .mt-dust{animation-play-state:running;}
+.mt-footer-bottom {
+  position: relative; z-index: 2;
+  text-align: center; font-size: 0.75rem; color: rgba(255,255,255,0.6);
+  padding: 1rem 1rem 1.2rem 1rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  background: rgba(2, 15, 14, 0.3);
+}
 
+@media (max-width: 1100px) {
+  .mt-footer-top { max-width: 1050px; }
+}
 
 @media (max-width: 900px) {
-  .mt-footer-top { grid-template-columns: 1fr 1fr; gap: 2rem 1.5rem; }
-  .mt-footer-col { border-left: none; padding: 0; }
+  .mt-footer-top { grid-template-columns: 1fr 1fr; gap: 2.5rem 1.5rem; max-width: 700px; }
+  .mt-footer-col { border-left: none; padding: 0 1rem; }
+  .mt-footer-col:first-child { padding-left: 1rem; }
 }
 
 @media (max-width: 620px) {
-  .mt-footer-top { grid-template-columns: 1fr; }
+  .mt-footer-top { grid-template-columns: 1fr; max-width: 400px; gap: 2.5rem; }
+  .mt-footer-col { max-width: 320px; padding: 0; border-left: none; }
+  .mt-footer-col:first-child { padding-left: 0; }
 }
 
 @media (max-width: 720px) {
@@ -518,911 +296,11 @@
   .mt-navlinks { display: none; }
   .mt-dots-wrap, .mt-counter { display: none; }
   .mt-footer-top { padding: 2.2rem 1.5rem 1rem 1.5rem; }
-  .mt-footer-scene { height: 120px; }
-  .mt-footer-pill { right: 1.2rem; bottom: 1.2rem; padding: 0.5rem 0.95rem; font-size: 0.72rem; }
 }
+
 .mt-logo-img {
   width: 145px;
   height: auto;
   display: block;
   object-fit: contain;
 }
-
-.mt-footer-logo-img {
-  width: 155px;
-  height: auto;
-  display: block;
-  object-fit: contain;
-}
-
-/* =============================== */
-/* CSS 2 - CONSERVADO COMPLETO     */
-/* =============================== */
-
-.mt-app {
-  --principal: linear-gradient(120deg, #063B38 0%, #075E55 42%, #078F7B 72%, #10BFA5 100%);
-  --principal-solido: #075E55;
-  --secundario: #19C3A6;
-  --sidebar: #063B38;
-  --fondo: #E8F0EE;
-  --contenedor: #FFFFFF;
-  --blanco: #FFFFFF;
-  --texto: #12201E;
-  --texto2: #50615D;
-  --borde-contenedor: #CFDEDA;
-  --sombra-contenedor: 0 3px 12px rgba(6, 59, 56, .08);
-  --sombra-contenedor-hover: 0 8px 24px rgba(6, 59, 56, .14);
-  --acento-mantia: #A3D65C;
-  font-family: 'Segoe UI', Inter, sans-serif;
-  background: var(--fondo);
-  min-height: 100vh;
-}
-.mt-header {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.2rem 3.5rem;
-  background: transparent;
-  border-bottom: none;
-  z-index: 30;
-}
-.mt-logo {
-  font-size: 1.5rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  color: var(--blanco);
-  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-.mt-logo span {
-  color: var(--acento-mantia);
-}
-.mt-right-nav {
-  display: flex;
-  align-items: center;
-  gap: 2.2rem;
-}
-.mt-navlinks {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-}
-.mt-navlinks a {
-  color: rgba(255,255,255,0.85);
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  transition: color 0.15s ease;
-}
-.mt-navlinks a:hover {
-  color: var(--blanco);
-}
-.mt-navlinks a.active {
-  color: var(--acento-mantia);
-}
-.mt-login-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: var(--principal);
-  color: var(--blanco);
-  font-weight: 700;
-  font-size: 0.85rem;
-  padding: 0.6rem 1.15rem;
-  border-radius: 8px;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  box-shadow: var(--sombra-contenedor);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-.mt-login-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--sombra-contenedor-hover);
-}
-.mt-main {
-  padding: 0;
-}
-.mt-app main.mt-main {
-  margin: 0;
-  padding: 0;
-}
-.mt-carousel {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  height: 100vh;
-  min-height: 520px;
-  background: var(--contenedor);
-}
-.mt-slides-track {
-  display: flex;
-  height: 100%;
-  width: calc(var(--slide-total) * 100%);
-  transform: translateX(calc(-1 * var(--slide-index) * (100% / var(--slide-total))));
-  transition: transform 0.6s cubic-bezier(.65,.05,.36,1);
-}
-.mt-slide {
-  flex: 0 0 calc(100% / var(--slide-total));
-  height: 100%;
-  position: relative;
-  background: var(--principal);
-}
-.mt-slide-bg {
-  position: absolute;
-  inset: 0;
-  background-image: repeating-linear-gradient(135deg,rgba(255,255,255,0.03) 0 2px,transparent 2px 26px);
-}
-.mt-slide-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: flex-end;
-  padding: 3rem 3.5rem;
-  background: linear-gradient(180deg,rgba(6,59,56,0.1) 0%,rgba(6,59,56,0.78) 100%);
-}
-.mt-slide-content {
-  max-width: 600px;
-  color: var(--blanco);
-  animation: mtFadeUp 0.55s cubic-bezier(.2,.7,.3,1) both;
-}
-.mt-slide-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  background: var(--acento-mantia);
-  color: var(--sidebar);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 0.35rem 0.7rem;
-  border-radius: 5px;
-  margin-bottom: 0.9rem;
-}
-.mt-slide-content h2 {
-  font-size: clamp(1.6rem,3.2vw,2.5rem);
-  font-weight: 800;
-  line-height: 1.15;
-  margin: 0 0 0.7rem 0;
-}
-.mt-slide-content p {
-  font-size: 0.98rem;
-  color: #DCEFE9;
-  line-height: 1.55;
-  margin: 0 0 1.4rem 0;
-}
-@keyframes mtFadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.mt-footer-full::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(circle at 15% 30%,rgba(163,214,92,.08),transparent 24%),radial-gradient(circle at 78% 15%,rgba(25,195,166,.07),transparent 22%);
-  opacity: 0;
-  transition: opacity 1s ease;
-}
-.mt-footer-full.in-view::before {
-  opacity: 1;
-}
-.mt-mining-particles {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 1;
-}
-.mt-mining-particle {
-  position: absolute;
-  bottom: 8%;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: rgba(163,214,92,.55);
-  box-shadow: 0 0 8px rgba(163,214,92,.35);
-  opacity: 0;
-}
-.mt-footer-full.in-view .mt-mining-particle {
-  animation: mtParticleFloat var(--particle-duration,5s) ease-in-out infinite;
-  animation-delay: var(--particle-delay,0s);
-}
-@keyframes mtParticleFloat {
-  0% {
-    transform: translate3d(0,12px,0) scale(.5);
-    opacity: 0;
-  }
-  20% {
-    opacity: .65;
-  }
-  70% {
-    opacity: .35;
-  }
-  100% {
-    transform: translate3d(var(--particle-x,30px),-95px,0) scale(1.2);
-    opacity: 0;
-  }
-}
-.mt-warning-light {
-  animation: mtWarningLight 1.2s ease-in-out infinite;
-  transform-origin: center;
-}
-@keyframes mtWarningLight {
-  0%,100% {
-    opacity: .45;
-  }
-  50% {
-    opacity: 1;
-    filter: drop-shadow(0 0 7px rgba(255,216,77,.75));
-  }
-}
-.mt-excavator {
-  opacity: 0;
-  transform: translateY(12px);
-}
-.mt-footer-full.in-view .mt-excavator {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity .8s ease .55s,transform .8s cubic-bezier(.22,.9,.32,1) .55s;
-}
-.mt-excavator-arm {
-  transform-box: fill-box;
-  transform-origin: 12% 90%;
-  animation: mtExcavatorArm 4.8s ease-in-out infinite;
-}
-@keyframes mtExcavatorArm {
-  0%,18% {
-    transform: rotate(0deg);
-  }
-  45% {
-    transform: rotate(-7deg);
-  }
-  65% {
-    transform: rotate(4deg);
-  }
-  82%,100% {
-    transform: rotate(0deg);
-  }
-}
-.mt-excavator-bucket {
-  transform-box: fill-box;
-  transform-origin: 12% 20%;
-  animation: mtExcavatorBucket 4.8s ease-in-out infinite;
-}
-@keyframes mtExcavatorBucket {
-  0%,38% {
-    transform: rotate(0deg);
-  }
-  52% {
-    transform: rotate(-18deg);
-  }
-  68% {
-    transform: rotate(12deg);
-  }
-  82%,100% {
-    transform: rotate(0deg);
-  }
-}
-.mt-hauler {
-  opacity: 0;
-}
-.mt-footer-full.in-view .mt-hauler {
-  opacity: .82;
-  animation: mtHaulerMove 18s linear infinite;
-}
-@keyframes mtHaulerMove {
-  0% {
-    transform: translateX(-230px);
-  }
-  42% {
-    transform: translateX(560px);
-  }
-  50% {
-    transform: translateX(590px);
-  }
-  92% {
-    transform: translateX(1510px);
-  }
-  100% {
-    transform: translateX(1580px);
-  }
-}
-.mt-hauler-wheel {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: mtWheel .8s linear infinite;
-}
-.mt-ore {
-  opacity: 0;
-}
-.mt-footer-full.in-view .mt-ore {
-  animation: mtOreDrop 2.6s ease-in infinite running;
-}
-.mt-ore:nth-child(2) {
-  animation-delay: .7s;
-}
-.mt-ore:nth-child(3) {
-  animation-delay: 1.35s;
-}
-.mt-ore:nth-child(4) {
-  animation-delay: 1.9s;
-}
-@keyframes mtOreDrop {
-  0% {
-    transform: translateY(-16px) scale(.7);
-    opacity: 0;
-  }
-  25% {
-    opacity: .8;
-  }
-  75% {
-    opacity: .75;
-  }
-  100% {
-    transform: translateY(34px) scale(1);
-    opacity: 0;
-  }
-}
-.mt-conveyor-belt {
-  stroke-dasharray: 10 9;
-  animation: mtConveyorMove .8s linear infinite;
-}
-@keyframes mtConveyorMove {
-  to {
-    stroke-dashoffset: -38;
-  }
-}
-.mt-cart-group {
-  animation: mtCart 13s cubic-bezier(.45,.05,.55,.95) infinite;
-}
-@keyframes mtCart {
-  0% {
-    transform: translate(-60px,0);
-  }
-  8% {
-    transform: translate(-40px,-1px);
-  }
-  48% {
-    transform: translate(700px,-3px);
-  }
-  52% {
-    transform: translate(720px,-3px);
-  }
-  92% {
-    transform: translate(1460px,-1px);
-  }
-  100% {
-    transform: translate(1500px,0);
-  }
-}
-.mt-wheel {
-  animation: mtWheel .7s linear infinite;
-  transform-origin: center;
-}
-@keyframes mtWheel {
-  to {
-    transform: rotate(360deg);
-  }
-}
-.mt-dust {
-  animation: mtDust 3s ease-out infinite;
-  transform-box: fill-box;
-  transform-origin: center;
-}
-@keyframes mtDust {
-  0% {
-    transform: translateY(0) scale(.6);
-    opacity: 0;
-  }
-  22% {
-    opacity: .7;
-  }
-  100% {
-    transform: translateY(-46px) scale(1.5);
-    opacity: 0;
-  }
-}
-.mt-footer-bottom {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-  font-size: 0.75rem;
-  color: rgba(255,255,255,0.6);
-  padding: 1rem 1rem 1.2rem;
-  border-top: 1px solid rgba(255,255,255,0.08);
-  background: rgba(2,15,14,0.3);
-}
-@media(prefers-reduced-motion:reduce) {
-  .mt-warning-light,.mt-excavator-arm,.mt-excavator-bucket,.mt-hauler,.mt-hauler-wheel,.mt-ore,.mt-conveyor-belt,.mt-mining-particle,.mt-cart-group,.mt-wheel,.mt-dust {
-    animation:none!important;
-  }
-  .mt-slide-content {
-    animation:none;
-  }
-}
-.mt-carousel-btn {
-  position:absolute;
-  top:50%;
-  transform:translateY(-50%);
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  background:rgba(6,59,56,0.6);
-  border:1px solid rgba(255,255,255,0.25);
-  color:var(--blanco);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  transition:background .15s ease;
-  backdrop-filter:blur(2px);
-}
-.mt-carousel-btn:hover {
-  background:rgba(6,59,56,0.9);
-}
-.mt-carousel-btn.prev {
-  left:1.2rem;
-}
-.mt-carousel-btn.next {
-  right:1.2rem;
-}
-.mt-dots-wrap {
-  position:absolute;
-  bottom:1.5rem;
-  left:3.5rem;
-  display:flex;
-  align-items:center;
-  gap:.5rem;
-}
-.mt-dot {
-  position:relative;
-  width:24px;
-  height:4px;
-  border-radius:3px;
-  background:rgba(255,255,255,0.3);
-  border:none;
-  cursor:pointer;
-  overflow:hidden;
-  transition:background .15s ease;
-}
-.mt-dot .fill {
-  position:absolute;
-  inset:0;
-  background:var(--acento-mantia);
-  transform-origin:left;
-  transform:scaleX(0);
-}
-.mt-dot.active .fill {
-  animation:mtProgress 5500ms linear forwards;
-}
-@keyframes mtProgress {
-  from {
-    transform:scaleX(0);
-  }
-  to {
-    transform:scaleX(1);
-  }
-}
-.mt-counter {
-  position:absolute;
-  bottom:1.5rem;
-  right:3.5rem;
-  color:var(--blanco);
-  font-size:.78rem;
-  font-weight:600;
-  background:rgba(6,59,56,0.6);
-  padding:.25rem .65rem;
-  border-radius:6px;
-}
-
-/* ========================================= FOOTER ========================================= */
-.mt-footer-full {
-  position:relative;
-  margin-top:0;
-  background:linear-gradient(180deg,#05312F 0%,#042523 100%);
-  color:var(--blanco);
-  overflow:hidden;
-  border-top:3px solid var(--acento-mantia);
-}
-.mt-footer-top {
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:0;
-  width:100%;
-  max-width:1250px;
-  margin:0 auto;
-  padding:3.4rem 1.5rem 2rem;
-  position:relative;
-  z-index:2;
-  justify-items:stretch;
-}
-.mt-footer-col {
-  width:100%;
-  max-width:280px;
-  margin:0 auto;
-  opacity:0;
-  transform:translateY(22px);
-  transition:opacity .7s cubic-bezier(.19,.72,.24,1),transform .7s cubic-bezier(.19,.72,.24,1);
-  padding:0 2rem;
-  border-left:1px solid rgba(255,255,255,0.08);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  text-align:center;
-}
-.mt-footer-col:first-child {
-  padding-left:2rem;
-  border-left:none;
-}
-.mt-footer-full.in-view .mt-footer-top .mt-footer-col:nth-child(1) {
-  opacity:1;
-  transform:none;
-  transition-delay:.05s;
-}
-.mt-footer-full.in-view .mt-footer-top .mt-footer-col:nth-child(2) {
-  opacity:1;
-  transform:none;
-  transition-delay:.13s;
-}
-.mt-footer-full.in-view .mt-footer-top .mt-footer-col:nth-child(3) {
-  opacity:1;
-  transform:none;
-  transition-delay:.21s;
-}
-.mt-footer-full.in-view .mt-footer-top .mt-footer-col:nth-child(4) {
-  opacity:1;
-  transform:none;
-  transition-delay:.29s;
-}
-.mt-footer-logo-badge {
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  background:var(--blanco);
-  border-radius:12px;
-  padding:.55rem 1rem;
-  margin-bottom:1.25rem;
-  box-shadow:0 4px 14px rgba(0,0,0,.25);
-}
-.mt-footer-logo-row {
-  width:100%;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-.mt-footer-logo-img {
-  width:155px;
-  height:auto;
-  display:block;
-  object-fit:contain;
-  margin-bottom:1rem;
-}
-.mt-footer-tagline {
-  font-size:.86rem;
-  color:rgba(255,255,255,.78);
-  max-width:34ch;
-  line-height:1.65;
-  margin-bottom:1.5rem;
-  text-align:center;
-}
-.mt-footer-icons {
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:.65rem;
-  width:100%;
-}
-.mt-footer-icon-btn {
-  width:38px;
-  height:38px;
-  border-radius:10px;
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.1);
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:rgba(255,255,255,.85);
-  transition:all .2s ease;
-}
-.mt-footer-icon-btn:hover {
-  background:var(--acento-mantia);
-  color:var(--sidebar);
-  border-color:var(--acento-mantia);
-  transform:translateY(-2px);
-}
-.mt-footer-col h4 {
-  width:100%;
-  font-size:.78rem;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.09em;
-  color:var(--acento-mantia);
-  margin-bottom:1.35rem;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:.5rem;
-  text-align:center;
-}
-.mt-footer-col h4 svg {
-  flex-shrink:0;
-  opacity:.9;
-}
-.mt-footer-linklist {
-  list-style:none;
-  margin:0;
-  padding:0;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:.85rem;
-  width:100%;
-}
-.mt-footer-linklist a {
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:.45rem;
-  color:rgba(255,255,255,.75);
-  text-decoration:none;
-  font-size:.85rem;
-  transition:color .15s ease,transform .15s ease;
-}
-.mt-footer-linklist a:hover {
-  color:var(--acento-mantia);
-  transform:translateX(3px);
-}
-.mt-footer-linklist a svg {
-  opacity:0;
-  transition:opacity .15s ease;
-  flex-shrink:0;
-}
-.mt-footer-linklist a:hover svg {
-  opacity:1;
-}
-.mt-footer-contact-list {
-  display:flex;
-  flex-direction:column;
-  gap:1.1rem;
-  width:100%;
-}
-.mt-footer-contact-row {
-  display:flex;
-  align-items:flex-start;
-  justify-content:center;
-  gap:.85rem;
-  width:100%;
-}
-.mt-footer-contact-icon {
-  width:34px;
-  height:34px;
-  border-radius:9px;
-  flex-shrink:0;
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.1);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:var(--acento-mantia);
-  margin-top:.05rem;
-}
-.mt-footer-contact-row div {
-  text-align:left;
-}
-.mt-footer-contact-row div strong {
-  display:block;
-  font-size:.85rem;
-  color:var(--blanco);
-  margin-bottom:.15rem;
-}
-.mt-footer-contact-row div span {
-  font-size:.78rem;
-  color:rgba(255,255,255,.65);
-  line-height:1.4;
-}
-.mt-footer-pill {
-  position:absolute;
-  bottom:1.5rem;
-  right:2rem;
-  z-index:3;
-  opacity:0;
-  transform:translateY(10px) scale(.92);
-}
-.mt-footer-full.in-view .mt-footer-pill {
-  opacity:1;
-  transform:none;
-  transition:opacity .6s ease .6s,transform .6s cubic-bezier(.34,1.56,.64,1) .6s,box-shadow .2s ease;
-}
-.mt-footer-scene {
-  position:relative;
-  height:175px;
-  z-index:1;
-}
-.mt-footer-scene svg {
-  position:absolute;
-  bottom:0;
-  left:0;
-  width:100%;
-  height:100%;
-  display:block;
-}
-.mt-scene-layer {
-  opacity:0;
-  transform:translateY(26px);
-  transition:opacity .8s cubic-bezier(.22,.9,.32,1),transform .8s cubic-bezier(.22,.9,.32,1);
-}
-.mt-footer-full.in-view .mt-scene-mountains-back {
-  opacity:1;
-  transform:none;
-  transition-delay:.1s;
-}
-.mt-footer-full.in-view .mt-scene-mountains-front {
-  opacity:1;
-  transform:none;
-  transition-delay:.2s;
-}
-.mt-footer-full.in-view .mt-scene-portal {
-  opacity:1;
-  transform:none;
-  transition-delay:.34s;
-}
-.mt-footer-full.in-view .mt-scene-rail {
-  opacity:1;
-  transform:none;
-  transition-delay:.5s;
-}
-@media(max-width:1100px) {
-  .mt-footer-top {
-    max-width:1050px;
-    padding-left:1rem;
-    padding-right:1rem;
-  }
-  .mt-footer-col {
-    padding:0 1.25rem;
-  }
-  .mt-footer-col:first-child {
-    padding-left:1.25rem;
-  }
-}
-@media(max-width:900px) {
-  .mt-footer-top {
-    grid-template-columns:repeat(2,1fr);
-    gap:2.5rem 1.5rem;
-    max-width:700px;
-    padding:3rem 1.5rem 2rem;
-  }
-  .mt-footer-col {
-    max-width:280px;
-    border-left:none;
-    padding:0 1rem;
-  }
-  .mt-footer-col:first-child {
-    padding-left:1rem;
-  }
-}
-@media(max-width:620px) {
-  .mt-footer-top {
-    grid-template-columns:1fr;
-    gap:2.5rem;
-    max-width:400px;
-    padding:2.5rem 1.5rem 1.5rem;
-  }
-  .mt-footer-col {
-    width:100%;
-    max-width:320px;
-    padding:0;
-    border-left:none;
-  }
-  .mt-footer-col:first-child {
-    padding-left:0;
-  }
-  .mt-footer-tagline {
-    max-width:34ch;
-  }
-  .mt-footer-contact-row {
-    justify-content:center;
-  }
-  .mt-footer-scene {
-    height:120px;
-  }
-  .mt-footer-pill {
-    right:1.2rem;
-    bottom:1.2rem;
-    padding:.5rem .95rem;
-    font-size:.72rem;
-  }
-}
-@media(max-width:420px) {
-  .mt-footer-top {
-    padding-left:1rem;
-    padding-right:1rem;
-  }
-  .mt-footer-col {
-    max-width:300px;
-  }
-  .mt-footer-logo-img {
-    width:140px;
-  }
-  .mt-footer-icon-btn {
-    width:36px;
-    height:36px;
-  }
-}
-.mt-logo-img {
-  width:145px;
-  height:auto;
-  display:block;
-  object-fit:contain;
-}
-
-/* ===== CORRECCION DEFINITIVA DE ANIMACIONES DEL FOOTER ===== */
-.mt-footer-full.in-view .mt-warning-light,
-.mt-footer-full.in-view .mt-excavator-arm,
-.mt-footer-full.in-view .mt-excavator-bucket,
-.mt-footer-full.in-view .mt-hauler,
-.mt-footer-full.in-view .mt-hauler-wheel,
-.mt-footer-full.in-view .mt-conveyor-belt,
-.mt-footer-full.in-view .mt-cart-group,
-.mt-footer-full.in-view .mt-wheel,
-.mt-footer-full.in-view .mt-dust,
-.mt-footer-full.in-view .mt-mining-particle,
-.mt-footer-full.in-view .mt-ore {
-  animation-play-state:running !important;
-}
-.mt-footer-full.in-view .mt-excavator {
-  opacity:1 !important;
-  transform:translateY(0);
-}
-.mt-footer-full.in-view .mt-hauler {
-  opacity:.82 !important;
-}
-.mt-footer-full.in-view .mt-ore {
-  opacity:1;
-}
-
-.mt-footer-scene{position:relative!important;height:180px!important;min-height:180px!important;overflow:hidden!important;z-index:5!important;background:linear-gradient(180deg,rgba(5,49,47,0) 0%,rgba(2,20,18,.32) 100%)!important}
-.mt-footer-scene svg{position:absolute!important;inset:auto 0 0 0!important;width:100%!important;height:100%!important;display:block!important;overflow:visible!important;z-index:6!important}
-.mt-footer-scene .mt-scene-layer{opacity:1!important;transform:none!important}
-.mt-footer-scene .mt-mining-particle{opacity:.65!important;animation:mtParticleFloat var(--particle-duration,5s) ease-in-out infinite!important;animation-delay:var(--particle-delay,0s)!important}
-.mt-footer-scene .mt-warning-light{opacity:1!important;animation:mtWarningLight 1.2s ease-in-out infinite!important}
-.mt-footer-scene .mt-excavator{opacity:1!important;transform:translateY(0)!important}
-.mt-footer-scene .mt-excavator-arm{transform-box:fill-box!important;transform-origin:12% 90%!important;animation:mtExcavatorArm 4.8s ease-in-out infinite!important}
-.mt-footer-scene .mt-excavator-bucket{transform-box:fill-box!important;transform-origin:12% 20%!important;animation:mtExcavatorBucket 4.8s ease-in-out infinite!important}
-.mt-footer-scene .mt-hauler{opacity:.95!important;animation:mtHaulerMove 18s linear infinite!important}
-.mt-footer-scene .mt-hauler-wheel{transform-box:fill-box!important;transform-origin:center!important;animation:mtWheel .8s linear infinite!important}
-.mt-footer-scene .mt-ore{opacity:1!important;animation:mtOreDrop 2.6s ease-in infinite!important}
-.mt-footer-scene .mt-conveyor-belt{animation:mtConveyorMove .8s linear infinite!important;stroke:rgba(163,214,92,.9)!important;filter:drop-shadow(0 0 4px rgba(163,214,92,.35))}
-.mt-footer-scene .mt-cart-group{animation:mtCart 13s cubic-bezier(.45,.05,.55,.95) infinite!important}
-.mt-footer-scene .mt-wheel{transform-box:fill-box!important;transform-origin:center!important;animation:mtWheel .7s linear infinite!important}
-.mt-footer-scene .mt-dust{animation:mtDust 3s ease-out infinite!important;transform-box:fill-box!important;transform-origin:center!important}
-.mt-footer-scene .mt-scene-mountains-back{fill:rgba(15,92,83,.8)!important}
-.mt-footer-scene .mt-scene-mountains-front{fill:rgba(4,35,32,.95)!important}
-.mt-footer-scene .mt-scene-rail line{stroke:rgba(163,214,92,.38)!important}
-.mt-footer-scene .mt-scene-rail rect{fill:rgba(163,214,92,.24)!important}
-.mt-footer-scene .mt-hauler path:first-child{fill:#0d3833!important;stroke:#A3D65C!important}
-.mt-footer-scene [style*="animationPlayState"]{animation-play-state:running!important}
-@media(max-width:620px){.mt-footer-scene{height:135px!important;min-height:135px!important}}
-
-/* CORRECCION SVG: conservar los transform de posicion del SVG */
-.mt-footer-scene .mt-excavator{transform:none!important;opacity:1!important}
-.mt-footer-scene .mt-hauler{transform:translateX(-230px)!important;opacity:.95!important;animation:mtHaulerMoveFixed 18s linear infinite!important}
-@keyframes mtHaulerMoveFixed{0%{transform:translateX(-230px)}42%{transform:translateX(560px)}50%{transform:translateX(590px)}92%{transform:translateX(1510px)}100%{transform:translateX(1580px)}}
-.mt-footer-scene .mt-hauler-wheel{transform-box:fill-box!important;transform-origin:center!important;animation:mtWheel .8s linear infinite!important}
-
-/* Usa la propiedad translate para NO borrar transform="translate(...)" del SVG */
-.mt-footer-scene .mt-hauler{transform:none!important;translate:-230px 0!important;animation:mtHaulerTranslate 18s linear infinite!important}
-@keyframes mtHaulerTranslate{0%{translate:-230px 0}42%{translate:560px 0}50%{translate:590px 0}92%{translate:1510px 0}100%{translate:1580px 0}}

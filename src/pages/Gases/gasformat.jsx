@@ -1,4 +1,3 @@
-import React from 'react';
 import { useState } from "react";
 import { Boton, BotonLink } from "../../components/common/Button";
 import { PageWelcome, Searcher } from "../../components/common/welcome";
@@ -102,94 +101,93 @@ function FormularioGases({onCancel}){
 export function FormatoGases() {
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     return (
-        <div>
+        <div className="grid-contenedor-5">
             <PageWelcome
                 titulo="FORMATO DE GASES"
                 descripcion="Este es el formato de la medición de gases."
             />
             <Searcher placeholder="Buscar por ubicación, nivel de gas, responsable, observaciones"/>
-            <br />
-            <table className="form">
-                <tbody>
-                    <tr>
-                        <th colSpan="10">FORMATO MEDICIÓN DE GASES MINA DIDÁCTICA</th>
-                    </tr>
-                    <tr>
-                        <th colSpan="4" rowSpan="2">Mina Didáctica Sena</th>
-                        <th colSpan="3">Fecha de medición:</th>
-                        <th data-label="dia"></th>
-                        <th data-label="mes"></th>
-                        <th data-label="año"></th>  
-                    </tr>
-                    <tr>
-                        <th colSpan="3">Hora Ingreso a Monitoreo:</th>
-                        <th data-label="dia"></th>
-                        <th data-label="mes"></th>
-                        <th data-label="año"></th>  
-                    </tr>
+            <section className="cards2">
+                <table className="form">
+                    <tbody>
+                        <tr>
+                            <th colSpan="10">FORMATO MEDICIÓN DE GASES MINA DIDÁCTICA</th>
+                        </tr>
+                        <tr>
+                            <th colSpan="4" rowSpan="2">Mina Didáctica Sena</th>
+                            <th colSpan="3">Fecha de medición:</th>
+                            <th data-label="dia"></th>
+                            <th data-label="mes"></th>
+                            <th data-label="año"></th>  
+                        </tr>
+                        <tr>
+                            <th colSpan="3">Hora Ingreso a Monitoreo:</th>
+                            <th data-label="dia"></th>
+                            <th data-label="mes"></th>
+                            <th data-label="año"></th>  
+                        </tr>
 
-                    <tr>
-                        <th rowspan="2">Labor/Hora</th>
-                        <th colSpan="9">REPORTE REGISTRO Y MEDICIÓN DE GASES </th>
-                    </tr>
-                    <tr>
-                        <th>%<br/>O2</th>
-                        <th>%<br/>CH4</th>
-                        <th>%<br/>CO2</th>
-                        <th>%<br/>CO</th>
-                        <th>%<br/>H2S</th>
-                        <th>%<br/>NO₂</th>
-                        <th>Responsable de la<br/>medición</th>
-                        <th>Observaciones</th>
-                        <th></th>
-                    </tr>
-                    <tr>
-                        <th>TUNEL 1</th>
-                        <td data-label="Valor O2"></td>
-                        <td data-label="Valor CH4"></td>
-                        <td data-label="Valor CO2"></td>
-                        <td data-label="Valor CO"></td>
-                        <td data-label="Valor H2S"></td>
-                        <td data-label="Valor NO2"></td>
-                        <td data-label="Responsable de la medición"></td>
-                        <td data-label="Observaciones"></td>
-                        <td>
-                            <div className="btn-container">
-                                <Boton
-                                    clase="btn-azul"
-                                    icono="fa-solid fa-plus"
-                                    title="Agregar"
-                                    onClick={() => setMostrarFormulario(true)}
-                                />
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th colSpan="2" rowSpan="3">VLP valores límites<br/>permisibles para gases<br/>en PPM y %</th>
-                        <th>CH4</th> 
-                        <th>CO2</th> 
-                        <th>CO</th> 
-                        <th>H2S</th> 
-                        <th>NO₂</th> 
-                        <th colSpan="3" rowSpan="3">La concentración de oxígeno en el aire debe ser mínimo<br/>O2 = 19.5% y no mayor a O2 = 23.5% en volumen.</th>
-                    </tr>
-                    <tr>
-                        <th>%</th>
-                        <th>%</th>
-                        <th>PPM</th>
-                        <th>PPM</th>
-                        <th>PPM</th>
-                    </tr>
-                    <tr>
-                        <th>1</th>
-                        <th>0.5</th>
-                        <th>25</th>
-                        <th>1</th>
-                        <th>0.2</th>
-                    </tr>
-                    <tr>
-                        <td colSpan="6">
-                            <div className='card-firma'>
+                        <tr>
+                            <th rowspan="2">Labor/Hora</th>
+                            <th colSpan="9">REPORTE REGISTRO Y MEDICIÓN DE GASES </th>
+                        </tr>
+                        <tr>
+                            <th>%<br/>O2</th>
+                            <th>%<br/>CH4</th>
+                            <th>%<br/>CO2</th>
+                            <th>%<br/>CO</th>
+                            <th>%<br/>H2S</th>
+                            <th>%<br/>NO₂</th>
+                            <th>Responsable de la<br/>medición</th>
+                            <th>Observaciones</th>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <th>TUNEL 1</th>
+                            <td data-label="Valor O2"></td>
+                            <td data-label="Valor CH4"></td>
+                            <td data-label="Valor CO2"></td>
+                            <td data-label="Valor CO"></td>
+                            <td data-label="Valor H2S"></td>
+                            <td data-label="Valor NO2"></td>
+                            <td data-label="Responsable de la medición"></td>
+                            <td data-label="Observaciones"></td>
+                            <td>
+                                <div className="btn-container">
+                                    <Boton
+                                        clase="btn-azul"
+                                        icono="fa-solid fa-plus"
+                                        title="Agregar"
+                                        onClick={() => setMostrarFormulario(true)}
+                                    />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th colSpan="2" rowSpan="3">VLP valores límites<br/>permisibles para gases<br/>en PPM y %</th>
+                            <th>CH4</th> 
+                            <th>CO2</th> 
+                            <th>CO</th> 
+                            <th>H2S</th> 
+                            <th>NO₂</th> 
+                            <th colSpan="3" rowSpan="3">La concentración de oxígeno en el aire debe ser mínimo<br/>O2 = 19.5% y no mayor a O2 = 23.5% en volumen.</th>
+                        </tr>
+                        <tr>
+                            <th>%</th>
+                            <th>%</th>
+                            <th>PPM</th>
+                            <th>PPM</th>
+                            <th>PPM</th>
+                        </tr>
+                        <tr>
+                            <th>1</th>
+                            <th>0.5</th>
+                            <th>25</th>
+                            <th>1</th>
+                            <th>0.2</th>
+                        </tr>
+                        <tr>
+                            <td colSpan="6">
                                 <Dropzone 
                                     label="FIRMA DE JEFE DE MINA:"
                                     id="firmaJefeMina"
@@ -197,10 +195,8 @@ export function FormatoGases() {
                                     ayuda=""
                                     required
                                 />
-                            </div>
-                        </td>
-                        <td colSpan="4">
-                            <div className='card-firma'>
+                            </td>
+                            <td colSpan="4">
                                 <Dropzone 
                                     label="Vo. Bo. LIDER SST:"
                                     id="firmaResponsable"
@@ -208,12 +204,11 @@ export function FormatoGases() {
                                     ayuda=""
                                     required
                                 />
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <br/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
             <div className="btn-container">
                 <Boton
                     clase="btn-azul"

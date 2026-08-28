@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useFechaActual } from "../../hooks/useFechaActual";
 import "../../styles/Components.modules.css";
+import { useAuth } from "../../context/AuthContext.jsx";
+import AppLayout from "../../components/layout/AppLayout.jsx";
+import PublicLayout from "../../components/layout/PublicLayout.jsx";
 
 /* ---------- pequeños bloques reutilizables de la página ---------- */
 
@@ -86,11 +88,12 @@ function Chip({ icono, children }) {
 function FilaContacto({ icono, titulo, texto }) {
     return (
         <div
+            className="contact-row"
             style={{
                 display: "flex",
                 alignItems: "center",
                 gap: "0.9rem",
-                padding: "0.6rem 0",
+                padding: "0.85rem 0",
             }}
         >
             <Circulo
@@ -170,37 +173,40 @@ const equipoDesarrollo = [
     {
         nombre: "Dilan Santiago",
         rol: "Frontend Developer",
-        imagen: "/img/santiago2.png",
+        imagen: "/santiago2.png",
     },
     {
         nombre: "Kevin el papu",
         rol: "Backend Developer",
-        imagen: "/img/kev.jpeg",
+        imagen: "/kev.jpeg",
     },
     {
         nombre: "Leox Rodriguez",
         rol: "Diseño",
-        imagen: "/img/leox.jpeg",
+        imagen: "/leox.jpeg",
     },
     {
         nombre: "Alvaro Sebastian",
         rol: "Base de datos",
-        imagen: "/img/seba.jpeg",
+        imagen: "/seba.jpeg",
     },
         {
         nombre: "daniela rojas",
         rol: "Frontend Developer",
-        imagen: "/img/daniela.jpeg",
+        imagen: "/mantia-log.png",
     },
 ];
 
 /* ---------------------------- componente ---------------------------- */
 
 function AcercaDe() {
-    const fechaActual = useFechaActual();
+
+    const { isAuthenticated } = useAuth();
+    const Layout = isAuthenticated ? AppLayout : PublicLayout;
 
     return (
-        <div>
+        <Layout>
+        <div className="public-page">
 
             {/* ================= HERO ================= */}
 
@@ -232,49 +238,39 @@ function AcercaDe() {
                     PROYECTO FORMATIVO SENA
                 </span>
 
-                <h1 style={{ fontSize: "2.2rem" }}>
-                    MANT
-                    <span
-                        style={{
-                            color: "var(--acento-mantia)",
-                        }}
-                    >
-                        IA
-                    </span>
-                </h1>
-
-                <p
-                    style={{
-                        maxWidth: "40rem",
-                        margin: "0.6rem auto 0",
-                        opacity: 0.92,
-                    }}
-                >
-                    Mantenimiento e inventario de activos, pensado para
-                    la industria minera colombiana.
-                </p>
-
+              <div
+    style={{
+        marginBottom: "1.25rem",
+        display: "flex",
+        justifyContent: "center",
+    }}
+>
                 <div
-                    style={{
-                        marginTop: "1.5rem",
-                        display: "inline-flex",
-                    }}
-                >
-                    <div
-                        className="date"
-                        style={{
-                            boxShadow:
-                                "0 0.25rem 1rem rgba(0,0,0,.18)",
-                        }}
-                    >
-                        <i className="fa-regular fa-calendar"></i>
-
-                        <span id="fecha">
-                            {" "}
-                            {fechaActual}
-                        </span>
-                    </div>
+                className="date"
+                style={{
+            padding: "1rem 1.6rem",
+            boxShadow:
+                "0 0.25rem 1rem rgba(0,0,0,.18)",
+                }}
+            >
+        <img
+            src="/mantia-logo.png"
+            alt="MANTIA"
+            style={{ height: "2.4rem", display: "block" }}
+                />
                 </div>
+            </div>
+
+            <p
+            style={{
+        maxWidth: "40rem",
+        margin: "0.6rem auto 0",
+        opacity: 0.92,
+            }}
+        >
+    Mantenimiento e inventario de activos, pensado para
+    la industria minera colombiana.
+</p>
             </div>
 
             <br />
@@ -328,6 +324,7 @@ function AcercaDe() {
 
 
             {/* ================= EQUIPO SENA ================= */}
+            {/* Tabla con nombres y fotos: solo visible con sesión iniciada */}
 
             <div
                 style={{
@@ -337,6 +334,7 @@ function AcercaDe() {
                 }}
             >
 
+                {isAuthenticated && (
                 <div
                     className="date"
                     style={{
@@ -495,6 +493,7 @@ function AcercaDe() {
                         </table>
                     </div>
                 </div>
+                )}
 
                 {/* ================= CONTACTO ================= */}
 
@@ -540,17 +539,14 @@ function AcercaDe() {
 
             {/* ================= BOTONES ================= */}
 
-            <div className="btn-container">
+                <div className="btn-container">
 
-                <a
-                    href="mailto:mantiadso@gmail.com"
-                    className="btn-azul"
-                >
-                    <i className="fa-solid fa-envelope"></i>
-                    Escríbenos
-                </a>
+                <a href="mailto:mantiadso@gmail.com" className="btn-azul">
+        <i className="fa-solid fa-envelope"></i>
+        Escríbenos
+            </a>
 
-                <Link to="/ayuda">
+                <Link to="/help">
                     <button className="btn-2">
                         <i className="fa-solid fa-circle-question"></i>
                         Ir a Ayuda
@@ -562,6 +558,7 @@ function AcercaDe() {
             <br />
 
         </div>
+        </Layout>
     );
 }
 

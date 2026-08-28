@@ -5,13 +5,16 @@ import loginImage from "../../assets/img/Mantia2..png";
 import "../../styles/global.css";
 import "../../styles/components.modules.css";
 import { Boton } from "../../components/common/Button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthScene from "./AuthScene";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -25,7 +28,7 @@ const Login = () => {
         }
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         setError("");
 
@@ -34,7 +37,12 @@ const Login = () => {
             return;
         }
 
-        console.log("Login con:", { email, password });
+        try {
+            await login(email, password);
+            navigate("/machines");
+        } catch (err) {
+            setError(err.message);
+        }
     };
 
     return (
@@ -103,4 +111,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default Login

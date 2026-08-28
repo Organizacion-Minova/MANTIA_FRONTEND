@@ -1,9 +1,49 @@
+import { useState } from "react";
 import { Boton, BotonLink } from "../../components/common/Button";
-import { Link } from "react-router-dom";
 import {PageWelcome, Searcher} from "../../components/common/welcome";
+import { Form, Text, Textarea, Select } from "../../components/common/forms";
+function Formulario({onCancel}){
+    return(
+        <Form
+            titulo="Agregar nueva ubicación"
+            descripcion="Ingrese los datos para la nueva ubicacion"
+            onCancel={onCancel}
+            textoBoton="Guardar"
+            iconoBoton="fa-solid fa-floppy-disk"
+        >
+            <div className="col-span-6">
+                <Text
+                    label="Nombre de la ubicación:"
+                    id="nombre"
+                    name="nombre"
+                    placeholder="Ingrese el nombre de la ubicación"
+                    required
+                />
+            </div>
+            <div className="col-span-6">
+                <Select
+                    label="Categoria ubicacion: "
+                    id="categoria"
+                    name="categoria"
+                    opciones={["Seleccione una categoria"]}
+                    required
+                />
+            </div>
+            <div className="col-span-6">
+                <Textarea
+                    label="Descripción:"
+                    id="descripcion"
+                    name="descripcion"
+                    placeholder="Ingrese la descripción"
+                    required
+                />
+            </div>
+        </Form>
+    )
 
+}
 function Ubicaciones() {
-
+    const [mostrarFormulario, setMostrarFormulario] = useState(false);
     return (
         <div className="list-grid">
             <header className="bienvenida">
@@ -38,6 +78,7 @@ function Ubicaciones() {
                     clase="btn-azul"
                     icono="fa-solid fa-plus"
                     texto="Nueva Ubicación"
+                    onClick={() => setMostrarFormulario(true)}
                 />
                 <BotonLink
                     link="/ubications/categoriesubications"
@@ -46,6 +87,9 @@ function Ubicaciones() {
                     texto="Categoría Ubicaciones"
                 />
             </div>
+            {mostrarFormulario && (
+                <Formulario onCancel={() => setMostrarFormulario(false)} />
+            )}
         </div>
     );
 }

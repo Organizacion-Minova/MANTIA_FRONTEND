@@ -1,18 +1,65 @@
-# React + Vite
+![Vista previa de MANTIA](/src/assets/img/logo%20-%20Mantia_readme.png)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Sistema web de gestión de inventario y mantenimiento para elementos utilizados en entornos mineros: máquinas, equipos, herramientas, ubicaciones, usuarios, alertas, uso diario e inspecciones.
 
-Currently, two official plugins are available:
+# Estado del proyecto
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Actualmente esta desarrollado el borrador de como se espera que el Fronted quede este se a realizado con tecnologias como: 
 
-## React Compiler
+## Tecnologias
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+- **React** + **Vite**
+- **React Router DOM** — enrutamiento y navegación entre páginas
+- **Chart.js** + **react-chartjs-2** + **chartjs-plugin-annotation** — gráficas y estadísticas
+- **Heroicons** — íconos para los componentes de formularios
 
-Note: This will impact Vite dev & build performances.
+## Instalacion Frontend
 
-## Expanding the Oxlint configuration
+Clona el repositorio e instala las dependencias:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```bash
+git clone https://github.com/Organizacion-Minova/MANTIA_FRONTEND.git
+cd MANTIA_FRONTEND
+npm install 
+```
+
+
+
+### Dependencias principales instaladas manualmente
+
+Si necesitas reinstalar alguna dependencia específica:
+
+```bash
+npm install react-router-dom
+npm install @heroicons/react
+npm install chartjs-plugin-annotation
+npm install chart.js react-chartjs-2 chartjs-plugin-annotation
+```
+## Uso
+
+Correr el servidor el servidor de desarrollo:
+
+```bash
+npm run dev
+```
+
+## Estructura del proyecto
+
+```
+src/
+│
+├── assets/                  # Imágenes, íconos y recursos estáticos
+│
+├── components/
+│   ├── layout/               # AppLayout (Topbar + Sidebar + Footer + Main)
+│   ├── common/                # Componentes reutilizables 
+│   └── forms/                 # Componentes base de formularios (Text, Select, Textarea, Radio, etc.)
+│
+├── pages/                      # Diseño de todas las paginas realizadas
+│
+├── styles/                   # Hojas de estilo (global.css, módulos por componente)
+│
+├── App.jsx
+└── main.jsx
+```
+
