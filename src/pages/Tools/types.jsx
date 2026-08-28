@@ -67,90 +67,88 @@ function FormNoConsumibles({onCancel}){
 export function Consumibles(){
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     return(
-        <div className="list-grid">
-            <header className="bienvenida">
-                <PageWelcome
-                    titulo="HERRAMIENTAS CONSUMIBLES"
-                    descripcion="Este es el formato de las herramientas consumibles."
-                />
-                <Searcher/>
-            </header>
-            <div className="table-responsive">
-                <table className="table">
-                     <thead>
-                         <tr>
-                             <th>ID</th>
-                             <th>Nombre</th>
-                             <th>Descripción</th>
-                             <th>Acciones</th>
-                         </tr>
-                     </thead>
-                     <tbody>
-                         <tr>
-                             <td></td>
-                             <td></td>
-                             <td></td>
-                             <td></td>
-                         </tr>
-                     </tbody>
-                </table>
-            </div>
-            <div className="btn-container">
-                <Boton
-                    clase="btn-azul"
-                    icono="fa-solid fa-plus"
-                    texto="Agregar tipo herramienta"
-                    onClick={() => setMostrarFormulario(true)}
-                />
-            </div>
+        <div className="">
+            <PageWelcome
+                titulo="HERRAMIENTAS CONSUMIBLES"
+                descripcion="Este es el formato de las herramientas consumibles."
+            />
+            <Searcher/>
+            <br/>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Leonardo</td>
+                        <td>Kevin</td>
+                        <td>Sebastian</td>
+                        <td><BotonLink
+                            link="/types/consumables/tools"
+                            clase="btn-azul"
+                            icono="fa-solid fa-eye"
+                        /></td>
+                    </tr>
+                </tbody>
+            </table>
+            <br/>
+            <Boton
+                clase="btn-azul"
+                icono="fa-solid fa-plus"
+                texto="Agregar tipo herramienta"
+                onClick={() => setMostrarFormulario(true)}
+            />
             {mostrarFormulario && (
                 <FormConsumibles onCancel={() => setMostrarFormulario(false)} />
             )}
         </div>
     );
     
-                
-    
 }
 export function No_Consumibles(){
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     return(
-        <div className="list-grid">
-            <header className="bienvenida">
-                <PageWelcome
-                    titulo="HERRAMIENTAS NO CONSUMIBLES"
-                    descripcion="Este es el formato de las herramientas no consumibles."
-                />
-                <Searcher/>
-            </header>
-        
-            <table className="table">
-                 <thead>
-                     <tr>
-                         <th>ID</th>
-                         <th>Nombre</th>
-                         <th>Descripción</th>
-                         <th>Acciones</th>
-                     </tr>
-                 </thead>
-                 <tbody>
-                     <tr>
-                         <td></td>
-                         <td></td>
-                         <td></td>
-                         <td></td>
-                     </tr>
-                 </tbody>
+        <div className="">
+            <PageWelcome
+                titulo="HERRAMIENTAS NO CONSUMIBLES"
+                descripcion="Este es el formato de las herramientas no consumibles."
+            />
+            <Searcher/>
+            <br/>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Leonardo</td>
+                        <td>Daniela</td>
+                        <td>Santiago</td>
+                        <td><BotonLink
+                            link="/types/noconsumables/tools"
+                            clase="btn-azul"
+                            icono="fa-solid fa-eye"
+                        /></td>
+                    </tr>
+                </tbody>
             </table>
-            
-            <div className="btn-container">
-                <Boton
-                    clase="btn-azul"
-                    icono="fa-solid fa-plus"
-                    texto="Agregar tipo herramienta"
-                    onClick={() => setMostrarFormulario(true)}
-                />
-            </div>
+            <br/>
+            <Boton
+                clase="btn-azul"
+                icono="fa-solid fa-plus"
+                texto="Agregar tipo herramienta"
+                onClick={() => setMostrarFormulario(true)}
+            />
             {mostrarFormulario && (
                 <FormNoConsumibles onCancel={() => setMostrarFormulario(false)} />
             )}

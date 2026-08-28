@@ -4,20 +4,26 @@
 .topbar{grid-area: topbar;}
 .sidebar{grid-area: sidebar;}
 #contenido{grid-area: contenido;}
-.footer{grid-area: footer;}
+.btn-accesibilidad{grid-area : accesibilidad;}
+footer{grid-area: footer;}
 
 /* ===== DESKTOP ===== */
 
 .app-layout{
-    background-color: var(--fondo);
+     background-color: var(--fondo);
     min-height:100vh;
     display:grid;
 
     grid-template:
         "topbar topbar" auto
         "sidebar contenido" 1fr
+        "accesibilidad accesibilidad"auto
         "footer footer" auto
         / auto 1fr;
+
+        .sidebar .submenu{
+            padding-left: 0;
+         }  
 }
 
 /* ===== TABLET ===== */
@@ -29,6 +35,7 @@
         grid-template:
             "topbar topbar" auto
             "sidebar contenido" 1fr
+            "accesibilidad accesibilidad"auto
             "footer footer" auto
             / auto 1fr;
 
@@ -58,18 +65,20 @@
     .app-layout{
 
         grid-template:
-            "topbar topbar" 
+            "topbar topbar" auto
             "sidebar contenido" 1fr
+            "accesibilidad accesibilidad"auto
             "footer footer" auto
             / auto 1fr;
 
         
         .topbar{
-               display:grid;               
+               display:grid;
+
               grid-template-columns:
                  auto  auto;
               align-items:center;
-              padding:0rem 0.8rem;      } 
+        } 
           .centro{
             display: none;
           }
@@ -79,7 +88,7 @@
         }
         .sidebar {
            width:0; 
-           background-color: var(--sidebar);
+           background-color: var(--principal);
            
           }
         
@@ -272,6 +281,7 @@
                 } 
 
 .sidebar .active i {
+    color: #19C3A6;
     color: var(--acento-mantía);
 }
 
@@ -283,9 +293,6 @@
 .flecha { transition: 0.3s; }
 .menu-desplegable.activo .flecha { transform: rotate(180deg); }
 
- .sidebar .submenu{
-            padding-left: 0;
-         }  
 
 /* Sidebar cerrado estilos */
 .sidebar.cerrado{ 
@@ -450,7 +457,7 @@
 .overlay-panel {
     position: absolute;
     top: calc(100% + 8px);
-    background: var(--contenedor);
+    background: var(--blanco);
     border-radius: 16px;
     box-shadow: var(--sombra-contenedor);
     z-index: 9999;
@@ -688,6 +695,200 @@ footer{
     justify-content:center;
     line-height:1.4;
 }
+
+/* ==============================
+   BOTÓN DE ACCESIBILIDAD
+   ============================== */
+
+/* 
+.btn-accesibilidad {
+    position: fixed;
+    bottom: 1.25rem;
+    right: 1.25rem;
+    background: var(--secundario);
+    color: var(--blanco);
+   
+    padding: 0.5rem;
+    border-radius: 50%;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 50;
+}
+
+
+/* ==============================
+   HEADER DEL PANEL
+   ============================== 
+.header-accesibilidad {
+ 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--principal);
+    padding: 10px;
+}
+
+.header-accesibilidad img {
+    display: flex;
+   
+    border-radius: 20%;
+}
+
+.header-accesibilidad #cerrarAccesibilidad:hover {
+    background: var(--rojo);
+}
+
+.texto-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    color: var(--texto);
+}
+
+
+/* ==============================
+   PANEL DE ACCESIBILIDAD
+   ============================== 
+
+.contenedor-btns{
+    display: grid;
+    grid-template-columns: 50% 1fr;
+    gap: 0.6rem;
+}
+
+.panel-accesibilidad {
+    position: fixed;
+    bottom: 5rem;
+    right: 1.25rem;
+    width: auto;
+    height: auto;
+    background: var(--accesibilidad);
+    border: 1px solid var(--principal);
+    border-radius: 10px;
+    padding: 15px;
+    display: none;
+    z-index: 50;
+}
+
+.panel-accesibilidad.activo {
+    display: block;
+}
+
+.panel-accesibilidad button {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    background: var(--Azul-difuminado);
+    color: var(--blanco);
+    font-weight: bold;
+    width: 100%;
+    margin: 0.3rem 0;
+    padding: 0.9rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+}
+
+
+/* ==============================
+   SECCION DE TAMAÑO DE TEXTO
+   ============================== 
+.contenedor-texto {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: var(--Azul-difuminado);
+    color: var(--blanco);
+    font-weight: bold;
+    width: 100%;
+    margin: 0.3rem 0;
+    padding: 0.9rem;
+  
+    border-radius: 0.375rem;
+    cursor: pointer
+    
+}
+.contenedor-texto:hover{transform: translateY(-0.125rem); }
+
+
+
+/*contenedor de aumentar y disminuir
+.grupo-botones {
+    display:grid;
+    grid-template-columns:auto auto auto;
+
+    gap:1rem;
+
+    justify-content:center;
+
+    max-height:0;
+    opacity:0;
+
+    overflow:hidden;
+
+    transition:
+        max-height .25s ease,
+        opacity .2s ease,
+        margin-top .2s ease;
+}
+
+/*mostrar botones - y + cuando este activo
+.contenedor-texto.activo .grupo-botones{ max-height:4rem; opacity:1; margin-top:.75rem;}
+
+
+/*botones de aumentar y disminuir
+.btn-texto {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 0.375rem;
+
+    cursor: pointer;
+    color: var(--blanco);
+    font-size: 1.1rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+/* indicador de tamaño de texto 
+.nivel-texto{
+    width:auto;
+    text-align:center;
+    font-weight:bold;
+    color:var(--blanco);
+    font-size:0.9rem;
+}
+
+#accesibilidad button{
+
+    transition:
+        background .25s,
+        transform .2s,
+        color .2s;
+
+}
+
+#accesibilidad button.activo{
+
+    background: var(--verde);
+
+    color: var(--blanco);
+
+    border-color: var(--verde);
+
+}
+
+#accesibilidad button.activo i{
+
+    color: var(--blanco);
+
+} */
+
 
 
 

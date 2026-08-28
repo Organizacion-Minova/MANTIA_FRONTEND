@@ -3,7 +3,7 @@ import { Boton,BotonLink } from "../../components/common/Button";
 
 export function CardEquipment() {
      return(
-        <div className="cards-grid">
+        <div className="page-layout">
        
             <PageWelcome
                 titulo="Equipo"

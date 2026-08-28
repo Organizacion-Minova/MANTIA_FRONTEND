@@ -45,34 +45,32 @@ function Formulario({onCancel}){
 function Ubicaciones() {
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     return (
-        <div className="list-grid">
-            <header className="bienvenida">
-                 <PageWelcome
-                     titulo="UBICACIONES"
-                     descripcion="Este es el formato de las ubicaciones."
-                 />
-                 <Searcher/>
-            </header>
-            <div className="table-responsive">
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th><h4>Nombre de la ubicación</h4></th>
-                            <th><h4>Descripción</h4></th>
-                            <th><h4>Categoria</h4></th>
-                            <th><h4>Acciones</h4></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div className="">
+            <PageWelcome
+                titulo="UBICACIONES"
+                descripcion="Este es el formato de las ubicaciones."
+            />
+            <Searcher/>
+            <br/>
+            <table>
+                <thead>
+                    <tr>
+                        <th><h4>Nombre de la ubicación</h4></th>
+                        <th><h4>Descripción</h4></th>
+                        <th><h4>Categoria</h4></th>
+                        <th><h4>Acciones</h4></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+            <br/>
             <div className="btn-container">
                 <Boton
                     clase="btn-azul"
@@ -91,6 +89,8 @@ function Ubicaciones() {
                 <Formulario onCancel={() => setMostrarFormulario(false)} />
             )}
         </div>
+
+
     );
 }
 
