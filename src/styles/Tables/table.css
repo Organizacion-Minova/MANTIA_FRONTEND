@@ -1,10 +1,19 @@
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: 0 0.125rem 0.5rem var(--sombra-contenedor);
+     border-radius: 0.75rem;
+     
+}
+
 table { 
     width: 100%;
     border-collapse: collapse;
-    background: var(--blanco);
-    border-radius: 0.75rem;
-    overflow: hidden;
-    box-shadow: 0 0.125rem 0.5rem var(--principal);
+    background: var(--blanco);   
+    overflow: hidden; 
+    
 }
 
 thead tr { 
@@ -40,5 +49,43 @@ tbody tr:hover {
 }
 .dark-theme table { 
     background: var(--contenedor);
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+
+    thead th {
+        padding: 0.75rem 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    tbody td {
+        padding: 0.7rem 0.75rem;
+        font-size: 0.84rem;
+    }
+
+}
+
+@media (max-width: 767px) {
+
+    .tabla-responsive {
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    table {
+        min-width: 42rem;
+    }
+
+    thead th {
+        padding: 0.7rem 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    tbody td {
+        padding: 0.7rem 0.75rem;
+        font-size: 0.82rem;
+    }
+
 }
 

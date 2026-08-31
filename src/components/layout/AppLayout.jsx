@@ -9,7 +9,11 @@ import "../../styles/variables.css";
 import "../../styles/Tables/table.css";
 import "../../styles/Components.modules.css"
 import "../../styles/Tables/form.css";
+import "../../styles/grid_content.css";
+import "../../styles/accessibility.css";
+import AccessibilityPanel from "../accessibility/AccessibilityPanel";
 import { useAuth } from "../../context/AuthContext.jsx";
+
 
 function AppLayout({ children }) {
     const { usuario, isAuthenticated, logout } = useAuth();
