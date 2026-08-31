@@ -13,7 +13,7 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const { login } = useAuth();
+    const { login, loginConLetra } = useAuth();
     const navigate = useNavigate();
 
     const handleChange = (event) => {
@@ -32,13 +32,19 @@ const Login = () => {
         event.preventDefault();
         setError("");
 
-        if (!email || !password) {
+        const esLetraDev = /^[A-Za-z]$/.test(email.trim());
+
+        if (!esLetraDev && (!email || !password)) {
             setError("Debes completar ambos campos.");
             return;
         }
 
         try {
-            await login(email, password);
+            if (esLetraDev) {
+                await loginConLetra(email.trim().toUpperCase());
+            } else {
+                await login(email, password);
+            }
             navigate("/machines");
         } catch (err) {
             setError(err.message);
@@ -63,7 +69,7 @@ const Login = () => {
                                 </label>
                                 <input
                                     id="email"
-                                    type="email"
+                                    type="text"
                                     name="email"
                                     value={email}
                                     onChange={handleChange}
@@ -81,7 +87,7 @@ const Login = () => {
                                     value={password}
                                     onChange={handleChange}
                                     placeholder="••••••••"
-                                    required
+
                                 />
                             </div>
                             <Boton
