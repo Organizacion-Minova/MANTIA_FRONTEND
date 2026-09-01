@@ -1,15 +1,15 @@
 import { PageWelcome, Searcher } from "../../components/common/welcome";
 import { Boton } from "../../components/common/Button";
-import '../../styles/Profile/profile.css';
-import '../../styles/Alerts/alerts.css';
-
 function Alerts() {
     return (
-        <div className="grid-contenedor-5">
-            <PageWelcome
-                titulo="ALERTAS"
-                descripcion=""
-            />
+        <div className="alerts-grid">
+            <header className="bienvenida">
+                <PageWelcome
+                    titulo="ALERTAS"
+                    descripcion="olisssssssss"
+                />
+                <Searcher placeholder="Buscar por nombre, código, número de serie, marca, ubicación"/>
+            </header>
             <section className='cards'>
                 <div className='card'>
                     <div className="icon blue"><i className="fa-solid fa-circle-exclamation"></i></div>
@@ -32,10 +32,8 @@ function Alerts() {
                     <p>Sensores de gases activos</p>
                 </div>
             </section>       
+           
             <section className="cards2">
-                <Searcher placeholder="Buscar por nombre, código, número de serie, marca, ubicación"/>
-            </section> 
-            <section className="cards2 table">
                 <table id="tablaAlertas">
                     <thead>
                         <tr>

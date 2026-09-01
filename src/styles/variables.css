@@ -42,6 +42,7 @@
     --sombra-contenedor-hover:
         0 8px 24px rgba(6, 59, 56, .14);
     --acento-mantia: #A3D65C;
+    --acento-mantia2: #bdf86a;
    
     --amarillo:         #FFD800;
     --verde:            #00B333;
@@ -178,6 +179,7 @@ html.dark-theme {
   
     /* --acento-mantia: #4E9F94; */
     --acento-mantia: #3F8F82;
+     --acento-mantia2: #57cdba;
 
     /* =========================================
        ESTADOS

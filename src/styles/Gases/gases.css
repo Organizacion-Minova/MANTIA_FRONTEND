@@ -1,5 +1,5 @@
 .panel-filtros-horizontal {
-    background: var(--blanco);
+    background: var(--contenedor);
     padding: 1.25rem;
     border-radius: 10px;
     display: grid;
@@ -20,7 +20,7 @@
     padding: 0.6rem;
     border: 1px solid var(--borde-contenedor);
     border-radius: 6px;
-    background: var(--blanco);
+    background: var(--contenedor);
     color: var(--texto);
     font-size: 0.9rem;
     outline: none;
@@ -37,7 +37,7 @@
 }
 
 .card-mini-grafica {
-    background: var(--blanco);
+    background: var(--contenedor);
     border: 1px solid var(--borde-contenedor);
     border-radius: 10px;
     padding: 1rem;

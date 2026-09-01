@@ -67,6 +67,7 @@ function CategoriasUbicacion() {
                         clase="btn-azul"
                         icono="fa-solid fa-plus"
                         texto="Nueva Categoria"
+                        onClick={() => setMostrarFormulario(true)}
                     />
                     <BotonLink
                         link="/ubications"
@@ -76,6 +77,9 @@ function CategoriasUbicacion() {
                     />
 
                 </div>
+            {mostrarFormulario && (
+                <Formulario onCancel={() => setMostrarFormulario(false)} />
+            )}
         </div>
     );
 }

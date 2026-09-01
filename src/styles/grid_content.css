@@ -5,12 +5,13 @@
 .btn-container{grid-area: botones;}
 .middle{grid-area: paneles;}
 .alerts-panel{grid-area: alertas;}
+
 /*GRID CONTENEDOR DE HOJAS DE VIDA*/
 .cards-grid{
    
 
     display:grid;
-
+    gap: 1rem;
     grid-template:
        "bienvenida"
         "seccion1"
@@ -53,7 +54,7 @@
         .welcome{
             flex-direction:column;
              align-items:center;
-             text-align:center22221;
+             text-align:center;
             gap:1rem;
         }
              
@@ -160,25 +161,25 @@
 /*==========================================
     Alertas griiiiiiiiiiiiiiiiiiiiiiiiiiid
 ============================================*/
-.grid-contenedor-5{
+.alerts-grid{
     display:grid;
     gap:20px;
 
     grid-template:
         "bienvenida" 
-        "secciones" 
-        "secciones2" 
+        "seccion1" 
+        "seccion2" 
         / 1fr;
 }
 
 /* ===== TABLET ===== */
 @media (max-width:991px){
 
-    .grid-contenedor-5{
+    .alerts-grid{
         grid-template:
         "bienvenida"
-        "secciones"
-        "secciones2"
+        "seccion1"
+        "seccion2"
         / 1fr;
         .welcome{
             flex-direction:column;
@@ -201,11 +202,11 @@
 /* ===== MOVIL ===== */
 @media (max-width:990px){
 
-    .grid-contenedor-5{
+    .alerts-grid{
         grid-template: 
         "bienvenida"
-        "secciones"
-        "secciones2"
+        "seccion1"
+        "seccion2"
         auto;
         .welcome{
             flex-direction:column;
@@ -230,25 +231,25 @@
     Grid perfil
 ============================================*/
 
-.grid-contenedor-3{
+.profile-grid{
   min-height:100vh;
   display:grid;
 
   grid-template:
     "bienvenida"
-    "secciones"
-    "secciones2"
+    "seccion1"
+    "seccion2"
     "paneles"
     /  1fr;
 }
 
 /* ===== TABLET ===== */
 @media (max-width:991px){
-  .grid-contenedor-3{
+  .profile-grid{
     grid-template:
       "bienvenida"
-      "secciones"
-      "secciones2"
+      "seccion1"
+      "seccion2"
       "paneles"
       / 1fr;
       .welcome{
@@ -262,11 +263,11 @@
 
 /* ===== MOVIL ===== */
 @media (max-width:990px){
-  .grid-contenedor-3{
+  .profile-grid{
     grid-template:
       "bienvenida"
-      "secciones"
-      "secciones2"
+      "seccion1"
+      "seccion2"
       "paneles"
       auto;
     .welcome{

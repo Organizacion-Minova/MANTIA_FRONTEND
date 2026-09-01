@@ -10,7 +10,7 @@
 
 .form-container {
     position: relative;
-    background-color: var(--blanco);
+    background: var(--contenedor);
     padding: 2rem;
     border-radius: 0.75rem;
     box-shadow: var(--sombra-contenedor-hover);
@@ -136,7 +136,7 @@
     display: flex;
     align-items: center;
     border-radius: 0.375rem;
-    background-color: var(--contenedor);
+    background: var(--contenedor);
     border: 1px solid var(--borde-contenedor);
     transition: border-color 0.2s, box-shadow 0.2s;
 }
@@ -161,7 +161,7 @@
     display: block;
     width: 100%;
     min-width: 0;
-    background-color: var(--contenedor);
+    background: var(--contenedor);
     padding: 0.375rem 0.75rem;
     font-size: 0.875rem;
     line-height: 1.5;
@@ -189,7 +189,7 @@
     display: block;
     width: 100%;
     border-radius: 0.375rem;
-    background-color: var(--contenedor);
+    background: var(--contenedor);
     padding: 0.375rem 0.75rem;
     font-size: 0.875rem;
     line-height: 1.5;
@@ -394,3 +394,23 @@
     color: var(--texto);
     cursor: pointer;
 }
+ 
+/* formularios tablas */
+.form{
+    width:100%;
+    border-collapse:collapse;
+    text-align: center;
+    background-color: var(--contenedor);
+    
+}
+
+.form th{
+    padding:0.9375rem ;
+    border:2px solid var(--secundario);
+}
+.form td{
+    padding:0.9375rem ;
+    border:2px solid var(--secundario);
+}
+
+

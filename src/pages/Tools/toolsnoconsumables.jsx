@@ -45,14 +45,15 @@ function Formulario({onCancel}){
 function ToolsNoConsumables(){
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     return(
-        <div className="">
+        <div className="list-grid">
             <PageWelcome
                 titulo="HERRAMIENTAS NO CONSUMIBLES ----"
                 descripcion="Este es el formato de las herramientas ()."
             />
             <Searcher/>
             <br />
-            <table>
+           
+            <table className="table">
                 <thead>
                     <tr>
                         <th>Nombre</th>

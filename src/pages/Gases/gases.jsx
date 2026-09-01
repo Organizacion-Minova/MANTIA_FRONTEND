@@ -3,14 +3,16 @@ import { PageWelcome, Searcher } from "../../components/common/welcome";
 
 function Gases() {
     return (
-        <div className="grid-contenedor-5">
-            <PageWelcome
-                titulo="MEDICIÓN DE GASES"
-                descripcion="Este es el formato con el registro de gases."
-            />
-            <Searcher placeholder="Buscar por código, fecha, hora, observaciones "/>
-            <section className='cards2'>
-                <table>
+        <div className="list-grid">
+            <header className="bienvenida">
+                <PageWelcome
+                    titulo="MEDICIÓN DE GASES"
+                    descripcion="Este es el formato con el registro de gases."
+                />
+                <Searcher placeholder="Buscar por código, fecha, hora, observaciones "/>
+            </header>
+            <div className="table-responsive">
+                <table className="table">
                     <thead>
                         <tr>
                             <th>Código</th>
@@ -46,7 +48,7 @@ function Gases() {
                         </tr>
                     </tbody>
                 </table>
-            </section>
+            </div>
             <div className="btn-container">
                 <BotonLink
                     link="/gases/compare_gases"
