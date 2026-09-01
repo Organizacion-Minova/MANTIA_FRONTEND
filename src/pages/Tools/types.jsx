@@ -123,26 +123,26 @@ export function No_Consumibles(){
                 />
                 <Searcher/>
             </header>
-        
-            <table className="table">
-                 <thead>
-                     <tr>
-                         <th>ID</th>
-                         <th>Nombre</th>
-                         <th>Descripción</th>
-                         <th>Acciones</th>
-                     </tr>
-                 </thead>
-                 <tbody>
-                     <tr>
-                         <td></td>
-                         <td></td>
-                         <td></td>
-                         <td></td>
-                     </tr>
-                 </tbody>
-            </table>
-            
+            <div className="table-responsive">
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <div className="btn-container">
                 <Boton
                     clase="btn-azul"

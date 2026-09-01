@@ -8,9 +8,11 @@ import "../../styles/global.css";
 import "../../styles/variables.css";
 import "../../styles/Tables/table.css";
 import "../../styles/Components.modules.css"
-import "../../styles/Tables/form.css";
 import "../../styles/grid_content.css";
 import "../../styles/accessibility.css";
+import '../../styles/Profile/profile.css';
+import '../../styles/Alerts/alerts.css';
+import '../../styles/Gases/gases.css';
 import AccessibilityPanel from "../accessibility/AccessibilityPanel";
 import { useAuth } from "../../context/AuthContext.jsx";
 
@@ -223,13 +225,11 @@ function AppLayout({ children }) {
                 </ul>
             </aside>
 
-
             <main id="contenido" className={`contenido ${cerrado ? "cerrado" : ""}`}>
                 {children ?? <Outlet />}
             </main>
-            <button className="btn-accesibilidad">
-                Accesibilidad (pendiente)
-            </button>
+
+           <AccessibilityPanel />
 
             <footer className="footer">
                 <div className="secFooterPrincipal">

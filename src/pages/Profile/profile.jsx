@@ -3,7 +3,7 @@ import { PageWelcome } from "../../components/common/welcome";
 import { Boton } from "../../components/common/Button";
 import { DropzoneProfile } from "../../components/common/DropzoneProfile";
 import { Text, Select } from "../../components/common/forms";
-import '../../styles/Profile/profile.css';
+
 
 function Profile() {
     const [fotoArchivo, setFotoArchivo] = useState(null);
@@ -18,7 +18,7 @@ function Profile() {
     };
 
     return (
-        <div className='grid-contenedor-3'>
+        <div className='grid-profile'>
             <PageWelcome
                 titulo="MI PERFIL"
                 descripcion="Información personal y configuración de la cuenta."

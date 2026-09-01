@@ -117,10 +117,11 @@ export function UsoDiario(){
                     texto="Exportar Pdf"
                 />
                 <BotonLink
-                    link=""
+                    link="../machines/cardMachine"
                     clase="btn-2"
                     icono="fa-solid fa-arrow-left"
                     texto="Regresar"
+                    
                 />
             </div>
             {mostrarFormulario && (

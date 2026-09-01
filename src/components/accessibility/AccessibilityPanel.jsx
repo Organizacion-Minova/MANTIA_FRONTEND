@@ -117,7 +117,7 @@ function AccessibilityPanel() {
                        <span>Tamaño</span>
                        <div className="grupo-botones">
                             <button
-                            className="btn-texto"
+                            className={`btn-texto ${tamanoModificado ? "activo" : ""}`}
                             type="button"
                                     disabled={preferencias.tamanoTexto === 0}
                                     onClick={(e) => { e.stopPropagation(); disminuirTexto(); }}
@@ -126,7 +126,7 @@ function AccessibilityPanel() {
                             </button>
                                 <span className="nivel-texto">{textoIndicador}</span>
                             <button
-                                className="btn-texto"
+                                className={`btn-texto ${tamanoModificado ? "activo" : ""}`}
                                 type="button"
                                 disabled={preferencias.tamanoTexto === NIVELES.length - 1}
                                 onClick={(e) => { e.stopPropagation(); aumentarTexto(); }}
