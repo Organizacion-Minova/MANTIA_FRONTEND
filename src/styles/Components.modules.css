@@ -1,0 +1,279 @@
+main{
+    margin-top: 4rem;
+    margin-left: 14.75rem;
+    padding: 2rem;
+    transition: padding-left 0,5s ease;
+}
+
+main.cerrado{
+    margin-left: 5rem;
+    
+}
+.welcome {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    
+}
+.welcome h1 { color: var(--texto);text-transform: uppercase; }
+.welcome p  { color: var(--texto2); }
+
+.date {
+    background: var(--contenedor);
+    color: var(--texto);
+    padding: 15px 25px;
+    border-radius: 12px;
+}
+.btn-container {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+/* Este boton se usa para la opcion mas probable a escoger por el usuario */
+.btn-azul {
+    background:    var(--secundario);
+    color:         var(--blanco);
+    border:        none;
+    border-radius: 3.125rem;
+    padding:       0.875rem 1.75rem;
+    font-size:     0.9375rem;
+    font-weight:   700;
+    cursor:        pointer;
+    display:       inline-flex;
+    align-items:   center;
+    justify-content: center;
+    gap:           0.5rem;
+    transition:    background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow:    0 0.25rem 1.125rem rgba(57,76,170,0.35);
+    letter-spacing: 0.0125rem;
+    text-decoration: none;
+    width:         fit-content;
+}
+/* ESTE BOTON SE USA PARA OPCION SECUNDARIA */
+.btn-2{
+    background:    var(--fondo);
+    color:        var(--secundario);
+    border: solid 2px var(--secundario);
+    
+    border-radius: 3.125rem;
+    padding:       0.875rem 1.75rem;
+    font-size:     0.9375rem;
+    font-weight:   700;
+    cursor:        pointer;
+    display:       inline-flex;
+    align-items:   center;
+    justify-content: center;
+    gap:           0.5rem;
+    transition:    background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow:    0 0.25rem 1.125rem rgba(57,76,170,0.35);
+    letter-spacing: 0.0125rem;
+    text-decoration: none;
+    width:         fit-content;
+}
+
+
+.btn-azul:hover{
+    transform: translateY(-10%);
+}
+.btn-2:hover{
+     transform: translateY(-10%);
+}
+
+.btn-buscar {
+    height: 2.75rem; padding: 0 1rem;
+    background: var(--principal); color: var(--blanco);
+    border: none; border-radius: 0.5rem;
+    font-size: 0.875rem; font-weight: 600;
+    cursor: pointer;
+    transition: background .2s, transform .1s;
+    display: flex; align-items: center; gap: 0.4375rem;
+    white-space: nowrap;
+}
+
+.btn-buscar:hover  { background: var(--secundario); }
+.btn-buscar:active { transform: scale(0.97); }
+
+.search-main    { display: flex; gap: 0.5rem; margin-bottom: 0.625rem; }
+.search-wrapper { flex: 1; position: relative; }
+.search-wrapper i {
+    position: absolute; left: 0.8125rem; top: 50%;
+    transform: translateY(-50%);
+    color: var(--principal); font-size: 1rem; pointer-events: none;
+}
+.search-wrapper input {
+    width: 100%; height: 2.75rem;
+    padding: 0 0.875rem 0 2.5rem;
+    border: 0.09375rem solid var(--principal); border-radius: 0.5rem;
+    font-size: 0.9375rem; color: var(--texto);
+    background: var(--contenedor);
+    outline: none; transition: border-color .2s, box-shadow .2s;
+}
+.search-wrapper input:focus {
+    border: solid 2px var(--acento-mantia);
+    box-shadow: var(--sombra-contenedor-hover);
+}
+
+/* TARJETAAAAAAAAAAAAASS REUTILIZABLES */
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    margin-bottom:25px;
+}
+
+.cards2{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    margin-bottom:25px;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.card{
+    border-radius:15px;
+    padding:25px;
+    box-shadow: var(--sombra-contenedor);
+    background:var(--contenedor);
+    border-top: 3px solid #19C3A6;
+    border: solid 2px var(--borde-contenedor);
+}
+
+.card:hover{
+    box-shadow: var(--sombra-contenedor-hover);
+}
+
+.card h2{
+    font-size:45px;
+    margin:15px 0;
+    color:var(--texto2);
+}
+
+.card h3{
+    color:var(--texto);
+    margin:15px 0 8px;
+}
+
+.card p{
+    color:var(--texto2);
+}
+
+.card a{
+    text-decoration:none;
+    color:var(--principal);
+    font-weight:600;
+}
+.card-title{
+    display:flex;
+    align-items:center;
+    gap:0.875rem;
+    margin-bottom:1rem;
+}
+
+/* ============================================================
+   PÁGINAS PÚBLICAS INTERNAS (Acerca de / Ayuda dentro de PublicLayout)
+   ============================================================ */
+.public-page {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 6.5rem 1.5rem 4rem;
+}
+
+/* Dentro de AppLayout (ya logueado) el topbar es fijo y .contenido ya
+   deja el margen de arriba necesario (margin-top: 4rem). El padding-top
+   de 6.5rem de .public-page es solo para cuando el header de PublicLayout
+   flota (position: absolute) sobre el contenido; si se suman los dos,
+   queda un hueco enorme en blanco. Aquí se anula ese extra. */
+.contenido .public-page {
+    padding-top: 2rem;
+}
+
+.public-page .mt-block {
+    margin-bottom: 3.5rem;
+}
+
+.public-page .mt-block-last {
+    margin-bottom: 0;
+}
+
+.public-page h2 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--texto);
+    margin-bottom: 0.4rem;
+    padding-left: 1rem;
+    position: relative;
+}
+
+.public-page h2::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.15rem;
+    bottom: 0.15rem;
+    width: 0.28rem;
+    border-radius: 0.2rem;
+    background: var(--secundario);
+}
+
+.public-page .mt-block > p {
+    padding-left: 1rem;
+    line-height: 1.6;
+}
+
+.public-page h3 {
+    font-size: 1.05rem;
+    color: var(--texto);
+    margin-bottom: 0.5rem;
+}
+
+.public-page .date {
+    padding: 1.85rem 1.75rem;
+    border: 0.0625rem solid var(--borde-contenedor);
+    border-radius: 1.1rem;
+    background: var(--contenedor);
+}
+
+.public-page .date:hover {
+    border-color: var(--secundario);
+}
+
+/* Tarjetas de valores (¿Qué es MANTIA? / Misión / Visión / Seguridad) */
+.public-page .date h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.public-page .date p {
+    line-height: 1.55;
+    font-size: 0.92rem;
+}
+
+/* Bloque de Contáctanos: separa cada fila con una línea sutil */
+.public-page .contact-row {
+    border-bottom: 0.0625rem solid var(--fondo);
+}
+
+.public-page .contact-row:last-child {
+    border-bottom: none;
+}
+
+.public-page .btn-container {
+    justify-content: center;
+    margin-top: 1rem;
+    padding-top: 2.5rem;
+    border-top: 0.0625rem solid var(--borde-contenedor);
+}
+
+@media (max-width: 40rem) {
+    .public-page {
+        padding: 6rem 1rem 3rem;
+    }
+
+    .public-page .date {
+        padding: 1.5rem 1.35rem;
+    }
+}
