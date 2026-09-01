@@ -1,5 +1,5 @@
-import { createContext, useContext, useState } from "react";
-import { login as loginRequest, logout as logoutRequest, getUser } from "../api/auth";
+import { createContext, useContext, useState, useEffect } from "react";
+import { login as loginRequest, logout as logoutRequest, getUser, quickLogin } from "../api/auth";
 
 const AuthContext = createContext(null);
 
@@ -20,6 +20,17 @@ export function AuthProvider({ children }) {
         }
     }
 
+    // Login rápido de desarrollo: recibe una sola letra (D, S, J, L, K)
+    // y entra directo como ese usuario, sin verificar contraseña.
+    async function loginConLetra(letra) {
+        try {
+            const data = await quickLogin(letra);
+            setUsuario(data);
+        } catch (err) {
+            throw new Error("Esa letra no corresponde a ningún desarrollador.");
+        }
+    }
+
     async function logout() {
         await logoutRequest();
         setUsuario(null);
@@ -29,12 +40,17 @@ export function AuthProvider({ children }) {
         try {
             const data = await getUser();
             setUsuario(data);
+            return true;
         } catch {
             setUsuario(null);
+            return false;
         }
     }
 
-    const value = { usuario, isAuthenticated, login, logout, cargarUsuarioActual };
+    useEffect(() => {
+        cargarUsuarioActual();
+    }, []);
+    const value = { usuario, isAuthenticated, login, loginConLetra, logout, cargarUsuarioActual };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
@@ -42,3 +58,4 @@ export function AuthProvider({ children }) {
 export function useAuth() {
     return useContext(AuthContext);
 }
+

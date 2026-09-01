@@ -21,3 +21,9 @@ export async function getUser() {
 export async function logout() {
     await api.post('/api/logout');
 }
+
+export async function quickLogin(letra) {
+    await api.get('/sanctum/csrf-cookie');
+    const { data } = await api.post(`/api/dev-login/${letra}`);
+    return data.user;   // ← extraemos el usuario de adentro del wrapper
+}

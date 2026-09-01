@@ -16,7 +16,8 @@ import { useAuth } from "../../context/AuthContext.jsx";
 
 
 function AppLayout({ children }) {
-    const { usuario, isAuthenticated, handleLogout } = useAuth();
+    const { usuario, isAuthenticated, logout } = useAuth();
+    const navigate = useNavigate();
     const [cerrado, setCerrado] = useState(false);
     const [herramientasAbierto, setHerramientasAbierto] = useState(false);
     const [openAlertas, setOpenAlertas] = useState(false);
@@ -24,18 +25,18 @@ function AppLayout({ children }) {
     const [removeBellBadge, setRemoveBellBadge] = useState(false);
 
     return (
-        <div className="app-layout" onClick={() => {setOpenPerfil(false); setOpenAlertas(false);}}>
+        <div className="app-layout" onClick={() => { setOpenPerfil(false); setOpenAlertas(false); }}>
             <header className="topbar">
                 <div className="izquierda">
                     <div
-                    className={`menu-contenedor`}
-                    onClick={() => setCerrado(!cerrado)}
-                >
-                <div id="toggleSidebar" className={cerrado ? "cerrado" : ""}>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                </div>
+                        className={`menu-contenedor`}
+                        onClick={() => setCerrado(!cerrado)}
+                    >
+                        <div id="toggleSidebar" className={cerrado ? "cerrado" : ""}>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
                     </div>
                     <div className="logo">
                         <img src="/src/assets/img/Mantia - logo.png" alt="MANTIA" />
@@ -47,20 +48,20 @@ function AppLayout({ children }) {
                 </div>
 
                 <nav className="derecha">
-                    <button className="bell-btn" id="btnCampana" title="Alertas" onClick={(e) => { e.stopPropagation(); setOpenAlertas(!openAlertas); setOpenPerfil(false);}}>
+                    <button className="bell-btn" id="btnCampana" title="Alertas" onClick={(e) => { e.stopPropagation(); setOpenAlertas(!openAlertas); setOpenPerfil(false); }}>
                         <i className="fa-solid fa-bell"></i>
                         <span className={`bell-badge ${removeBellBadge ? "remove" : ""}`} id="bellBadge">5</span>
-                    </button>  
+                    </button>
 
-                    <button className="profile-btn" id="btnPerfil" onClick={(e) => { e.stopPropagation(); setOpenPerfil(!openPerfil); setOpenAlertas(false);}}>
+                    <button className="profile-btn" id="btnPerfil" onClick={(e) => { e.stopPropagation(); setOpenPerfil(!openPerfil); setOpenAlertas(false); }}>
                         <img
                             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDnLesNChl-l86u_LACs0pBkjqaot3ramr_A&s"
                             alt="Foto de perfil"
                         />
                         <div>
-                            <h4>{usuario?.nombre || "PAPOI"}</h4>
+                            <h4>{usuario?.name || "Invitado"}</h4>
                             <span className="role-tag">
-                                <i className="fa-solid fa-shield-halved"></i> PAPOI
+                                <i className="fa-solid fa-code"></i> Desarrollador
                             </span>
                         </div>
                     </button>
@@ -76,7 +77,7 @@ function AppLayout({ children }) {
                                 clase="mark-all"
                                 texto="Marcar todas como leídas"
                                 title="Eliminar"
-                                onClick={(e) => { e.stopPropagation(); setRemoveBellBadge(!removeBellBadge);}}
+                                onClick={(e) => { e.stopPropagation(); setRemoveBellBadge(!removeBellBadge); }}
                             />
                         </div>
                         <div className="alerts-footer">
@@ -92,18 +93,18 @@ function AppLayout({ children }) {
                     {/* OVERLAY PERFIL */}
                     <div className={`overlay-panel ${openPerfil ? "open" : ""}`} id="overlayPerfil">
                         <div className="perfil-header">
-                            <img 
-                                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDnLesNChl-l86u_LACs0pBkjqaot3ramr_A&s" 
+                            <img
+                                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDnLesNChl-l86u_LACs0pBkjqaot3ramr_A&s"
                                 alt="Perfil"
                                 className="perfil-avatar"
                             />
-                            <h3>PAPOI</h3>
-                            <span>Superadministrador</span>
+                            <h3>{usuario?.name || "Invitado"}</h3>
+                            <span>Área de Desarrollo</span>
                         </div>
                         <div className="perfil-info">
                             <p>
                                 <i className="fa-solid fa-envelope"></i>
-                                papoi@gmail.com
+                                {usuario?.email || "sin-correo@mantia.dev"}
                             </p>
                         </div>
                         <div className="perfil-actions">
@@ -144,7 +145,7 @@ function AppLayout({ children }) {
                         <>
                             <li className={`menu-desplegable ${herramientasAbierto ? "activo" : ""}`}>
 
-                                <a  className="menu-titulo"
+                                <a className="menu-titulo"
                                     onClick={() => setHerramientasAbierto(!herramientasAbierto)}
                                 >
                                     <i className="fa-solid fa-screwdriver-wrench"></i>
@@ -208,7 +209,7 @@ function AppLayout({ children }) {
                     </li>
                     <li>
                         {isAuthenticated ? (
-                            <a onClick={handleLogout} style={{ cursor: "pointer" }}>
+                            <a onClick={async () => { await logout(); navigate("/login"); }} style={{ cursor: "pointer" }}>
                                 <i className="fa-solid fa-right-from-bracket"></i>
                                 <span>Cerrar sesión</span>
                             </a>
@@ -221,26 +222,28 @@ function AppLayout({ children }) {
                     </li>
                 </ul>
             </aside>
-            
+
 
             <main id="contenido" className={`contenido ${cerrado ? "cerrado" : ""}`}>
-            {children ?? <Outlet/>}
-                </main>
-            <AccessibilityPanel/>
+                {children ?? <Outlet />}
+            </main>
+            <button className="btn-accesibilidad">
+                Accesibilidad (pendiente)
+            </button>
 
             <footer className="footer">
                 <div className="secFooterPrincipal">
                     <img className="logoSenaFooter" src="/src/assets/img/logo-sena-blanco.png" alt="SENA" />
                     <img className="logoSmaqFooter" src="/src/assets/img/Mantia - logo.png" alt="MANTIA" />
                     <div className="descripcion-logos">
-                        <br/>Mantenimiento e inventario de activos
-                        <br/> Copyright © 2026. Todos los derechos reservados.
+                        <br />Mantenimiento e inventario de activos
+                        <br /> Copyright © 2026. Todos los derechos reservados.
                     </div>
                 </div>
 
                 <div className="infoFooter">
-                    <br/><strong>CONTACTANOS</strong>
-                    <br/>mantiadso@gmail.com
+                    <br /><strong>CONTACTANOS</strong>
+                    <br />mantiadso@gmail.com
                 </div>
             </footer>
         </div>
