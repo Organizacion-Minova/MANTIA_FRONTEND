@@ -5,6 +5,7 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
     const [usuario, setUsuario] = useState(null);
+    const [cargando, setCargando] = useState(true);
 
     const isAuthenticated = !!usuario;
 
@@ -48,9 +49,10 @@ export function AuthProvider({ children }) {
     }
 
     useEffect(() => {
-        cargarUsuarioActual();
+        cargarUsuarioActual().finally(() => setCargando(false));
     }, []);
-    const value = { usuario, isAuthenticated, login, loginConLetra, logout, cargarUsuarioActual };
+
+    const value = { usuario, isAuthenticated, login, loginConLetra, logout, cargarUsuarioActual, cargando };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
@@ -58,4 +60,3 @@ export function AuthProvider({ children }) {
 export function useAuth() {
     return useContext(AuthContext);
 }
-
