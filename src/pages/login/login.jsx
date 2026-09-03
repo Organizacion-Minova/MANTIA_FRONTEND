@@ -8,12 +8,14 @@ import { Boton } from "../../components/common/Button";
 import { Link, useNavigate } from "react-router-dom";
 import AuthScene from "./AuthScene";
 import { useAuth } from "../../context/AuthContext.jsx";
+import LoadingScreen from "../../components/LoadingScreen.jsx";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const { login, loginConLetra } = useAuth();
+    const [cargandoLogin, setCargandoLogin] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = (event) => {
@@ -39,6 +41,7 @@ const Login = () => {
             return;
         }
 
+        setCargandoLogin(true);
         try {
             if (esLetraDev) {
                 await loginConLetra(email.trim().toUpperCase());
@@ -48,8 +51,14 @@ const Login = () => {
             navigate("/machines");
         } catch (err) {
             setError(err.message);
+            setCargandoLogin(false);
         }
     };
+
+    // 👇 AQUÍ VA — dentro del componente, antes del return del formulario
+    if (cargandoLogin) {
+        return <LoadingScreen indeterminado />;
+    }
 
     return (
         <AuthScene>
@@ -87,7 +96,6 @@ const Login = () => {
                                     value={password}
                                     onChange={handleChange}
                                     placeholder="••••••••"
-
                                 />
                             </div>
                             <Boton
@@ -117,4 +125,4 @@ const Login = () => {
     );
 };
 
-export default Login
+export default Login;
