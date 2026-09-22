@@ -1,7 +1,7 @@
 import { PhotoIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import { ChevronDownIcon } from '@heroicons/react/16/solid';
 import { Boton } from '../../components/common/Button.jsx';
-import '../../styles/Form/Form.css';
+import '../../styles/Form/form.css';
 
 // Base del formulario
 export function Form({ titulo, descripcion, onSubmit, onCancel, children, textoBoton = "Guardar", iconoBoton = "fa-solid fa-floppy-disk" }) {
@@ -36,6 +36,7 @@ export function Form({ titulo, descripcion, onSubmit, onCancel, children, textoB
                         clase="btn-azul"
                         icono={iconoBoton}
                         texto={textoBoton}
+                        title="Guardar"
                     />
                 </div>
             </form>
@@ -44,7 +45,7 @@ export function Form({ titulo, descripcion, onSubmit, onCancel, children, textoB
 }
 
 // Campo de texto
-export function Text({ label, id, name, type = "text", placeholder, value, onChange, prefix, required = false }) {
+export function Text({ label, id, name, type = "text", placeholder, value, onChange, prefix, required = false, disabled }) {
     return (
         <div className="form-field-wrapper">
             <label htmlFor={id} className="form-label">
@@ -61,6 +62,7 @@ export function Text({ label, id, name, type = "text", placeholder, value, onCha
                         value={value}
                         onChange={onChange}
                         required={required}
+                        disabled={disabled}
                         className={`form-input ${prefix ? 'with-prefix' : ''}`}
                     />
                 </div>
@@ -97,23 +99,31 @@ export function Textarea({ label, id, name, rows = 3, placeholder, value, onChan
 export function Select({ label, id, name, value, onChange, opciones = [], required = false }) {
     return (
         <div className="form-field-wrapper">
-            <label htmlFor={id} className="form-label">
-                {label} {required && <span className="form-required-star">*</span>}
-            </label>
+            {label && (
+                <label htmlFor={id} className="form-label">
+                    {label} {required && <span className="form-required-star">*</span>}
+                </label>
+            )}
             <div style={{ marginTop: '0.5rem' }} className="form-select-wrapper">
                 <select
-                id={id}
-                name={name}
-                value={value}
-                onChange={onChange}
-                required={required}
-                className="form-select"
+                    id={id}
+                    name={name}
+                    value={value}
+                    onChange={onChange}
+                    required={required}
+                    className="form-select"
                 >
-                {opciones.map((op, idx) => (
-                    <option key={idx} value={op.valor || op}>
-                    {op.etiqueta || op}
-                    </option>
-                ))}
+                    {opciones.map((op, idx) => {
+                        const val = op.valor !== undefined ? op.valor : op;
+                        const label = op.etiqueta !== undefined ? op.etiqueta : op;
+
+
+                        return (
+                            <option key={idx} value={val}>
+                                {label}
+                            </option>
+                        );
+                    })}
                 </select>
                 <ChevronDownIcon aria-hidden="true" className="form-select-icon" />
             </div>

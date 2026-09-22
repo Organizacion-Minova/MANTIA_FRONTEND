@@ -96,7 +96,7 @@ main.cerrado{
 .btn-buscar:hover  { background: var(--secundario); }
 .btn-buscar:active { transform: scale(0.97); }
 
-.search-main    { display: flex; gap: 0.5rem; margin-bottom: 0.625rem; }
+.search-main    { display: flex; gap: 0.5rem; margin-bottom: 0.625rem; flex-wrap: wrap; }
 .search-wrapper { flex: 1; position: relative; }
 .search-wrapper i {
     position: absolute; left: 0.8125rem; top: 50%;
@@ -114,6 +114,26 @@ main.cerrado{
 .search-wrapper input:focus {
     border: solid 2px var(--acento-mantia);
     box-shadow: var(--sombra-contenedor-hover);
+}
+
+.searcher-filters-container {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.searcher-filters-container .form-field-wrapper,
+.searcher-filters-container .form-select-wrapper {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    height: 100%;
+}
+
+.searcher-filters-container .form-select {
+    height: 100%;
+    border: 0.09375rem solid var(--principal);
+    border-radius: 0.5rem;
+    height: 2.75rem;
 }
 
 /* TARJETAAAAAAAAAAAAASS REUTILIZABLES */
