@@ -173,13 +173,13 @@ function CategoriasUbicacion() {
                                             <Boton
                                                 clase="btn-azul"
                                                 onClick={() => handleEditar(cat)}
-                                                title="Editar registro"
+                                                titulo="Editar registro"
                                                 icono="fa-solid fa-edit"
                                             />
                                             <Boton
                                                 clase="btn-azul"
                                                 onClick={() => handleEliminar(cat.id)}
-                                                title="Eliminar registro"
+                                                titulo="Eliminar registro"
                                                 icono="fa-solid fa-trash"
                                             />
                                         </div>
@@ -202,14 +202,14 @@ function CategoriasUbicacion() {
                     icono="fa-solid fa-plus"
                     texto="Nueva Categoría"
                     onClick={handleCrear}
-                    title="Registrar nueva categoría"
+                    titulo="Registrar nueva categoría"
                 />
                 <BotonLink
                     link="/ubications"
                     clase="btn-2"
                     icono="fa-solid fa-list"
                     texto="Volver a Ubicaciones"
-                    title="Ir a la página de Ubicaciones"
+                    titulo="Ir a la página de Ubicaciones"
                 />
             </div>
             {mostrarFormulario && (

@@ -30,8 +30,8 @@ import Profile from './pages/Profile/profile.jsx'
 import Alerts from './pages/Alerts/alerts.jsx';
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 import RutaPrivada from "./components/RutaPrivada.jsx";
-import LoadingScreen from "./components/LoadingScreen.jsx";
-
+import LoadingScreen from "./components/LoadingScreen";
+// import Dashboard from "./pages/Dashboard/dashboard.jsx";
 
 function LoadingGate({ children }) {
   const { cargando } = useAuth();
@@ -47,6 +47,7 @@ createRoot(document.getElementById('root')).render(
           <Routes>
             <Route path="/" element={<MantiaInicio />} />
             <Route path="/" element={<RutaPrivada><App /></RutaPrivada>}>
+              {/* <Route path='dashboard' element={<Dashboard />} /> */}
               <Route path='ubications' element={<Ubicaciones />} />
               <Route path='ubications/categoriesubications' element={<CategoriasUbicacion />} />
               <Route path='machines' element={<Maquinas />} />
@@ -60,8 +61,8 @@ createRoot(document.getElementById('root')).render(
               <Route path='companies' element={<Empresas />} />
               <Route path='types/consumables' element={<Consumibles />} />
               <Route path='types/noconsumables' element={<No_Consumibles />} />
-              <Route path='types/consumables/tools' element={<ToolsConsumables />} />
-              <Route path='types/noconsumables/tools' element={<ToolsNoConsumables />} />
+              <Route path='types/consumables/tools/:id' element={<ToolsConsumables />} />
+              <Route path='types/noconsumables/tools/:id' element={<ToolsNoConsumables />} />
               <Route path='dailyuse' element={<UsoDiario />} />
               <Route path='gases' element={<Gases />} />
               <Route path='gases/compare_gases' element={<CompararGases />} />

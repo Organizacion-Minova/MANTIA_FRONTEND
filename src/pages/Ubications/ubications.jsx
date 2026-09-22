@@ -207,19 +207,19 @@ function Ubicaciones() {
                                         <div className="btn-container">
                                             <Boton
                                                 clase="btn-azul"
-                                                title="Ver registro"
+                                                titulo="Ver registro"
                                                 icono="fa-solid fa-eye"
                                             />
                                             <Boton
                                                 clase="btn-azul"
                                                 onClick={() => handleEditar(ubi)}
-                                                title="Editar registro"
+                                                titulo="Editar registro"
                                                 icono="fa-solid fa-edit"
                                             />
                                             <Boton
                                                 clase="btn-azul"
                                                 onClick={() => handleEliminar(ubi.id)}
-                                                title="Eliminar registro"
+                                                titulo="Eliminar registro"
                                                 icono="fa-solid fa-trash"
                                             />
                                         </div>
@@ -242,14 +242,14 @@ function Ubicaciones() {
                     icono="fa-solid fa-plus"
                     texto="Nueva Ubicación"
                     onClick={handleCrear}
-                    title="Registrar nueva ubicación"
+                    titulo="Registrar nueva ubicación"
                 />
                 <BotonLink
                     link="/ubications/categoriesubications"
                     clase="btn-2"
                     icono="fa-solid fa-list"
                     texto="Categorías Ubicaciones"
-                    title="Ir a la página de Categorías Ubicaciones"
+                    titulo="Ir a la página de Categorías Ubicaciones"
                 />
             </div>
             {mostrarFormulario && (

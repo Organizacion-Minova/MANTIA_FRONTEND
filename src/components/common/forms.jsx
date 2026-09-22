@@ -36,7 +36,7 @@ export function Form({ titulo, descripcion, onSubmit, onCancel, children, textoB
                         clase="btn-azul"
                         icono={iconoBoton}
                         texto={textoBoton}
-                        title="Guardar"
+                        titulo="Guardar"
                     />
                 </div>
             </form>

@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Boton, BotonLink } from "../../components/common/Button";
 import { PageWelcome,Searcher } from "../../components/common/welcome";
 import { Form, Text, Select } from "../../components/common/forms";
+import { GetCategoryToolById } from "../../api/Toolsapi";
+import LoadingScreen from "../../components/LoadingScreen";
+
 function Formulario({onCancel}){
     return(
         <Form
@@ -43,46 +47,63 @@ function Formulario({onCancel}){
     )
 }
 function ToolsConsumables(){
+    const { id } = useParams();
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
+    const [categoria, setCategoria] = useState(null);
+
+    useEffect(() => {
+        GetCategoryToolById(id)
+            .then(setCategoria)
+            .catch(err => console.error("Error al cargar categoría:", err));
+    }, [id]);
+    if (!categoria) {
+        return <LoadingScreen indeterminado />;
+    }
     return(
-        <div className="">
-            <PageWelcome
-                titulo="HERRAMIENTAS CONSUMIBLES ----"
-                descripcion="Este es el formato de las herramientas ()."
-            />
-            <Searcher/>
-            <br />
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Cantidad</th>
-                        <th>Ubicacion</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </tbody>
-            </table>
-            <br />
+        <div className="list-grid">
+            <header className="bienvenida">
+                <PageWelcome
+                    titulo={`HERRAMIENTAS CONSUMIBLES ${categoria.name}` }  
+                    descripcion={`Este es el formato de las herramientas consumibles ${categoria.name} .`}
+                />
+                <Searcher/>
+            </header>
+            <div className="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Condicion</th>
+                            <th>Cantidad</th>
+                            <th>Ubicacion</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <div className="btn-container">
                 <BotonLink
                     link="/types/consumables"
                     clase="btn-2"
                     icono="fa-solid fa-list"
                     texto="Volver a categorias consumibles"
+                    titulo="Volver a categorias consumibles"
                 />
                 <Boton
                     clase="btn-azul"
                     icono="fa-solid fa-plus"
                     texto="Nueva Herramienta"
                     onClick={() => setMostrarFormulario(true)}
+                    titulo="Agregar nueva herramienta"
                 />
             </div>
             {mostrarFormulario && (
