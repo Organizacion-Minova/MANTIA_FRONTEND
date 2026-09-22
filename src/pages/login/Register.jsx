@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "../../styles/variables.css";
 import "../../styles/global.css";
-import "../../styles/components.modules.css";
+import "../../styles/Components.modules.css";
 import "../../styles/animations/login.css";
 import { Boton } from "../../components/common/Button";
 import loginImage from "../../assets/img/Mantia2..png";

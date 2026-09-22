@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "../../styles/animations/login.css";
 import "../../styles/variables.css";
 import "../../styles/global.css";
-import "../../styles/components.modules.css";
+import "../../styles/Components.modules.css";
 import { Boton } from "../../components/common/Button";
 
 const AuthScene = ({ children }) => {

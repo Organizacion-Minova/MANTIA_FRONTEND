@@ -2,7 +2,7 @@ import React from "react";
 
 import "../../styles/variables.css";
 import "../../styles/global.css";
-import "../../styles/components.modules.css";
+import "../../styles/Components.modules.css";
 import "../../styles/animations/login.css";
 import { Link } from "react-router-dom";
 import { Boton } from "../../components/common/Button";
