@@ -28,10 +28,15 @@ main.cerrado{
 .btn-container {
     display: flex;
     gap: 15px;
-    margin-bottom: 20px;
     flex-wrap: wrap;
 }
 
+.btn-container-page{
+    display: flex;
+    gap: 15px;
+    justify-content: space-between;
+
+}
 /* Este boton se usa para la opcion mas probable a escoger por el usuario */
 .btn-azul {
     background:    var(--secundario);
@@ -297,3 +302,50 @@ main.cerrado{
         padding: 1.5rem 1.35rem;
     }
 }
+
+.paginacion-container {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.paginacion-container button {
+    min-width: 2.5rem;
+    height: 2.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+}
+
+.paginacion-container button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.paginacion-container button:not(:disabled):hover {
+    transform: translateY(-2px);
+}
+
+.error-texto {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--rojo);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    margin-top: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.error-texto::before {
+    content: "\f06a";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+}
+

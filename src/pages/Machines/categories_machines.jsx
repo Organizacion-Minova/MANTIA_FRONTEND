@@ -2,7 +2,11 @@ import { useState, useEffect } from "react";
 import { Boton,BotonLink } from "../../components/common/Button";
 import { PageWelcome, Searcher } from "../../components/common/welcome";
 import { Form, Text, Textarea, Select } from '../../components/common/forms';
-import { GetCategoryMachine, CreateCategoryMachine, DeleteCategoryMachine, UpdateCategoryMachine } from "../../api/auth";
+import { GetCategoryMachine, CreateCategoryMachine, DeleteCategoryMachine, UpdateCategoryMachine } from "../../api/machinesapi";
+import LoadingScreen from "../../components/LoadingScreen";
+import { usePaginacion } from "../../components/common/Paginacion";
+import Paginacion from "../../components/common/Paginacion";
+import { soloLetras, tieneGroserias, esPalabraCoherente} from "../../components/common/Validations";
 function Formulario({ onCancel, onGuardado, categoriaEditar }) {
     const esEdicion = categoriaEditar != null;
     const [nombre, setNombre] = useState(categoriaEditar?.name || "");
@@ -14,14 +18,42 @@ function Formulario({ onCancel, onGuardado, categoriaEditar }) {
         e.preventDefault();
         setErrores({});
 
+        const erroresLocales={};
+
+        if (!soloLetras(nombre) || !soloLetras(descripcion)){
+            if(!soloLetras(nombre)){
+                erroresLocales.name = ["El contenido solo puede contener letras y espacios"]
+            }
+            if(!soloLetras(descripcion)){
+                erroresLocales.description = ["El contenido solo puede contener letras y espacios"]
+            }
+        } else if (tieneGroserias(nombre) || tieneGroserias(descripcion)){
+            if (tieneGroserias(nombre)){
+                erroresLocales.name = ["El contenido tiene palabras inapropiadas"]
+                
+            } else if (tieneGroserias(descripcion)){
+                erroresLocales.description = ["El contenido tiene palabras inapropiadas"]
+            }
+        } else if (!esPalabraCoherente(nombre) || !esPalabraCoherente(descripcion)){
+            if (!esPalabraCoherente(nombre)){
+                erroresLocales.name = ["El contenido no es coherente"]
+            }
+            if (!esPalabraCoherente(descripcion)){
+                erroresLocales.description = ["El contenido no es coherente"]
+            }
+        }
+
+        if (Object.keys(erroresLocales).length > 0) {
+            setErrores(erroresLocales);
+            return; 
+        }
         if (esEdicion) {
             const sinCambios =
                 nombre === categoriaEditar.name &&
                 descripcion === categoriaEditar.description &&
                 estado === categoriaEditar.status;
-
             if (sinCambios) {
-                onCancel(); // cierra el formulario sin hacer nada
+                onCancel();
                 return;
             }
         }   
@@ -63,11 +95,16 @@ function Formulario({ onCancel, onGuardado, categoriaEditar }) {
                     name="nombre"
                     placeholder="Ingrese el nombre de la categoria"
                     value={nombre}
-                    onChange={(e) => setNombre(e.target.value)}
+                    onChange={(e) => {
+                        const valor = e.target.value;
+                        if (soloLetras(valor) || valor===""){
+                            setNombre(e.target.value)
+                        }
+                    }}
                     required
                 />
             </div>
-            {errores.name && <p className="error-texto">{errores.name[0]}</p>}
+            {errores.name && alert(errores.name[0])}
 
             <div className="col-span-6">
                 <Textarea
@@ -80,6 +117,7 @@ function Formulario({ onCancel, onGuardado, categoriaEditar }) {
                     required
                 />
             </div>
+            {errores.description && alert(errores.description[0])}
 
             {esEdicion && (
                 <div className="col-span-6">
@@ -106,6 +144,8 @@ function CategoriasMaquinas(){
     const [categorias, setCategorias] = useState([]);
     const [cargando, setCargando] = useState(true);
 
+    const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(categorias, 7);
+
     const cargarCategorias = () => {
         setCargando(true);
         GetCategoryMachine()
@@ -117,7 +157,7 @@ function CategoriasMaquinas(){
         cargarCategorias();
     }, []);
 
-    if (cargando) return <p>Cargando categorías...</p>;
+    if (cargando) return <LoadingScreen indeterminado/>;
 
     const handleEliminar = async (id) => {
         const confirmar = window.confirm("¿Seguro que quieres eliminar esta categoría?");
@@ -125,7 +165,7 @@ function CategoriasMaquinas(){
 
         try {
             await DeleteCategoryMachine(id);
-            cargarCategorias(); // recarga la tabla sin esa categoría
+            cargarCategorias(); 
         } catch (error) {
             console.error("Error al eliminar categoría:", error);
         }
@@ -158,7 +198,7 @@ function CategoriasMaquinas(){
                         </tr>
                     </thead>
                     <tbody>
-                        {categorias.map((cat) => (
+                        {datosPagina.map((cat) => (
                         <tr key={cat.id}>
                             <td>{cat.name}</td>
                             <td>{cat.description}</td>
@@ -168,11 +208,13 @@ function CategoriasMaquinas(){
                                     clase="btn-azul"
                                     icono="fa-solid fa-edit"
                                     onClick={() => handleAbrirEditar(cat)}
+                                    titulo="Editar categoria"
                                 />
                                 <Boton
                                     clase="btn-2"
                                     icono="fa-solid fa-trash"
                                     onClick={() => handleEliminar(cat.id)}
+                                    titulo="Eliminar categoria"
                                 />
                             </td>
                         </tr>
@@ -180,18 +222,27 @@ function CategoriasMaquinas(){
                     </tbody>
                 </table>
            </div>
-            <div className="btn-container">
-                <Boton
-                    clase="btn-azul"
-                    icono="fa-solid fa-plus"
-                    texto="Nueva Categoria"
-                    onClick={handleAbrirCrear}
-                />
-                <BotonLink
-                    link="/machines"
-                    clase="btn-2"
-                    icono="fa-solid fa-list"
-                    texto="Maquinas"
+            <div className="btn-container-page">
+                <div className="btn-container">
+                    <Boton
+                        clase="btn-azul"
+                        icono="fa-solid fa-plus"
+                        texto="Nueva Categoria"
+                        onClick={handleAbrirCrear}
+                        titulo="Agregar nueva categoria"
+                    />
+                    <BotonLink
+                        link="/machines"
+                        clase="btn-2"
+                        icono="fa-solid fa-list"
+                        texto="Maquinas"
+                        titulo="Volver a listado de maquinas"
+                    />
+                </div>
+                <Paginacion
+                    paginaActual={paginaActual}
+                    totalPaginas={totalPaginas}
+                    setPaginaActual={setPaginaActual}
                 />
             </div>
             {mostrarFormulario && (
@@ -201,7 +252,6 @@ function CategoriasMaquinas(){
                     onGuardado={cargarCategorias}
                     categoriaEditar={categoriaEditar}
                 />
-                
             )}
         </div>
     )

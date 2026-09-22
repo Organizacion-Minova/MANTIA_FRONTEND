@@ -13,6 +13,7 @@ import "../../styles/accessibility.css";
 import '../../styles/Profile/profile.css';
 import '../../styles/Alerts/alerts.css';
 import '../../styles/Gases/gases.css';
+
 import AccessibilityPanel from "../accessibility/AccessibilityPanel";
 import { useAuth } from "../../context/AuthContext.jsx";
 

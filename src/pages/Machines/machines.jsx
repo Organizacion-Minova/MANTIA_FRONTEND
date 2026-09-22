@@ -200,10 +200,12 @@ function Maquinas(){
                                 link="/machines/cardmachine"
                                 clase="btn-azul"
                                 icono="fa-solid fa-eye"
+                                titulo="Ver detalles de la máquina"
                             />
                             <Boton
                                 clase="btn-2"
                                 icono="fa-solid fa-edit"
+                                titulo="Editar máquina"
                             />
                             </td>
                         </tr>
@@ -211,18 +213,21 @@ function Maquinas(){
                 </table>
             </div>
             <div className="btn-container">
-                <Boton
-                    clase="btn-azul"
-                    icono="fa-solid fa-plus"
-                    texto="Nueva Máquina"
-                    onClick={() => setMostrarFormulario(true)}
-                />
                 <BotonLink
                     link="/machines/categoriesmachines"
                     clase="btn-2"
                     texto="Categorias Maquinas"
                     icono="fa-solid fa-list"
+                    titulo="Volver a categorias de maquinas"
                 />
+                <Boton
+                    clase="btn-azul"
+                    icono="fa-solid fa-plus"
+                    texto="Nueva Máquina"
+                    onClick={() => setMostrarFormulario(true)}
+                    titulo="Agregar nueva maquina"
+                />
+                
             </div>
             {mostrarFormulario && (
                 <Formulario onCancel={() => setMostrarFormulario(false)} />
