@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "../../styles/animations/login.css";
 import "../../styles/variables.css";
 import "../../styles/global.css";
@@ -13,9 +14,9 @@ const AuthScene = ({ children }) => {
     return (
         <div className={`login-page ${esDeDia ? "modo-dia" : "modo-noche"}`}>
             <nav className="mantia-nav">
-                <a href="#inicio">Inicio</a>
-                <a href="#ayuda">Ayuda</a>
-                <a href="#nosotros">Nosotros</a>
+                <Link to="/">Inicio</Link>
+                <Link to="/help">Ayuda</Link>
+                <Link to="/about">Nosotros</Link>
             </nav>
 
             <svg

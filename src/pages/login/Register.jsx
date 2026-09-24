@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "../../styles/variables.css";
 import "../../styles/global.css";
 import "../../styles/components.modules.css";
@@ -7,8 +7,54 @@ import "../../styles/animations/login.css";
 import { Boton } from "../../components/common/Button";
 import loginImage from "../../assets/img/Mantia2..png";
 import AuthScene from "./AuthScene";
+import { register } from "../../api/auth";
 
 const Register = () => {
+    const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        nombre: "",
+        apellido: "",
+        email: "",
+        password: "",
+        confirmPassword: ""
+    });
+    const [error, setError] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError("");
+        setSuccessMessage("");
+
+        if (formData.password !== formData.confirmPassword) {
+            setError("Las contraseñas no coinciden");
+            return;
+        }
+
+        try {
+            setLoading(true);
+            const fullName = `${formData.nombre} ${formData.apellido}`;
+            await register({
+                name: fullName,
+                email: formData.email,
+                password: formData.password
+            });
+            setSuccessMessage("¡Registro exitoso! Tu cuenta está pendiente de aprobación por el administrador. Te notificaremos por correo cuando sea aprobada.");
+            setTimeout(() => {
+                navigate("/login");
+            }, 4000);
+        } catch (err) {
+            setError(err.response?.data?.message || "Ocurrió un error al registrarse");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <AuthScene>
             <div className="login-container login-container--ancho">
@@ -29,7 +75,10 @@ const Register = () => {
                             Los campos marcados con <span className="required-mark">*</span> son obligatorios.
                         </p>
 
-                        <form>
+                        {error && <div style={{ color: "#d9534f", marginBottom: "15px", fontSize: "14px" }}>{error}</div>}
+                        {successMessage && <div style={{ color: "#5cb85c", marginBottom: "15px", fontSize: "14px" }}>{successMessage}</div>}
+
+                        <form onSubmit={handleSubmit}>
                             <div
                                 className="form-row"
                             >
@@ -42,6 +91,9 @@ const Register = () => {
                                         type="text"
                                         name="nombre"
                                         placeholder="Ej: Juan"
+                                        value={formData.nombre}
+                                        onChange={handleChange}
+                                        required
                                     />
                                 </div>
 
@@ -54,6 +106,9 @@ const Register = () => {
                                         type="text"
                                         name="apellido"
                                         placeholder="Ej: García"
+                                        value={formData.apellido}
+                                        onChange={handleChange}
+                                        required
                                     />
                                 </div>
                             </div>
@@ -67,82 +122,15 @@ const Register = () => {
                                     type="email"
                                     name="email"
                                     placeholder="tucorreo@ejemplo.com"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    required
                                 />
                             </div>
 
                             <div
                                 className="form-row"
                             >
-                                <div className="input-box">
-                                    <label htmlFor="rol">Postularse para rol</label>
-                                    <select id="rol" name="rol">
-                                        <option value="">Selecciona un rol</option>
-                                        <option value="Administrador">Administrador</option>
-                                        <option value="Recepcionista">Recepcionista</option>
-                                        <option value="Tecnico">Técnico</option>
-                                    </select>
-                                </div>
-
-                                <div className="input-box">
-                                    <label htmlFor="tipoTecnico">
-                                        Tipo de técnico <span className="required-mark">*</span>
-                                    </label>
-                                    <select id="tipoTecnico" name="tipoTecnico">
-                                        <option value="">Selecciona una especialidad</option>
-                                        <option value="Electricista">Electricista</option>
-                                        <option value="Mecanico">Mecánico</option>
-                                        <option value="Operador">Operador</option>
-                                        <option value="Supervisor">Supervisor</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div
-                                className="form-row"
-                            >
-                                <div className="input-box">
-                                    <label htmlFor="tipoDoc">
-                                        Tipo de documento <span className="required-mark">*</span>
-                                    </label>
-                                    <select id="tipoDoc" name="tipoDoc">
-                                        <option value="">Selecciona</option>
-                                        <option value="CC">Cédula de Ciudadanía</option>
-                                        <option value="TI">Tarjeta de Identidad</option>
-                                        <option value="PP">Pasaporte</option>
-                                        <option value="CE">Cédula de Extranjería</option>
-                                    </select>
-                                </div>
-
-                                <div className="input-box">
-                                    <label htmlFor="numDoc">
-                                        No. de documento <span className="required-mark">*</span>
-                                    </label>
-                                    <input
-                                        id="numDoc"
-                                        type="text"
-                                        name="numDoc"
-                                        placeholder="Solo números"
-                                        inputMode="numeric"
-                                    />
-                                </div>
-                            </div>
-
-                            <div
-                                className="form-row"
-                            >
-                                <div className="input-box">
-                                    <label htmlFor="telefono">
-                                        Teléfono / Celular <span className="required-mark">*</span>
-                                    </label>
-                                    <input
-                                        id="telefono"
-                                        type="tel"
-                                        name="telefono"
-                                        placeholder="Ej: 3001234567"
-                                        inputMode="numeric"
-                                    />
-                                </div>
-
                                 <div className="input-box">
                                     <label htmlFor="password">
                                         Contraseña <span className="required-mark">*</span>
@@ -152,26 +140,32 @@ const Register = () => {
                                         type="password"
                                         name="password"
                                         placeholder="Mínimo 8 caracteres"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="input-box">
+                                    <label htmlFor="confirmPassword">
+                                        Confirmar contraseña <span className="required-mark">*</span>
+                                    </label>
+                                    <input
+                                        id="confirmPassword"
+                                        type="password"
+                                        name="confirmPassword"
+                                        placeholder="Repite tu contraseña"
+                                        value={formData.confirmPassword}
+                                        onChange={handleChange}
+                                        required
                                     />
                                 </div>
                             </div>
 
-                            <div className="input-box">
-                                <label htmlFor="confirmPassword">
-                                    Confirmar contraseña <span className="required-mark">*</span>
-                                </label>
-                                <input
-                                    id="confirmPassword"
-                                    type="password"
-                                    name="confirmPassword"
-                                    placeholder="Repite tu contraseña"
-                                />
-                            </div>
-
-
                             <Boton
                                 clase="btn-azul"
-                                texto="Crear mi cuenta"
+                                texto={loading ? "Registrando..." : "Crear mi cuenta"}
+                                disabled={loading}
                             />
 
                             <div className="links-footer">
