@@ -1,13 +1,59 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PageWelcome } from "../../components/common/welcome";
 import { Boton } from "../../components/common/Button";
 import { DropzoneProfile } from "../../components/common/DropzoneProfile";
 import { Text, Select } from "../../components/common/forms";
+import { getUser, getPendingRequests, approveRequest, rejectRequest } from "../../api/auth";
 
 
 function Profile() {
     const [fotoArchivo, setFotoArchivo] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
+    const [user, setUser] = useState(null);
+    const [pendingRequests, setPendingRequests] = useState([]);
+    const [message, setMessage] = useState("");
+
+    useEffect(() => {
+        getUser().then((data) => {
+            setUser(data);
+            // Si es admin, cargamos solicitudes
+            const isAdmin = data.email === 'mantiaadso@gmail.com' || data.roles?.some(r => r.name === 'Administrador');
+            if (isAdmin) {
+                loadRequests();
+            }
+        }).catch(() => {});
+    }, []);
+
+    const loadRequests = async () => {
+        try {
+            const reqs = await getPendingRequests();
+            setPendingRequests(reqs);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleApprove = async (id) => {
+        try {
+            await approveRequest(id);
+            setMessage("Usuario aprobado correctamente.");
+            loadRequests();
+        } catch (err) {
+            setMessage("Error al aprobar usuario.");
+        }
+    };
+
+    const handleReject = async (id) => {
+        try {
+            await rejectRequest(id);
+            setMessage("Usuario rechazado.");
+            loadRequests();
+        } catch (err) {
+            setMessage("Error al rechazar usuario.");
+        }
+    };
+
+    const isAdmin = user?.email === 'mantiaadso@gmail.com' || user?.roles?.some(r => r.name === 'Administrador');
 
     const handleImageChange = (e) => { 
         const file = e.target.files[0];
@@ -23,6 +69,47 @@ function Profile() {
                 titulo="MI PERFIL"
                 descripcion="Información personal y configuración de la cuenta."
             />
+            {message && <div style={{ padding: "10px", background: "#e8f5e9", color: "#2e7d32", borderRadius: "6px", marginBottom: "15px" }}>{message}</div>}
+            
+            {isAdmin && (
+                <section className='cards2' style={{ marginBottom: '20px' }}>
+                    <div className='card'>
+                        <div className="card-title">
+                            <div className="icon blue"><i className="fa-solid fa-user-shield icono-titulo"></i></div>
+                            <h3>Panel de Administración - Solicitudes Pendientes</h3>
+                        </div>
+                        <p>Aprueba o rechaza las solicitudes de registro de nuevos usuarios.</p><br/>
+                        {pendingRequests.length === 0 ? (
+                            <p style={{ color: "#706f6c" }}>No hay solicitudes pendientes en este momento.</p>
+                        ) : (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                {pendingRequests.map((req) => (
+                                    <div key={req.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', background: '#f9f9f9', borderRadius: '8px', border: '1px solid #e0e0e0' }}>
+                                        <div>
+                                            <strong>{req.name}</strong><br/>
+                                            <span style={{ fontSize: '13px', color: '#666' }}>{req.email}</span>
+                                        </div>
+                                        <div style={{ display: 'flex', gap: '8px' }}>
+                                            <button 
+                                                onClick={() => handleApprove(req.id)}
+                                                style={{ background: '#28a745', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' }}
+                                            >
+                                                Aprobar
+                                            </button>
+                                            <button 
+                                                onClick={() => handleReject(req.id)}
+                                                style={{ background: '#dc3545', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' }}
+                                            >
+                                                Rechazar
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </section>
+            )}
             <section className='cards'>
                 <div className='card' style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                     <DropzoneProfile
