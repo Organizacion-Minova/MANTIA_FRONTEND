@@ -17,7 +17,7 @@ export function usePaginacion(datos, elementosPorPagina = 6) {
         setPaginaActual,
     };
 }
-function Paginacion({ paginaActual, totalPaginas, setPaginaActual, maxBotonesVisibles=4 }) {
+export function Paginacion({ paginaActual, totalPaginas, setPaginaActual, maxBotonesVisibles=4 }) {
     if (totalPaginas <= 1) return null;
     let inicio = Math.max(1, paginaActual - Math.floor(maxBotonesVisibles / 2));
     let fin = inicio + maxBotonesVisibles - 1;
@@ -59,5 +59,3 @@ function Paginacion({ paginaActual, totalPaginas, setPaginaActual, maxBotonesVis
         </div>
     );
 }
-
-export default Paginacion;

@@ -4,9 +4,9 @@ import { PageWelcome, Searcher } from "../../components/common/welcome";
 import { Form, Text, Textarea, Select } from "../../components/common/forms";
 import { GetCategoryTools, CreateCategoryTools, DeleteCategoryTools, UpdateCategoryTools } from "../../api/Toolsapi";
 import LoadingScreen from "../../components/LoadingScreen";
-import { usePaginacion } from "../../components/common/Paginacion";
-import Paginacion from "../../components/common/Paginacion";
+import { usePaginacion, Paginacion   } from "../../components/common/Paginacion";
 import { soloLetras, tieneGroserias, esPalabraCoherente } from "../../components/common/Validations";
+import { useSearch } from "../../hooks/useSearch";
 
 function FormConsumibles({onCancel,onGuardado,categoriaEditar }){
     const esEdicion = categoriaEditar != null;
@@ -258,8 +258,16 @@ export function Consumibles(){
     let [categorias, setCategorias] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [categoriaEditar, setCategoriaEditar] = useState(null);
-    categorias = categorias.filter((cat) => cat.category_group_id === 1);
-    const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(categorias, 7);
+    categorias = categorias.filter((cat) => cat.category_group_id === 1)
+    const { busqueda, setBusqueda, filtrosEspeciales, setFiltroEspecial, itemsFiltrados: categoriasFiltradas } = useSearch(
+        categorias,
+        ["name", "description", "status"]
+    );
+    const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(categoriasFiltradas, 7);
+
+    useEffect(() => {
+        setPaginaActual(1);
+    }, [busqueda, filtrosEspeciales, setPaginaActual]);
 
     const cargarCategorias=()=>{
         setCargando(true);
@@ -298,7 +306,24 @@ export function Consumibles(){
                     titulo="HERRAMIENTAS CONSUMIBLES"
                     descripcion="Este es el formato de las herramientas consumibles."
                 />
-                <Searcher/>
+                <Searcher
+                    value={busqueda}
+                    onChange={(e) => setBusqueda(e.target.value)}
+                    placeholder="Buscar por nombre o descripción"
+                    filtrosAdicionales={
+                        <Select
+                            id="filtro-estado-consumibles"
+                            name="filtro-estado-consumibles"
+                            value={filtrosEspeciales.status || ""}
+                            onChange={(e) => setFiltroEspecial("status", e.target.value)}
+                            opciones={[
+                                { valor: "", etiqueta: "Todos los estados" },
+                                { valor: "Activo", etiqueta: "Activo" },
+                                { valor: "Inactivo", etiqueta: "Inactivo" },
+                            ]}
+                        />
+                    }
+                />
             </header>
             <div className="table-responsive">
                 <table className="table">
@@ -370,9 +395,17 @@ export function No_Consumibles(){
     let [categorias, setCategorias] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [categoriaEditar, setCategoriaEditar] = useState(null);
-    categorias = categorias.filter((cat) => cat.category_group_id === 2);
-    const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(categorias, 7);
+    categorias= categorias.filter((cat) => cat.category_group_id === 2)
 
+    const { busqueda, setBusqueda, filtrosEspeciales, setFiltroEspecial, itemsFiltrados: categoriasFiltradas } = useSearch(
+    categorias,
+    ["name", "description", "status"]
+    );
+    const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(categoriasFiltradas, 7);
+
+    useEffect(() => {
+        setPaginaActual(1);
+    }, [busqueda, filtrosEspeciales, setPaginaActual]);
     const cargarCategorias=()=>{
         setCargando(true);
         GetCategoryTools()
@@ -410,7 +443,24 @@ export function No_Consumibles(){
                     titulo="HERRAMIENTAS NO CONSUMIBLES"
                     descripcion="Este es el formato de las herramientas no consumibles."
                 />
-                <Searcher/>
+                <Searcher
+                    value={busqueda}
+                    onChange={(e) => setBusqueda(e.target.value)}
+                    placeholder="Buscar por nombre o descripción"
+                    filtrosAdicionales={
+                        <Select
+                            id="filtro-estado-consumibles"
+                            name="filtro-estado-consumibles"
+                            value={filtrosEspeciales.status || ""}
+                            onChange={(e) => setFiltroEspecial("status", e.target.value)}
+                            opciones={[
+                                { valor: "", etiqueta: "Todos los estados" },
+                                { valor: "Activo", etiqueta: "Activo" },
+                                { valor: "Inactivo", etiqueta: "Inactivo" },
+                            ]}
+                        />
+                    }
+                />
             </header>
             <div className="table-responsive">
                 <table className="table">

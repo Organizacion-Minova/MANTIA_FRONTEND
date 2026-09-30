@@ -64,6 +64,7 @@ export function Text({ label, id, name, type = "text", placeholder, value, onCha
                         required={required}
                         disabled={disabled}
                         className={`form-input ${prefix ? 'with-prefix' : ''}`}
+                        maxLength={type === "text" ? 50 : undefined}
                     />
                 </div>
             </div>
