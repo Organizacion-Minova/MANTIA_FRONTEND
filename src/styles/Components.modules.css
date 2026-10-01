@@ -2,7 +2,7 @@ main{
     margin-top: 4rem;
     margin-left: 14.75rem;
     padding: 2rem;
-    transition: padding-left 0,5s ease;
+    transition: padding-left 0.5s ease;
 }
 
 main.cerrado{
@@ -18,6 +18,24 @@ main.cerrado{
 }
 .welcome h1 { color: var(--texto);text-transform: uppercase; }
 .welcome p  { color: var(--texto2); }
+
+@media (max-width:991px){
+      .welcome{
+            flex-direction:column;
+            align-items:center;
+            text-align:center;
+            gap:1rem;
+        }
+}
+
+@media (max-width: 990px){
+       .welcome{
+            flex-direction:column;
+             align-items:center;
+             text-align:center;
+            gap:1rem;
+        }
+}
 
 .date {
     background: var(--contenedor);

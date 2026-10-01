@@ -1,5 +1,4 @@
 import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import App from './App.jsx'
 import Ubicaciones from "./pages/Ubications/ubications";
@@ -11,6 +10,7 @@ import LlenarInspeccion from './pages/Forms/completeinspection';
 import MostrarInspeccion from './pages/Forms/showinspection';
 import Empresas from "./pages/Companies/companies"
 import CategoriasMaquinas from './pages/Machines/categories_machines';
+import { createRoot } from 'react-dom/client'
 import Equipos from './pages/Equipment/equipments';
 import { CardEquipment } from './pages/Equipment/card_Equipment';
 import { Consumibles, No_Consumibles } from './pages/Tools/types';
@@ -31,6 +31,8 @@ import Alerts from './pages/Alerts/alerts.jsx';
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 import RutaPrivada from "./components/RutaPrivada.jsx";
 import LoadingScreen from "./components/LoadingScreen.jsx";
+import Dashboard from "./pages/Dashboard/dashboard.jsx";
+
 
 
 function LoadingGate({ children }) {
@@ -47,6 +49,7 @@ createRoot(document.getElementById('root')).render(
           <Routes>
             <Route path="/" element={<MantiaInicio />} />
             <Route path="/" element={<RutaPrivada><App /></RutaPrivada>}>
+              <Route path='dashboard' element={<Dashboard />} />
               <Route path='ubications' element={<Ubicaciones />} />
               <Route path='ubications/categoriesubications' element={<CategoriasUbicacion />} />
               <Route path='machines' element={<Maquinas />} />

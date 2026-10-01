@@ -28,48 +28,51 @@ function agruparDeATres(array) {
 function MostrarInspeccion() {
     const gruposDatosGenerales = agruparDeATres(datosGeneralesEjemplo);
     return (
-        <div>
-            <PageWelcome
-                titulo="INSPECCIÓN REALIZADA"
-                descripcion="Resumen del formulario diligenciado."
-            />
-
-            <table className="form">
-                <tbody>
-                    {gruposDatosGenerales.map((grupo, index) => (
-                        <React.Fragment key={index}>
-                            <tr >
-                                {grupo.map((campo) => (
-                                    <th colSpan="2" key={campo.id}>{campo.texto}</th>
-                                ))}
-                            </tr>
-                            <tr>
-                                {grupo.map((campo) => (
-                                    <td colSpan="2" key={campo.id}>{campo.valor}</td>
-                                ))}
-                            </tr>
-                        </React.Fragment>
-                    ))}
-                    <tr>
-                        <th colSpan="2">Pregunta</th>
-                        <th>SI</th>
-                        <th>NO</th>
-                        <th>N/A</th>
-                        <th>Observaciones</th>
-                    </tr>
-
-                
-                    {preguntasEjemplo.map((pregunta) => (
-                        <tr key={pregunta.id}>
-                            <td colSpan="2">{pregunta.texto}</td>
-                            <td>{pregunta.respuesta === "SI" && "X"}</td>
-                            <td>{pregunta.respuesta === "NO" && "X"}</td>
-                            <td>{pregunta.respuesta === "N/A" && "X"}</td>
-                            <td>{pregunta.observacion}</td>
+        <div className="list-grid">
+            <header>
+                <PageWelcome
+                    titulo="INSPECCIÓN REALIZADA"
+                    descripcion="Resumen del formulario diligenciado."
+                />
+            </header>
+            <div className="table-responsive">
+                <table className="form">
+                    <tbody>
+                        {gruposDatosGenerales.map((grupo, index) => (
+                                <React.Fragment key={index}>
+                                    <tr >
+                                    {grupo.map((campo) => (
+                                        <th colSpan="2" key={campo.id}>{campo.texto}</th>
+                                    ))}
+                                </tr>
+                                <tr>
+                                    {grupo.map((campo) => (
+                                        <td colSpan="2" key={campo.id}>{campo.valor}</td>
+                                    ))}
+                                </tr>
+                            </React.Fragment>
+                        ))}
+                        <tr>
+                            <th colSpan="2">Pregunta</th>
+                            <th>SI</th>
+                            <th>NO</th>
+                            <th>N/A</th>
+                            <th>Observaciones</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+
+                    
+                        {preguntasEjemplo.map((pregunta) => (
+                            <tr key={pregunta.id}>
+                                <td colSpan="2">{pregunta.texto}</td>
+                                <td>{pregunta.respuesta === "SI" && "X"}</td>
+                                <td>{pregunta.respuesta === "NO" && "X"}</td>
+                                <td>{pregunta.respuesta === "N/A" && "X"}</td>
+                                <td>{pregunta.observacion}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 }
