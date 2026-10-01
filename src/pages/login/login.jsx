@@ -9,6 +9,7 @@ import { Link, useNavigate } from "react-router-dom";
 import AuthScene from "./AuthScene";
 import { useAuth } from "../../context/AuthContext.jsx";
 import LoadingScreen from "../../components/LoadingScreen.jsx";
+import AccessibilityPanel from "../../components/accessibility/AccessibilityPanel.jsx";
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -121,6 +122,7 @@ const Login = () => {
                     </div>
                 </div>
             </div>
+            <AccessibilityPanel />
         </AuthScene>
     );
 };

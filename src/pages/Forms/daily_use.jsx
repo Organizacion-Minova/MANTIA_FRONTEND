@@ -63,42 +63,44 @@ function Formulario({onCancel}){
 export function UsoDiario(){
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     return(
-        <div>
-            <PageWelcome
-                titulo={"USO DIARIO"}
-                descripcion={"Este es el formato de uso diario de la"}
-
-            />
-            <Searcher/>
-            <br />
-            <table className="form">
-                <tbody>
-                    <tr>
-                        <th colSpan="6">REGISTRO DIARIO DE USO DE MAQUINARIA Y EQUIPOS MINA DIDACTICA</th>
-                    </tr>
-                    <tr>
-                        <th colSpan="2">NOMBRE MAQUINA:</th>
-                        <td colSpan="4" ></td>
-                    </tr>
-                    <tr >
-                        <th>Fecha</th>
-                        <th>Verificacion de estado de <br/> funcionamiento de la máquina</th>
-                        <th>Inicio de operacion</th>
-                        <th>Fin de operacion</th>
-                        <th>Responsable a cargo</th>
-                        <th>Observaciones</th>
-                    </tr>
-                    <tr>
-                        <td ></td>
-                        <td ></td>
-                        <td ></td>
-                        <td ></td>
-                        <td ></td>
-                        <td ></td>
-                    </tr> 
-                </tbody>
-            </table>
-            <br />
+        <div className="list-grid">
+            <header>
+                <PageWelcome
+                    titulo={"USO DIARIO"}
+                    descripcion={"Este es el formato de uso diario de la"}
+                />
+                <Searcher/>
+           </header>
+            <div className="table-responsive">
+                <table className="form">
+                    <tbody>
+                        <tr>
+                            <th colSpan="6">REGISTRO DIARIO DE USO DE MAQUINARIA Y EQUIPOS MINA DIDACTICA</th>
+                        </tr>
+                        <tr>
+                            <th colSpan="2">NOMBRE MAQUINA:</th>
+                            <td colSpan="4" ></td>
+                        </tr>
+                        <tr >
+                            <th>Fecha</th>
+                            <th>Verificacion de estado de <br/> funcionamiento de la máquina</th>
+                            <th>Inicio de operacion</th>
+                            <th>Fin de operacion</th>
+                            <th>Responsable a cargo</th>
+                            <th>Observaciones</th>
+                        </tr>
+                        <tr>
+                            <td ></td>
+                            <td ></td>
+                            <td ></td>
+                            <td ></td>
+                            <td ></td>
+                            <td ></td>
+                        </tr> 
+                    </tbody>
+                </table>
+            </div>
+          
             <div className="btn-container">
                 <Boton
                     clase="btn-azul"

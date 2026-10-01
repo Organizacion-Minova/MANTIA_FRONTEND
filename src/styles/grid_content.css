@@ -7,6 +7,38 @@
 .middle{grid-area: paneles;}
 .alerts-panel{grid-area: alertas;}
 
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+
+  grid-template-areas:
+    "bienvenida"
+    "seccion1"
+    "seccion2"
+    "paneles"
+    "alertas"; 
+}
+
+@media (max-width: 991px) {
+    .dashboard-grid {
+        .dashboard-summary-section {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .dashboard-insights-section {
+    grid-template-columns: 1fr;
+  }
+    }
+}
+
+@media (max-width: 990px) {
+    .dashboard-grid {
+        .dashboard-summary-section {
+        grid-template-columns: 1fr;
+        }
+    }
+}
+
 /*GRID CONTENEDOR DE HOJAS DE VIDA*/
 .cards-grid{
    
@@ -31,13 +63,6 @@
             "seccion2"
             "botones"
             / 1fr;
-            
-            .welcome{
-            flex-direction:column;
-            align-items:center;
-            text-align:center;
-            gap:1rem;
-        }
     }
 
      
@@ -295,3 +320,4 @@
     height:auto;
   }
 }
+

@@ -163,7 +163,7 @@ function Equipos(){
                     </tr>
                 </tbody>
             </table>
-            <br />
+            </div>
             <Boton
                 clase="btn-azul"
                 icono="fa-solid fa-plus"
@@ -175,7 +175,7 @@ function Equipos(){
             {mostrarFormulario && (
                 <Formulario onCancel={() => setMostrarFormulario(false)} />
             )}
-        </div>
+        
         </div>
     )}
 

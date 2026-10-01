@@ -87,6 +87,7 @@ function AccessibilityPanel() {
                 type="button"
                 aria-label="Abrir accesibilidad"
                 onClick={() => setAbierto(!abierto)}
+                title={abierto ? "Cerrar panel de accesibilidad" : "Abrir accesibilidad"}
             >
                 <i className="fa-solid fa-universal-access"></i>
             </button>
@@ -104,6 +105,7 @@ function AccessibilityPanel() {
                         onClick={() => setAbierto(false)}
                         style={{ cursor: "pointer" }}
                         className="cerrar-accesibilidad"
+                        title="Cerrar panel de accesibilidad"
                     />
                 </div>
 
@@ -112,6 +114,7 @@ function AccessibilityPanel() {
                         className={`contenedor-texto ${grupoVisible ? "activo" : ""}`}
                         id="contenedorTexto"
                         onClick={alternarGrupoTexto}
+                        title={tamanoModificado ? "Restablecer tamaño de texto para cerrar" : "Abrir opciones de tamaño de texto"}
                     >
                         <i className="fa-solid fa-font"></i>
                        <span>Tamaño</span>
@@ -140,6 +143,7 @@ function AccessibilityPanel() {
                         type="button"
                         className={preferencias.modoOscuro ? "activo" : ""}
                         onClick={alternarModoOscuro}
+                        title={preferencias.modoOscuro ? "Desactivar modo oscuro" : "Activar modo oscuro"}
                     >
                         <i className="fa-solid fa-moon"></i>
                         <span>Modo oscuro</span>
@@ -148,6 +152,7 @@ function AccessibilityPanel() {
                         type="button"
                         className={preferencias.altoContraste ? "activo" : ""}
                         onClick={alternarAltoContraste}
+                        title={preferencias.altoContraste ? "Desactivar alto contraste" : "Activar alto contraste"}
                     >
                         <i className="fa-solid fa-circle-half-stroke"></i>
                         <span>Alto contraste</span>
@@ -156,13 +161,17 @@ function AccessibilityPanel() {
                         type="button"
                         className={leyendo ? "activo" : ""}
                         onClick={alternarLectura}
+                        title={leyendo ? "Detener lectura de la página" : "Leer página en voz alta"}
                     >
                         <i className="fa-solid fa-volume-high"></i>
                         <span>{leyendo ? "Detener lectura" : "Leer página"}</span>
                     </button>
                 </div>
 
-                <button type="button" onClick={restablecerPreferencias}>
+                <button type="button" 
+                        onClick={restablecerPreferencias} 
+                        title="Restablecer preferencias"
+                >
                     <i className="fa-solid fa-rotate-left"></i>
                     <span>Restablecer</span>
                 </button>

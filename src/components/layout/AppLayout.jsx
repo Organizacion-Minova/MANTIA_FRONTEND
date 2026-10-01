@@ -13,7 +13,7 @@ import "../../styles/accessibility.css";
 import '../../styles/Profile/profile.css';
 import '../../styles/Alerts/alerts.css';
 import '../../styles/Gases/gases.css';
-
+import '../../styles/dashboard.css';
 import AccessibilityPanel from "../accessibility/AccessibilityPanel";
 import { useAuth } from "../../context/AuthContext.jsx";
 
@@ -51,12 +51,12 @@ function AppLayout({ children }) {
                 </div>
 
                 <nav className="derecha">
-                    <button className="bell-btn" id="btnCampana" title="Alertas" onClick={(e) => { e.stopPropagation(); setOpenAlertas(!openAlertas); setOpenPerfil(false); }}>
+                    <button className="bell-btn" id="btnCampana" title="Notificaciones" onClick={(e) => { e.stopPropagation(); setOpenAlertas(!openAlertas); setOpenPerfil(false); }}>
                         <i className="fa-solid fa-bell"></i>
                         <span className={`bell-badge ${removeBellBadge ? "remove" : ""}`} id="bellBadge">5</span>
                     </button>
 
-                    <button className="profile-btn" id="btnPerfil" onClick={(e) => { e.stopPropagation(); setOpenPerfil(!openPerfil); setOpenAlertas(false); }}>
+                    <button className="profile-btn" id="btnPerfil" title="Perfil" onClick={(e) => { e.stopPropagation(); setOpenPerfil(!openPerfil); setOpenAlertas(false); }}>
                         <img
                             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDnLesNChl-l86u_LACs0pBkjqaot3ramr_A&s"
                             alt="Foto de perfil"
@@ -116,12 +116,14 @@ function AppLayout({ children }) {
                                 clase="btn-azul"
                                 icono="fa-solid fa-user"
                                 texto="Ver mi perfil"
+                                title="Ver el perfil"
                             />
                             <BotonLink
                                 link=""
                                 clase="btn-azul"
                                 icono="fa-solid fa-shield-halved"
                                 texto="Panel Superadmin"
+                                title="Panel de superadministrador"
                             />
                         </div>
                         <div className="perfil-footer">
@@ -130,6 +132,7 @@ function AppLayout({ children }) {
                                 clase="btn-azul"
                                 icono="fa-solid fa-right-from-bracket"
                                 texto="Cerrar Sesion"
+                                title="Cerrar sesión"
                             />
                         </div>
                     </div>
@@ -138,10 +141,13 @@ function AppLayout({ children }) {
             <aside className={`sidebar ${cerrado ? "cerrado" : ""}`} id="sidebar">
                 <ul>
                     <li>
-                        <a href="/">
-                            <i className="fa-solid fa-house"></i>
-                            <span>Inicio</span>
-                        </a>
+                        <Link 
+                            to="/dashboard"
+                            title="Ir al panel de control"
+                        >
+                            <i className="fa-solid fa-solar-panel"></i>
+                            <span>Dashboard</span>
+                        </Link>
                     </li>
 
                     {isAuthenticated && (
@@ -157,13 +163,19 @@ function AppLayout({ children }) {
 
                                 <ul className="submenu">
                                     <li>
-                                        <Link to="/types/consumables">
+                                        <Link 
+                                            to="/types/consumables"
+                                            title="Ir a consumibles"
+                                        >
                                             <i className="fa-solid fa-wrench"></i>
                                             <span>Consumibles</span>
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link to="/types/noconsumables">
+                                        <Link 
+                                            to="/types/noconsumables"
+                                            title="Ir a no consumibles"
+                                        >
                                             <i className="fa-solid fa-tools"></i>
                                             <span>No consumibles</span>
                                         </Link>
@@ -172,25 +184,37 @@ function AppLayout({ children }) {
                             </li>
 
                             <li>
-                                <Link to="/equipment">
+                                <Link 
+                                    to="/equipment"
+                                    title="Ir a equipos"
+                                >
                                     <i className="fa-solid fa-gears"></i>
                                     <span>Equipos</span>
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/machines">
+                                <Link 
+                                    to="/machines"
+                                    title="Ir a maquinas"
+                                >
                                     <i className="fa-solid fa-industry"></i>
                                     <span>Maquinas</span>
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/ubications">
+                                <Link 
+                                    to="/ubications"
+                                    title="Ir a ubicaciones"
+                                >
                                     <i className="fa-solid fa-map-marker-alt"></i>
                                     <span>Ubicaciones</span>
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/companies">
+                                <Link 
+                                    to="/companies"
+                                    title="Ir a empresas"
+                                >
                                     <i className="fa-solid fa-clipboard-check"></i>
                                     <span>Empresas</span>
                                 </Link>
@@ -199,25 +223,26 @@ function AppLayout({ children }) {
                     )}
 
                     <li>
-                        <Link to="/about">
+                        <Link to="/about" title="Ir a acerca de">
                             <i className="fa-solid fa-info-circle"></i>
                             <span>Acerca de</span>
                         </Link>
                     </li>
                     <li>
-                        <Link to="/help">
+                        <Link to="/help" title="Ir a ayuda">
                             <i className="fa-solid fa-circle-question"></i>
                             <span>Ayuda</span>
                         </Link>
                     </li>
                     <li>
                         {isAuthenticated ? (
-                            <a onClick={async () => { await logout(); navigate("/login"); }} style={{ cursor: "pointer" }}>
+                            <a onClick={async () => { await logout(); navigate("/login"); }} style={{ cursor: "pointer" }}
+                            title="Cerrar sesión">
                                 <i className="fa-solid fa-right-from-bracket"></i>
                                 <span>Cerrar sesión</span>
                             </a>
                         ) : (
-                            <Link to="/login">
+                            <Link to="/login" title="Ir a iniciar sesión">
                                 <i className="fa-solid fa-right-from-bracket"></i>
                                 <span>Iniciar sesión</span>
                             </Link>
@@ -242,7 +267,8 @@ function AppLayout({ children }) {
                     </div>
                 </div>
 
-                <div className="infoFooter">
+                <div className="infoFooter"
+                     title="Información de contacto">
                     <br /><strong>CONTACTANOS</strong>
                     <br />mantiadso@gmail.com
                 </div>
