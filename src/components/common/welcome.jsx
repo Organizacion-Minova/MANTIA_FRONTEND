@@ -1,4 +1,3 @@
-import { Boton } from "../../components/common/Button";
 function PageWelcome({ titulo, descripcion }) {
     const fechaActual = new Date().toLocaleDateString("es-CO", {
         weekday: "long",
@@ -26,22 +25,39 @@ function PageWelcome({ titulo, descripcion }) {
     );
 }
 
-function Searcher({placeholder="Buscar por nombre, descripción, categoría"}) {
+function Searcher({ value, onChange, placeholder = "Buscar...", rangoFecha, onRangoFechaChange, filtrosAdicionales = null }) {
     return (
         <div className="search-main">
             <div className="search-wrapper">
-                <i className="fa-solid fa-magnifying-glass "></i>
+                <i className="fa-solid fa-magnifying-glass"></i>
                 <input
                     type="text"
                     id="q"
                     placeholder={placeholder}
+                    value={value}
+                    onChange={onChange}
                 />
             </div>
-            <Boton
-                clase="btn-buscar"
-                icono="fa-solid fa-magnifying-glass"
-                texto="Buscar"
-            />
+
+            {onRangoFechaChange && (
+                <select
+                    className="select-filtro-fecha"
+                    value={rangoFecha}
+                    onChange={(e) => onRangoFechaChange(e.target.value)}
+                >
+                    <option value="">Todas las fechas</option>
+                    <option value="hoy">Hoy</option>
+                    <option value="7_dias">Últimos 7 días</option>
+                    <option value="mes">Este mes</option>
+                    <option value="ano">Este año</option>
+                </select>
+            )}
+           
+            {filtrosAdicionales && (
+                <div className="searcher-filters-container">
+                    {filtrosAdicionales}
+                </div>
+            )}
         </div>
     );
 }

@@ -63,8 +63,8 @@ createRoot(document.getElementById('root')).render(
               <Route path='companies' element={<Empresas />} />
               <Route path='types/consumables' element={<Consumibles />} />
               <Route path='types/noconsumables' element={<No_Consumibles />} />
-              <Route path='types/consumables/tools' element={<ToolsConsumables />} />
-              <Route path='types/noconsumables/tools' element={<ToolsNoConsumables />} />
+              <Route path='types/consumables/tools/:id' element={<ToolsConsumables />} />
+              <Route path='types/noconsumables/tools/:id' element={<ToolsNoConsumables />} />
               <Route path='dailyuse' element={<UsoDiario />} />
               <Route path='gases' element={<Gases />} />
               <Route path='gases/compare_gases' element={<CompararGases />} />

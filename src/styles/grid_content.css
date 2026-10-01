@@ -3,6 +3,7 @@
 .cards{grid-area: seccion1;}
 .cards2{grid-area: seccion2;}
 .btn-container{grid-area: botones;}
+.btn-container-page{grid-area: botones;}
 .middle{grid-area: paneles;}
 .alerts-panel{grid-area: alertas;}
 
