@@ -29,9 +29,11 @@ import MantiaInicio from "./pages/Index/index";
 import Profile from './pages/Profile/profile.jsx'
 import Alerts from './pages/Alerts/alerts.jsx';
 import { AuthProvider } from "./context/AuthContext.jsx";
+import { ToastProvider } from "./context/ToastContext.jsx";
 import RutaPrivada from "./components/RutaPrivada.jsx";
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+  <ToastProvider>
     <AuthProvider>
       <BrowserRouter>
         <Routes>
@@ -67,5 +69,6 @@ createRoot(document.getElementById('root')).render(
         </Routes>
       </BrowserRouter>
     </AuthProvider>
+  </ToastProvider>
   </StrictMode>,
 )

@@ -5,6 +5,7 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
     const [usuario, setUsuario] = useState(null);
+    const [cargando, setCargando] = useState(true); // NUEVO
 
     const isAuthenticated = !!usuario;
 
@@ -20,8 +21,6 @@ export function AuthProvider({ children }) {
         }
     }
 
-    // Login rápido de desarrollo: recibe una sola letra (D, S, J, L, K)
-    // y entra directo como ese usuario, sin verificar contraseña.
     async function loginConLetra(letra) {
         try {
             const data = await quickLogin(letra);
@@ -44,13 +43,16 @@ export function AuthProvider({ children }) {
         } catch {
             setUsuario(null);
             return false;
+        } finally {
+            setCargando(false); // NUEVO: pase lo que pase, ya terminamos de verificar
         }
     }
 
     useEffect(() => {
         cargarUsuarioActual();
     }, []);
-    const value = { usuario, isAuthenticated, login, loginConLetra, logout, cargarUsuarioActual };
+
+    const value = { usuario, isAuthenticated, cargando, login, loginConLetra, logout, cargarUsuarioActual }; // agregado "cargando"
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
@@ -58,4 +60,3 @@ export function AuthProvider({ children }) {
 export function useAuth() {
     return useContext(AuthContext);
 }
-

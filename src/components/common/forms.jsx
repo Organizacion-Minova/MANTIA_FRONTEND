@@ -110,8 +110,8 @@ export function Select({ label, id, name, value, onChange, opciones = [], requir
                 className="form-select"
                 >
                 {opciones.map((op, idx) => (
-                    <option key={idx} value={op.valor || op}>
-                    {op.etiqueta || op}
+                    <option key={idx} value={typeof op === "object" ? op.valor : op}>
+                    {typeof op === "object" ? op.etiqueta : op}
                     </option>
                 ))}
                 </select>
@@ -253,22 +253,26 @@ export function Radio({ label, id, name, value, onChange, opciones = [], require
                 {label} {required && <span className="form-required-star">*</span>}
             </label>
             <div className="form-radio-group">
-                {opciones.map((op, idx) => (
-                <div key={idx} className="form-radio-item">
-                    <input
-                    id={`${id}-${idx}`}
-                    name={name}
-                    type="radio"
-                    value={op.valor || op}
-                    checked={value === (op.valor || op)}
-                    onChange={onChange}
-                    className="form-radio-input"
-                    />
-                    <label htmlFor={`${id}-${idx}`} className="form-radio-label">
-                    {op.etiqueta || op}
-                    </label>
-                </div>
-                ))}
+                {opciones.map((op, idx) => {
+                    const valorOpcion = typeof op === "object" ? op.valor : op;
+                    const etiquetaOpcion = typeof op === "object" ? op.etiqueta : op;
+                    return (
+                        <div key={idx} className="form-radio-item">
+                            <input
+                            id={`${id}-${idx}`}
+                            name={name}
+                            type="radio"
+                            value={valorOpcion}
+                            checked={value === valorOpcion}
+                            onChange={onChange}
+                            className="form-radio-input"
+                            />
+                            <label htmlFor={`${id}-${idx}`} className="form-radio-label">
+                            {etiquetaOpcion}
+                            </label>
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );
