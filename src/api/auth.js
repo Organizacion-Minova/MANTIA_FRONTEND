@@ -22,8 +22,50 @@ export async function logout() {
     await api.post('/api/logout');
 }
 
+export async function register(userData) {
+    await api.get('/sanctum/csrf-cookie');
+    const { data } = await api.post('/api/register', userData);
+    return data;
+}
+
 export async function quickLogin(letra) {
     await api.get('/sanctum/csrf-cookie');
     const { data } = await api.post(`/api/dev-login/${letra}`);
     return data.user;   // ← extraemos el usuario de adentro del wrapper
+}
+
+
+export async function GetCategoryMachine() {
+    const { data } = await api.get("/api/machine-categories");
+    return data;
+}
+
+export async function CreateCategoryMachine(categoria) {
+    const { data } = await api.post("/api/machine-categories", categoria);
+    return data;
+}
+
+export async function DeleteCategoryMachine(id) {
+    const { data } = await api.delete(`/api/machine-categories/${id}`);
+    return data;
+}
+
+export async function UpdateCategoryMachine(id, categoria) {
+    const { data } = await api.put(`/api/machine-categories/${id}`, categoria);
+    return data;
+}
+
+export async function getPendingRequests() {
+    const { data } = await api.get('/api/admin/requests');
+    return data.requests;
+}
+
+export async function approveRequest(id) {
+    const { data } = await api.post(`/api/admin/approve/${id}`);
+    return data;
+}
+
+export async function rejectRequest(id) {
+    const { data } = await api.post(`/api/admin/reject/${id}`);
+    return data;
 }

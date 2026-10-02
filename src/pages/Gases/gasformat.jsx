@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Boton, BotonLink } from "../../components/common/Button";
 import { PageWelcome, Searcher } from "../../components/common/welcome";
 import { Form, Text, Textarea, Dropzone } from '../../components/common/forms';
-import '../../styles/Gases/gases.css';
 
 function FormularioGases({onCancel}){
     return(
@@ -101,13 +100,16 @@ function FormularioGases({onCancel}){
 export function FormatoGases() {
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     return (
-        <div className="grid-contenedor-5">
-            <PageWelcome
-                titulo="FORMATO DE GASES"
-                descripcion="Este es el formato de la medición de gases."
-            />
-            <Searcher placeholder="Buscar por ubicación, nivel de gas, responsable, observaciones"/>
-            <section className="cards2">
+        <div className="list-grid">
+            <header className="bienvenida">
+                <PageWelcome
+                    titulo="FORMATO DE GASES"
+                    descripcion="Este es el formato de la medición de gases."
+                    
+                />
+                <Searcher placeholder="Buscar por ubicación, nivel de gas, responsable, observaciones"/>
+            </header>
+            <div className="table-responsive">
                 <table className="form">
                     <tbody>
                         <tr>
@@ -208,7 +210,7 @@ export function FormatoGases() {
                         </tr>
                     </tbody>
                 </table>
-            </section>
+            </div>
             <div className="btn-container">
                 <Boton
                     clase="btn-azul"
@@ -232,4 +234,7 @@ export function FormatoGases() {
             )}
         </div>
     );
+   
 }
+
+

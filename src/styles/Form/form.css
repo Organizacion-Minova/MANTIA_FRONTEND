@@ -10,7 +10,7 @@
 
 .form-container {
     position: relative;
-    background-color: var(--blanco);
+    background: var(--contenedor);
     padding: 2rem;
     border-radius: 0.75rem;
     box-shadow: var(--sombra-contenedor-hover);
@@ -24,13 +24,25 @@
     overflow-y: auto;
 }
 
+@media (max-width: 990px) {
+
+    .form-container {
+        width: calc(100% - 2rem);
+        max-width: none;
+        padding: 1.25rem;
+        border-radius: 0.625rem;
+        max-height: 75vh;
+    }
+
+} 
+
 .form-cancel-btn {
     position: absolute;
     top: 1.25rem;
     right: 1.25rem;
     border-radius: 0.375rem;
     background-color: var(--contenedor);
-    color: var(--borde-contenedor);
+    color: var(--color-critical);
     padding: 0.25rem;
     border: none;
     cursor: pointer;
@@ -38,10 +50,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 5rem;
+    height: 2rem;
+   
 }
 
+
 .form-cancel-btn:hover {
-    color: var(--acento-mantia);
+    color: var(--blanco);
+    background-color: var(--color-critical);
 }
 
 .form-cancel-btn:focus {
@@ -136,7 +153,7 @@
     display: flex;
     align-items: center;
     border-radius: 0.375rem;
-    background-color: var(--contenedor);
+    background: var(--contenedor);
     border: 1px solid var(--borde-contenedor);
     transition: border-color 0.2s, box-shadow 0.2s;
 }
@@ -161,7 +178,7 @@
     display: block;
     width: 100%;
     min-width: 0;
-    background-color: var(--contenedor);
+    background: var(--contenedor);
     padding: 0.375rem 0.75rem;
     font-size: 0.875rem;
     line-height: 1.5;
@@ -189,7 +206,7 @@
     display: block;
     width: 100%;
     border-radius: 0.375rem;
-    background-color: var(--contenedor);
+    background: var(--contenedor);
     padding: 0.375rem 0.75rem;
     font-size: 0.875rem;
     line-height: 1.5;
@@ -394,3 +411,23 @@
     color: var(--texto);
     cursor: pointer;
 }
+ 
+/* formularios tablas */
+.form{
+    width:100%;
+    border-collapse:collapse;
+    text-align: center;
+    background-color: var(--contenedor);
+    
+}
+
+.form th{
+    padding:0.9375rem ;
+    border:2px solid var(--secundario);
+}
+.form td{
+    padding:0.9375rem ;
+    border:2px solid var(--secundario);
+}
+
+

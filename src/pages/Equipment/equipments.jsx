@@ -152,27 +152,30 @@ function Equipos(){
                                 link="/equipment/cardequipment"
                                 clase="btn-azul"
                                 icono="fa-solid fa-eye"
+                                titulo="Ver detalles del equipo"
                             />
                             <Boton
                                 clase="btn-2"
                                 icono="fa-solid fa-edit"
+                                title="Editar equipo"
                             />
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <br />
+            </div>
             <Boton
                 clase="btn-azul"
                 icono="fa-solid fa-plus"
                 texto="Nueva Equipo"
                 onClick={() => setMostrarFormulario(true)}
+                titulo="Agregar nuevo equipo"
 
             />
             {mostrarFormulario && (
                 <Formulario onCancel={() => setMostrarFormulario(false)} />
             )}
-        </div>
+        
         </div>
     )}
 

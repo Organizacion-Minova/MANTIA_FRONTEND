@@ -92,12 +92,12 @@ function CompararGases() {
     const metaAmpliada = gasAmpliadoKey ? limitesGases[gasAmpliadoKey] : null;
 
     return (
-        <div className="grid-contenedor-5">
+        <div className="cards-grid">
             <PageWelcome
                 titulo="COMPARACIÓN DE GASES"
                 descripcion="Este es el análisis comparativo de gases."
             />
-            <section className="cards">
+            <section className="seccion1">
                 <div className="panel-filtros-horizontal">
                     <div className="control-input">
                         <label>Ubicación</label>
@@ -121,7 +121,7 @@ function CompararGases() {
                     </div>
                 </div>
             </section>
-            <section className="cards2">
+            <section className="seccion2">
                 {metaAmpliada ? (
                     <div id="vistaAmpliada" className='card-mini-grafica'>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -167,6 +167,7 @@ function CompararGases() {
                     </div>
                 )}
             </section>
+         
             <div className="btn-container">
                 <BotonLink
                     link="/gases"

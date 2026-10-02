@@ -26,7 +26,7 @@
     
     --blanco: #FFFFFF;
 
-    --contenedor: #ffffffd9;
+    --contenedor: #ffffff;
   
     --texto: #12201E;
 
@@ -42,10 +42,25 @@
     --sombra-contenedor-hover:
         0 8px 24px rgba(6, 59, 56, .14);
     --acento-mantia: #A3D65C;
+    --acento-mantia2: #bdf86a;
    
     --amarillo:         #FFD800;
     --verde:            #00B333;
     --rojo:             #E24B4A;
+
+
+     --color-success: #2E7D32;
+    --color-success-bg: #E6F4EA;
+    --color-warning: #B7791F;
+    --color-warning-bg: #FEF3D9;
+    --color-critical: #C62828;
+    --color-critical-bg: #FBE7E7;
+
+    --space-xs: 0.25rem;  /* 4px  → espaciado interno mínimo, entre ícono y texto */
+    --space-sm: 0.5rem;   /* 8px  → padding interno de elementos pequeños */
+    --space-md: 1rem;     /* 16px → gap entre tarjetas, padding de tarjetas */
+    --space-lg: 1.5rem;   /* 24px → gap entre secciones del dashboard */
+    --space-xl: 2rem;     /* 32px → separación mayor, ej. header del dashboard */
 }
 /*======================
    MODO OSCURO NENAS
@@ -178,6 +193,7 @@ html.dark-theme {
   
     /* --acento-mantia: #4E9F94; */
     --acento-mantia: #3F8F82;
+     --acento-mantia2: #57cdba;
 
     /* =========================================
        ESTADOS
@@ -188,6 +204,13 @@ html.dark-theme {
     --verde: #4FC879;
 
     --rojo: #EB6864;
+
+    --color-success: #6FCF7C;
+  --color-success-bg: rgba(111, 207, 124, 0.12);
+  --color-warning: #F2C94C;
+  --color-warning-bg: rgba(242, 201, 76, 0.12);
+  --color-critical: #EB5757;
+  --color-critical-bg: rgba(235, 87, 87, 0.12);
 }
 /*======================
    MODO ALTO CONTRASTE

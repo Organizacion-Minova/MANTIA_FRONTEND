@@ -184,6 +184,13 @@
 
 }
 
+.panel-accesibilidad .contenedor-texto .grupo-botones .btn-texto.activo{
+    background: var(--acento-mantia2);
+    color: var(--blanco);
+
+    border-color: var(--acento-mantia);
+}
+
 
 .panel-accesibilidad button.activo i{
 
