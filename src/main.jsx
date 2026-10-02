@@ -43,6 +43,7 @@ function LoadingGate({ children }) {
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+  <ToastProvider>
     <AuthProvider>
       <LoadingGate>
         <BrowserRouter>
@@ -81,5 +82,6 @@ createRoot(document.getElementById('root')).render(
         </BrowserRouter>
       </LoadingGate>
     </AuthProvider>
+  </ToastProvider>
   </StrictMode>,
 )

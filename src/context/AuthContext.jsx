@@ -21,8 +21,6 @@ export function AuthProvider({ children }) {
         }
     }
 
-    // Login rápido de desarrollo: recibe una sola letra (D, S, J, L, K)
-    // y entra directo como ese usuario, sin verificar contraseña.
     async function loginConLetra(letra) {
         try {
             const data = await quickLogin(letra);
@@ -45,6 +43,8 @@ export function AuthProvider({ children }) {
         } catch {
             setUsuario(null);
             return false;
+        } finally {
+            setCargando(false); // NUEVO: pase lo que pase, ya terminamos de verificar
         }
     }
 
