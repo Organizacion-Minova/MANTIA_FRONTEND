@@ -32,7 +32,7 @@ function Formulario({ onCancel, onSuccess, empresaEditar = null }) {
 
         try {
             if (isEditing) {
-                await actualizarEmpresa(empresaEditar.tax_id, formData);
+                await actualizarEmpresa(empresaEditar.id, formData);
             } else {
                 await guardarEmpresa(formData);
             }
@@ -206,7 +206,7 @@ function Empresas() {
                             </tr>
                         ) : empresasFiltradas.length > 0 ? (
                             empresasFiltradas.map((emp) => (
-                                <tr key={emp.tax_id}>
+                                <tr key={emp.id}>
                                     <td>{emp.nit}</td>
                                     <td>{emp.name}</td>
                                     <td>{emp.phone}</td>
@@ -227,7 +227,7 @@ function Empresas() {
                                             />
                                             <Boton
                                                 clase="btn-azul"
-                                                onClick={() => handleEliminar(emp.tax_id)}
+                                                onClick={() => handleEliminar(emp.id)}
                                                 title="Eliminar registro"
                                                 icono="fa-solid fa-trash"
                                             />
