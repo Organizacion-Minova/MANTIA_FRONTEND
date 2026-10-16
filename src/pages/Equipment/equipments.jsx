@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Boton,BotonLink } from "../../components/common/Button";
 import { PageWelcome,Searcher } from "../../components/common/welcome";
 import { Form, Text, Textarea, Dropzone,Select, Date } from "../../components/common/forms";
+import { GetEquipments } from "../../api/Equipmentsapi";
+import LoadingScreen from "../../components/LoadingScreen";
+
 function Formulario({onCancel}){
     return(
         <Form
@@ -115,6 +118,27 @@ function Formulario({onCancel}){
 }
 function Equipos(){
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
+    let [equipos, setEquipos]= useState([])
+    const [cargando, setCargando] = useState(true);
+
+    const cargarEquipos = () => {
+        setCargando(true);
+        GetEquipments()
+            .then((data) => {
+                setEquipos(data);   
+            })
+            .catch((error) => {
+                console.error("Error al cargar los equipos:", error);
+                
+            })
+            .finally(() => setCargando(false));
+    };
+
+    useEffect(() => {
+        cargarEquipos();
+    }, []);
+
+    if (cargando) return <LoadingScreen indeterminado/>
     return(
         <div className="list-grid">
             <header className="bienvenida">
@@ -124,7 +148,7 @@ function Equipos(){
                 />
                 <Searcher/>
             </header>
-         <div class="table-responsive">
+         <div className="table-responsive">
             <table className="table">
                 
                 <thead>
@@ -139,14 +163,14 @@ function Equipos(){
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Alfis</td>
-                        <td>666</td>
-                        <td>Su aguela</td>
-                        <td>lobo chiviado</td>
-                        <td>Casa xleox</td>
-                        <td>pasable</td>
-
+                    {equipos.map((e) => (
+                    <tr key={e.id}>
+                        <td>{e.name}</td>
+                        <td>{e.serial_number}</td>
+                        <td>{e.responsible}</td>
+                        <td>{e.company.name}</td>
+                        <td>{e.ubicacion.name}</td>
+                        <td>{e.status==='active'?'Activo':'Inactivo'}</td>
                         <td>
                             <BotonLink
                                 link="/equipment/cardequipment"
@@ -161,6 +185,7 @@ function Equipos(){
                             />
                         </td>
                     </tr>
+                    ))}
                 </tbody>
             </table>
             </div>

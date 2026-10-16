@@ -93,13 +93,7 @@ function Formulario({onCancel,onGuardado, herramientaEditar, categoryid}){
                     name="nombre"
                     placeholder="Nombre de la herramienta"
                     value={nombre}
-                    onChange={(e) => {
-                        const valor = e.target.value;
-                        if (valor === "" || soloLetras(valor)) {
-                            setNombre(valor);
-                        }
-                    }
-                    }
+                    onChange={(e) => setNombre(e.target.value)}
                     required
                 />
             </div>
