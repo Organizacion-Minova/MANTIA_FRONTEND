@@ -208,7 +208,7 @@
 .form-description {
     font-size: 0.78rem;
     color: #64748b;
-    text-align: left;
+    text-align: center;
     margin-bottom: 18px;
 }
 
@@ -236,32 +236,6 @@
     font-weight: 500;
     animation: sacudir 0.3s ease-in-out;
 }
-
-/* ---------- BOTÓN MODO DÍA / NOCHE ---------- */
-.btn-azul-2 {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 25;
-    padding: 10px 18px;
-    border: none;
-    border-radius: 999px;
-    background: var(--secundario);
-    backdrop-filter: blur(4px);
-    color: #fff;
-    font-family: inherit;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-    transition: background 0.2s ease, transform 0.2s ease;
-} 
-
- .btn-azul-2:hover {
-    background: rgba(15, 23, 42, 0.75);
-    transform: translateY(-1px);
-}
-
 
 /* ===================================================
    ANIMACIONES SVG Y ELEMENTOS

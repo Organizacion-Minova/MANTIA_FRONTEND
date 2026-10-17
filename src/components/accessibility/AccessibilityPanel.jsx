@@ -9,7 +9,7 @@ const preferenciasDefecto = {
     altoContraste: false,
 };
 
-function AccessibilityPanel() {
+function AccessibilityPanel({ onModoOscuroChange }) {
     const [abierto, setAbierto] = useState(false);
     const [textoActivo, setTextoActivo] = useState(false);
     const [leyendo, setLeyendo] = useState(false);
@@ -50,7 +50,9 @@ function AccessibilityPanel() {
     }
 
     function alternarModoOscuro() {
-        setPreferencias({ ...preferencias, modoOscuro: !preferencias.modoOscuro });
+        const modoOscuro = !preferencias.modoOscuro;
+        setPreferencias({ ...preferencias, modoOscuro });
+        onModoOscuroChange?.(modoOscuro);
     }
 
     function alternarAltoContraste() {
@@ -61,6 +63,7 @@ function AccessibilityPanel() {
         speechSynthesis.cancel();
         setLeyendo(false);
         setPreferencias(preferenciasDefecto);
+        onModoOscuroChange?.(preferenciasDefecto.modoOscuro);
     }
 
     function alternarLectura() {

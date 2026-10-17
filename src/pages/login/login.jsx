@@ -9,7 +9,6 @@ import { Link, useNavigate } from "react-router-dom";
 import AuthScene from "./AuthScene";
 import { useAuth } from "../../context/AuthContext.jsx";
 import LoadingScreen from "../../components/LoadingScreen.jsx";
-import AccessibilityPanel from "../../components/accessibility/AccessibilityPanel.jsx";
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -113,7 +112,14 @@ const Login = () => {
                                 </span>
                                 <span>
                                     ¿No tienes una cuenta?{" "}
-                                    <Link to="/register">Registrarme</Link>
+                                    <Link to="/register">Solicitar</Link>
+                                </span>
+                                <span>
+                                <strong>
+                                    <Link to="/">
+                                         <i className="fa-solid fa-house"></i> Regresar al inicio
+                                    </Link>
+                                </strong>
                                 </span>
                             </div>
                         </form>
@@ -122,7 +128,6 @@ const Login = () => {
                     </div>
                 </div>
             </div>
-            <AccessibilityPanel />
         </AuthScene>
     );
 };

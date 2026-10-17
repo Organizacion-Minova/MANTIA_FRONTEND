@@ -32,8 +32,8 @@ import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 import RutaPrivada from "./components/RutaPrivada.jsx";
 import LoadingScreen from "./components/LoadingScreen.jsx";
 import Dashboard from "./pages/Dashboard/dashboard.jsx";
-
-
+import { ToastProvider } from './context/ToastContext.jsx';
+import NotFound from './pages/Others/not_found.jsx';
 
 function LoadingGate({ children }) {
   const { cargando } = useAuth();
@@ -72,6 +72,7 @@ createRoot(document.getElementById('root')).render(
               <Route path='gases/gas_format' element={<FormatoGases />} />
               <Route path='profile' element={<Profile />} />
               <Route path='alerts' element={<Alerts />} />
+              <Route path="*" element={<NotFound />} /> 
             </Route>
             <Route path="login" element={<Login />} />
             <Route path="ResetPassword" element={<ResetPassword />} />

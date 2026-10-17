@@ -677,7 +677,7 @@ footer{
 }
 
 .logoSmaqFooter{
-    height:100px;
+    height:20px;
     width:auto;
 }
 
@@ -845,3 +845,17 @@ footer{
 .badge-mantto{ background:rgba(255,216,0,.20); color:#a88600; }
 .badge-fuera{ background:rgba(226,75,74,.12); color:var(--rojo); }
 .badge-inactivo{ background:rgba(80,97,93,.14); color:var(--texto2); }
+
+/* ========================================================================================
+   ESTILOS PAGINA 404   
+=========================================================================================== */
+.not-found{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    height:calc(100vh - 5rem);
+    text-align:center;
+    padding:2rem;
+    font-size:2.125rem;
+}

@@ -70,7 +70,9 @@ const Register = () => {
 
                     <div className="container-login">
                         <h3>Crear Cuenta</h3>
-
+                        <p className="form-description">
+                            Diligencia tus datos para solicitar una cuenta. Una vez creada, el administrador deberá aprobarla antes de que puedas iniciar sesión.
+                        </p>
                         <p className="form-description">
                             Los campos marcados con <span className="required-mark">*</span> son obligatorios.
                         </p>
@@ -164,7 +166,7 @@ const Register = () => {
 
                             <Boton
                                 clase="btn-azul"
-                                texto={loading ? "Registrando..." : "Crear mi cuenta"}
+                                texto={loading ? "Registrando..." : "Registrarse"}
                                 disabled={loading}
                             />
 
@@ -177,7 +179,7 @@ const Register = () => {
                                     ¿Ya tienes cuenta?{" "}
                                     <Link to="/login">Iniciar sesión</Link>
                                 </span>
-                                <Link to="/">Ir al inicio</Link>
+                                
                             </div>
                         </form>
                     </div>
