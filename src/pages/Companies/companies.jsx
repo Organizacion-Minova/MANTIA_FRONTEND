@@ -4,6 +4,8 @@ import { Boton } from "../../components/common/Button";
 import { Form, Text } from '../../components/common/forms';
 import { obtenerEmpresas, guardarEmpresa, actualizarEmpresa, eliminarEmpresa } from "../../api/company";
 import { useSearch } from "../../hooks/useSearch";
+import LoadingScreen from "../../components/LoadingScreen";
+import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
 
 function Formulario({ onCancel, onSuccess, empresaEditar = null }) {
     const [formData, setFormData] = useState({
@@ -133,6 +135,11 @@ function Empresas() {
         ['nit', 'name', 'phone', 'email', 'address']
     );
 
+    const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(empresasFiltradas, 7);
+    useEffect(() => {
+        setPaginaActual(1);
+    }, [busqueda, setPaginaActual]);
+
     const cargarLista = async () => {
         setCargando(true);
         try {
@@ -174,6 +181,7 @@ function Empresas() {
         }
     };
 
+    if (cargando) return <LoadingScreen indeterminado/>
     return (
         <div className="list-grid">
             <header className="bienvenida">
@@ -204,8 +212,8 @@ function Empresas() {
                             <tr>
                                 <td colSpan="6" style={{ textAlign: "center" }}>Cargando empresas...</td>
                             </tr>
-                        ) : empresasFiltradas.length > 0 ? (
-                            empresasFiltradas.map((emp) => (
+                        ) : datosPagina.length > 0 ? (
+                            datosPagina.map((emp) => (
                                 <tr key={emp.id}>
                                     <td>{emp.nit}</td>
                                     <td>{emp.name}</td>
@@ -245,7 +253,8 @@ function Empresas() {
                     </tbody>
                 </table>
             </div>
-            <div className="btn-container">
+            <div className="btn-container-page">
+                <div className="btn-container">
                 <Boton
                     clase="btn-azul"
                     texto="Nueva Empresa"
@@ -253,14 +262,20 @@ function Empresas() {
                     onClick={handleCrear}
                     title="Registrar nueva empresa"
                 />
-                {mostrarFormulario && (
-                    <Formulario
-                        empresaEditar={empresaAEditar}
-                        onCancel={() => setMostrarFormulario(false)}
-                        onSuccess={cargarLista}
-                    />
-                )}
+                </div>
+                <Paginacion
+                    paginaActual={paginaActual}
+                    totalPaginas={totalPaginas}
+                    setPaginaActual={setPaginaActual}
+                />
             </div>
+            {mostrarFormulario && (
+                <Formulario
+                    empresaEditar={empresaAEditar}
+                    onCancel={() => setMostrarFormulario(false)}
+                    onSuccess={cargarLista}
+                />
+            )}
         </div>
     );
 }
