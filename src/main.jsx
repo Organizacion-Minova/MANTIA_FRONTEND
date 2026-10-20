@@ -29,11 +29,14 @@ import MantiaInicio from "./pages/Index/index";
 import Profile from './pages/Profile/profile.jsx'
 import Alerts from './pages/Alerts/alerts.jsx';
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
+import { ToastProvider } from "./context/ToastContext.jsx";
+import EscuchaToasts from "./components/Alertas/EscuchaToasts.jsx";
 import RutaPrivada from "./components/RutaPrivada.jsx";
 import LoadingScreen from "./components/LoadingScreen.jsx";
 import Dashboard from "./pages/Dashboard/dashboard.jsx";
 import { ToastProvider } from './context/ToastContext.jsx';
 import NotFound from './pages/Others/not_found.jsx';
+
 
 function LoadingGate({ children }) {
   const { cargando } = useAuth();
@@ -44,6 +47,7 @@ function LoadingGate({ children }) {
 createRoot(document.getElementById('root')).render(
   <StrictMode>
   <ToastProvider>
+    <EscuchaToasts />
     <AuthProvider>
       <LoadingGate>
         <BrowserRouter>
