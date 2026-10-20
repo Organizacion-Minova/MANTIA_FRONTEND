@@ -1,6 +1,5 @@
 //este componente es el dueño layout (estructura principal) de la aplicación,
 //  que contiene el header, el sidebar, el contenido y el footer
-import { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Boton, BotonLink } from "../../components/common/Button";
@@ -14,8 +13,15 @@ import '../../styles/Profile/profile.css';
 import '../../styles/Alerts/alerts.css';
 import '../../styles/Gases/gases.css';
 import '../../styles/dashboard.css';
+import '../../styles/Ia.css';
 import AccessibilityPanel from "../accessibility/AccessibilityPanel";
+import IAMantia from '../IAMantia/IAMantia.jsx';
 import { useAuth } from "../../context/AuthContext.jsx";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import CampanaNotificaciones from '../Alertas/CampanaNotificaciones';
+import { obtenerNotificaciones, marcarComoLeida, marcarTodasComoLeidas } from '../../api/notificaciones';
+import { useToast } from '../../context/ToastContext.jsx';
+import { mapearNotificacionBackend } from '../../utils/notificaciones';
 
 
 function AppLayout({ children }) {
@@ -25,7 +31,66 @@ function AppLayout({ children }) {
     const [herramientasAbierto, setHerramientasAbierto] = useState(false);
     const [openAlertas, setOpenAlertas] = useState(false);
     const [openPerfil, setOpenPerfil] = useState(false);
-    const [removeBellBadge, setRemoveBellBadge] = useState(false);
+
+    const { notificar } = useToast();
+    const [notificaciones, setNotificaciones] = useState([]);
+    const conocidas = useRef(null); // null = todavía no se hizo la primera carga
+
+    const cargarNotificaciones = useCallback(async () => {
+        try {
+            const datos = await obtenerNotificaciones();
+            const lista = datos.map(mapearNotificacionBackend);
+
+            if (conocidas.current === null) {
+                // Primera carga: solo se memorizan las que ya existían, sin avisar
+                conocidas.current = new Set(lista.map((n) => n.id));
+            } else {
+                lista.forEach((n) => {
+                    if (conocidas.current.has(n.id)) return;
+                    conocidas.current.add(n.id);
+                    // Las informativas ya las avisa cada acción (api/axios.js);
+                    // aquí solo se avisan las de peligro y las advertencias nuevas
+                    if (n.tipo === 'danger') notificar('danger', n.mensaje, 'Alerta de peligro', 8000);
+                    if (n.tipo === 'warning') notificar('warning', n.mensaje, 'Advertencia', 6000);
+                });
+            }
+
+            setNotificaciones(lista);
+        } catch (error) {
+            console.error('No se pudieron cargar las notificaciones', error);
+        }
+    }, [notificar]);
+
+    useEffect(() => {
+        cargarNotificaciones();
+        const intervalo = setInterval(cargarNotificaciones, 15000);
+        return () => clearInterval(intervalo);
+    }, [cargarNotificaciones]);
+
+    // Se refresca al instante cuando cualquier acción termina bien (lo avisa api/axios.js)
+    useEffect(() => {
+        window.addEventListener('notificaciones:actualizar', cargarNotificaciones);
+        return () => window.removeEventListener('notificaciones:actualizar', cargarNotificaciones);
+    }, [cargarNotificaciones]);
+
+    const marcarTodas = async () => {
+        try {
+            await marcarTodasComoLeidas();
+        } catch (error) {
+            console.error('No se pudieron marcar como leídas', error);
+        }
+        cargarNotificaciones();
+    };
+
+    const marcarUna = async (id) => {
+        setNotificaciones((prev) => prev.map((n) => (n.id === id ? { ...n, leida: true } : n)));
+        try {
+            await marcarComoLeida(id);
+        } catch (error) {
+            console.error('No se pudo marcar como leída', error);
+            cargarNotificaciones();
+        }
+    };
 
     return (
         <div className="app-layout" onClick={() => { setOpenPerfil(false); setOpenAlertas(false); }}>
@@ -51,10 +116,6 @@ function AppLayout({ children }) {
                 </div>
 
                 <nav className="derecha">
-                    <button className="bell-btn" id="btnCampana" title="Notificaciones" onClick={(e) => { e.stopPropagation(); setOpenAlertas(!openAlertas); setOpenPerfil(false); }}>
-                        <i className="fa-solid fa-bell"></i>
-                        <span className={`bell-badge ${removeBellBadge ? "remove" : ""}`} id="bellBadge">5</span>
-                    </button>
 
                     <button className="profile-btn" id="btnPerfil" title="Perfil" onClick={(e) => { e.stopPropagation(); setOpenPerfil(!openPerfil); setOpenAlertas(false); }}>
                         <img
@@ -69,29 +130,14 @@ function AppLayout({ children }) {
                         </div>
                     </button>
 
-                    {/* OVERLAY ALERTAS */}
-                    <div className={`overlay-panel ${openAlertas ? "open" : ""}`} id="overlayAlertas">
-                        <div className="alerts-header">
-                            <h3>
-                                <i className="fa-solid fa-bell"></i>
-                                Alertas del sistema
-                            </h3>
-                            <Boton
-                                clase="mark-all"
-                                texto="Marcar todas como leídas"
-                                title="Eliminar"
-                                onClick={(e) => { e.stopPropagation(); setRemoveBellBadge(!removeBellBadge); }}
-                            />
-                        </div>
-                        <div className="alerts-footer">
-                            <BotonLink
-                                link="/Alerts"
-                                clase="btn-azul"
-                                icono="fa-solid fa-triangle-exclamation"
-                                texto="Alertas"
-                            />
-                        </div>
-                    </div>
+                    <CampanaNotificaciones
+                    notificaciones={notificaciones}
+                    abierto={openAlertas}
+                    onToggle={() =>  { setOpenAlertas(!openAlertas); setOpenPerfil(false); }}
+                    onCerrar={() => setOpenAlertas(false)}
+                    onMarcarTodas={marcarTodas}
+                    onMarcarUna={marcarUna}
+                    />
 
                     {/* OVERLAY PERFIL */}
                     <div className={`overlay-panel ${openPerfil ? "open" : ""}`} id="overlayPerfil">
@@ -254,7 +300,7 @@ function AppLayout({ children }) {
             <main id="contenido" className={`contenido ${cerrado ? "cerrado" : ""}`}>
                 {children ?? <Outlet />}
             </main>
-
+            <IAMantia/>
            <AccessibilityPanel />
 
             <footer className="footer">
