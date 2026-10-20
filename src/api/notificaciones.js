@@ -8,7 +8,3 @@ export async function obtenerNotificaciones() {
 export async function marcarComoLeida(id) {
     await api.post(`/api/notificaciones/${id}/leer`);
 }
-
-export async function marcarTodasComoLeidas() {
-    await api.post('/api/notificaciones/leer-todas');
-}

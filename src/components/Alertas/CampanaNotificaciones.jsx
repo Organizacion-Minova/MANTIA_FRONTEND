@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import PanelNotificaciones from "./PanelNotificaciones";
 import "../../styles/Alerts/notificaciones-sistema.css";
 
-function CampanaNotificaciones({ notificaciones, abierto, onToggle, onCerrar, onMarcarTodas, onMarcarUna }) {
+function CampanaNotificaciones({ notificaciones, abierto, onToggle, onCerrar, onMarcarTodas }) {
     const campanaRef = useRef(null);
     const [animarCampana, setAnimarCampana] = useState(false);
     const [animarPanel, setAnimarPanel] = useState(false);
@@ -47,9 +47,9 @@ function CampanaNotificaciones({ notificaciones, abierto, onToggle, onCerrar, on
             <button className={`bell-btn ${animarCampana ? "trigger-campana" : ""}`} id="btnCampana" title="Alertas"
                 onClick={manejarClicCampana} onAnimationEnd={() => setAnimarCampana(false)}>
                 <i className="fa-solid fa-bell"></i>
-                {pendientes > 0 && <span className="bell-badge" id="bellBadge">{pendientes > 9 ? "9+" : pendientes}</span>}
+                {pendientes > 0 && <span className="bell-badge" id="bellBadge">{pendientes}</span>}
             </button>
-            <PanelNotificaciones abierto={abierto} animar={animarPanel} notificaciones={notificaciones} onMarcarTodas={onMarcarTodas} onMarcarUna={onMarcarUna} onCerrar={onCerrar} />
+            <PanelNotificaciones abierto={abierto} animar={animarPanel} notificaciones={notificaciones} onMarcarTodas={onMarcarTodas} />
         </div>
     );
 }
