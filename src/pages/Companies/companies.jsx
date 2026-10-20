@@ -4,6 +4,8 @@ import { Boton } from "../../components/common/Button";
 import { Form, Text } from '../../components/common/forms';
 import { obtenerEmpresas, guardarEmpresa, actualizarEmpresa, eliminarEmpresa } from "../../api/company";
 import { useSearch } from "../../hooks/useSearch";
+import LoadingScreen from "../../components/LoadingScreen";
+import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
 
 function Formulario({ onCancel, onSuccess, empresaEditar = null }) {
     const [formData, setFormData] = useState({
@@ -32,7 +34,7 @@ function Formulario({ onCancel, onSuccess, empresaEditar = null }) {
 
         try {
             if (isEditing) {
-                await actualizarEmpresa(empresaEditar.tax_id, formData);
+                await actualizarEmpresa(empresaEditar.id, formData);
             } else {
                 await guardarEmpresa(formData);
             }
@@ -133,6 +135,11 @@ function Empresas() {
         ['nit', 'name', 'phone', 'email', 'address']
     );
 
+    const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(empresasFiltradas, 7);
+    useEffect(() => {
+        setPaginaActual(1);
+    }, [busqueda, setPaginaActual]);
+
     const cargarLista = async () => {
         setCargando(true);
         try {
@@ -174,6 +181,7 @@ function Empresas() {
         }
     };
 
+    if (cargando) return <LoadingScreen indeterminado/>
     return (
         <div className="list-grid">
             <header className="bienvenida">
@@ -204,9 +212,9 @@ function Empresas() {
                             <tr>
                                 <td colSpan="6" style={{ textAlign: "center" }}>Cargando empresas...</td>
                             </tr>
-                        ) : empresasFiltradas.length > 0 ? (
-                            empresasFiltradas.map((emp) => (
-                                <tr key={emp.tax_id}>
+                        ) : datosPagina.length > 0 ? (
+                            datosPagina.map((emp) => (
+                                <tr key={emp.id}>
                                     <td>{emp.nit}</td>
                                     <td>{emp.name}</td>
                                     <td>{emp.phone}</td>
@@ -227,7 +235,7 @@ function Empresas() {
                                             />
                                             <Boton
                                                 clase="btn-azul"
-                                                onClick={() => handleEliminar(emp.tax_id)}
+                                                onClick={() => handleEliminar(emp.id)}
                                                 title="Eliminar registro"
                                                 icono="fa-solid fa-trash"
                                             />
@@ -245,7 +253,8 @@ function Empresas() {
                     </tbody>
                 </table>
             </div>
-            <div className="btn-container">
+            <div className="btn-container-page">
+                <div className="btn-container">
                 <Boton
                     clase="btn-azul"
                     texto="Nueva Empresa"
@@ -253,14 +262,20 @@ function Empresas() {
                     onClick={handleCrear}
                     title="Registrar nueva empresa"
                 />
-                {mostrarFormulario && (
-                    <Formulario
-                        empresaEditar={empresaAEditar}
-                        onCancel={() => setMostrarFormulario(false)}
-                        onSuccess={cargarLista}
-                    />
-                )}
+                </div>
+                <Paginacion
+                    paginaActual={paginaActual}
+                    totalPaginas={totalPaginas}
+                    setPaginaActual={setPaginaActual}
+                />
             </div>
+            {mostrarFormulario && (
+                <Formulario
+                    empresaEditar={empresaAEditar}
+                    onCancel={() => setMostrarFormulario(false)}
+                    onSuccess={cargarLista}
+                />
+            )}
         </div>
     );
 }

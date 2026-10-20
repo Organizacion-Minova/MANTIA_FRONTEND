@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { PhotoIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import { ChevronDownIcon } from '@heroicons/react/16/solid';
 import { Boton } from '../../components/common/Button.jsx';
@@ -127,31 +128,83 @@ export function Select({ label, id, name, value, onChange, opciones = [], requir
 }
 
 // Carga de archivos
-export function Dropzone({ label, id, name, onChange, ayuda = "PNG, JPG, PDF hasta 10MB", required = false }) {
+export function Dropzone({
+    label,
+    id,
+    name,
+    onChange,
+    onFileDrop,
+    onRemove,
+    preview,
+    previewAlt = "Vista previa del archivo",
+    previewLabel,
+    error,
+    ayuda = "PNG, JPG, PDF hasta 10MB",
+    required = false,
+    accept
+}) {
+    const inputRef = useRef(null);
+
     return (
         <div className="form-field-wrapper">
             <label htmlFor={id} className="form-label">
                 {label} {required && <span className="form-required-star">*</span>}
             </label>
-            <div className="form-dropzone-container">
-                <div>
-                    <PhotoIcon aria-hidden="true" className="form-dropzone-icon" />
-                    <div className="form-dropzone-text-group">
-                        <label htmlFor={id} className="form-dropzone-label">
-                        <span>Subir un archivo</span>
-                        <input
-                            id={id}
-                            name={name}
-                            type="file"
-                            onChange={onChange}
-                            className="sr-only"
-                            required={required}
-                        />
-                        </label>
-                        <p className="form-dropzone-subtext">o arrastrar y soltar</p>
+            <div
+                className="form-dropzone-container"
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                    e.preventDefault();
+                    onFileDrop?.(e);
+                }}
+            >
+                {preview ? (
+                    <div className="form-dropzone-preview">
+                        <img src={preview} alt={previewAlt} />
+                        <div className="form-dropzone-preview-details">
+                            <p>{previewLabel}</p>
+                            <label htmlFor={id} className="form-dropzone-label">
+                                Cambiar imagen
+                            </label>
+                        </div>
+                        {onRemove && (
+                            <button
+                                type="button"
+                                className="form-dropzone-remove"
+                                onClick={() => {
+                                    if (inputRef.current) inputRef.current.value = "";
+                                    onRemove();
+                                }}
+                                aria-label="Quitar imagen seleccionada"
+                            >
+                                <XMarkIcon aria-hidden="true" />
+                                Quitar
+                            </button>
+                        )}
                     </div>
-                    <p className="form-dropzone-help">{ayuda}</p>
-                </div>
+                ) : (
+                    <div className="form-dropzone-empty">
+                        <PhotoIcon aria-hidden="true" className="form-dropzone-icon" />
+                        <div className="form-dropzone-text-group">
+                            <label htmlFor={id} className="form-dropzone-label">
+                                Subir un archivo
+                            </label>
+                            <p className="form-dropzone-subtext">o arrastrar y soltar</p>
+                        </div>
+                    </div>
+                )}
+                <input
+                    ref={inputRef}
+                    id={id}
+                    name={name}
+                    type="file"
+                    accept={accept}
+                    onChange={onChange}
+                    className="sr-only"
+                    required={required}
+                />
+                <p className="form-dropzone-help">{ayuda}</p>
+                {error && <p className="form-dropzone-error" role="alert">{error}</p>}
             </div>
         </div>
     );

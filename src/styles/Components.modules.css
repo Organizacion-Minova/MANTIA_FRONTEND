@@ -185,6 +185,28 @@ main.cerrado{
     border: solid 2px var(--borde-contenedor);
 }
 
+.equipment-image-container{
+    width:100%;
+    height:20rem;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+}
+
+.equipment-image-container img{
+    display:block;
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+@media (max-width:767px){
+    .equipment-image-container{
+        height:15rem;
+    }
+}
+
 .card:hover{
     box-shadow: var(--sombra-contenedor-hover);
 }
@@ -366,4 +388,3 @@ main.cerrado{
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
 }
-

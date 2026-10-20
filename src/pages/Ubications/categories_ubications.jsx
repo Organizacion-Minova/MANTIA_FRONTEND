@@ -4,6 +4,8 @@ import { PageWelcome, Searcher } from "../../components/common/welcome";
 import { Form, Text, Textarea } from "../../components/common/forms";
 import { obtenerCategoriasUbicacion, guardarCategoriaUbicacion, actualizarCategoriaUbicacion, eliminarCategoriaUbicacion } from "../../api/locationCategory";
 import { useSearch } from "../../hooks/useSearch";
+import LoadingScreen from "../../components/LoadingScreen";
+import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
 
 function Formulario({ onCancel, onSuccess, categoriaEditar = null }) {
     const [formData, setFormData] = useState({
@@ -95,6 +97,11 @@ function CategoriasUbicacion() {
         ['name', 'description']
     );
 
+    const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(categoriasFiltradas, 7);
+    useEffect(() => {
+        setPaginaActual(1);
+    }, [busqueda, setPaginaActual]);
+
     const cargarLista = async () => {
         setCargando(true);
         try {
@@ -136,6 +143,7 @@ function CategoriasUbicacion() {
         }
     };
 
+    if (cargando) return <LoadingScreen indeterminado/>
     return (
         <div className="list-grid">
             <header className="bienvenida">
@@ -163,8 +171,8 @@ function CategoriasUbicacion() {
                             <tr>
                                 <td colSpan="3" style={{ textAlign: "center" }}>Cargando categorías...</td>
                             </tr>
-                        ) : categoriasFiltradas.length > 0 ? (
-                            categoriasFiltradas.map((cat) => (
+                        ) : datosPagina.length > 0 ? (
+                            datosPagina.map((cat) => (
                                 <tr key={cat.id}>
                                     <td>{cat.name}</td>
                                     <td>{cat.description}</td>
@@ -196,20 +204,27 @@ function CategoriasUbicacion() {
                     </tbody>
                 </table>
             </div>
-            <div className="btn-container">
-                <Boton
-                    clase="btn-azul"
-                    icono="fa-solid fa-plus"
-                    texto="Nueva Categoría"
-                    onClick={handleCrear}
-                    titulo="Registrar nueva categoría"
-                />
-                <BotonLink
-                    link="/ubications"
-                    clase="btn-2"
-                    icono="fa-solid fa-list"
-                    texto="Volver a Ubicaciones"
-                    titulo="Ir a la página de Ubicaciones"
+            <div className="btn-container-page">
+                <div className="btn-container">
+                    <Boton
+                        clase="btn-azul"
+                        icono="fa-solid fa-plus"
+                        texto="Nueva Categoría"
+                        onClick={handleCrear}
+                        titulo="Registrar nueva categoría"
+                    />
+                    <BotonLink
+                        link="/ubications"
+                        clase="btn-2"
+                        icono="fa-solid fa-list"
+                        texto="Volver a Ubicaciones"
+                        titulo="Ir a la página de Ubicaciones"
+                    />
+                </div>
+                <Paginacion
+                    paginaActual={paginaActual}
+                    totalPaginas={totalPaginas}
+                    setPaginaActual={setPaginaActual}
                 />
             </div>
             {mostrarFormulario && (

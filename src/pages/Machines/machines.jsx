@@ -1,22 +1,193 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Boton,BotonLink } from "../../components/common/Button";
 import {PageWelcome,Searcher} from "../../components/common/welcome";
 import { Form, Text, Textarea, Dropzone, Select, Date } from '../../components/common/forms';
-function Formulario({onCancel}){
+import LoadingScreen from "../../components/LoadingScreen";
+import { GetCategoryMachine ,GetMachine, CreateMachine, UpdateMachine, DeleteMachine } from "../../api/machinesapi";
+import { obtenerUbicaciones } from "../../api/location";
+import { obtenerEmpresas } from "../../api/company";
+import { usePaginacion,Paginacion } from "../../components/common/Paginacion";
+import { useSearch } from "../../hooks/useSearch";
+
+const valorSelect = (valor) => (valor == null ? "" : String(valor));
+const valorOperacion = (valor) => {
+    if (valor === true || valor === 1 || valor === "1" || valor === "yes" || valor === "true") return "1";
+    if (valor === false || valor === 0 || valor === "0" || valor === "no" || valor === "false") return "0";
+    return valorSelect(valor);
+};
+
+function Formulario({onCancel, onGuardado, maquinaEditar}){
+    const esEdicion=maquinaEditar!=null;
+    const [codigo, setCodigo] = useState(maquinaEditar?.code || "");
+    const [nombre, setNombre] = useState(maquinaEditar?.name || "");
+    const [modelo, setModelo] = useState(maquinaEditar?.model || "");
+    const [numeroSerie, setNumeroSerie] = useState(maquinaEditar?.serial_number || "");
+    const [fechaAdquisicion, setFechaAdquisicion] = useState(maquinaEditar?.acquisition_date || "");
+    const [costoAdquisicion, setCostoAdquisicion] = useState(maquinaEditar?.acquisition_cost || "");
+    const [estado, setEstado] = useState(maquinaEditar?.status || "");
+    const [garantia, setGarantia] = useState(maquinaEditar?.warranty || "");
+    const [archivoImagen, setArchivoImagen] = useState(null);
+    const [categoriaid, setCategoriaid] = useState(valorSelect(maquinaEditar?.category_maquina?.id ?? maquinaEditar?.category_id));
+    const [locationid, setLocationid] = useState(valorSelect(maquinaEditar?.ubicacion?.id ?? maquinaEditar?.location?.id ?? maquinaEditar?.location_id));
+    const [companyid, setCompanyid] = useState(valorSelect(maquinaEditar?.company?.id ?? maquinaEditar?.company_id));
+    const [responsable, setResponsable] = useState(maquinaEditar?.responsible || "");
+    const [usoMaquina, setUsoMaquina] = useState(maquinaEditar?.machine_usage || "");
+    const [maquinaEnOperacion, setMaquinaEnOperacion] = useState(valorOperacion(maquinaEditar?.in_operation));
+    const [caracteristicas, setCaracteristicas] = useState(maquinaEditar?.characteristics || "");
+    const [categorias,setCategorias]=useState([]);
+    const [ubicaciones, setUbicaciones] = useState([]);
+    const [empresas, setEmpresas] = useState([]);
+    const [errorImagen, setErrorImagen] = useState("");
+    const [vistaPrevia, setVistaPrevia] = useState(null);
+    const [errores, setErrores] = useState({});
+    const [mensajeError, setMensajeError] = useState("");
+    const imagenActual = maquinaEditar?.image || null;
+
+    useEffect(()=>{
+        GetCategoryMachine()
+            .then((data) => setCategorias(Array.isArray(data) ? data : []))
+            .catch((error) => console.error("Error al traer categorías de máquinas:", error));
+        obtenerUbicaciones()
+            .then((data) => setUbicaciones(Array.isArray(data?.ubicaciones) ? data.ubicaciones : []))
+            .catch((error) => console.error("Error al traer ubicaciones:", error));
+        obtenerEmpresas()
+            .then((data) => setEmpresas(Array.isArray(data) ? data : []))
+            .catch((error) => console.error("Error al traer empresas:", error));
+    }, [])
+
+    useEffect(()=>{
+        return () => {
+            if (vistaPrevia) URL.revokeObjectURL(vistaPrevia);
+        };
+    }, [vistaPrevia])
+    const handleImagen = (e) => {
+        const archivo = e.target?.files?.[0] || e.dataTransfer?.files?.[0];
+        if (!archivo) return;
+
+        if (!archivo.type.startsWith("image/")) {
+            setErrorImagen("Seleccione un archivo de imagen válido.");
+            setArchivoImagen(null);
+            setVistaPrevia(null);
+            if (e.target) e.target.value = "";
+            return;
+        }
+
+        if (archivo.size > 10 * 1024 * 1024) {
+            setErrorImagen("La imagen no puede superar los 10 MB.");
+            setArchivoImagen(null);
+            setVistaPrevia(null);
+            if (e.target) e.target.value = "";
+            return;
+        }
+
+        setErrorImagen("");
+        setArchivoImagen(archivo);
+        setVistaPrevia(URL.createObjectURL(archivo));
+    };
+    const handleQuitarImagen = () => {
+        setArchivoImagen(null);
+        setVistaPrevia(null);
+        setErrorImagen("");
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setErrores({});
+        setMensajeError("");
+        if (!esEdicion && !archivoImagen) {
+            setErrorImagen("Debe seleccionar una imagen.");
+            return;
+        }
+        if (esEdicion){
+            const sincambios=
+                codigo===maquinaEditar.code &&
+                nombre===maquinaEditar.name &&
+                modelo===maquinaEditar.model &&
+                numeroSerie===maquinaEditar.serial_number &&
+                fechaAdquisicion===maquinaEditar.acquisition_date &&
+                costoAdquisicion===maquinaEditar.acquisition_cost &&
+                estado===maquinaEditar.status &&
+                garantia===maquinaEditar.warranty &&
+                categoriaid===valorSelect(maquinaEditar.category_maquina?.id ?? maquinaEditar.category_id) &&
+                locationid===valorSelect(maquinaEditar.ubicacion?.id ?? maquinaEditar.location?.id ?? maquinaEditar.location_id) &&
+                companyid===valorSelect(maquinaEditar.company?.id ?? maquinaEditar.company_id) &&
+                responsable===maquinaEditar.responsible &&
+                caracteristicas===maquinaEditar.characteristics &&
+                usoMaquina===maquinaEditar.machine_usage &&
+                maquinaEnOperacion===valorOperacion(maquinaEditar.in_operation) &&
+                !archivoImagen;
+            if (sincambios){
+                onCancel();
+                return;
+            }
+
+        }
+        const datos = new FormData();
+            datos.append("code", codigo);
+            datos.append("name", nombre);
+            datos.append("model", modelo);
+            datos.append("serial_number", numeroSerie);
+            datos.append("acquisition_date", fechaAdquisicion);
+            datos.append("acquisition_cost", costoAdquisicion);
+            datos.append("status", estado);
+            datos.append("warranty", garantia);
+            datos.append("machine_category_id", categoriaid);
+            datos.append("location_id", locationid);
+            datos.append("company_id", companyid);
+            datos.append("responsible", responsable);
+            datos.append("machine_usage", usoMaquina);
+            datos.append("in_operation", maquinaEnOperacion);
+            datos.append("characteristics", caracteristicas);
+            if (archivoImagen) datos.append("image", archivoImagen);
+        try {
+            if (esEdicion){
+                await UpdateMachine(maquinaEditar.id, datos);
+            } else {
+                await CreateMachine(datos);
+            }
+            onGuardado();
+            onCancel();
+        } catch (error) {
+            const respuesta = error.response?.data;
+            if (respuesta?.errors && typeof respuesta.errors === "object") {
+                setErrores(respuesta.errors);
+                setMensajeError(respuesta.message || "El servidor rechazó algunos datos.");
+                console.error("Error de validación al guardar la máquina:", JSON.stringify(respuesta, null, 2));
+            } else {
+                console.error("Error al guardar la maquina:", respuesta || error.message);
+                setMensajeError(respuesta?.message || "No se pudo guardar la máquina. Intente de nuevo.");
+            }
+        }
+    }
     return(
         <Form
-            titulo="Agregar nueva maquina"
-            descripcion="Ingrese los datos de la nueva maquina"
+            titulo={esEdicion?"Editar Maquina":"Agregar nueva Maquina"}
+            descripcion={esEdicion?"Ingrese los datos que desea editar":"Ingrese los datos de la nueva maquina"}
             onCancel={onCancel}
             textoBoton="Guardar"
             iconoBoton="fa-solid fa-floppy-disk"
+            onSubmit={handleSubmit}
         >
+            {(mensajeError || Object.entries(errores).length > 0) && (
+                <div className="col-span-6" role="alert">
+                    {mensajeError && <p>{mensajeError}</p>}
+                    {Object.entries(errores).map(([campo, mensajes]) => (
+                        <p key={campo}>{campo}: {
+                            Array.isArray(mensajes)
+                                ? mensajes.map((mensaje) => typeof mensaje === "string" ? mensaje : JSON.stringify(mensaje)).join(" ")
+                                : typeof mensajes === "string" ? mensajes : JSON.stringify(mensajes)
+                        }</p>
+                    ))}
+                </div>
+            )}
             <div className="col-span-3">
                 <Text
                     label="Código:"
                     id="codigo"
                     name="codigo"
                     placeholder="Código de la máquina"
+                    value={codigo}
+                    onChange={(e) => setCodigo(e.target.value)}
                     required
                 />
             </div>
@@ -26,6 +197,8 @@ function Formulario({onCancel}){
                     id="nombre"
                     name="nombre"
                     placeholder="Nombre de la máquina"
+                    value={nombre}
+                    onChange={(e) => setNombre(e.target.value)}
                     required
                 />
             </div>
@@ -35,6 +208,8 @@ function Formulario({onCancel}){
                     id="modelo"
                     name="modelo"
                     placeholder="Modelo de la máquina"
+                    value={modelo}
+                    onChange={(e) => setModelo(e.target.value)}
                     required
                 />
             </div>
@@ -43,7 +218,9 @@ function Formulario({onCancel}){
                     label="Marca:"
                     id="marca"
                     name="marca"
-                    opciones={["Seleccione una marca"]}
+                    value={companyid}
+                    onChange={(e) => setCompanyid(e.target.value)}
+                    opciones={[{valor:"", etiqueta:"Seleccione una marca"},...empresas.map((u)=>({valor: u.id, etiqueta: u.name}))]}
                     required
                 />
             </div>
@@ -53,7 +230,9 @@ function Formulario({onCancel}){
                     id="serie"
                     name="serie"
                     placeholder="Número de serie"
-                    required 
+                    value={numeroSerie}
+                    onChange={(e) =>setNumeroSerie(e.target.value)}
+                    required
                 />
             </div>
             <div className="col-span-3">
@@ -61,7 +240,9 @@ function Formulario({onCancel}){
                     label="Ubicacion: "
                     id="ubicacion"
                     name="ubicacion"
-                    opciones={["Selecciona una ubicacion"]}
+                    value={locationid}
+                    onChange={(e) => setLocationid(e.target.value)}
+                    opciones={[{valor:"", etiqueta:"Seleccione una ubicacion"},...ubicaciones.map((u)=>({valor: u.id, etiqueta: u.name}))]}
                     required
                 />
             </div>
@@ -71,6 +252,8 @@ function Formulario({onCancel}){
                     id="usoMaquina"
                     name="usoMaquina"
                     placeholder="Uso de la maquina"
+                    value={usoMaquina}
+                    onChange={(e) => setUsoMaquina(e.target.value)}
                     required
                 />
             </div>
@@ -80,6 +263,8 @@ function Formulario({onCancel}){
                     id="responsable"
                     name="responsable"
                     placeholder="Ingresa el responsable"
+                    value={responsable}
+                    onChange={(e) => setResponsable(e.target.value)}
                     required
                 />
             </div>
@@ -88,6 +273,8 @@ function Formulario({onCancel}){
                     label="Fecha de adquisición:"
                     id="fechaAdquisicion"
                     name="fechaAdquisicion"
+                    value={fechaAdquisicion}
+                    onChange={(e) => setFechaAdquisicion(e.target.value)}
                     required
                 />
             </div>
@@ -98,6 +285,8 @@ function Formulario({onCancel}){
                     name="costoAdquisicion"
                     type="number"
                     placeholder="Costo de adquisición"
+                    value={costoAdquisicion}
+                    onChange={(e) => setCostoAdquisicion(e.target.value)}
                     required
                 />
             </div>
@@ -106,7 +295,14 @@ function Formulario({onCancel}){
                     label="Estado:"
                     id="estado"
                     name="estado"
-                    opciones={["Seleccione una opcion", "Activo", "Mantenimiento", "Fuera de servicio", "Inactivo"]}
+                    value={estado}
+                    onChange={(e) => setEstado(e.target.value)}
+                    opciones={[
+                        {valor:"", etiqueta:"Seleccione un estado"},
+                        {valor:"active", etiqueta:"Activo"},
+                        {valor:"inactive", etiqueta:"Inactivo"},
+                        {valor:"maintenance", etiqueta:"Mantenimiento"}
+                    ]}
                     required
                 />
             </div>
@@ -115,7 +311,13 @@ function Formulario({onCancel}){
                     label="Maquina en operación:"
                     id="maquinaenoperacion"
                     name="maquinaenoperacion"
-                    opciones={["Seleccione una opción", "Si", "No"]}
+                    value={maquinaEnOperacion}
+                    onChange={(e) => setMaquinaEnOperacion(e.target.value)}
+                    opciones={[
+                        {valor:"", etiqueta:"Seleccione una opción"},
+                        {valor:"1", etiqueta:"Sí"},
+                        {valor:"0", etiqueta:"No"}
+                    ]}
                     required
                 />
             </div>
@@ -126,6 +328,8 @@ function Formulario({onCancel}){
                     name="garantia"
                     type="number"
                     placeholder="Garantía en meses"
+                    value={garantia}
+                    onChange={(e) => setGarantia(e.target.value)}
                     required
                 />
             </div>
@@ -134,7 +338,12 @@ function Formulario({onCancel}){
                     label="Categoría:"
                     id="categoria"
                     name="categoria"
-                    opciones={["Seleccione una categoria"]}
+                    value={categoriaid}
+                    onChange={(e) => setCategoriaid(e.target.value)}
+                    opciones={[
+                        {valor:"", etiqueta:"Seleccione una categoría"},
+                        ...categorias.map((cat) => ({valor: valorSelect(cat.id), etiqueta: cat.name}))
+                    ]}
                     required
                 />
             </div>
@@ -145,6 +354,8 @@ function Formulario({onCancel}){
                     name="caracteristicas"
                     placeholder="Características de la maquina"
                     rows="4"
+                    value={caracteristicas}
+                    onChange={(e) => setCaracteristicas(e.target.value)}
                     required
                 />
             </div>
@@ -153,8 +364,16 @@ function Formulario({onCancel}){
                     label="Imagen:"
                     id="imagen"
                     name="imagen"
-                    ayuda="PNG, JPG, PDF hasta 10MB"
-                    required
+                    accept="image/*"
+                    ayuda="Formatos de imagen, hasta 10 MB"
+                    onChange={handleImagen}
+                    onFileDrop={handleImagen}
+                    onRemove={archivoImagen ? handleQuitarImagen : undefined}
+                    preview={vistaPrevia || imagenActual}
+                    previewAlt="Vista previa de la imagen del equipo"
+                    previewLabel={archivoImagen?.name || "Imagen actual"}
+                    error={errorImagen}
+                    required={!esEdicion && !archivoImagen}
                 />
             </div>
         </Form>
@@ -163,6 +382,86 @@ function Formulario({onCancel}){
 }
 function Maquinas(){
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
+    let [maquina, setMaquina]=useState([])
+    const [maquinaEditar, setMaquinaEditar]=useState(null);
+    const [cargando, setCargando]=useState(true)
+    maquina.map((maquina)=>({
+        ...maquina,
+        categoriaBusqueda: maquina.category_maquina?.name || "",
+        marcaBusqueda: maquina.company?.name || "",
+        ubicacionBusqueda: maquina.ubicacion?.name || ""
+    }));
+    const { busqueda, setBusqueda, filtrosEspeciales, setFiltroEspecial, itemsFiltrados: maquinasFiltrados } = useSearch(
+        maquina,
+        ["code","name","responsible","model","ubicacionBusqueda","marcaBusqueda"]
+    );
+    const marcasUnicas = Array.from(
+        new Map(
+            maquina
+                .filter((maquina) => maquina.company?.id != null)
+                .map((maquina) => [
+                    String(maquina.company.id),
+                    { valor: maquina.company.id, etiqueta: maquina.company.name },
+                ])
+        ).values()
+    );
+    const ubicacionesUnicas = Array.from(
+        new Map(
+            maquina
+                .filter((maquina) => maquina.ubicacion?.id != null)
+                .map((maquina) => [
+                    String(maquina.ubicacion.id),
+                    { valor: maquina.ubicacion.id, etiqueta: maquina.ubicacion.name },
+                ])
+        ).values()
+    );
+    const categoriasUnicas = Array.from(
+        new Map(
+            maquina
+                .filter((maquina) => maquina.category_maquina?.id != null)
+                .map((maquina) => [
+                    String(maquina.category_maquina.id),
+                    { valor: maquina.category_maquina.id, etiqueta: maquina.category_maquina.name },
+                ])
+        ).values()
+    );
+    const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(maquinasFiltrados, 7  );
+    const cargarMaquinas = () =>{
+        setCargando(true);
+        GetMachine()
+            .then((data) => {
+                setMaquina(data);
+            })
+            .catch((error) => {
+                console.error("Error al cargar las maquinas:", error);
+
+            })
+            .finally(() => setCargando(false));
+    }
+    useEffect(()=>{
+        cargarMaquinas()
+    },[])
+    const handleEliminar = async (id) =>{
+        let confirmar= window.confirm("¿Seguro que quieres eliminar esta maquina?")
+        if (!confirmar)
+            return
+        try {
+            await DeleteMachine(id)
+            cargarMaquinas()
+        }
+        catch (error){
+            console.error("Error al eliminar categoría:", error);
+        }
+    }
+    const handleAbrirCrear=()=>{
+        setMaquinaEditar(null);
+        setMostrarFormulario(true);
+    }
+    const handleAbrirEditar=(maquina)=>{
+        setMaquinaEditar(maquina);
+        setMostrarFormulario(true);
+    }
+    if (cargando) return <LoadingScreen indeterminado/>
     return(
         <div className="list-grid">
             <header className="bienvenida">
@@ -170,16 +469,55 @@ function Maquinas(){
                     titulo="MAQUINAS"
                     descripcion="Este es el formato de las máquinas."
                 />
-                <Searcher/>
+                <Searcher
+                    value={busqueda}
+                    onChange={(e)=>setBusqueda(e.target.value)}
+                    placeholder="Buscar por codigo, nombre, responsable, modelo, ubicacion o empresa"
+                    filtrosAdicionales={
+                        <div className="btn-container">
+                            <Select
+                                id="filtro-categoria"
+                                name="filtro-categoria"
+                                value={filtrosEspeciales.machine_category_id || ""}
+                                onChange={(e) => setFiltroEspecial("machine_category_id", e.target.value)}
+                                opciones={[
+                                    { valor: "", etiqueta: "Todas las categorías" },
+                                    ...categoriasUnicas,
+                                ]}
+                            />
+                            <Select
+                                id="filtro-ubicacion"
+                                name="filtro-ubicacion"
+                                value={filtrosEspeciales.location_id || ""}
+                                onChange={(e) => setFiltroEspecial("location_id", e.target.value)}
+                                opciones={[
+                                    { valor: "", etiqueta: "Todas las ubicaciones" },
+                                    ...ubicacionesUnicas,
+                                ]}
+                            
+                            />
+                            <Select
+                                id="filtro-marca"
+                                name="filtro-marca"
+                                value={filtrosEspeciales.company_id || ""}
+                                onChange={(e) => setFiltroEspecial("company_id", e.target.value)}
+                                opciones={[
+                                    { valor: "", etiqueta: "Todas las marcas" },
+                                    ...marcasUnicas,
+                                ]}
+                            
+                            />
+                    </div>}
+                />
             </header>
             <div className="table-responsive">
                 <table className="table">
                         <thead>
                             <tr>
-                                <th>Nombre</th>
-                                <th>Código</th>
+                            <th>Código</th>
+                            <th>Nombre</th>
                             <th>Número de serie</th>
-                            <th>Tipo</th>
+                            <th>Categoria</th>
                             <th>Marca</th>
                             <th>Ubicación</th>
                             <th>Estado</th>
@@ -187,50 +525,70 @@ function Maquinas(){
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Dante</td>
-                            <td>666</td>
-                            <td>que es eso</td>
-                            <td>Cazador de demonios</td>
-                            <td>Capcom</td>
-                            <td>Infierno</td>
-                            <td>Papucho</td>
-                            <td>
-                            <BotonLink
-                                link="/machines/cardmachine"
-                                clase="btn-azul"
-                                icono="fa-solid fa-eye"
-                                titulo="Ver detalles de la máquina"
-                            />
-                            <Boton
-                                clase="btn-2"
-                                icono="fa-solid fa-edit"
-                                titulo="Editar máquina"
-                            />
-                            </td>
-                        </tr>
+                        {datosPagina.map((m) => (
+                            <tr key={m.id}>
+                                <td>{m.code}</td>
+                                <td>{m.name}</td>
+                                <td>{m.serial_number}</td>
+                                <td>{m.category_maquina?.name||""}</td>
+                                <td>{m.company?.name||""}</td>
+                                <td>{m.ubicacion?.name||""}</td>
+                                <td>{m.status==="active"?"Activo":m.status==="inactive"?"Inactivo":m.status==="maintenance"?"En mantenimiento":"Desconocido"}</td>
+                                <td>
+                                <BotonLink
+                                    link={`/machines/cardmachine/${m.id}`}
+                                    clase="btn-azul"
+                                    icono="fa-solid fa-eye"
+                                    titulo="Ver detalles de la máquina"
+                                />
+                                <Boton
+                                    clase="btn-2"
+                                    icono="fa-solid fa-edit"
+                                    onClick={()=>handleAbrirEditar(m)}
+                                    titulo="Editar máquina"
+                                />
+                                <Boton
+                                    clase="btn-2"
+                                    icono="fa-solid fa-trash"
+                                    onClick={() => handleEliminar(m.id)}
+                                    titulo="Eliminar equipo"
+                                />
+                                </td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
             </div>
-            <div className="btn-container">
-                <BotonLink
-                    link="/machines/categoriesmachines"
-                    clase="btn-2"
-                    texto="Categorias Maquinas"
-                    icono="fa-solid fa-list"
-                    titulo="Volver a categorias de maquinas"
+            <div className="btn-container-page">
+                <div className="btn-container">
+                    <BotonLink
+                        link="/machines/categoriesmachines"
+                        clase="btn-2"
+                        texto="Categorias Maquinas"
+                        icono="fa-solid fa-list"
+                        titulo="Volver a categorias de maquinas"
+                    />
+                    <Boton
+                        clase="btn-azul"
+                        icono="fa-solid fa-plus"
+                        texto="Nueva Máquina"
+                        onClick={handleAbrirCrear}
+                        titulo="Agregar nueva maquina"
+                    />
+                </div>
+                <Paginacion
+                    paginaActual={paginaActual}
+                    totalPaginas={totalPaginas}
+                    setPaginaActual={setPaginaActual}
                 />
-                <Boton
-                    clase="btn-azul"
-                    icono="fa-solid fa-plus"
-                    texto="Nueva Máquina"
-                    onClick={() => setMostrarFormulario(true)}
-                    titulo="Agregar nueva maquina"
-                />
-                
             </div>
             {mostrarFormulario && (
-                <Formulario onCancel={() => setMostrarFormulario(false)} />
+                <Formulario
+                    key={maquinaEditar?.id || "nuevo"}
+                    onCancel={() => setMostrarFormulario(false)}
+                    onGuardado={cargarMaquinas}
+                    maquinaEditar={maquinaEditar}
+                />
             )}
         </div>
     );

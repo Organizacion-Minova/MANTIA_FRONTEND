@@ -16,7 +16,11 @@ const Register = () => {
         apellido: "",
         email: "",
         password: "",
-        confirmPassword: ""
+        confirmPassword: "",
+        documentType: "",
+        documentNumber: "",
+        requestedRole: "",
+        technicianType: ""
     });
     const [error, setError] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
@@ -38,11 +42,15 @@ const Register = () => {
 
         try {
             setLoading(true);
-            const fullName = `${formData.nombre} ${formData.apellido}`;
             await register({
-                name: fullName,
+                name: formData.nombre,
+                last_name: formData.apellido,
                 email: formData.email,
-                password: formData.password
+                password: formData.password,
+                document_type: formData.documentType,
+                document_number: formData.documentNumber,
+                requested_role: formData.requestedRole,
+                technician_type: formData.requestedRole === "Tecnico" ? formData.technicianType : null
             });
             setSuccessMessage("¡Registro exitoso! Tu cuenta está pendiente de aprobación por el administrador. Te notificaremos por correo cuando sea aprobada.");
             setTimeout(() => {
@@ -70,7 +78,9 @@ const Register = () => {
 
                     <div className="container-login">
                         <h3>Crear Cuenta</h3>
-
+                        <p className="form-description">
+                            Diligencia tus datos para solicitar una cuenta. Una vez creada, el administrador deberá aprobarla antes de que puedas iniciar sesión.
+                        </p>
                         <p className="form-description">
                             Los campos marcados con <span className="required-mark">*</span> son obligatorios.
                         </p>
@@ -162,9 +172,86 @@ const Register = () => {
                                 </div>
                             </div>
 
+                            <div className="form-row">
+                                <div className="input-box">
+                                    <label htmlFor="documentType">
+                                        Tipo de documento <span className="required-mark">*</span>
+                                    </label>
+                                    <select
+                                        id="documentType"
+                                        name="documentType"
+                                        className="form-select"
+                                        value={formData.documentType}
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        <option value="">Selecciona...</option>
+                                        <option value="CC">Cédula de ciudadanía</option>
+                                        <option value="CE">Cédula de extranjería</option>
+                                        <option value="TI">Tarjeta de identidad</option>
+                                        <option value="PA">Pasaporte</option>
+                                    </select>
+                                </div>
+
+                                <div className="input-box">
+                                    <label htmlFor="documentNumber">
+                                        Número de documento <span className="required-mark">*</span>
+                                    </label>
+                                    <input
+                                        id="documentNumber"
+                                        type="text"
+                                        name="documentNumber"
+                                        placeholder="Ej: 1020304050"
+                                        value={formData.documentNumber}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="input-box">
+                                <label htmlFor="requestedRole">
+                                    Solicitar rol <span className="required-mark">*</span>
+                                </label>
+                                <select
+                                    id="requestedRole"
+                                    name="requestedRole"
+                                    className="form-select"
+                                    value={formData.requestedRole}
+                                    onChange={handleChange}
+                                    required
+                                >
+                                    <option value="">Selecciona...</option>
+                                    <option value="Administrador">Administrador</option>
+                                    <option value="Invitado">Invitado</option>
+                                    <option value="Tecnico">Técnico</option>
+                                </select>
+                            </div>
+
+                            {formData.requestedRole === "Tecnico" && (
+                                <div className="input-box">
+                                    <label htmlFor="technicianType">
+                                        Tipo de técnico <span className="required-mark">*</span>
+                                    </label>
+                                    <select
+                                        id="technicianType"
+                                        name="technicianType"
+                                        className="form-select"
+                                        value={formData.technicianType}
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        <option value="">Selecciona...</option>
+                                        <option value="Electricista">Electricista</option>
+                                        <option value="Minero">Minero</option>
+                                        <option value="Mecanico">Mecánico</option>
+                                    </select>
+                                </div>
+                            )}
+
                             <Boton
                                 clase="btn-azul"
-                                texto={loading ? "Registrando..." : "Crear mi cuenta"}
+                                texto={loading ? "Registrando..." : "Registrarse"}
                                 disabled={loading}
                             />
 
@@ -177,7 +264,7 @@ const Register = () => {
                                     ¿Ya tienes cuenta?{" "}
                                     <Link to="/login">Iniciar sesión</Link>
                                 </span>
-                                <Link to="/">Ir al inicio</Link>
+                                
                             </div>
                         </form>
                     </div>

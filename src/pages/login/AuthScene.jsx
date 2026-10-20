@@ -4,20 +4,17 @@ import "../../styles/animations/login.css";
 import "../../styles/variables.css";
 import "../../styles/global.css";
 import "../../styles/Components.modules.css";
-import { Boton } from "../../components/common/Button";
+import AccessibilityPanel from "../../components/accessibility/AccessibilityPanel";
 
 const AuthScene = ({ children }) => {
-    const [esDeDia, setEsDeDia] = useState(false);
-
-    const alternarCicloDia = () => setEsDeDia((prev) => !prev);
+    const [esDeDia, setEsDeDia] = useState(() => {
+        const preferenciasGuardadas = localStorage.getItem("accesibilidad");
+        return preferenciasGuardadas ? !JSON.parse(preferenciasGuardadas).modoOscuro : true;
+    });
 
     return (
         <div className={`login-page ${esDeDia ? "modo-dia" : "modo-noche"}`}>
-            <nav className="mantia-nav">
-                <Link to="/">Inicio</Link>
-                <Link to="/help">Ayuda</Link>
-                <Link to="/about">Nosotros</Link>
-            </nav>
+           
 
             <svg
                 className="escena-svg"
@@ -227,12 +224,7 @@ const AuthScene = ({ children }) => {
             </svg>
 
             {children}
-
-            <Boton
-                clase="btn-azul-2"
-                texto={esDeDia ? "🌙 Modo Noche" : "☀️ Modo Día"}
-                onClick={alternarCicloDia}
-            />
+            <AccessibilityPanel onModoOscuroChange={(modoOscuro) => setEsDeDia(!modoOscuro)} />
 
             <style>{`
                 .luz-parpadeo {

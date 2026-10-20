@@ -116,7 +116,7 @@ export default function MantiaInicio() {
 
       <header className="mt-header">
         <img
-      src="/mantia-logo.png"
+      src="src/assets/img/mantia-cm.jpg"
       alt="MANTIA"
       className="mt-logo-img"
       />
@@ -148,10 +148,7 @@ export default function MantiaInicio() {
                       </div>
                       <h2>{s.heading}</h2>
                       <p>{s.text}</p>
-                      <button className="mt-login-btn">
-                        <Icon name="login" size={15} />
-                        Ingresar al sistema
-                      </button>
+                      
                     </div>
                   )}
                 </div>
@@ -188,23 +185,23 @@ export default function MantiaInicio() {
           <div className="mt-footer-col">
             <div className="mt-footer-logo-row">
           <img
-          src="/mantia-logo.png"
+          src="src/assets/img/mantia-cm.jpg"
           alt="MANTIA"
           className="mt-footer-logo-img"
           />
           </div>
             <p className="mt-footer-tagline">
-              Sistema especializado en el mantenimiento de maquinaria de extracción y control de inventarios mineros.
+              Sistema web para control del inventario de máquinas, equipos, herramientas y gases. Enfocado también en el manejo de formatos y mantenimientos.
             </p>
-            <div className="mt-footer-icons">
+            {/* <div className="mt-footer-icons">
               <button className="mt-footer-icon-btn" aria-label="Teléfono"><Icon name="phone" size={15} /></button>
               <button className="mt-footer-icon-btn" aria-label="Correo"><Icon name="mail" size={15} /></button>
               <button className="mt-footer-icon-btn" aria-label="Soporte"><Icon name="headset" size={15} /></button>
               <button className="mt-footer-icon-btn" aria-label="Ubicación"><Icon name="pin" size={15} /></button>
-            </div>
+            </div> */}
           </div>
 
-          <div className="mt-footer-col">
+          {/* <div className="mt-footer-col">
             <h4>Enlaces rápidos</h4>
             <ul className="mt-footer-linklist">
             {navLinks.map((l) => (
@@ -222,7 +219,7 @@ export default function MantiaInicio() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </div> */}
 
           <div className="mt-footer-col">
             <h4>Centro de Operaciones</h4>
@@ -251,22 +248,17 @@ export default function MantiaInicio() {
                 <div className="mt-footer-contact-icon"><Icon name="mail" size={15} /></div>
                 <div>
                   <strong>Correo empresarial</strong>
-                  <span>mantiadso@gmail.com</span>
+                  <span>mantiaadso@gmail.com</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-footer-cta">
-          <Link to="/login" className="mt-login-btn">
-            <Icon name="login" size={15} />
-            Iniciar sesión
-          </Link>
-        </div>
+
 
         <div className="mt-footer-bottom">
-          © {new Date().getFullYear()} MANTIA · Proyecto formativo SENA · Todos los derechos reservados
+          © {new Date().getFullYear()} MANTIA · Mantenimiento e inventario de activos · Todos los derechos reservados
         </div>
       </footer>
     </div>

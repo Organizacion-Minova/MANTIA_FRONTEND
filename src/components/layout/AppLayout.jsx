@@ -100,14 +100,14 @@ function AppLayout({ children }) {
                         className={`menu-contenedor`}
                         onClick={() => setCerrado(!cerrado)}
                     >
-                        <div id="toggleSidebar" className={cerrado ? "cerrado" : ""}>
+                        <div id="toggleSidebar" className={cerrado ? "cerrado" : ""} title={cerrado ? "Abrir menú lateral" : "Cerrar menú lateral"}>
                             <div></div>
                             <div></div>
                             <div></div>
                         </div>
                     </div>
                     <div className="logo">
-                        <img src="/src/assets/img/Mantia - logo.png" alt="MANTIA" />
+                        <img src="/src/assets/img/mantia-cm.jpg" alt="MANTIA" />
                     </div>
                 </div>
 
@@ -306,17 +306,17 @@ function AppLayout({ children }) {
             <footer className="footer">
                 <div className="secFooterPrincipal">
                     <img className="logoSenaFooter" src="/src/assets/img/logo-sena-blanco.png" alt="SENA" />
-                    <img className="logoSmaqFooter" src="/src/assets/img/Mantia - logo.png" alt="MANTIA" />
+                    <img className="logoSmaqFooter" src="/src/assets/img/mantia-cm.jpg" alt="MANTIA" />
                     <div className="descripcion-logos">
                         <br />Mantenimiento e inventario de activos
-                        <br /> Copyright © 2026. Todos los derechos reservados.
+                        <br /> Copyright © {new Date().getFullYear()}. Todos los derechos reservados. 
                     </div>
                 </div>
 
                 <div className="infoFooter"
                      title="Información de contacto">
                     <br /><strong>CONTACTANOS</strong>
-                    <br />mantiadso@gmail.com
+                    <br />mantiaadso@gmail.com
                 </div>
             </footer>
         </div>

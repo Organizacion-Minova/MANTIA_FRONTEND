@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title">
+  <title id="title">MANTIA</title>
+  <defs>
+    <linearGradient id="jade" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#10BFA5"/>
+      <stop offset="0.52" stop-color="#087F70"/>
+      <stop offset="1" stop-color="#063B38"/>
+    </linearGradient>
+    <linearGradient id="fold" x1="0" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#19C3A6"/>
+      <stop offset="1" stop-color="#7CE8D5"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="46" fill="url(#jade)"/>
+  <path d="M43 190 82 66 128 113 174 66 213 190 174 190 154 121 128 148 102 121 82 190Z" fill="#F8FFFD"/>
+  <path d="M82 190 102 121 116 135 103 172Z" fill="url(#fold)"/>
+  <path d="M174 190 154 121 140 135 153 172Z" fill="url(#fold)"/>
+  <path d="M102 121 128 148 154 121 140 135 128 147 116 135Z" fill="#087F70" opacity=".24"/>
+</svg>

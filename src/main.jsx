@@ -34,8 +34,8 @@ import EscuchaToasts from "./components/Alertas/EscuchaToasts.jsx";
 import RutaPrivada from "./components/RutaPrivada.jsx";
 import LoadingScreen from "./components/LoadingScreen.jsx";
 import Dashboard from "./pages/Dashboard/dashboard.jsx";
-
-
+import { ToastProvider } from './context/ToastContext.jsx';
+import NotFound from './pages/Others/not_found.jsx';
 
 
 function LoadingGate({ children }) {
@@ -59,12 +59,12 @@ createRoot(document.getElementById('root')).render(
               <Route path='ubications/categoriesubications' element={<CategoriasUbicacion />} />
               <Route path='machines' element={<Maquinas />} />
               <Route path='machines/categoriesmachines' element={<CategoriasMaquinas />} />
-              <Route path='machines/cardMachine' element={<CardMachine />} />
-              <Route path='machines/cardMachine/inspection' element={<AgregarInspeccion />} />
-              <Route path='machines/cardMachine/completeinspection' element={<LlenarInspeccion />} />
-              <Route path='machines/cardMachine/showinspection' element={<MostrarInspeccion />} />
+              <Route path='machines/cardMachine/:id' element={<CardMachine />} />
+              <Route path='inspection' element={<AgregarInspeccion />} />
+              <Route path='inspection/completeinspection' element={<LlenarInspeccion />} />
+              <Route path='inspection/completeinspection/showinspection' element={<MostrarInspeccion />} />
               <Route path='equipment' element={<Equipos />} />
-              <Route path='equipment/cardequipment' element={<CardEquipment />} />
+              <Route path='equipment/cardequipment/:id' element={<CardEquipment />} />
               <Route path='companies' element={<Empresas />} />
               <Route path='types/consumables' element={<Consumibles />} />
               <Route path='types/noconsumables' element={<No_Consumibles />} />
@@ -76,6 +76,7 @@ createRoot(document.getElementById('root')).render(
               <Route path='gases/gas_format' element={<FormatoGases />} />
               <Route path='profile' element={<Profile />} />
               <Route path='alerts' element={<Alerts />} />
+              <Route path="*" element={<NotFound />} /> 
             </Route>
             <Route path="login" element={<Login />} />
             <Route path="ResetPassword" element={<ResetPassword />} />
