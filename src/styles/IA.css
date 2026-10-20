@@ -1,0 +1,106 @@
+/* =====================================================================
+   MANTIA IA · Widget de chat (Opción 1 · Clásico MANTIA)
+   Todo está prefijado con .mc- para no chocar con otros estilos.
+   Si tu proyecto ya carga variables.css, puedes borrar el bloque
+   "VARIABLES" (son las mismas).
+   Requiere: Font Awesome 6 y las fuentes Archivo + Barlow.
+   ===================================================================== */
+/* =====================================================================
+   BOTÓN FLOTANTE · asistente con identidad minera sutil
+   ===================================================================== */
+.mc-toggle{position:relative;right:1.5rem;bottom:1.5rem;z-index:9998;height:62px;min-width:166px;padding:.45rem 1rem .45rem .5rem;
+border:1px solid rgba(255,255,255,.24);border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:.7rem;
+background:var(--principal);color:#fff;text-align:left;
+box-shadow:0 7px 20px rgba(6,59,56,.24),inset 0 1px rgba(255,255,255,.16);
+transition:box-shadow .22s,transform .22s,background .22s}
+.mc-toggle:hover{box-shadow:0 10px 25px rgba(6,59,56,.3),0 0 0 4px rgba(25,195,166,.12);transform:translateY(-2px)}
+/* Mientras la IA está pensando: brillo pulsante */
+.mc-toggle.mc-hablando{box-shadow:0 0 0 4px rgba(25,195,166,.16),0 10px 25px rgba(6,59,56,.3)}
+
+.mc-toggle-icon{position:relative;width:46px;height:46px;display:grid;place-items:center;flex:0 0 46px;
+border:1px solid rgba(255,255,255,.17);border-radius:50%;background:rgba(0,32,30,.2);color:var(--acento-mantia);font-size:1.15rem}
+.mc-headlamp{position:absolute;top:9px;left:50%;width:5px;height:5px;transform:translateX(-50%);
+border-radius:50%;background:var(--acento-mantia);box-shadow:0 0 5px rgba(163,214,92,.55)}
+.mc-toggle-label{display:flex;flex-direction:column;gap:1px;line-height:1.15}
+.mc-toggle-label strong{font:700 .85rem var(--fuente-principal);letter-spacing:.055em}
+.mc-toggle-label small{font:500 .7rem var(--fuente-principal);opacity:.78}
+.mc-online{position:absolute;right:0;bottom:0;width:11px;height:11px;background:#91e36f;border:2px solid #07554d;border-radius:50%}
+
+/* Badge de mensajes sin leer */
+.mc-badge{position:absolute;top:-3px;right:-3px;width:1.15rem;height:1.15rem;border-radius:50%;z-index:11;
+background:var(--acento-mantia);color:var(--sidebar);font:700 .62rem var(--fuente-principal);
+display:flex;align-items:center;justify-content:center;border:2px solid var(--fondo)}
+
+/* ===== Ventana ===== */
+.mc-win{position:fixed;right:1.25rem;bottom:6.25rem;z-index:9999;width:min(23rem,calc(100vw - 2rem));height:34rem;height:min(34rem,calc(100vh - 7.5rem));max-height:calc(100vh - 7.5rem);
+display:flex;flex-direction:column;overflow:hidden;border-radius:1.25rem;
+background:var(--contenedor);backdrop-filter:blur(14px);border:1px solid var(--borde-contenedor);
+box-shadow:0 20px 60px rgba(6,59,56,.2),0 3px 12px rgba(6,59,56,.08);font-family:var(--fuente-principal);color:var(--texto);
+opacity:0;pointer-events:none;transform:translateY(12px) scale(.98);transform-origin:bottom right;transition:transform .22s ease,opacity .22s ease}
+.mc-win.open{opacity:1;pointer-events:all;transform:none}
+
+/* Cabecera */
+.mc-header{display:flex;align-items:center;gap:.75rem;padding:1rem 1.1rem;flex-shrink:0;background:var(--principal);color:#fff}
+.mc-avatar{width:2.55rem;height:2.55rem;border-radius:.9rem;display:flex;align-items:center;justify-content:center;
+flex-shrink:0;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);box-shadow:inset 0 1px rgba(255,255,255,.15)}
+.mc-info{flex:1}
+.mc-info h4{font:700 1rem var(--fuente-secundaria);letter-spacing:.01em}
+.mc-info p{font-size:.74rem;display:flex;align-items:center;gap:6px;opacity:.88;margin-top:.15rem}
+.mc-dot{width:7px;height:7px;border-radius:50%;background:#a8ef74;box-shadow:0 0 0 3px rgba(168,239,116,.18)}
+.mc-actions{display:flex;gap:2px}
+.mc-actions button{width:2rem;height:2rem;display:grid;place-items:center;background:none;border:0;color:inherit;opacity:.78;cursor:pointer;padding:.4rem;border-radius:.65rem;transition:background .18s,opacity .18s}
+.mc-actions button:hover{opacity:1;background:rgba(255,255,255,.16)}
+
+/* Mensajes */
+.mc-messages{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.8rem;background:var(--fondo);scrollbar-width:thin;scrollbar-color:var(--borde-contenedor) transparent}
+.mc-row{display:flex;gap:.5rem;align-items:flex-end;max-width:92%}
+.mc-row.user{flex-direction:row-reverse;align-self:flex-end}
+.mc-icon{width:1.8rem;height:1.8rem;border-radius:.65rem;display:flex;align-items:center;justify-content:center;font-size:.72rem;flex-shrink:0}
+.mc-icon.ia{background:var(--principal);color:#fff}
+.mc-icon.user{background:var(--hover-principal);color:var(--secundario)}
+.mc-bubble{padding:.7rem .85rem;font-size:.86rem;line-height:1.6;border-radius:1rem;word-wrap:break-word;overflow-wrap:anywhere}
+.mc-row.ia .mc-bubble{background:var(--contenedor);border:1px solid var(--borde-contenedor);border-bottom-left-radius:.3rem;box-shadow:0 2px 5px rgba(6,59,56,.035)}
+.mc-row.user .mc-bubble{background:var(--secundario);color:#fff;border-bottom-right-radius:.3rem;box-shadow:0 3px 8px rgba(6,59,56,.12)}
+.mc-bubble ul{padding-left:1.1rem;margin-top:.25rem}
+.mc-bubble b{font-weight:700}
+.mc-time{font-size:.65rem;opacity:.55;margin-top:.2rem}
+.mc-row.user .mc-time{text-align:right}
+
+/* Alerta (úsala dentro de una respuesta: <span class="mc-alerta">…</span>) */
+.mc-alerta{display:inline-flex;align-items:center;gap:.35rem;background:var(--tinte-rojo);color:var(--rojo);
+border-radius:2rem;padding:.1rem .55rem;font-size:.75rem;font-weight:700;margin-bottom:.3rem}
+
+/* Indicador "escribiendo…" */
+.mc-typing{display:inline-flex;gap:4px;padding:.25rem 0}
+.mc-typing span{width:6px;height:6px;border-radius:50%;background:var(--texto2);animation:mc-bounce 1.2s infinite}
+.mc-typing span:nth-child(2){animation-delay:.15s}.mc-typing span:nth-child(3){animation-delay:.3s}
+@keyframes mc-bounce{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
+
+/* Chips de sugerencias */
+.mc-chips{display:flex;gap:.45rem;flex-wrap:wrap;padding:.55rem 1rem .25rem;background:var(--fondo)}
+.mc-chip{font:600 .73rem var(--fuente-principal);cursor:pointer;border-radius:2rem;padding:.4rem .75rem;
+background:var(--contenedor);border:1px solid var(--borde-contenedor);color:var(--texto2);transition:background .18s,border-color .18s,color .18s,transform .18s}
+.mc-chip:hover{background:var(--hover-principal);border-color:var(--secundario);color:var(--texto);transform:translateY(-1px)}
+
+/* Entrada */
+.mc-input-area{display:flex;gap:.55rem;align-items:flex-end;padding:.7rem 1rem 1rem;flex-shrink:0;background:var(--fondo)}
+.mc-input-area textarea{flex:1;resize:none;min-height:2.65rem;max-height:6rem;padding:.68rem .85rem;
+font:.86rem var(--fuente-principal);line-height:1.4;color:var(--texto);outline:none;background:var(--contenedor);
+border:1px solid var(--borde-contenedor);border-radius:.85rem;transition:border-color .18s,box-shadow .18s}
+.mc-input-area textarea:focus{border-color:var(--secundario);box-shadow:0 0 0 3px rgba(25,195,166,.13)}
+.mc-input-area textarea::placeholder{color:var(--texto2);opacity:.8}
+.mc-send{width:2.65rem;height:2.65rem;border-radius:.85rem;border:0;cursor:pointer;background:var(--secundario);color:#fff;
+display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 3px 8px rgba(6,59,56,.16);transition:transform .18s,background .18s,box-shadow .18s}
+.mc-send:hover:not(:disabled){background:var(--sidebar);transform:translateY(-1px);box-shadow:0 5px 12px rgba(6,59,56,.2)}
+.mc-send:disabled{opacity:.5;cursor:not-allowed}
+
+.mc-win button:focus-visible,.mc-toggle:focus-visible{outline:3px solid var(--acento-mantia);outline-offset:2px}
+
+@media (max-width:480px){
+  .mc-toggle{right:1rem;bottom:1rem;min-width:156px}
+  .mc-win{width:calc(100vw - 1rem);right:.5rem;bottom:.5rem;height:calc(100dvh - 1rem);max-height:calc(100dvh - 1rem);border-radius:1rem}
+}
+@media (prefers-reduced-motion:reduce){
+  .mc-win,.mc-typing span{animation:none!important;transition:none!important}
+  .mc-toggle,.mc-toggle *{animation:none!important;transition:none!important}
+}
