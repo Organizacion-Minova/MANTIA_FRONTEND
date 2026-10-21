@@ -26,7 +26,8 @@ export function useSearch(items = [], searchFields = [], dateField = 'created_at
 
             // Filtro de fecha
             if (rangoFecha && item[dateField]) {
-                const fechaItem = new Date(item[dateField]);
+                const valorFecha = item[dateField];
+                const fechaItem = new Date(/^\d{4}-\d{2}-\d{2}$/.test(valorFecha) ? `${valorFecha}T00:00:00` : valorFecha);
                 const hoy = new Date();
                 hoy.setHours(0, 0, 0, 0);
 
@@ -38,7 +39,7 @@ export function useSearch(items = [], searchFields = [], dateField = 'created_at
                 else if (rangoFecha === '7_dias') {
                     const hace7Dias = new Date(hoy);
                     hace7Dias.setDate(hoy.getDate() - 7);
-                    if (fechaItem < hace7Dias) return false;
+                    if (fechaItem < hace7Dias || fechaItem > hoy) return false;
                 }
                 else if (rangoFecha === 'mes') {
                     if (
@@ -46,7 +47,7 @@ export function useSearch(items = [], searchFields = [], dateField = 'created_at
                         fechaItem.getFullYear() !== hoy.getFullYear()
                     ) return false;
                 }
-                else if (rangoFecha === 'ano') {
+                else if (rangoFecha === 'anio') {
                     if (fechaItem.getFullYear() !== hoy.getFullYear()) return false;
                 }
             }

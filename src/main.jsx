@@ -73,7 +73,7 @@ createRoot(document.getElementById('root')).render(
               <Route path='dailyuse' element={<UsoDiario />} />
               <Route path='gases' element={<Gases />} />
               <Route path='gases/compare_gases' element={<CompararGases />} />
-              <Route path='gases/gas_format' element={<FormatoGases />} />
+              <Route path='gases/gas_format/:id' element={<FormatoGases />} />
               <Route path='profile' element={<Profile />} />
               <Route path='alerts' element={<Alerts />} />
               <Route path="*" element={<NotFound />} /> 

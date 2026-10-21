@@ -1,3 +1,5 @@
+import { Select } from '../../components/common/forms.jsx';
+
 function PageWelcome({ titulo, descripcion }) {
     const fechaActual = new Date().toLocaleDateString("es-CO", {
         weekday: "long",
@@ -25,7 +27,14 @@ function PageWelcome({ titulo, descripcion }) {
     );
 }
 
-function Searcher({ value, onChange, placeholder = "Buscar...", rangoFecha, onRangoFechaChange, filtrosAdicionales = null }) {
+function Searcher({ value, onChange, placeholder = "Buscar...", rangoFecha, onRangoFechaChange, filtrosAdicionales = null, 
+    filtrosFechas = [
+        { valor: "", etiqueta: "Todas las fechas" },
+        { valor: "hoy", etiqueta: "Hoy" },
+        { valor: "7_dias", etiqueta: "Últimos 7 días" },
+        { valor: "mes", etiqueta: "Este mes" },
+        { valor: "anio", etiqueta: "Este año" }
+    ] }) {
     return (
         <div className="search-main">
             <div className="search-wrapper">
@@ -40,19 +49,17 @@ function Searcher({ value, onChange, placeholder = "Buscar...", rangoFecha, onRa
             </div>
 
             {onRangoFechaChange && (
-                <select
-                    className="select-filtro-fecha"
-                    value={rangoFecha}
-                    onChange={(e) => onRangoFechaChange(e.target.value)}
-                >
-                    <option value="">Todas las fechas</option>
-                    <option value="hoy">Hoy</option>
-                    <option value="7_dias">Últimos 7 días</option>
-                    <option value="mes">Este mes</option>
-                    <option value="ano">Este año</option>
-                </select>
+                <div className="searcher-filters-container">
+                    <Select
+                        id=""
+                        name=""
+                        value={rangoFecha}
+                        onChange={(e) => onRangoFechaChange(e.target.value)}
+                        opciones={filtrosFechas}
+                    />
+                </div>
             )}
-           
+
             {filtrosAdicionales && (
                 <div className="searcher-filters-container">
                     {filtrosAdicionales}
