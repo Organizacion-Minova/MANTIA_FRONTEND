@@ -24,7 +24,7 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
     const [numeroSerie, setNumeroSerie] = useState(maquinaEditar?.serial_number || "");
     const [fechaAdquisicion, setFechaAdquisicion] = useState(maquinaEditar?.acquisition_date || "");
     const [costoAdquisicion, setCostoAdquisicion] = useState(maquinaEditar?.acquisition_cost || "");
-    const [estado, setEstado] = useState(maquinaEditar?.status || "");
+    const [estado, setEstado] = useState(maquinaEditar?.status || "active");
     const [garantia, setGarantia] = useState(maquinaEditar?.warranty || "");
     const [archivoImagen, setArchivoImagen] = useState(null);
     const [categoriaid, setCategoriaid] = useState(valorSelect(maquinaEditar?.category_maquina?.id ?? maquinaEditar?.category_id));
@@ -290,23 +290,26 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
                     required
                 />
             </div>
-            <div className="col-span-3">
-                <Select
-                    label="Estado:"
-                    id="estado"
-                    name="estado"
-                    value={estado}
-                    onChange={(e) => setEstado(e.target.value)}
-                    opciones={[
-                        {valor:"", etiqueta:"Seleccione un estado"},
-                        {valor:"active", etiqueta:"Activo"},
-                        {valor:"inactive", etiqueta:"Inactivo"},
-                        {valor:"maintenance", etiqueta:"Mantenimiento"}
-                    ]}
-                    required
-                />
-            </div>
-            <div className="col-span-3">
+            {esEdicion && (
+                <div className="col-span-3">
+                    <Select
+                        label="Estado:"
+                        id="estado"
+                        name="estado"
+                        value={estado}
+                        onChange={(e) => setEstado(e.target.value)}
+                        opciones={[
+                            {valor:"", etiqueta:"Seleccione un estado"},
+                            {valor:"active", etiqueta:"Activo"},
+                            {valor:"inactive", etiqueta:"Inactivo"},
+                            {valor:"maintenance", etiqueta:"Mantenimiento"}
+                        ]}
+                        required
+                    />
+                </div>
+            )}
+            
+            <div className={esEdicion?"col-span-3":"col-span-6"}>
                 <Select
                     label="Maquina en operación:"
                     id="maquinaenoperacion"
