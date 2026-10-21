@@ -5,6 +5,12 @@
    "VARIABLES" (son las mismas).
    Requiere: Font Awesome 6 y las fuentes Archivo + Barlow.
    ===================================================================== */
+
+/* =====================================================================
+   CONTENEDOR FLOTANTE (fija el botón abajo a la derecha)
+   ===================================================================== */
+#mantia-chat{position:fixed;right:5.5rem;bottom:0;z-index:9998}
+
 /* =====================================================================
    BOTÓN FLOTANTE · asistente con identidad minera sutil
    ===================================================================== */
@@ -17,19 +23,46 @@ transition:box-shadow .22s,transform .22s,background .22s}
 /* Mientras la IA está pensando: brillo pulsante */
 .mc-toggle.mc-hablando{box-shadow:0 0 0 4px rgba(25,195,166,.16),0 10px 25px rgba(6,59,56,.3)}
 
-.mc-toggle-icon{position:relative;width:46px;height:46px;display:grid;place-items:center;flex:0 0 46px;
-border:1px solid rgba(255,255,255,.17);border-radius:50%;background:rgba(0,32,30,.2);color:var(--acento-mantia);font-size:1.15rem}
-.mc-headlamp{position:absolute;top:9px;left:50%;width:5px;height:5px;transform:translateX(-50%);
-border-radius:50%;background:var(--acento-mantia);box-shadow:0 0 5px rgba(163,214,92,.55)}
+/* Robot del botón (casco minero) */
+.mc-bot{position:relative;flex:0 0 46px;width:46px;height:46px;border-radius:50%;
+background:rgba(0,32,30,.3);border:1px solid rgba(255,255,255,.2);display:grid;place-items:center}
+.mc-face{width:26px;height:17px;margin-top:9px;border-radius:7px;background:#e9fffb;
+display:flex;align-items:center;justify-content:center;gap:5px;box-shadow:inset 0 -2px rgba(6,59,56,.2)}
+.mc-eye{width:5px;height:7px;border-radius:3px;background:#0a5c53;animation:mc-parpadeo 4.5s infinite}
+.mc-casco{position:absolute;top:3px;left:50%;width:32px;height:16px;transform:translateX(-50%);
+border-radius:16px 16px 3px 3px;background:var(--acento-mantia);border-bottom:3px solid rgba(0,0,0,.18);
+box-shadow:0 2px 4px rgba(0,0,0,.18)}
+.mc-lampara{position:absolute;top:3px;left:50%;width:8px;height:5px;transform:translateX(-50%);
+border-radius:3px 3px 1px 1px;background:#fff7c9;box-shadow:0 0 7px 2px rgba(255,247,201,.75);
+animation:mc-lampara 2.4s ease-in-out infinite}
+
+/* Anillos que giran alrededor del robot */
+.mc-orbit{position:absolute;left:calc(.5rem - 5px);top:50%;width:56px;height:56px;margin-top:-28px;
+border-radius:50%;pointer-events:none}
+.mc-orbit1{border:1px dashed rgba(189,248,106,.45);animation:mc-giro 16s linear infinite}
+.mc-orbit2{animation:mc-giro 7s linear infinite reverse}
+.mc-orbit2::after{content:"";position:absolute;top:-2px;left:50%;width:5px;height:5px;margin-left:-2.5px;
+border-radius:50%;background:var(--acento-mantia2);box-shadow:0 0 6px rgba(189,248,106,.8)}
+
+/* Mientras responde, el robot "piensa" más rápido */
+.mc-toggle.mc-hablando .mc-orbit1{animation-duration:3s}
+.mc-toggle.mc-hablando .mc-orbit2{animation-duration:1.4s}
+
 .mc-toggle-label{display:flex;flex-direction:column;gap:1px;line-height:1.15}
 .mc-toggle-label strong{font:700 .85rem var(--fuente-principal);letter-spacing:.055em}
 .mc-toggle-label small{font:500 .7rem var(--fuente-principal);opacity:.78}
-.mc-online{position:absolute;right:0;bottom:0;width:11px;height:11px;background:#91e36f;border:2px solid #07554d;border-radius:50%}
+
+/* Indicador "en línea" pegado al robot */
+.mc-online{position:absolute;left:calc(.5rem + 33px);bottom:9px;width:11px;height:11px;background:#91e36f;border:2px solid #07554d;border-radius:50%}
 
 /* Badge de mensajes sin leer */
 .mc-badge{position:absolute;top:-3px;right:-3px;width:1.15rem;height:1.15rem;border-radius:50%;z-index:11;
 background:var(--acento-mantia);color:var(--sidebar);font:700 .62rem var(--fuente-principal);
 display:flex;align-items:center;justify-content:center;border:2px solid var(--fondo)}
+
+@keyframes mc-giro{to{transform:rotate(360deg)}}
+@keyframes mc-parpadeo{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+@keyframes mc-lampara{0%,100%{opacity:1}50%{opacity:.55}}
 
 /* ===== Ventana ===== */
 .mc-win{position:fixed;right:1.25rem;bottom:6.25rem;z-index:9999;width:min(23rem,calc(100vw - 2rem));height:34rem;height:min(34rem,calc(100vh - 7.5rem));max-height:calc(100vh - 7.5rem);
