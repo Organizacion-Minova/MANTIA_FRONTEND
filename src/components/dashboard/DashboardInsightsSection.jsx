@@ -2,22 +2,22 @@
 import RecentActivityFeed from "./RecentActivityFeed";
 import DailyUsageSummary from "./DailyUsageSummary";
 
-const activityItems = [
-  { id: 1, type: "maintenance", description: "Mantenimiento completado en Máquina 04", relativeTime: "hace 2 horas" },
-  { id: 2, type: "loan", description: "Préstamo de taladro a Juan Pérez", relativeTime: "hace 3 horas" },
-  { id: 3, type: "diagnostic", description: "Diagnóstico registrado en Equipo 12", relativeTime: "hace 5 horas" },
-];
+// const activityItems = [
+//   { id: 1, type: "maintenance", description: "Mantenimiento completado en Máquina 04", relativeTime: "hace 2 horas" },
+//   { id: 2, type: "loan", description: "Préstamo de taladro a Juan Pérez", relativeTime: "hace 3 horas" },
+//   { id: 3, type: "diagnostic", description: "Diagnóstico registrado en Equipo 12", relativeTime: "hace 5 horas" },
+// ];
 
-const usageItems = [
-  { label: "Máquinas en uso hoy", value: 6, icon: "fa-solid fa-industry" },
-  { label: "Equipos utilizados", value: 4, icon: "fa-solid fa-toolbox" },
-];
+// const usageItems = [
+//   { label: "Máquinas en uso hoy", value: 6, icon: "fa-solid fa-industry" },
+//   { label: "Equipos utilizados", value: 4, icon: "fa-solid fa-toolbox" },
+// ];
 
-export default function DashboardInsightsSection() {
+export default function DashboardInsightsSection({ data, sections }) {
   return (
     <section className="dashboard-insights-section">
-      <RecentActivityFeed items={activityItems} />
-      <DailyUsageSummary items={usageItems} />
+      <RecentActivityFeed items={data.activity} state={sections.activity} />
+      <DailyUsageSummary items={data.dailyUsage} state={sections.dailyUsage} />
     </section>
   );
 }
