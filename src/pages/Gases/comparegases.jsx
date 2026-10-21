@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Boton, BotonLink } from "../../components/common/Button";
 import { PageWelcome } from "../../components/common/welcome";
+import { obtenerMedicionesGases } from "../../api/gasMeasurement";
+import { obtenerUbicaciones } from "../../api/location";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -24,21 +26,16 @@ ChartJS.register(
     annotationPlugin
 );
 
-const ubicaciones = [
-    "Tunel 2", "Galeria 1 centro", "Galeria 2 centro", "Galeria 2 norte",
-    "Transversal norte", "Galeria 3 norte", "Galeria 3 centro", "Cruzada 33",
-    "Galeria 33", "Pozo", "Galeria 4", "Galeria 3 sur",
-    "Galeria 2 sur", "Transversal sur", "Tunel 3", "Tunel 1"
-];
-
 const limitesGases = {
-    oxigeno: { limite: 19.5, tipo: 'min', unidad: '%', label: 'Oxígeno (O₂)' },
-    metano: { limite: 1.0, tipo: 'max', unidad: '%', label: 'Metano (CH₄)' },
-    dioxido_carbono: { limite: 0.5, tipo: 'max', unidad: '%', label: 'Dióxido de Carbono (CO₂)' },
-    acido_sulfhidrico: { limite: 1.0, tipo: 'max', unidad: 'ppm', label: 'Ácido Sulfhídrico (H₂S)' },
-    monoxido_carbono: { limite: 25.0, tipo: 'max', unidad: 'ppm', label: 'Monóxido de Carbono (CO)' },
-    dioxido_nitrogeno: { limite: 0.2, tipo: 'max', unidad: 'ppm', label: 'Dióxido de Nitrógeno (NO₂)' }
+    oxigeno: { campo: 'oxygen', limite: 19.5, tipo: 'min', unidad: '%', label: 'Oxígeno (O₂)' },
+    metano: { campo: 'methane', limite: 1.0, tipo: 'max', unidad: '%', label: 'Metano (CH₄)' },
+    dioxido_carbono: { campo: 'carbon_dioxide', limite: 0.5, tipo: 'max', unidad: '%', label: 'Dióxido de Carbono (CO₂)' },
+    acido_sulfhidrico: { campo: 'hydrogen_sulfide', limite: 1.0, tipo: 'max', unidad: 'ppm', label: 'Ácido Sulfhídrico (H₂S)' },
+    monoxido_carbono: { campo: 'carbon_monoxide', limite: 25.0, tipo: 'max', unidad: 'ppm', label: 'Monóxido de Carbono (CO)' },
+    dioxido_nitrogeno: { campo: 'nitrogen_dioxide', limite: 0.2, tipo: 'max', unidad: 'ppm', label: 'Dióxido de Nitrógeno (NO₂)' }
 };
+
+const formatearFecha = (fecha) => fecha.split('-').reverse().join('/');
 
 const getCssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 
@@ -73,15 +70,15 @@ const getChartOptions = (meta, esAmpliado = false) => ({
     }
 });
 
-const getChartData = (meta, esAmpliado = false) => ({
-    labels: ['15/03/2026', '16/03/2026'],
+const getChartData = (meta, registros, esAmpliado = false) => ({
+    labels: registros.map((r) => formatearFecha(r.fecha)),
     datasets: [{
         label: `${meta.label} (${meta.unidad})`,
-        data: [meta.limite * 0.8, meta.limite * 0.9],
+        data: registros.map((r) => r.detalle[meta.campo] === null ? null : Number(r.detalle[meta.campo])),
         backgroundColor: [
-        getCssVar('--acento-mantia'),
-        getCssVar('--secundario') 
-        ],
+            getCssVar('--acento-mantia'),
+            getCssVar('--secundario')
+        ].slice(-registros.length),
         borderRadius: esAmpliado ? 6 : 4,
         barThickness: esAmpliado ? 50 : undefined
     }]
@@ -89,7 +86,30 @@ const getChartData = (meta, esAmpliado = false) => ({
 
 function CompararGases() {
     const [gasAmpliadoKey, setGasAmpliadoKey] = useState(null);
+    const [mediciones, setMediciones] = useState([]);
+    const [ubicaciones, setUbicaciones] = useState([]);
+    const [ubicacionId, setUbicacionId] = useState('');
     const metaAmpliada = gasAmpliadoKey ? limitesGases[gasAmpliadoKey] : null;
+
+    useEffect(() => {
+        const cargarDatos = async () => {
+            const [respuestaMediciones, respuestaUbicaciones] = await Promise.all([obtenerMedicionesGases(), obtenerUbicaciones()]);
+            const mina = (respuestaUbicaciones.ubicaciones || []).filter((u) => u.location_category?.name === 'Mina');
+            setMediciones(respuestaMediciones.data || []);
+            setUbicaciones(mina);
+            setUbicacionId(mina[0]?.id ?? '');
+        };
+        cargarDatos();
+    }, []);
+
+    const registros = useMemo(() => mediciones
+        .map((m) => ({ fecha: m.measurement_date, detalle: m.detail?.find((d) => String(d.location_id) === String(ubicacionId)) }))
+        .filter((r) => r.detalle && Object.values(limitesGases).some((g) => r.detalle[g.campo] !== null))
+        .slice(0, 2),
+    [mediciones, ubicacionId]);
+
+    const [ultimo, penultimo] = registros;
+    const comparados = [...registros].reverse(); 
 
     return (
         <div className="cards-grid">
@@ -101,10 +121,10 @@ function CompararGases() {
                 <div className="panel-filtros-horizontal">
                     <div className="control-input">
                         <label>Ubicación</label>
-                        <select defaultValue={ubicaciones[0]}>
+                        <select value={ubicacionId} onChange={(e) => setUbicacionId(e.target.value)}>
                             {ubicaciones.map((ubi) => (
-                            <option key={ubi} value={ubi}>
-                                {ubi}
+                            <option key={ubi.id} value={ubi.id}>
+                                {ubi.name}
                             </option>
                             ))}
                         </select>
@@ -112,22 +132,24 @@ function CompararGases() {
 
                     <div className="control-input">
                         <label>Último Registro</label>
-                        <input readOnly />
+                        <input readOnly value={ultimo ? formatearFecha(ultimo.fecha) : ''} />
                     </div>
 
                     <div className="control-input">
                         <label>Penúltimo Registro</label>
-                        <input readOnly />
+                        <input readOnly value={penultimo ? formatearFecha(penultimo.fecha) : ''} />
                     </div>
                 </div>
             </section>
             <section className="seccion2">
-                {metaAmpliada ? (
+                {!registros.length ? (
+                    <p>No hay mediciones registradas para esta ubicación.</p>
+                ) : metaAmpliada ? (
                     <div id="vistaAmpliada" className='card-mini-grafica'>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <h2 style={{fontFamily: 'var(--fuente-principal)', fontWeight: '400'}}>{metaAmpliada.label}</h2>
-                            <Boton 
-                                clase="btn-azul" 
+                            <Boton
+                                clase="btn-azul"
                                 onClick={() => setGasAmpliadoKey(null)}
                                 icono="fa-solid fa-xmark"
                             />
@@ -135,7 +157,7 @@ function CompararGases() {
                         <div style={{ height: '400px', width: '100%' }}>
                             <Bar
                                 options={getChartOptions(metaAmpliada, true)}
-                                data={getChartData(metaAmpliada, true)}
+                                data={getChartData(metaAmpliada, comparados, true)}
                             />
                         </div>
                     </div>
@@ -158,7 +180,7 @@ function CompararGases() {
                                     <div className="contenedor-canvas-mini">
                                         <Bar
                                             options={getChartOptions(meta)}
-                                            data={getChartData(meta)}
+                                            data={getChartData(meta, comparados)}
                                         />
                                     </div>
                                 </div>
