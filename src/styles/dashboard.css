@@ -1,5 +1,5 @@
 /* PANEL ALERTAAAAAAAAAAAAAAAAAAAAAAAS */
-.alerts-banner {
+/* .alerts-banner {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
@@ -25,8 +25,24 @@
   border: 1px solid var(--texto);
   color: var(--texto);
   opacity: 0.7;
+} */
+.dashboard-state {
+  padding: var(--space-lg);
+  text-align: center;
+  background-color: var(--contenedor);
+  border-radius: 8px;
 }
 
+.dashboard-state__retry {
+  margin-top: var(--space-sm);
+  padding: var(--space-xs) var(--space-md);
+  border: 1px solid var(--secundario);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--texto);
+  font-weight: 600;
+  cursor: pointer;
+}
 /*ESTILOS CARDSSSSSSSSSSSSSSSSSSSSSSS*/
 .dashboard-summary-section {
   display: grid;
@@ -96,13 +112,20 @@
   flex: 1;
 }
 
+.summary-card__highlights {
+  list-style: none;
+  margin: var(--space-xs) 0 0 0;
+  padding: var(--space-xs) 0 0 0;
+  border-top: 1px solid var(--fondo);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
 .summary-card__highlight {
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  margin-top: var(--space-xs);
-  padding-top: var(--space-xs);
-  border-top: 1px solid var(--acento-mantia);
   font-size: 0.85rem;
   font-weight: 600;
 }
@@ -258,6 +281,7 @@
   fill: none;
   stroke: var(--secundario);
   stroke-width: 2;
+   vector-effect: non-scaling-stroke;
 }
 
 .gases-trend__latest {
