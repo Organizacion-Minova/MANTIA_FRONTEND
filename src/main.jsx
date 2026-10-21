@@ -29,7 +29,6 @@ import MantiaInicio from "./pages/Index/index";
 import Profile from './pages/Profile/profile.jsx'
 import Alerts from './pages/Alerts/alerts.jsx';
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
-import { ToastProvider } from "./context/ToastContext.jsx";
 import EscuchaToasts from "./components/Alertas/EscuchaToasts.jsx";
 import RutaPrivada from "./components/RutaPrivada.jsx";
 import LoadingScreen from "./components/LoadingScreen.jsx";

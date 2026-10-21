@@ -13,9 +13,10 @@ import '../../styles/Profile/profile.css';
 import '../../styles/Alerts/alerts.css';
 import '../../styles/Gases/gases.css';
 import '../../styles/dashboard.css';
-import '../../styles/Ia.css';
+import '../../styles/IA.css';
+import MantiaAI from '../IAMantia/IAMantia.jsx';
+import { sendAiMessage } from '../../api/Ia.js';
 import AccessibilityPanel from "../accessibility/AccessibilityPanel";
-import IAMantia from '../IAMantia/IAMantia.jsx';
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useCallback, useEffect, useRef, useState } from 'react';
 import CampanaNotificaciones from '../Alertas/CampanaNotificaciones';
@@ -300,8 +301,8 @@ function AppLayout({ children }) {
             <main id="contenido" className={`contenido ${cerrado ? "cerrado" : ""}`}>
                 {children ?? <Outlet />}
             </main>
-            <IAMantia/>
-           <AccessibilityPanel />
+            <MantiaAI onSend={sendAiMessage} />
+            <AccessibilityPanel />
 
             <footer className="footer">
                 <div className="secFooterPrincipal">
