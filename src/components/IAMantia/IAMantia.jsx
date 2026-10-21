@@ -115,11 +115,11 @@ export default function IAMantia({
         setMensajes((prev) =>
           prev.map((m) => (m.id === idIA ? { ...m, texto: String(respuesta), escribiendo: false } : m))
         );
-      } catch {
+      } catch (error) {
         setMensajes((prev) =>
           prev.map((m) => {
             if (m.id === idIA)
-              return { ...m, texto: 'No pude responder en este momento. Intenta de nuevo.', escribiendo: false, excluir: true };
+              return { ...m, texto: error?.message || 'No pude responder en este momento. Intenta de nuevo.', escribiendo: false, excluir: true };
             if (m.id === idUser) return { ...m, excluir: true };
             return m;
           })
@@ -161,6 +161,10 @@ export default function IAMantia({
           <span className="mc-casco">
             <span className="mc-lampara" />
           </span>
+        </span>
+        <span className="mc-toggle-label">
+          <strong>MANTIA IA</strong>
+          <small>Pregúntame algo</small>
         </span>
         <span className="mc-online" />
         {sinLeer && <span className="mc-badge">1</span>}

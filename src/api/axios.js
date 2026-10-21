@@ -41,7 +41,7 @@ function esMutacion(metodo = 'get') {
 
 function esIgnorada(url) {
     const partes = segmentos(url);
-    return url?.includes('csrf-cookie') || partes[1] === 'notificaciones';
+    return url?.includes('csrf-cookie') || partes[1] === 'notificaciones' || partes[1] === 'ai';
 }
 
 function mensajeExito(metodo, url) {
