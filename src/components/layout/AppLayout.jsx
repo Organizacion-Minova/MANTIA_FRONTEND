@@ -192,7 +192,7 @@ function AppLayout({ children }) {
                             title="Ir al panel de control"
                         >
                             <i className="fa-solid fa-solar-panel"></i>
-                            <span>Dashboard</span>
+                            <span>Panel de Control</span>
                         </Link>
                     </li>
 
