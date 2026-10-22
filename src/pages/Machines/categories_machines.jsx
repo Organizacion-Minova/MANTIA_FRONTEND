@@ -5,7 +5,8 @@ import { Form, Text, Textarea, Select } from '../../components/common/forms';
 import { GetCategoryMachine, CreateCategoryMachine, DeleteCategoryMachine, UpdateCategoryMachine } from "../../api/machinesapi";
 import LoadingScreen from "../../components/LoadingScreen";
 import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
-import { soloLetras, tieneGroserias, esPalabraCoherente} from "../../components/common/Validations";
+import { capitalizarPrimeraLetra, soloLetras, sinCaracteresEspeciales, validarCaracteresEspeciales, validarGroserias } from "../../components/common/Validations";
+import { validarCamposRequeridos } from "../../components/common/requiredFields";
 import { useSearch } from "../../hooks/useSearch";
 
 function Formulario({ onCancel, onGuardado, categoriaEditar }) {
@@ -19,30 +20,19 @@ function Formulario({ onCancel, onGuardado, categoriaEditar }) {
         e.preventDefault();
         setErrores({});
 
-        const erroresLocales={};
+        if (!validarCamposRequeridos({
+            "Nombre de la categoría": nombre,
+            "Descripción": descripcion,
+            ...(esEdicion ? { "Estado": estado } : {}),
+        })) return;
 
-        if (!soloLetras(nombre) || !soloLetras(descripcion)){
-            if(!soloLetras(nombre)){
-                erroresLocales.name = ["El contenido solo puede contener letras y espacios"]
-            }
-            if(!soloLetras(descripcion)){
-                erroresLocales.description = ["El contenido solo puede contener letras y espacios"]
-            }
-        } else if (tieneGroserias(nombre) || tieneGroserias(descripcion)){
-            if (tieneGroserias(nombre)){
-                erroresLocales.name = ["El contenido tiene palabras inapropiadas"]
-                
-            } else if (tieneGroserias(descripcion)){
-                erroresLocales.description = ["El contenido tiene palabras inapropiadas"]
-            }
-        } else if (!esPalabraCoherente(nombre) || !esPalabraCoherente(descripcion)){
-            if (!esPalabraCoherente(nombre)){
-                erroresLocales.name = ["El contenido no es coherente"]
-            }
-            if (!esPalabraCoherente(descripcion)){
-                erroresLocales.description = ["El contenido no es coherente"]
-            }
+        const erroresLocales = {};
+
+        if (!soloLetras(descripcion)) {
+            erroresLocales.description = ["El contenido solo puede contener letras y espacios."];
         }
+        Object.assign(erroresLocales, validarCaracteresEspeciales({ name: nombre }));
+        Object.assign(erroresLocales, validarGroserias({ name: nombre, description: descripcion }));
 
         if (Object.keys(erroresLocales).length > 0) {
             setErrores(erroresLocales);
@@ -88,6 +78,7 @@ function Formulario({ onCancel, onGuardado, categoriaEditar }) {
             textoBoton="Guardar"
             iconoBoton="fa-solid fa-floppy-disk"
             onSubmit={handleSubmit}
+            noValidate
         >
             <div className="col-span-6">
                 <Text
@@ -98,14 +89,13 @@ function Formulario({ onCancel, onGuardado, categoriaEditar }) {
                     value={nombre}
                     onChange={(e) => {
                         const valor = e.target.value;
-                        if (soloLetras(valor) || valor===""){
-                            setNombre(e.target.value)
+                        if (sinCaracteresEspeciales(valor)){
+                            setNombre(capitalizarPrimeraLetra(valor))
                         }
                     }}
                     required
                 />
             </div>
-            {errores.name && alert(errores.name[0])}
 
             <div className="col-span-6">
                 <Textarea
@@ -114,11 +104,10 @@ function Formulario({ onCancel, onGuardado, categoriaEditar }) {
                     name="descripcion"
                     rows={4}
                     value={descripcion}
-                    onChange={(e) => setDescripcion(e.target.value)}
+                    onChange={(e) => setDescripcion(capitalizarPrimeraLetra(e.target.value))}
                     required
                 />
             </div>
-            {errores.description && alert(errores.description[0])}
 
             {esEdicion && (
                 <div className="col-span-6">
@@ -192,7 +181,7 @@ function CategoriasMaquinas(){
         <div className="list-grid">
             <header className="bienvenida">
                 <PageWelcome
-                    titulo="CATEGORIAS MAQUINAS"
+                    titulo="CATEGORIAS MÁQUINAS"
                     descripcion="Este es el formato de las categorias de las máquinas."
                 />
                 <Searcher

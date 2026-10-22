@@ -8,6 +8,8 @@ import { obtenerUbicaciones } from "../../api/location";
 import { obtenerEmpresas } from "../../api/company";
 import { usePaginacion,Paginacion } from "../../components/common/Paginacion";
 import { useSearch } from "../../hooks/useSearch";
+import { capitalizarPrimeraLetra, sinCaracteresEspeciales, validarCaracteresEspeciales, validarGroserias } from "../../components/common/Validations";
+import { validarCamposRequeridos } from "../../components/common/requiredFields";
 
 const valorSelect = (valor) => (valor == null ? "" : String(valor));
 const valorOperacion = (valor) => {
@@ -23,9 +25,9 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
     const [modelo, setModelo] = useState(maquinaEditar?.model || "");
     const [numeroSerie, setNumeroSerie] = useState(maquinaEditar?.serial_number || "");
     const [fechaAdquisicion, setFechaAdquisicion] = useState(maquinaEditar?.acquisition_date || "");
-    const [costoAdquisicion, setCostoAdquisicion] = useState(maquinaEditar?.acquisition_cost || "");
+    const [costoAdquisicion, setCostoAdquisicion] = useState(maquinaEditar?.acquisition_cost ?? "");
     const [estado, setEstado] = useState(maquinaEditar?.status || "active");
-    const [garantia, setGarantia] = useState(maquinaEditar?.warranty || "");
+    const [garantia, setGarantia] = useState(maquinaEditar?.warranty ?? "");
     const [archivoImagen, setArchivoImagen] = useState(null);
     const [categoriaid, setCategoriaid] = useState(valorSelect(maquinaEditar?.category_maquina?.id ?? maquinaEditar?.category_id));
     const [locationid, setLocationid] = useState(valorSelect(maquinaEditar?.ubicacion?.id ?? maquinaEditar?.location?.id ?? maquinaEditar?.location_id));
@@ -94,6 +96,41 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
         e.preventDefault();
         setErrores({});
         setMensajeError("");
+        const imagenFaltante = !esEdicion && !archivoImagen;
+        if (!validarCamposRequeridos({
+            "Código": codigo,
+            "Nombre": nombre,
+            "Modelo": modelo,
+            "Número de serie": numeroSerie,
+            "Fecha de adquisición": fechaAdquisicion,
+            "Costo de adquisición": costoAdquisicion,
+            "Marca": companyid,
+            "Ubicación": locationid,
+            "Uso de la máquina": usoMaquina,
+            "Responsable": responsable,
+            "Operación de la máquina": maquinaEnOperacion,
+            "Garantía": garantia,
+            "Categoría": categoriaid,
+            "Características": caracteristicas,
+            ...(esEdicion ? { "Estado": estado } : {}),
+            ...(imagenFaltante ? { "Imagen": "" } : {}),
+        })) {
+            if (imagenFaltante) setErrorImagen("Debe seleccionar una imagen.");
+            return;
+        }
+
+        const erroresLocales = validarCaracteresEspeciales({ name: nombre });
+        Object.assign(erroresLocales, validarGroserias({
+            name: nombre,
+            model: modelo,
+            machine_usage: usoMaquina,
+            responsible: responsable,
+            characteristics: caracteristicas,
+        }));
+        if (Object.keys(erroresLocales).length > 0) {
+            setErrores(erroresLocales);
+            return;
+        }
         if (!esEdicion && !archivoImagen) {
             setErrorImagen("Debe seleccionar una imagen.");
             return;
@@ -161,25 +198,14 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
     }
     return(
         <Form
-            titulo={esEdicion?"Editar Maquina":"Agregar nueva Maquina"}
+            titulo={esEdicion?"Editar máquina":"Agregar nueva máquina"}
             descripcion={esEdicion?"Ingrese los datos que desea editar":"Ingrese los datos de la nueva maquina"}
             onCancel={onCancel}
             textoBoton="Guardar"
             iconoBoton="fa-solid fa-floppy-disk"
             onSubmit={handleSubmit}
+            noValidate
         >
-            {(mensajeError || Object.entries(errores).length > 0) && (
-                <div className="col-span-6" role="alert">
-                    {mensajeError && <p>{mensajeError}</p>}
-                    {Object.entries(errores).map(([campo, mensajes]) => (
-                        <p key={campo}>{campo}: {
-                            Array.isArray(mensajes)
-                                ? mensajes.map((mensaje) => typeof mensaje === "string" ? mensaje : JSON.stringify(mensaje)).join(" ")
-                                : typeof mensajes === "string" ? mensajes : JSON.stringify(mensajes)
-                        }</p>
-                    ))}
-                </div>
-            )}
             <div className="col-span-3">
                 <Text
                     label="Código:"
@@ -198,7 +224,12 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
                     name="nombre"
                     placeholder="Nombre de la máquina"
                     value={nombre}
-                    onChange={(e) => setNombre(e.target.value)}
+                    onChange={(e) => {
+                        const valor = e.target.value;
+                        if (valor === "" || sinCaracteresEspeciales(valor)) {
+                            setNombre(capitalizarPrimeraLetra(valor));
+                        }
+                    }}
                     required
                 />
             </div>
@@ -209,7 +240,7 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
                     name="modelo"
                     placeholder="Modelo de la máquina"
                     value={modelo}
-                    onChange={(e) => setModelo(e.target.value)}
+                    onChange={(e) => setModelo(capitalizarPrimeraLetra(e.target.value))}
                     required
                 />
             </div>
@@ -253,7 +284,7 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
                     name="usoMaquina"
                     placeholder="Uso de la maquina"
                     value={usoMaquina}
-                    onChange={(e) => setUsoMaquina(e.target.value)}
+                    onChange={(e) => setUsoMaquina(capitalizarPrimeraLetra(e.target.value))}
                     required
                 />
             </div>
@@ -264,7 +295,7 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
                     name="responsable"
                     placeholder="Ingresa el responsable"
                     value={responsable}
-                    onChange={(e) => setResponsable(e.target.value)}
+                    onChange={(e) => setResponsable(capitalizarPrimeraLetra(e.target.value))}
                     required
                 />
             </div>
@@ -358,7 +389,7 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
                     placeholder="Características de la maquina"
                     rows="4"
                     value={caracteristicas}
-                    onChange={(e) => setCaracteristicas(e.target.value)}
+                    onChange={(e) => setCaracteristicas(capitalizarPrimeraLetra(e.target.value))}
                     required
                 />
             </div>
@@ -469,7 +500,7 @@ function Maquinas(){
         <div className="list-grid">
             <header className="bienvenida">
                 <PageWelcome
-                    titulo="MAQUINAS"
+                    titulo="MÁQUINAS"
                     descripcion="Este es el formato de las máquinas."
                 />
                 <Searcher
