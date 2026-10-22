@@ -5,10 +5,10 @@ import { Boton } from '../../components/common/Button.jsx';
 import '../../styles/Form/form.css';
 
 // Base del formulario
-export function Form({ titulo, descripcion, onSubmit, onCancel, children, textoBoton = "Guardar", iconoBoton = "fa-solid fa-floppy-disk" }) {
+export function Form({ titulo, descripcion, onSubmit, onCancel, children, textoBoton = "Guardar", iconoBoton = "fa-solid fa-floppy-disk", noValidate = false }) {
     return (
         <div className="form-modal-overlay" onClick={onCancel}>
-            <form onSubmit={onSubmit} className="form-container" onClick={(e) => e.stopPropagation()}>
+            <form onSubmit={onSubmit} className="form-container" onClick={(e) => e.stopPropagation()} noValidate={noValidate}>
                 {onCancel && (
                 <button
                     type="button"

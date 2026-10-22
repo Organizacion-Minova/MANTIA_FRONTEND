@@ -8,6 +8,18 @@ import { obtenerEmpresas } from "../../api/company";
 import LoadingScreen from "../../components/LoadingScreen";
 import { usePaginacion,Paginacion } from "../../components/common/Paginacion";
 import { useSearch } from "../../hooks/useSearch";
+import api from "../../api/axios";
+import { capitalizarPrimeraLetra, sinCaracteresEspeciales, validarCaracteresEspeciales, validarGroserias } from "../../components/common/Validations";
+import { validarCamposRequeridos } from "../../components/common/requiredFields";
+
+function obtenerUrlImagen(imagen) {
+    if (!imagen) return null;
+    if (/^https?:\/\//i.test(imagen)) return imagen;
+
+    const ruta = imagen.replace(/^\/+/, "").replace(/^storage\//, "");
+    const baseUrl = api.defaults.baseURL.replace(/\/+$/, "");
+    return `${baseUrl}/storage/${ruta}`;
+}
 
 function Formulario({onCancel, onGuardado, equiposEditar}){
     const esEdicion = equiposEditar != null;
@@ -27,7 +39,7 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
     const [errores, setErrores] = useState({});
     const [errorImagen, setErrorImagen] = useState("");
     const [vistaPrevia, setVistaPrevia] = useState(null);
-    const imagenActual = equiposEditar?.image || null;
+    const imagenActual = obtenerUrlImagen(equiposEditar?.image);
 
     useEffect(()=>{
         obtenerUbicaciones()
@@ -78,6 +90,38 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
     const handleSubmit = async (e) =>{
         e.preventDefault();
         setErrores({});
+        const imagenFaltante = !esEdicion && !archivoImagen;
+        if (!validarCamposRequeridos({
+            "Código": codigo,
+            "Nombre": nombre,
+            "Descripción": descripcion,
+            "Número de serie": serie,
+            "Marca": companyid,
+            "Fecha de ingreso": fechaIngreso,
+            "Ubicación": locationid,
+            "Responsable": responsable,
+            "Modelo": modelo,
+            ...(esEdicion ? { "Estado": estado } : {}),
+            ...(imagenFaltante ? { "Imagen": "" } : {}),
+        })) {
+            if (imagenFaltante) setErrorImagen("Debe seleccionar una imagen.");
+            return;
+        }
+
+        const erroresLocales = validarCaracteresEspeciales({
+            name: nombre,
+            responsible: responsable,
+        });
+        Object.assign(erroresLocales, validarGroserias({
+            name: nombre,
+            description: descripcion,
+            responsible: responsable,
+            model: modelo,
+        }));
+        if (Object.keys(erroresLocales).length > 0) {
+            setErrores(erroresLocales);
+            return;
+        }
         if (!esEdicion && !archivoImagen) {
             setErrorImagen("Debe seleccionar una imagen.");
             return;
@@ -138,7 +182,17 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
             textoBoton="Guardar"
             iconoBoton="fa-solid fa-floppy-disk"
             onSubmit={handleSubmit}
+            noValidate
         >
+            {Object.keys(errores).length > 0 && (
+                <div className="col-span-6" role="alert">
+                    {Object.entries(errores).map(([campo, mensajes]) => (
+                        <p key={campo}>
+                            {campo}: {Array.isArray(mensajes) ? mensajes.join(" ") : String(mensajes)}
+                        </p>
+                    ))}
+                </div>
+            )}
             <div className="col-span-3">
                 <Text
                     label="Código:"
@@ -157,7 +211,12 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
                     name="nombre"
                     placeholder="Nombre del equipo"
                     value={nombre}
-                    onChange={(e) => setNombre(e.target.value)}
+                    onChange={(e) => {
+                        const valor = e.target.value;
+                        if (valor === "" || sinCaracteresEspeciales(valor)) {
+                            setNombre(capitalizarPrimeraLetra(valor));
+                        }
+                    }}
                     required
                 />
             </div>
@@ -169,7 +228,7 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
                     placeholder="Descripcion del equipo"
                     rows="4"
                     value={descripcion}
-                    onChange={(e) => setDescripcion(e.target.value)}
+                    onChange={(e) => setDescripcion(capitalizarPrimeraLetra(e.target.value))}
                     required
                 />
             </div>
@@ -223,7 +282,12 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
                     name="responsable"
                     placeholder="Ingresa el responsable"
                     value={responsable}
-                    onChange={(e) => setResponsable(e.target.value)}
+                    onChange={(e) => {
+                        const valor = e.target.value;
+                        if (valor === "" || sinCaracteresEspeciales(valor)) {
+                            setResponsable(capitalizarPrimeraLetra(valor));
+                        }
+                    }}
                     required
                 />
             </div>
@@ -234,7 +298,7 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
                     name="modelo"
                     placeholder="Modelo de la máquina"
                     value={modelo}
-                    onChange={(e) => setModelo(e.target.value)}
+                    onChange={(e) => setModelo(capitalizarPrimeraLetra(e.target.value))}
                     required
                 />
             </div>
@@ -420,7 +484,7 @@ function Equipos(){
                                 clase="btn-2"
                                 icono="fa-solid fa-edit"
                                 onClick={()=>handleAbrirEditar(e)}
-                                title="Editar equipo"
+                                titulo="Editar equipo"
                             />
                             <Boton
                                 clase="btn-2"

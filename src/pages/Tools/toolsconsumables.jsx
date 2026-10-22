@@ -1,22 +1,24 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import { Boton, BotonLink } from "../../components/common/Button";
 import { PageWelcome,Searcher } from "../../components/common/welcome";
 import { Form, Text, Select } from "../../components/common/forms";
-import { GetCategoryToolById, GetTools, DeleteTool, CreateTool, UpdateTool} from "../../api/Toolsapi";
+import {  GetTools, DeleteTool, CreateTool, UpdateTool, GetCategoryTools} from "../../api/Toolsapi";
 import LoadingScreen from "../../components/LoadingScreen";
 import { usePaginacion, Paginacion   } from "../../components/common/Paginacion";
 import { obtenerUbicaciones } from "../../api/location";
-import { soloLetras, soloNumeros, tieneGroserias, esPalabraCoherente} from "../../components/common/Validations";
+import { capitalizarPrimeraLetra, soloNumeros, sinCaracteresEspeciales, tieneGroserias, validarCaracteresEspeciales } from "../../components/common/Validations";
+import { validarCamposRequeridos } from "../../components/common/requiredFields";
 import { useSearch } from "../../hooks/useSearch";
 
-function Formulario({onCancel,onGuardado, herramientaEditar, categoryid}){
+function Formulario({onCancel,onGuardado, herramientaEditar}){
     const esEdicion = herramientaEditar != null;
     const [nombre, setNombre] = useState(herramientaEditar?.name ||"");
-    const [stockBueno, setStockBueno] = useState(herramientaEditar?.condiciones?.find(c => c.condition === "bueno")?.stock || "");
-    const [stockRegular, setStockRegular] = useState(herramientaEditar?.condiciones?.find(c => c.condition === "regular")?.stock || "");
-    const [stockMalo, setStockMalo] = useState(herramientaEditar?.condiciones?.find(c => c.condition === "malo")?.stock || "");
+    const [stockBueno, setStockBueno] = useState(herramientaEditar?.condiciones?.find(c => c.condition === "bueno")?.stock ?? "");
+    const [stockRegular, setStockRegular] = useState(herramientaEditar?.condiciones?.find(c => c.condition === "regular")?.stock ?? "");
+    const [stockMalo, setStockMalo] = useState(herramientaEditar?.condiciones?.find(c => c.condition === "malo")?.stock ?? "");
     const [locationId, setLocationId] = useState(herramientaEditar?.location_id || "");
+    const [categoryId, setCategoryId] = useState(herramientaEditar?.category_id || "");
+    const [categoria, setCategoria]= useState([])
     const [ubicaciones, setUbicaciones] = useState([]);
     const [errores, setErrores] = useState({});
 
@@ -24,20 +26,37 @@ function Formulario({onCancel,onGuardado, herramientaEditar, categoryid}){
         obtenerUbicaciones()
             .then((data) => setUbicaciones(Array.isArray(data.ubicaciones) ? data.ubicaciones : []))
             .catch((error) => console.error("Error al traer ubicaciones:", error));
+        GetCategoryTools()
+            .then((data) => {
+                const lista = Array.isArray(data) ? data : [];
+                setCategoria(
+                    lista.filter((c) => Number(c.category_group_id) === 1)
+                );
+    })            .catch((error) => console.error("Error al traer categorias:", error));
     }, []);
 
     const handleSubmit = async (e) =>{
         e.preventDefault();
         setErrores({});
 
+        if (!validarCamposRequeridos({
+            "Nombre": nombre,
+            "Cantidad buena": stockBueno,
+            "Cantidad regular": stockRegular,
+            "Cantidad mala": stockMalo,
+            "Ubicación": locationId,
+            "Categoria": categoryId
+        })) return;
+
         const erroresLocales = {};
 
-        if (!soloLetras(nombre)) {
-            erroresLocales.name = ["El nombre solo puede contener letras y espacios."];
-        }else if (tieneGroserias(nombre)) {
+        Object.assign(erroresLocales, validarCaracteresEspeciales({ name: nombre }));
+        if (tieneGroserias(nombre)) {
             erroresLocales.name = ["El nombre contiene palabras inapropiadas."];
-        }else if (!esPalabraCoherente(nombre)) {
-            erroresLocales.name = ["El nombre contiene palabras que no son coherentes."];
+        }
+        if (Object.keys(erroresLocales).length > 0) {
+            setErrores(erroresLocales);
+            return;
         }
         if (esEdicion) {
             const sincambios =
@@ -45,7 +64,8 @@ function Formulario({onCancel,onGuardado, herramientaEditar, categoryid}){
                 Number(stockBueno) === herramientaEditar.condiciones?.find(c => c.condition === "bueno")?.stock &&
                 Number(stockRegular) === herramientaEditar.condiciones?.find(c => c.condition === "regular")?.stock &&
                 Number(stockMalo) === herramientaEditar.condiciones?.find(c => c.condition === "malo")?.stock &&
-                Number(locationId) === herramientaEditar.location_id;
+                Number(locationId) === herramientaEditar.location_id &&
+                Number(categoryId) === herramientaEditar.category_id;
             if (sincambios) {
                 onCancel();
                 return;
@@ -54,7 +74,7 @@ function Formulario({onCancel,onGuardado, herramientaEditar, categoryid}){
         const datos = {
             name: nombre,
             location_id: locationId,
-            category_id: Number(categoryid), 
+            category_id: Number(categoryId), 
             condiciones: {
                 bueno: Number(stockBueno) || 0,
                 regular: Number(stockRegular) || 0,
@@ -85,8 +105,9 @@ function Formulario({onCancel,onGuardado, herramientaEditar, categoryid}){
             textoBoton="Guardar"
             iconoBoton="fa-solid fa-floppy-disk"
             onSubmit={handleSubmit}
+            noValidate
         >
-            <div className="col-span-6">
+            <div className="col-span-3">
                 <Text
                     label="Nombre:"
                     id="nombre"
@@ -95,15 +116,25 @@ function Formulario({onCancel,onGuardado, herramientaEditar, categoryid}){
                     value={nombre}
                     onChange={(e) => {
                         const valor = e.target.value;
-                        if (valor === "" || soloLetras(valor)) {
-                            setNombre(valor);
+                        if (valor === "" || sinCaracteresEspeciales(valor)) {
+                            setNombre(capitalizarPrimeraLetra(valor));
                         }
                     }
                     }
                     required
                 />
             </div>
-            {errores.name && <p className="error-texto">{errores.name[0]}</p>}
+            <div className="col-span-3">
+                <Select
+                    label="Categoria: "
+                    id="categoria"
+                    name="categoria"
+                    value={categoryId}
+                    onChange={(e) => setCategoryId(e.target.value)}
+                    opciones={[{valor:"", etiqueta:"Seleccione una categoria"},...categoria.map((c) => ({ valor: c.id, etiqueta: c.name }))]}
+                    required
+                />
+            </div>
             <div className="col-span-3">
                 <Text
                     label="Cantidad buena:"
@@ -166,6 +197,7 @@ function Formulario({onCancel,onGuardado, herramientaEditar, categoryid}){
                     required
                 />
             </div>
+
         </Form>
     )
 }
@@ -177,22 +209,19 @@ function obtenerCantidadSegunEstado(herramienta, estado) {
     return encontrado ? encontrado.stock : 0;
 }
 function ToolsConsumables(){
-    const { id } = useParams();
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
-    const [categoria, setCategoria] = useState(null);
     let[herramienta, setHerramienta] = useState([]);
     const [herramientaEditar, setHerramientaEditar]=useState(null);
-    const [cargandoCategoria, setCargandoCategoria] = useState(true);
-    const [cargandoHerramientas, setCargandoHerramientas] = useState(true);
+    const [cargando, setCargando] = useState(true);
     const [estadoSeleccionado, setEstadoSeleccionado] = useState({});
-    const herramientasCategoria = herramienta
-        .filter((herramienta) => herramienta.category_id === Number(id))
-        .map((herramienta) => ({
+    herramienta = herramienta.filter((h)=>Number(h.categoria?.category_group_id) === 1);
+    herramienta.map((herramienta) => ({
             ...herramienta,
             ubicacionBusqueda: herramienta.ubicacion?.name || "",
+            categoriaBusqueda: herramienta.categoria?.name || ""
     }));
     const ubicacionesDisponibles = [...new Map(
-        herramientasCategoria
+        herramienta
             .filter((herramienta) => herramienta.location_id != null)
             .map((herramienta) => [
                 String(herramienta.location_id),
@@ -202,37 +231,40 @@ function ToolsConsumables(){
                 },
             ])
     ).values()];
+    const categoriasDisponibles = [...new Map(
+        herramienta
+        .filter((h)=>(h.categoria?.category_group_id) === 1)
+            .map((herramienta)=>[
+                String(herramienta.category_id),
+                {
+                    id: herramienta.category_id,
+                    name: herramienta.categoria?.name || `Categoria ${herramienta.category_id}`,
+                }
+            ])
+    ).values()]
     const { busqueda, setBusqueda, filtrosEspeciales, setFiltroEspecial, itemsFiltrados: herramientasFiltradas } = useSearch(
-        herramientasCategoria,
-        ["name", "ubicacionBusqueda"]
+        herramienta,
+        ["name", "ubicacionBusqueda", "categoriaBusqueda"]
     );
     const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(herramientasFiltradas, 7);
 
     useEffect(() => {
         setPaginaActual(1);
     }, [busqueda, filtrosEspeciales, setPaginaActual]);
-    const cargarCategoria = () => {
-        setCargandoCategoria(true);
-        GetCategoryToolById(id)
-            .then((data) => setCategoria(data))
-            .catch((err) => console.error("Error al cargar categoría:", err))
-            .finally(() => setCargandoCategoria(false));
-    };
 
     const cargarHerramientas = () => {
-        setCargandoHerramientas(true);
+        setCargando(true);
         GetTools()
             .then((data) => {
                 setHerramienta(data);
             })
             .catch((err) => console.error("Error al cargar herramientas:", err))
-            .finally(() => setCargandoHerramientas(false));
+            .finally(() => setCargando(false));
     };
 
     useEffect(() => {
-        cargarCategoria();
         cargarHerramientas();
-    }, [id]);
+    }, []);
     const handleEliminar = async (id) =>{
         let confirmar= window.confirm("¿Seguro que quieres eliminar esta herramienta?")
         if (!confirmar)
@@ -254,7 +286,7 @@ function ToolsConsumables(){
         setMostrarFormulario(true);
     }
 
-    if (cargandoCategoria || cargandoHerramientas) {
+    if (cargando) {
         return <LoadingScreen indeterminado />;
     }
     
@@ -270,27 +302,43 @@ function ToolsConsumables(){
         <div className="list-grid">
             <header className="bienvenida">
                 <PageWelcome
-                    titulo={`HERRAMIENTAS CONSUMIBLES ${categoria.name}` }  
-                    descripcion={`Este es el formato de las herramientas consumibles ${categoria.name} .`}
+                    titulo={`HERRAMIENTAS CONSUMIBLES` }  
+                    descripcion={`Este es el formato de las herramientas consumibles .`}
                 />
+                
                 <Searcher
                     value={busqueda}
                     onChange={(e) => setBusqueda(e.target.value)}
                     placeholder="Buscar por nombre o ubicacion"
                     filtrosAdicionales={
-                        <Select
-                            id="filtro-ubicacion"
-                            name="filtro-ubicacion"
-                            value={filtrosEspeciales.location_id || ""}
-                            onChange={(e) => setFiltroEspecial("location_id", e.target.value)}
-                            opciones={[
-                                { valor: "", etiqueta: "Todas las ubicaciones" },
-                                ...ubicacionesDisponibles.map((ubicacion) => ({
-                                    valor: ubicacion.id,
-                                    etiqueta: ubicacion.name,
-                                })),
-                            ]}
-                        />
+                        <div className="btn-container">
+                            <Select
+                                id="filtro-ubicacion"
+                                name="filtro-ubicacion"
+                                value={filtrosEspeciales.location_id || ""}
+                                onChange={(e) => setFiltroEspecial("location_id", e.target.value)}
+                                opciones={[
+                                    { valor: "", etiqueta: "Todas las ubicaciones" },
+                                    ...ubicacionesDisponibles.map((ubicacion) => ({
+                                        valor: ubicacion.id,
+                                        etiqueta: ubicacion.name,
+                                    })),
+                                ]}
+                            />
+                            <Select
+                                id="filtro-categoria"
+                                name="filtro-categoria"
+                                value={filtrosEspeciales.category_id || ""}
+                                onChange={(e) => setFiltroEspecial("category_id", e.target.value)}
+                                opciones={[
+                                    { valor: "", etiqueta: "Todas las categorias" },
+                                    ...categoriasDisponibles.map((c) => ({
+                                        valor: c.id,
+                                        etiqueta: c.name,
+                                    })),
+                                ]}
+                            />
+                        </div>
                     }
                 />
             </header>
@@ -302,6 +350,7 @@ function ToolsConsumables(){
                             <th>Condicion</th>
                             <th>Cantidad</th>
                             <th>Ubicacion</th>
+                            <th>Categoria</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -327,6 +376,7 @@ function ToolsConsumables(){
                                 {obtenerCantidadSegunEstado(h, estadoActual)}
                             </td>
                             <td>{h.ubicacion.name}</td>
+                            <td>{h.categoria?.name || "Sin categoría"}</td>
                             <td>
                                 <Boton
                                     clase="btn-azul"
@@ -348,19 +398,20 @@ function ToolsConsumables(){
             </div>
             <div className="btn-container-page">
                 <div className="btn-container">
-                    <BotonLink
-                        link="/types/consumables"
-                        clase="btn-2"
-                        icono="fa-solid fa-list"
-                        texto="Volver a categorias consumibles"
-                        titulo="Volver a categorias consumibles"
-                    />
+                    
                     <Boton
                         clase="btn-azul"
                         icono="fa-solid fa-plus"
                         texto="Nueva Herramienta"
                         onClick={handleAbrirCrear}
                         titulo="Agregar nueva herramienta"
+                    />
+                    <BotonLink
+                        link="/consumables/tools/types"
+                        clase="btn-2"
+                        icono="fa-solid fa-list"
+                        texto="Ir a las categorias de las herramientas consumibles"
+                        titulo="Ir a las categorias de las herramientas consumibles"
                     />
                 </div>
                 <Paginacion
@@ -375,7 +426,6 @@ function ToolsConsumables(){
                     onCancel={() => setMostrarFormulario(false)}
                     onGuardado={cargarHerramientas} 
                     herramientaEditar={herramientaEditar}
-                    categoryid={id}
                 />
             )}
         </div>

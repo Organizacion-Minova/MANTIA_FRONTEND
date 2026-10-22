@@ -40,8 +40,8 @@ export function CardEquipment() {
         <div className="cards-grid">
        
             <PageWelcome
-                titulo={`Hoja de vida del ${equipo.name}`}
-                descripcion="Hoja de vida del equipo."
+                titulo={`Detalles de ${equipo.name}`}
+                descripcion="Detalles del equipo."
             />
             <section className="cards">
                 <div className="card">

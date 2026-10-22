@@ -5,7 +5,8 @@ import { Form, Text, Textarea, Select } from "../../components/common/forms";
 import { GetCategoryTools, CreateCategoryTools, DeleteCategoryTools, UpdateCategoryTools } from "../../api/Toolsapi";
 import LoadingScreen from "../../components/LoadingScreen";
 import { usePaginacion, Paginacion   } from "../../components/common/Paginacion";
-import { soloLetras, tieneGroserias, esPalabraCoherente } from "../../components/common/Validations";
+import { capitalizarPrimeraLetra, sinCaracteresEspeciales, validarCaracteresEspeciales, validarGroserias } from "../../components/common/Validations";
+import { validarCamposRequeridos } from "../../components/common/requiredFields";
 import { useSearch } from "../../hooks/useSearch";
 
 function FormConsumibles({onCancel,onGuardado,categoriaEditar }){
@@ -19,35 +20,20 @@ function FormConsumibles({onCancel,onGuardado,categoriaEditar }){
         e.preventDefault();
         setErrores({});
 
-        const erroresLocales={};
+        if (!validarCamposRequeridos({
+            "Nombre de la categoría": nombre,
+            "Descripción": descripcion,
+            ...(esEdicion ? { "Estado": estado } : {}),
+        })) return;
 
-        if (!soloLetras(nombre) || !soloLetras(descripcion)){
-            if(!soloLetras(nombre)){
-                erroresLocales.name = ["El contenido solo puede contener letras y espacios"]
-            }
-            if(!soloLetras(descripcion)){
-                erroresLocales.description = ["El contenido solo puede contener letras y espacios"]
-            }
-        } else if (tieneGroserias(nombre) || tieneGroserias(descripcion)){
-            if (tieneGroserias(nombre)){
-                erroresLocales.name = ["El contenido tiene palabras inapropiadas"]
-            }
-            if (tieneGroserias(descripcion)){
-                erroresLocales.description = ["El contenido tiene palabras inapropiadas"]
-            }
-        } else if (!esPalabraCoherente(nombre) || !esPalabraCoherente(descripcion)){
-            if (!esPalabraCoherente(nombre)){
-                erroresLocales.name = ["El contenido no es coherente"]
-            }
-            if (!esPalabraCoherente(descripcion)){
-                erroresLocales.description = ["El contenido no es coherente"]
-            }
-        }
-
+        const erroresLocales = {};
+        Object.assign(erroresLocales, validarCaracteresEspeciales({ name: nombre }));
+        Object.assign(erroresLocales, validarGroserias({ name: nombre, description: descripcion }));
         if (Object.keys(erroresLocales).length > 0) {
             setErrores(erroresLocales);
-            return; 
+            return;
         }
+
         if (esEdicion){
             const sinCambios= 
                 nombre.trim() === categoriaEditar.name &&
@@ -91,6 +77,7 @@ function FormConsumibles({onCancel,onGuardado,categoriaEditar }){
             textoBoton="Guardar"
             iconoBoton="fa-solid fa-floppy-disk"
             onSubmit={handleSubmit}
+            noValidate
         >
             <div className="col-span-6">
                 <Text
@@ -101,8 +88,8 @@ function FormConsumibles({onCancel,onGuardado,categoriaEditar }){
                     value={nombre}
                     onChange={(e) => {
                         const valor = e.target.value;
-                        if (soloLetras(valor) || valor===""){
-                            setNombre(e.target.value)
+                        if (sinCaracteresEspeciales(valor) || valor === ""){
+                            setNombre(capitalizarPrimeraLetra(valor))
                         }
                     }}
                     required
@@ -117,11 +104,10 @@ function FormConsumibles({onCancel,onGuardado,categoriaEditar }){
                     rows="4"
                     placeholder="Descripcion"
                     value={descripcion}
-                    onChange={(e) => setDescripcion(e.target.value)}
+                    onChange={(e) => setDescripcion(capitalizarPrimeraLetra(e.target.value))}
                     required
                 />
             </div>
-            {errores.description && <p className="error-texto">{errores.description[0]}</p>}
             {esEdicion && (
                 <div className="col-span-6">
                     <Select
@@ -152,11 +138,15 @@ function FormNoConsumibles({onCancel, onGuardado, categoriaEditar}){
         e.preventDefault();
         setErrores({});
 
-        const erroresLocales={};
+        if (!validarCamposRequeridos({
+            "Nombre de la categoría": nombre,
+            "Descripción": descripcion,
+            ...(esEdicion ? { "Estado": estado } : {}),
+        })) return;
 
-        if (!soloLetras(nombre)){
-            erroresLocales.name = []
-        }
+        const erroresLocales = {};
+        Object.assign(erroresLocales, validarCaracteresEspeciales({ name: nombre }));
+        Object.assign(erroresLocales, validarGroserias({ name: nombre, description: descripcion }));
         if (Object.keys(erroresLocales).length > 0) {
             setErrores(erroresLocales);
             return; 
@@ -204,6 +194,7 @@ function FormNoConsumibles({onCancel, onGuardado, categoriaEditar}){
             textoBoton="Guardar"
             iconoBoton="fa-solid fa-floppy-disk"
             onSubmit={handleSubmit}
+            noValidate
         >
             <div className="col-span-6">
                 <Text
@@ -214,8 +205,8 @@ function FormNoConsumibles({onCancel, onGuardado, categoriaEditar}){
                     value={nombre}
                     onChange={(e) => {
                         const valor = e.target.value;
-                        if (soloLetras(valor) || valor===""){
-                            setNombre(e.target.value)
+                        if (sinCaracteresEspeciales(valor) || valor === ""){
+                            setNombre(capitalizarPrimeraLetra(valor))
                         }
                     }}
                     required
@@ -230,10 +221,11 @@ function FormNoConsumibles({onCancel, onGuardado, categoriaEditar}){
                     rows="4"
                     placeholder="Descripcion"
                     value={descripcion}
-                    onChange={(e) => setDescripcion(e.target.value)}
+                    onChange={(e) => setDescripcion(capitalizarPrimeraLetra(e.target.value))}
                     required
                 />
             </div>
+            {errores.description && <p className="error-texto">{errores.description[0]}</p>}
             {esEdicion && (
                 <div className="col-span-6">
                     <Select
@@ -258,7 +250,7 @@ export function Consumibles(){
     let [categorias, setCategorias] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [categoriaEditar, setCategoriaEditar] = useState(null);
-    categorias = categorias.filter((cat) => cat.category_group_id === 1)
+    categorias = categorias.filter((cat) => Number(cat.category_group_id) === 2)
     const { busqueda, setBusqueda, filtrosEspeciales, setFiltroEspecial, itemsFiltrados: categoriasFiltradas } = useSearch(
         categorias,
         ["name", "description", "status"]
@@ -272,7 +264,7 @@ export function Consumibles(){
     const cargarCategorias=()=>{
         setCargando(true);
         GetCategoryTools()
-            .then((data) => setCategorias(data))
+            .then((data) => setCategorias(Array.isArray(data) ? data : data?.data || []))
             .catch((error) => console.error("Error al traer categorías:", error))
             .finally(() => setCargando(false))
     }
@@ -303,8 +295,8 @@ export function Consumibles(){
         <div className="list-grid">
             <header className="bienvenida">
                 <PageWelcome
-                    titulo="HERRAMIENTAS CONSUMIBLES"
-                    descripcion="Este es el formato de las herramientas consumibles."
+                    titulo="CATEGORIAS DE HERRAMIENTAS CONSUMIBLES"
+                    descripcion="Este es el formato de las categorias de herramientas consumibles."
                 />
                 <Searcher
                     value={busqueda}
@@ -342,12 +334,7 @@ export function Consumibles(){
                             <td>{cat.description}</td>
                             <td>{cat.status}</td>                           
                             <td>
-                                <BotonLink
-                                    link={`/types/consumables/tools/${cat.id}`}
-                                    clase="btn-azul"
-                                    icono="fa-solid fa-eye"
-                                    titulo="Ver herramientas consumibles de la categoria"
-                                />
+                                
                                 <Boton
                                     clase="btn-azul"
                                     icono="fa-solid fa-edit"
@@ -367,13 +354,22 @@ export function Consumibles(){
                 </table>
             </div>
             <div className="btn-container-page">
-                <Boton
-                    clase="btn-azul"
-                    icono="fa-solid fa-plus"
-                    texto="Agregar tipo herramienta"
-                    onClick={handleAbrirCrear}
-                    titulo="Agregar nueva categoria consumible"
-                />
+                <div className="btn-container">
+                    <BotonLink
+                        link={`/consumables/tools`}
+                        clase="btn-azul"
+                        icono="fa-solid fa-list"
+                        texto="Ver herramientas consumibles"
+                        titulo="Ver herramientas consumibles "
+                    />
+                    <Boton
+                        clase="btn-2"
+                        icono="fa-solid fa-plus"
+                        texto="Agregar tipo herramienta"
+                        onClick={handleAbrirCrear}
+                        titulo="Agregar nueva categoria consumible"
+                    />
+                </div>
                 <Paginacion
                     paginaActual={paginaActual}
                     totalPaginas={totalPaginas}
@@ -395,7 +391,7 @@ export function No_Consumibles(){
     let [categorias, setCategorias] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [categoriaEditar, setCategoriaEditar] = useState(null);
-    categorias= categorias.filter((cat) => cat.category_group_id === 2)
+    categorias= categorias.filter((cat) => Number(cat.category_group_id) === 2)
 
     const { busqueda, setBusqueda, filtrosEspeciales, setFiltroEspecial, itemsFiltrados: categoriasFiltradas } = useSearch(
     categorias,
@@ -409,7 +405,7 @@ export function No_Consumibles(){
     const cargarCategorias=()=>{
         setCargando(true);
         GetCategoryTools()
-            .then((data) => setCategorias(data))
+            .then((data) => setCategorias(Array.isArray(data) ? data : data?.data || []))
             .catch((error) => console.error("Error al traer categorías:", error))
             .finally(() => setCargando(false))
     }
@@ -440,8 +436,8 @@ export function No_Consumibles(){
         <div className="list-grid">
             <header className="bienvenida">
                 <PageWelcome
-                    titulo="HERRAMIENTAS NO CONSUMIBLES"
-                    descripcion="Este es el formato de las herramientas no consumibles."
+                    titulo="CATEGORIAS DE HERRAMIENTAS NO CONSUMIBLES"
+                    descripcion="Este es el formato de las categorias de herramientas no consumibles."
                 />
                 <Searcher
                     value={busqueda}
@@ -480,7 +476,7 @@ export function No_Consumibles(){
                             <td>{cat.status}</td>
                             <td>
                                 <BotonLink
-                                    link={`/types/consumables/tools/${cat.id}`}
+                                    link={`/noconsumables/tools/${cat.id}`}
                                     clase="btn-azul"
                                     icono="fa-solid fa-eye"
                                     titulo="Ver herramientas consumibles de la categoria"
@@ -504,13 +500,22 @@ export function No_Consumibles(){
                 </table>
             </div>
             <div className="btn-container-page">
-                <Boton
-                    clase="btn-azul"
-                    icono="fa-solid fa-plus"
-                    texto="Agregar tipo herramienta"
-                    onClick={handleAbrirCrear}
-                    titulo="Agregar nueva categoria consumible"
-                />
+                <div className="btn-container">
+                    <BotonLink
+                        link={`/noconsumables/tools`}
+                        clase="btn-azul"
+                        icono="fa-solid fa-list"
+                        texto="Ver herramientas no consumibles"
+                        titulo="Ver herramientas no consumibles "
+                    />
+                    <Boton
+                        clase="btn-2"
+                        icono="fa-solid fa-plus"
+                        texto="Agregar tipo herramienta"
+                        onClick={handleAbrirCrear}
+                        titulo="Agregar nueva categoria no consumible"
+                    />
+                </div>
                 <Paginacion
                     paginaActual={paginaActual}
                     totalPaginas={totalPaginas}

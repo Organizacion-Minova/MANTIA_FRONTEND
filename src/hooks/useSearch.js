@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 
 export function useSearch(items = [], searchFields = [], dateField = 'created_at') {
     const [busqueda, setBusqueda] = useState('');
@@ -55,12 +55,12 @@ export function useSearch(items = [], searchFields = [], dateField = 'created_at
         });
     }, [items, searchFields, busqueda, rangoFecha, filtrosEspeciales, dateField]);
 
-    const setFiltroEspecial = (campo, valor) => {
+    const setFiltroEspecial = useCallback((campo, valor) => {
         setFiltrosEspeciales((prev) => ({
             ...prev,
             [campo]: valor
         }));
-    };
+    }, []);
 
     return { busqueda, setBusqueda, rangoFecha, setRangoFecha, filtrosEspeciales, setFiltroEspecial, itemsFiltrados };
 }

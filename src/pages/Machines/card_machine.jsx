@@ -40,15 +40,15 @@ export function CardMachine() {
         <div className="cards-grid">
 
             <PageWelcome
-                titulo={`Hoja de vida del ${maquina.name}`}
-                descripcion="Hoja de vida de la maquina."
+                titulo={`Detalles de ${maquina.name}`}
+                descripcion="Hoja de vida de la máquina."
             />
                 <section className="cards">
                     <div className="card">
                         <div className="equipment-image-container">
                             <img
                                 src={obtenerUrlImagen(maquina.image)}
-                                alt="Imagen de la maquina"
+                                alt="Imagen de la máquina"
                                 onError={(e) => {
                                     e.currentTarget.onerror = null;
                                     e.currentTarget.src = imagenPorDefecto;
@@ -75,7 +75,7 @@ export function CardMachine() {
                             <li><strong>CIUDAD:</strong> <span id="eb_ciudad">Sogamoso</span></li>
                             <li><strong>FECHA ADQUISICION:</strong> <span id="eb_fecha">{maquina.acquisition_date}</span></li>
                             <li><strong>EQUIPO EN OPERACIÓN:</strong> <span id="eb_equipoOperacion">{maquina.in_operation}</span></li>
-                            <li><strong>ESTADO:</strong> <span id="eb_estado">{maquina.status}</span></li>
+                            <li><strong>ESTADO:</strong> <span id="eb_estado">{maquina.status==="active"?"Activo":maquina.status==="inactive"?"Inactivo":maquina.status==="maintenance"?"En mantenimiento":"Desconocido"}</span></li>
                         </div>
                     <div className="card" style={{ listStyle: 'none', fontSize: '1.25rem' }}>
                             <li><strong>RESPONSABLE:</strong> <span id="eb_responsable">{maquina.responsible}</span></li>
