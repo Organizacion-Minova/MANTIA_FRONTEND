@@ -666,8 +666,7 @@ footer{
     border-bottom:2px solid var(--blanco);
     gap:25px;
     padding-bottom:15px;
-    margin-bottom:10px;
-}
+  }
 
 .logoSenaFooter{
     height:60px;
@@ -681,13 +680,6 @@ footer{
     width:auto;
 }
 
-.infoFooter{
-    font-size:small;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    line-height:1.4;
-}
 
 
 

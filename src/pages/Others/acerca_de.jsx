@@ -4,6 +4,7 @@ import "../../styles/Components.modules.css";
 import { useAuth } from "../../context/AuthContext.jsx";
 import AppLayout from "../../components/layout/AppLayout.jsx";
 import PublicLayout from "../../components/layout/PublicLayout.jsx";
+import { PageWelcome } from "../../components/common/welcome";
 
 /* ---------- pequeños bloques reutilizables de la página ---------- */
 
@@ -207,74 +208,14 @@ function AcercaDe() {
     return (
         <Layout>
         <div className="public-page">
-
-            {/* ================= HERO ================= */}
-
-            <div
-                style={{
-                    background: "var(--principal)",
-                    color: "var(--blanco)",
-                    borderRadius: "1.25rem",
-                    padding: "3rem 2rem",
-                    textAlign: "center",
-                    boxShadow: "var(--sombra-contenedor-hover)",
-                }}
-            >
-                <span
-                    style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "0.4rem",
-                        background: "rgba(255,255,255,.15)",
-                        padding: "0.35rem 1rem",
-                        borderRadius: "3.125rem",
-                        fontSize: "0.75rem",
-                        fontWeight: 700,
-                        letterSpacing: "0.02em",
-                        marginBottom: "1rem",
-                    }}
-                >
-                    <i className="fa-solid fa-graduation-cap"></i>
-                    PROYECTO FORMATIVO SENA
-                </span>
-
-              <div
-    style={{
-        marginBottom: "1.25rem",
-        display: "flex",
-        justifyContent: "center",
-    }}
->
-                <div
-                className="date"
-                style={{
-            padding: "1rem 1.6rem",
-            boxShadow:
-                "0 0.25rem 1rem rgba(0,0,0,.18)",
-                }}
-            >
-        <img
-            src="/mantia-logo.png"
-            alt="MANTIA"
-            style={{ height: "2.4rem", display: "block" }}
-                />
-                </div>
-            </div>
-
-            <p
-            style={{
-        maxWidth: "40rem",
-        margin: "0.6rem auto 0",
-        opacity: 0.92,
-            }}
-        >
-    Mantenimiento e inventario de activos, pensado para
-    la industria minera colombiana.
-</p>
-            </div>
-
-            <br />
-            <br />
+            <PageWelcome
+                titulo="Acerca de MANTIA"
+                descripcion="Mantenimiento e inventario de activos, pensado para la industria minera colombiana."
+            />
+            <p style={{ color: "var(--texto2)", marginBottom: "2rem" }}>
+                <i className="fa-solid fa-graduation-cap" aria-hidden="true"></i>{" "}
+                Proyecto formativo del SENA, Centro Nacional Minero.
+            </p>
 
             {/* ================= POR QUÉ EXISTE ================= */}
 
@@ -516,7 +457,7 @@ function AcercaDe() {
                     <FilaContacto
                         icono="fa-solid fa-envelope"
                         titulo="Correo"
-                        texto="mantiadso@gmail.com"
+                        texto="MantiaCM@gmail.com"
                     />
 
                     <FilaContacto
@@ -541,10 +482,10 @@ function AcercaDe() {
 
                 <div className="btn-container">
 
-                <a href="mailto:mantiadso@gmail.com" className="btn-azul">
+                {/* <a href="mailto:mantiadso@gmail.com" className="btn-azul">
         <i className="fa-solid fa-envelope"></i>
         Escríbenos
-            </a>
+            </a> */}
 
                 <Link to="/help">
                     <button className="btn-2">
