@@ -266,8 +266,53 @@ function AppLayout({ children }) {
                                     <span>Empresas</span>
                                 </Link>
                             </li>
+                            
                         </>
                     )}
+                    <li className={`menu-desplegable ${herramientasAbierto ? "activo" : ""}`}> 
+                        <a className="menu-titulo" onClick={() => setHerramientasAbierto(!herramientasAbierto)} > 
+                            <i className="fa-solid fa-file-alt"></i> 
+                            <span>Formatos</span> 
+                        </a> 
+                        <ul className="submenu"> 
+                            <li> 
+                                <Link 
+                                    to="/dailyuse" 
+                                    title="Ir al formato de uso diario" 
+                                > 
+                                    <i className="fa-solid fa-calendar-alt"></i> 
+                                    <span>Uso Diario</span> 
+                                </Link> 
+                            </li> 
+                            <li> 
+                                <Link 
+                                    to="/gases" 
+                                    title="Ir al formato de medicion de gases" 
+                                > 
+                                    <i className="fa-solid fa-gas-pump"></i> 
+                                    <span>Medición de Gases</span> 
+                                </Link> 
+                            </li> 
+                            <li> 
+                                <Link 
+                                    to="/inspection" 
+                                    title="Ir al formato de inspección" 
+                                > 
+                                    <i className="fa-solid fa-search"></i> 
+                                    <span>Inspección</span> 
+                                </Link> 
+                            </li> 
+                            <li> 
+                                <Link 
+                                    to="" 
+                                    title="Ir al formato preoperacional" 
+                                > 
+                                    <i className="fa-solid fa-cogs"></i> 
+                                    <span>Preoperacional</span> 
+                                </Link> 
+                            </li> 
+                        </ul> 
+                    </li>
 
                     <li>
                         <Link to="/about" title="Ir a acerca de">
