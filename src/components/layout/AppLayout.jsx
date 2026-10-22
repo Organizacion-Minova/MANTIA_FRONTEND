@@ -149,7 +149,7 @@ function AppLayout({ children }) {
                                 className="perfil-avatar"
                             />
                             <h3>{usuario?.name || "Invitado"}</h3>
-                            <span>Área de Desarrollo</span>
+                            <span>Área de desarrollo</span>
                         </div>
                         <div className="perfil-info">
                             <p>
@@ -169,7 +169,7 @@ function AppLayout({ children }) {
                                 link=""
                                 clase="btn-azul"
                                 icono="fa-solid fa-shield-halved"
-                                texto="Panel Superadmin"
+                                texto="Panel de superadministrador"
                                 title="Panel de superadministrador"
                             />
                         </div>
@@ -178,7 +178,7 @@ function AppLayout({ children }) {
                                 link="/login"
                                 clase="btn-azul"
                                 icono="fa-solid fa-right-from-bracket"
-                                texto="Cerrar Sesion"
+                                texto="Cerrar sesión"
                                 title="Cerrar sesión"
                             />
                         </div>
@@ -211,7 +211,7 @@ function AppLayout({ children }) {
                                 <ul className="submenu">
                                     <li>
                                         <Link 
-                                            to="/types/consumables"
+                                             to="/consumables/tools"
                                             title="Ir a consumibles"
                                         >
                                             <i className="fa-solid fa-wrench"></i>
@@ -220,7 +220,7 @@ function AppLayout({ children }) {
                                     </li>
                                     <li>
                                         <Link 
-                                            to="/types/noconsumables"
+                                            to="/noconsumables/tools"
                                             title="Ir a no consumibles"
                                         >
                                             <i className="fa-solid fa-tools"></i>
@@ -242,11 +242,12 @@ function AppLayout({ children }) {
                             <li>
                                 <Link 
                                     to="/machines"
-                                    title="Ir a maquinas"
+                                    title="Ir a máquinas"
                                 >
                                     <i className="fa-solid fa-industry"></i>
-                                    <span>Maquinas</span>
+                                    <span>Máquinas</span>
                                 </Link>
+                                
                             </li>
                             <li>
                                 <Link 
@@ -266,9 +267,9 @@ function AppLayout({ children }) {
                                     <span>Empresas</span>
                                 </Link>
                             </li>
-                            
                         </>
                     )}
+
                     <li className={`menu-desplegable ${herramientasAbierto ? "activo" : ""}`}> 
                         <a className="menu-titulo" onClick={() => setHerramientasAbierto(!herramientasAbierto)} > 
                             <i className="fa-solid fa-file-alt"></i> 
@@ -357,12 +358,6 @@ function AppLayout({ children }) {
                         <br />Mantenimiento e inventario de activos
                         <br /> Copyright © {new Date().getFullYear()}. Todos los derechos reservados. 
                     </div>
-                </div>
-
-                <div className="infoFooter"
-                     title="Información de contacto">
-                    <br /><strong>CONTACTANOS</strong>
-                    <br />mantiaadso@gmail.com
                 </div>
             </footer>
         </div>

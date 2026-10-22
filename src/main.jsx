@@ -35,6 +35,10 @@ import LoadingScreen from "./components/LoadingScreen.jsx";
 import Dashboard from "./pages/Dashboard/dashboard.jsx";
 import { ToastProvider } from './context/ToastContext.jsx';
 import NotFound from './pages/Others/not_found.jsx';
+import TermnsAndConditions from "./pages/Others/TermnsAndConditions.jsx";
+
+// import PoliticaPrivacidad from "./pages/PoliticaPrivacidad";
+
 
 
 function LoadingGate({ children }) {
@@ -65,10 +69,10 @@ createRoot(document.getElementById('root')).render(
               <Route path='equipment' element={<Equipos />} />
               <Route path='equipment/cardequipment/:id' element={<CardEquipment />} />
               <Route path='companies' element={<Empresas />} />
-              <Route path='types/consumables' element={<Consumibles />} />
-              <Route path='types/noconsumables' element={<No_Consumibles />} />
-              <Route path='types/consumables/tools/:id' element={<ToolsConsumables />} />
-              <Route path='types/noconsumables/tools/:id' element={<ToolsNoConsumables />} />
+              <Route path='consumables/tools/types' element={<Consumibles />} />
+              <Route path='noconsumables/tools/types' element={<No_Consumibles />} />
+              <Route path='consumables/tools' element={<ToolsConsumables />} />
+              <Route path='noconsumables/tools' element={<ToolsNoConsumables />} />
               <Route path='dailyuse' element={<UsoDiario />} />
               <Route path='gases' element={<Gases />} />
               <Route path='gases/compare_gases' element={<CompararGases />} />
@@ -82,6 +86,10 @@ createRoot(document.getElementById('root')).render(
             <Route path="register" element={<Register />} />
             <Route path='about' element={<AcercaDe />} />
             <Route path='help' element={<Ayuda />} />
+            <Route
+              path="/terms"
+              element={<TermnsAndConditions />}
+            />
           </Routes>
         </BrowserRouter>
       </LoadingGate>

@@ -337,6 +337,25 @@ main.cerrado{
     border-bottom: none;
 }
 
+.public-page .faq-answer {
+    margin: 0 0 0.35rem 2rem;
+    padding: 0.55rem 0.75rem;
+    border-left: 2px solid var(--secundario);
+}
+
+.public-page .menu-desplegable.activo .faq-answer {
+    max-height: none;
+    overflow: visible;
+    margin-top: 0.25rem;
+}
+
+.public-page .faq-answer p {
+    margin: 0;
+    padding-bottom: 0.25rem;
+    color: var(--texto2);
+    line-height: 1.6;
+}
+
 .public-page .btn-container {
     justify-content: center;
     margin-top: 1rem;
