@@ -36,35 +36,35 @@ function Searcher({ value, onChange, placeholder = "Buscar...", rangoFecha, onRa
         { valor: "anio", etiqueta: "Este año" }
     ] }) {
     return (
-        <div className="search-main">
-            <div className="search-wrapper">
-                <i className="fa-solid fa-magnifying-glass"></i>
-                <input
-                    type="text"
-                    id="q"
-                    placeholder={placeholder}
-                    value={value}
-                    onChange={onChange}
-                />
-            </div>
-
-            {onRangoFechaChange && (
-                <div className="searcher-filters-container">
-                    <Select
-                        id=""
-                        name=""
-                        value={rangoFecha}
-                        onChange={(e) => onRangoFechaChange(e.target.value)}
-                        opciones={filtrosFechas}
+        <div className="search-filters-section">
+            <div className="search-main">
+                <div className="search-wrapper">
+                    <i className="fa-solid fa-magnifying-glass"></i>
+                    <input
+                        type="text"
+                        id="q"
+                        placeholder={placeholder}
+                        value={value}
+                        onChange={onChange}
                     />
                 </div>
-            )}
 
-            {filtrosAdicionales && (
-                <div className="searcher-filters-container">
-                    {filtrosAdicionales}
-                </div>
-            )}
+
+                {(onRangoFechaChange || filtrosAdicionales) && (
+                    <div className="searcher-filters-container">
+                        {onRangoFechaChange && (
+                            <Select
+                                id="filtro-fecha"
+                                name="filtro-fecha"
+                                value={rangoFecha}
+                                onChange={(e) => onRangoFechaChange(e.target.value)}
+                                opciones={filtrosFechas}
+                            />
+                        )}
+                        {filtrosAdicionales}
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
