@@ -8,8 +8,8 @@ export default function EscuchaToasts() {
 
     useEffect(() => {
         const alRecibir = (e) => {
-            const { tipo, mensaje, titulo } = e.detail;
-            notificar(tipo, mensaje, titulo);
+            const { tipo, mensaje, titulo, duracion } = e.detail;
+            notificar(tipo, mensaje, titulo, duracion);                 
         };
         window.addEventListener("app:toast", alRecibir);
         return () => window.removeEventListener("app:toast", alRecibir);

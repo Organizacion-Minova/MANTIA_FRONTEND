@@ -51,7 +51,7 @@ function mensajeExito(metodo, url) {
 
     if (recurso === 'login' || recurso === 'dev-login') return 'Sesión iniciada correctamente';
     if (recurso === 'logout') return 'Sesión cerrada correctamente';
-    if (recurso === 'register') return 'Solicitud de registro enviada correctamente';
+    if (recurso === 'register') return 'Solicitud enviada. Tu cuenta quedará pendiente de aprobación del administrador.';
     if (recurso === 'forgot-password') return 'Te enviamos un código de recuperación al correo';
     if (recurso === 'reset-password') return 'Contraseña actualizada correctamente';
     if (recurso === 'admin' && partes[2] === 'approve') return 'Solicitud aprobada correctamente';
@@ -78,8 +78,8 @@ function mensajeError(error) {
     return data?.message ?? 'No se pudo completar la acción.';
 }
 
-function avisar(tipo, mensaje, titulo) {
-    window.dispatchEvent(new CustomEvent('app:toast', { detail: { tipo, mensaje, titulo } }));
+function avisar(tipo, mensaje, titulo, duracion) {
+    window.dispatchEvent(new CustomEvent('app:toast', { detail: { tipo, mensaje, titulo, duracion } }));
 }
 
 api.interceptors.response.use(
@@ -87,7 +87,9 @@ api.interceptors.response.use(
         const { method, url } = respuesta.config;
 
         if (esMutacion(method) && !esIgnorada(url)) {
-            avisar('success', mensajeExito(method, url), 'Operación exitosa');
+            // El mensaje del registro es más largo, así que se deja más tiempo en pantalla
+            const duracion = segmentos(url)[1] === 'register' ? 7000 : undefined;
+            avisar('success', mensajeExito(method, url), 'Operación exitosa', duracion);
 
             // Refresca la campana al instante (el cierre de sesión no lo necesita)
             if (segmentos(url)[1] !== 'logout') {
@@ -106,7 +108,7 @@ api.interceptors.response.use(
             !MANEJAN_SUS_ERRORES.includes(segmentos(config.url)[1]) &&
             error.response?.status !== 401
         ) {
-            avisar('danger', mensajeError(error), 'Ocurrió un error');
+            avisar('danger', mensajeError(error), 'No se pudo completar la acción', 6000);
         }
         return Promise.reject(error);
     }

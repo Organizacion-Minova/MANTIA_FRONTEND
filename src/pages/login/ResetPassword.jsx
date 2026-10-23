@@ -8,33 +8,45 @@ import { Boton } from "../../components/common/Button";
 import loginImage from "../../assets/img/Mantia2..png";
 import AuthScene from "./AuthScene";
 import api from "../../api/axios";
+import { useToast } from "../../context/ToastContext.jsx";
+import { mensajeDeError } from "../../utils/errores";
 
 const ResetPassword = () => {
     const navigate = useNavigate();
+    const { peligro, advertencia } = useToast();
     const [step, setStep] = useState(1); // 1: Pedir email, 2: Ingresar código, 3: Nueva contraseña
     const [email, setEmail] = useState("");
     const [code, setCode] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-
-    const [message, setMessage] = useState("");
-    const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+
+    // Los avisos de éxito (código enviado / contraseña actualizada) los muestra api/axios.js.
+    // Aquí solo se avisan los errores y las validaciones locales.
 
     // Paso 1: Enviar correo para recibir código
     const handleSendCode = async (e) => {
         e.preventDefault();
-        setError("");
-        setMessage("");
+
+        if (!email.trim()) {
+            advertencia("Ingresa tu correo electrónico.", "Campo incompleto");
+            return;
+        }
+        if (!/^\S+@\S+\.\S+$/.test(email.trim())) {
+            advertencia("Ingresa un correo electrónico válido.", "Correo inválido");
+            return;
+        }
 
         try {
             setLoading(true);
             await api.get('/sanctum/csrf-cookie');
-            await api.post('/api/forgot-password', { email });
-            setMessage("¡Código de 6 dígitos enviado a tu correo!");
+            await api.post('/api/forgot-password', { email: email.trim() });
             setStep(2);
         } catch (err) {
-            setError(err.response?.data?.message || "No se pudo enviar el código. Verifica el correo.");
+            peligro(
+                mensajeDeError(err, "No se pudo enviar el código. Verifica el correo."),
+                "No se pudo enviar el código"
+            );
         } finally {
             setLoading(false);
         }
@@ -43,12 +55,9 @@ const ResetPassword = () => {
     // Paso 2: Validar formato del código y avanzar a paso 3
     const handleVerifyCode = (e) => {
         e.preventDefault();
-        setError("");
-        setMessage("");
 
-        const trimmedCode = code.trim();
-        if (trimmedCode.length !== 6) {
-            setError("El código debe tener exactamente 6 dígitos.");
+        if (!/^\d{6}$/.test(code.trim())) {
+            advertencia("El código debe tener exactamente 6 dígitos.", "Código inválido");
             return;
         }
 
@@ -58,32 +67,32 @@ const ResetPassword = () => {
     // Paso 3: Validar contraseña y enviar { email, code, password } al backend
     const handleResetPassword = async (e) => {
         e.preventDefault();
-        setError("");
-        setMessage("");
 
         if (password.length < 8) {
-            setError("La contraseña debe tener al menos 8 caracteres.");
+            advertencia("La contraseña debe tener al menos 8 caracteres.", "Contraseña muy corta");
             return;
         }
 
         if (password !== confirmPassword) {
-            setError("Las contraseñas no coinciden.");
+            peligro("Las contraseñas no coinciden.", "Contraseñas distintas");
             return;
         }
 
         try {
             setLoading(true);
             await api.post('/api/reset-password', {
-                email,
+                email: email.trim(),
                 code: code.trim(),
                 password
             });
-            setMessage("¡Contraseña restablecida con éxito! Redirigiendo al login...");
             setTimeout(() => {
                 navigate("/login");
             }, 3000);
         } catch (err) {
-            setError(err.response?.data?.message || "Código inválido o expirado.");
+            peligro(
+                mensajeDeError(err, "Código inválido o expirado."),
+                "No se pudo restablecer la contraseña"
+            );
         } finally {
             setLoading(false);
         }
@@ -106,10 +115,7 @@ const ResetPassword = () => {
                                     Ingresa tu correo registrado para recibir un código de verificación de 6 dígitos.
                                 </p>
 
-                                {error && <div style={{ color: "#d9534f", marginBottom: "15px", fontSize: "14px" }}>{error}</div>}
-                                {message && <div style={{ color: "#5cb85c", marginBottom: "15px", fontSize: "14px" }}>{message}</div>}
-
-                                <form onSubmit={handleSendCode}>
+                                <form onSubmit={handleSendCode} noValidate>
                                     <div className="input-box">
                                         <label htmlFor="email">Correo Electrónico:</label>
                                         <input
@@ -144,10 +150,7 @@ const ResetPassword = () => {
                                     Ingresa el código de 6 dígitos que enviamos a <strong>{email}</strong>.
                                 </p>
 
-                                {error && <div style={{ color: "#d9534f", marginBottom: "15px", fontSize: "14px" }}>{error}</div>}
-                                {message && <div style={{ color: "#5cb85c", marginBottom: "15px", fontSize: "14px" }}>{message}</div>}
-
-                                <form onSubmit={handleVerifyCode}>
+                                <form onSubmit={handleVerifyCode} noValidate>
                                     <div className="input-box">
                                         <label htmlFor="code">Código de 6 dígitos:</label>
                                         <input
@@ -170,11 +173,7 @@ const ResetPassword = () => {
 
                                     <div className="links-footer">
                                         <span
-                                            onClick={() => {
-                                                setError("");
-                                                setMessage("");
-                                                setStep(1);
-                                            }}
+                                            onClick={() => setStep(1)}
                                             style={{ cursor: "pointer", color: "var(--color-primary)" }}
                                         >
                                             ¿No recibiste el código? Volver a enviar
@@ -193,10 +192,7 @@ const ResetPassword = () => {
                                     Crea y confirma tu nueva contraseña para la cuenta <strong>{email}</strong>.
                                 </p>
 
-                                {error && <div style={{ color: "#d9534f", marginBottom: "15px", fontSize: "14px" }}>{error}</div>}
-                                {message && <div style={{ color: "#5cb85c", marginBottom: "15px", fontSize: "14px" }}>{message}</div>}
-
-                                <form onSubmit={handleResetPassword}>
+                                <form onSubmit={handleResetPassword} noValidate>
                                     <div className="input-box">
                                         <label htmlFor="password">Nueva Contraseña:</label>
                                         <input
@@ -231,11 +227,7 @@ const ResetPassword = () => {
 
                                     <div className="links-footer">
                                         <span
-                                            onClick={() => {
-                                                setError("");
-                                                setMessage("");
-                                                setStep(2);
-                                            }}
+                                            onClick={() => setStep(2)}
                                             style={{ cursor: "pointer", color: "var(--color-primary)" }}
                                         >
                                             Volver a ingresar el código

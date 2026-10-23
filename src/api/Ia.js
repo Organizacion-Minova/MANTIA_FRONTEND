@@ -2,9 +2,10 @@ import api from './axios';
 
 // Envía la pregunta al backend (que es quien habla con la IA) y devuelve el texto de la respuesta.
 // MantiaAI le pasa el historial: [{ role: 'user' | 'assistant', content: '...' }]
-export async function sendAiMessage(texto, historial) {
+// y la pantalla actual (ej: "/machines/cardMachine/5") para que la IA sepa de qué se habla.
+export async function sendAiMessage(texto, historial, pantalla) {
     try {
-        const { data } = await api.post('/api/ai/chat', { mensaje: texto, historial });
+        const { data } = await api.post('/api/ai/chat', { mensaje: texto, historial, pantalla });
         return data.respuesta;
     } catch (error) {
         const mensaje =

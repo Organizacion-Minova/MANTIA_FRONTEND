@@ -6,6 +6,7 @@ import { Form, Text, Textarea, Select, Dropzone } from '../../components/common/
 import { obtenerMedicionPorId, actualizarDetalleGases, actualizarCabeceraGases } from "../../api/gasMeasurement";
 import { useSearch } from "../../hooks/useSearch";
 import LoadingScreen from "../../components/LoadingScreen";
+import { useToast } from "../../context/ToastContext.jsx";
 
 const gases = [
     { key: 'oxygen', label: 'O2', nombre: 'Oxígeno', simbolo: '%' },
@@ -119,6 +120,7 @@ function FormularioGases({ detalle, onCancel, onSuccess }) {
 }
 
 export function FormatoGases() {
+    const { advertencia } = useToast();
     const { id } = useParams();
     const [medicion, setMedicion] = useState(null);
     const [cargando, setCargando] = useState(true);
@@ -154,10 +156,10 @@ export function FormatoGases() {
         try {
             await actualizarCabeceraGases(id, datos);
         } catch (err) {
-            const errores = err.response?.data?.errors;
-            alert(errores ? Object.values(errores).flat()[0] : err.response?.data?.message || "No se pudieron guardar los datos.");
-            cargarDatos();
-        }
+    // El aviso de error lo muestra api/axios.js; aquí solo se restaura lo guardado
+    console.error("No se pudieron guardar los datos:", err);
+    cargarDatos();
+        }       
     };
 
     const handleHora = (e) => guardarCabecera({ measurement_time: e.target.value || null });
@@ -167,7 +169,7 @@ export function FormatoGases() {
         e.target.value = '';
         if (!archivo) return;
         if (!archivo.type.startsWith('image/')) {
-            alert("La firma debe ser una imagen.");
+            advertencia("La firma debe ser una imagen.", "Archivo no válido");
             return;
         }
         const lector = new FileReader();

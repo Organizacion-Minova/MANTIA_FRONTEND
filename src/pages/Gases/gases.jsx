@@ -5,10 +5,12 @@ import { obtenerMedicionesGases, crearMedicionGases, eliminarMedicionGases } fro
 import { useSearch } from "../../hooks/useSearch";
 import LoadingScreen from "../../components/LoadingScreen";
 import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
+import { useToast } from "../../context/ToastContext.jsx";
 
 function Gases() {
     const [mediciones, setMediciones] = useState([]);
     const [cargando, setCargando] = useState(true);
+    const { advertencia } = useToast();
 
     const { busqueda, setBusqueda, rangoFecha, setRangoFecha, itemsFiltrados: medicionesFiltradas } = useSearch(
         mediciones,
@@ -37,14 +39,16 @@ function Gases() {
     const handleCrear = async () => {
         const hoy = new Date().toLocaleDateString('en-CA');
         if (mediciones.some((m) => m.measurement_date === hoy)) {
-            alert("Ya existe una medición de gases registrada para el día de hoy.");
+            advertencia("Ya existe una medición de gases registrada para el día de hoy.", "Medición duplicada");
             return;
         }
         try {
             await crearMedicionGases({});
             cargarDatos();
-        } catch (err) {
-            alert(err.response?.data?.message || "No se pudo crear la medición de gases.");
+       } catch (err) {
+            // El aviso de error lo muestra api/axios.js; aquí solo se restaura lo guardado
+            console.error("No se pudieron guardar los datos:", err);
+            cargarDatos();
         }
     };
 
