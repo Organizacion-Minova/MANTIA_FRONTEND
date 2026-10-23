@@ -8,6 +8,8 @@
 .alerts-panel{grid-area: alertas;}
 
 .dashboard-grid {
+    transition: background-color var(--transition-speed) ease, 
+              color var(--transition-speed) ease;
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-lg);

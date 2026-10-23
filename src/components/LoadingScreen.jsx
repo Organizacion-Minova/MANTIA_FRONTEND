@@ -181,7 +181,7 @@ const styles = {
         transition: "width 0.1s linear",
     },
     label: {
-        color: "var(--fondo)",
+        color: "var(--blanco)",
         fontFamily: "var(--fuente-secundaria)",
         fontSize: 12,
         marginTop: 10,
