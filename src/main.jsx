@@ -1,10 +1,99 @@
 import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import App from './App.jsx'
+import Ubicaciones from "./pages/Ubications/ubications";
+import CategoriasUbicacion from "./pages/Ubications/categories_ubications";
+import Maquinas from "./pages/Machines/machines";
+import { CardMachine } from './pages/Machines/card_machine';
+import AgregarInspeccion from './pages/Forms/inspection';
+import LlenarInspeccion from './pages/Forms/completeinspection';
+import MostrarInspeccion from './pages/Forms/showinspection';
+import Empresas from "./pages/Companies/companies"
+import CategoriasMaquinas from './pages/Machines/categories_machines';
+import { createRoot } from 'react-dom/client'
+import Equipos from './pages/Equipment/equipments';
+import { CardEquipment } from './pages/Equipment/card_Equipment';
+import { Consumibles, No_Consumibles } from './pages/Tools/types';
+import ToolsConsumables from './pages/Tools/toolsconsumables'
+import ToolsNoConsumables from './pages/Tools/toolsnoconsumables';
+import { UsoDiario } from './pages/Forms/daily_use';
+import Gases from './pages/Gases/gases';
+import CompararGases from './pages/Gases/comparegases';
+import { FormatoGases } from './pages/Gases/gasformat';
+import Login from './pages/login/login.jsx'
+import ResetPassword from './pages/login/ResetPassword'
+import Register from './pages/login/Register'
+import AcercaDe from "./pages/Others/acerca_de";
+import Ayuda from "./pages/Others/ayuda";
+import MantiaInicio from "./pages/Index/index";
+import Profile from './pages/Profile/profile.jsx'
+import Alerts from './pages/Alerts/alerts.jsx';
+import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
+import EscuchaToasts from "./components/Alertas/EscuchaToasts.jsx";
+import RutaPrivada from "./components/RutaPrivada.jsx";
+import LoadingScreen from "./components/LoadingScreen.jsx";
+import Dashboard from "./pages/Dashboard/dashboard.jsx";
+import { ToastProvider } from './context/ToastContext.jsx';
+import NotFound from './pages/Others/not_found.jsx';
+import TermnsAndConditions from "./pages/Others/TermnsAndConditions.jsx";
+
+// import PoliticaPrivacidad from "./pages/PoliticaPrivacidad";
+
+
+
+function LoadingGate({ children }) {
+  const { cargando } = useAuth();
+  if (cargando) return <LoadingScreen />;
+  return children;
+}
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+  <ToastProvider>
+    <EscuchaToasts />
+    <AuthProvider>
+      <LoadingGate>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<MantiaInicio />} />
+            <Route path="/" element={<RutaPrivada><App /></RutaPrivada>}>
+              <Route path='dashboard' element={<Dashboard />} />
+              <Route path='ubications' element={<Ubicaciones />} />
+              <Route path='ubications/categoriesubications' element={<CategoriasUbicacion />} />
+              <Route path='machines' element={<Maquinas />} />
+              <Route path='machines/categoriesmachines' element={<CategoriasMaquinas />} />
+              <Route path='machines/cardMachine/:id' element={<CardMachine />} />
+              <Route path='inspection' element={<AgregarInspeccion />} />
+              <Route path='inspection/completeinspection' element={<LlenarInspeccion />} />
+              <Route path='inspection/completeinspection/showinspection' element={<MostrarInspeccion />} />
+              <Route path='equipment' element={<Equipos />} />
+              <Route path='equipment/cardequipment/:id' element={<CardEquipment />} />
+              <Route path='companies' element={<Empresas />} />
+              <Route path='consumables/tools/types' element={<Consumibles />} />
+              <Route path='noconsumables/tools/types' element={<No_Consumibles />} />
+              <Route path='consumables/tools' element={<ToolsConsumables />} />
+              <Route path='noconsumables/tools' element={<ToolsNoConsumables />} />
+              <Route path='dailyuse' element={<UsoDiario />} />
+              <Route path='gases' element={<Gases />} />
+              <Route path='gases/compare_gases' element={<CompararGases />} />
+              <Route path='gases/gas_format/:id' element={<FormatoGases />} />
+              <Route path='profile' element={<Profile />} />
+              <Route path='alerts' element={<Alerts />} />
+              <Route path="*" element={<NotFound />} /> 
+            </Route>
+            <Route path="login" element={<Login />} />
+            <Route path="ResetPassword" element={<ResetPassword />} />
+            <Route path="register" element={<Register />} />
+            <Route path='about' element={<AcercaDe />} />
+            <Route path='help' element={<Ayuda />} />
+            <Route
+              path="/terms"
+              element={<TermnsAndConditions />}
+            />
+          </Routes>
+        </BrowserRouter>
+      </LoadingGate>
+    </AuthProvider>
+  </ToastProvider>
   </StrictMode>,
 )
