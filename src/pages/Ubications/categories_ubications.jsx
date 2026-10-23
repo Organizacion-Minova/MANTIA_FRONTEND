@@ -1,16 +1,40 @@
 import { useState, useEffect } from "react";
 import { Boton, BotonLink } from "../../components/common/Button";
 import { PageWelcome, Searcher } from "../../components/common/welcome";
-import { Form, Text, Textarea } from "../../components/common/forms";
+import { Form, Text, Textarea, Select } from "../../components/common/forms";
 import { obtenerCategoriasUbicacion, guardarCategoriaUbicacion, actualizarCategoriaUbicacion, eliminarCategoriaUbicacion } from "../../api/locationCategory";
 import { useSearch } from "../../hooks/useSearch";
 import LoadingScreen from "../../components/LoadingScreen";
 import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
 
+const opciones_estado = [
+    { valor: "active", etiqueta: "Activo" },
+    { valor: "inactive", etiqueta: "Inactivo" }
+];
+
+const etiqueta_estado = { active: "Activo", inactive: "Inactivo" };
+
+const obtenerMensajeError = (err, porDefecto) => {
+    const errores = err.response?.data?.errors;
+    return (errores && Object.values(errores)[0]?.[0]) || err.response?.data?.message || porDefecto;
+};
+
+const regex_nombre = /^[\p{L}\p{N}\s\-]+$/u;
+
+const validar = ({ nombre, descripcion }) => {
+    if (!nombre) return "El nombre es obligatorio.";
+    if (nombre.length > 45) return "El nombre no puede superar los 45 caracteres.";
+    if (!regex_nombre.test(nombre)) return "El nombre solo puede contener letras, números, espacios y guiones.";
+    if (!descripcion) return "La descripción es obligatoria.";
+    if (descripcion.length > 5000) return "La descripción no puede superar los 5000 caracteres.";
+    return null;
+};
+
 function Formulario({ onCancel, onSuccess, categoriaEditar = null }) {
     const [formData, setFormData] = useState({
         nombre: categoriaEditar ? categoriaEditar.name : '',
-        descripcion: categoriaEditar ? categoriaEditar.description : ''
+        descripcion: categoriaEditar ? categoriaEditar.description : '',
+        estado: categoriaEditar ? categoriaEditar.status : 'active'
     });
     const [cargando, setCargando] = useState(false);
     const [error, setError] = useState(null);
@@ -26,20 +50,23 @@ function Formulario({ onCancel, onSuccess, categoriaEditar = null }) {
 
     const handleSubmit = async (e) => {
         if (e && e.preventDefault) e.preventDefault();
+        const datos = { ...formData, nombre: formData.nombre.trim(), descripcion: formData.descripcion.trim() };
+        const errorValidacion = validar(datos);
+        if (errorValidacion) return setError(errorValidacion);
+
         setCargando(true);
         setError(null);
 
         try {
             if (isEditing) {
-                await actualizarCategoriaUbicacion(categoriaEditar.id, formData);
+                await actualizarCategoriaUbicacion(categoriaEditar.id, datos);
             } else {
-                await guardarCategoriaUbicacion(formData);
+                await guardarCategoriaUbicacion(datos);
             }
             onSuccess();
             onCancel();
         } catch (err) {
-            const mensajeServidor = err.response?.data?.message || "Error al registrar la categoría.";
-            setError(mensajeServidor);
+            setError(obtenerMensajeError(err, "Error al procesar la solicitud."));
         } finally {
             setCargando(false);
         }
@@ -67,6 +94,7 @@ function Formulario({ onCancel, onSuccess, categoriaEditar = null }) {
                     placeholder="Ingrese el nombre de la categoría"
                     value={formData.nombre}
                     onChange={handleChange}
+                    maxLength={45}
                     required
                 />
             </div>
@@ -79,9 +107,23 @@ function Formulario({ onCancel, onSuccess, categoriaEditar = null }) {
                     placeholder="Ingrese la descripción de la categoría"
                     value={formData.descripcion}
                     onChange={handleChange}
+                    maxLength={5000}
                     required
                 />
             </div>
+            {isEditing && (
+                <div className="col-span-6">
+                    <Select
+                        label="Estado:"
+                        id="estado"
+                        name="estado"
+                        value={formData.estado}
+                        onChange={handleChange}
+                        opciones={opciones_estado}
+                        required
+                    />
+                </div>
+            )}
         </Form>
     );
 }
@@ -91,8 +133,8 @@ function CategoriasUbicacion() {
     const [categoriaAEditar, setCategoriaAEditar] = useState(null);
     const [categorias, setCategorias] = useState([]);
     const [cargando, setCargando] = useState(true);
-    
-    const { busqueda, setBusqueda, itemsFiltrados: categoriasFiltradas } = useSearch(
+
+    const { busqueda, setBusqueda, filtrosEspeciales, setFiltroEspecial, itemsFiltrados: categoriasFiltradas } = useSearch(
         categorias,
         ['name', 'description']
     );
@@ -100,7 +142,7 @@ function CategoriasUbicacion() {
     const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(categoriasFiltradas, 7);
     useEffect(() => {
         setPaginaActual(1);
-    }, [busqueda, setPaginaActual]);
+    }, [busqueda, filtrosEspeciales, setPaginaActual]);
 
     const cargarLista = async () => {
         setCargando(true);
@@ -108,7 +150,6 @@ function CategoriasUbicacion() {
             const data = await obtenerCategoriasUbicacion();
             setCategorias(Array.isArray(data) ? data : []);
         } catch (err) {
-            console.error("Error al cargar categorías:", err);
             setCategorias([]);
         } finally {
             setCargando(false);
@@ -135,11 +176,16 @@ function CategoriasUbicacion() {
                 await eliminarCategoriaUbicacion(id);
                 cargarLista();
             } catch (err) {
-                console.error("Error al eliminar la categoría:", err);
-                
+                setCargando(false);
             }
         }
     };
+
+    const opcionesEstados = [
+        { valor: "", etiqueta: "Todos los estados" },
+        { valor: "active", etiqueta: "Activo" },
+        { valor: "inactive", etiqueta: "Inactivo" }
+    ];
 
     if (cargando) return <LoadingScreen indeterminado/>
     return (
@@ -153,6 +199,15 @@ function CategoriasUbicacion() {
                         value={busqueda}
                         onChange={(e) => setBusqueda(e.target.value)}
                         placeholder="Buscar por nombre o descripción"
+                        filtrosAdicionales={
+                            <Select
+                                id="filtroEstado"
+                                name="filtroEstado"
+                                value={filtrosEspeciales.status || ""}
+                                onChange={(e) => setFiltroEspecial('status', e.target.value)}
+                                opciones={opcionesEstados}
+                            />
+                        }
                     />
             </header>
             <div className="table-responsive">
@@ -161,19 +216,21 @@ function CategoriasUbicacion() {
                         <tr>
                             <th>Nombre</th>
                             <th>Descripción</th>
+                            <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {cargando ? (
                             <tr>
-                                <td colSpan="3" style={{ textAlign: "center" }}>Cargando categorías...</td>
+                                <td colSpan="4" style={{ textAlign: "center" }}>Cargando categorías...</td>
                             </tr>
                         ) : datosPagina.length > 0 ? (
                             datosPagina.map((cat) => (
                                 <tr key={cat.id}>
                                     <td>{cat.name}</td>
                                     <td>{cat.description}</td>
+                                    <td>{etiqueta_estado[cat.status]}</td>
                                     <td>
                                         <div className="btn-container">
                                             <Boton
@@ -194,7 +251,7 @@ function CategoriasUbicacion() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="3" style={{ textAlign: "center" }}>
+                                <td colSpan="4" style={{ textAlign: "center" }}>
                                     {busqueda ? "No se encontraron resultados" : "No hay categorías registradas"}
                                 </td>
                             </tr>

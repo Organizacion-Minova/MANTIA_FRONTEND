@@ -196,6 +196,14 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
             }
         }
     }
+
+    const opcionesUbicaciones = [
+        { valor: "", etiqueta: "Seleccione una ubicación" },
+        ...ubicaciones
+            .filter(ubi => ubi.status === 'active' || ubi.id === maquinaEditar?.location_id)
+            .map(ubi => ({ valor: ubi.id, etiqueta: ubi.status === 'active' ? ubi.name : `${ubi.name} (Inactiva)` }))
+    ];
+
     return(
         <Form
             titulo={esEdicion?"Editar máquina":"Agregar nueva máquina"}
@@ -273,7 +281,7 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
                     name="ubicacion"
                     value={locationid}
                     onChange={(e) => setLocationid(e.target.value)}
-                    opciones={[{valor:"", etiqueta:"Seleccione una ubicacion"},...ubicaciones.map((u)=>({valor: u.id, etiqueta: u.name}))]}
+                    opciones={opcionesUbicaciones}
                     required
                 />
             </div>

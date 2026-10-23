@@ -174,6 +174,14 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
             }
         }
     }
+
+        const opcionesUbicaciones = [
+        { valor: "", etiqueta: "Seleccione una ubicación" },
+        ...ubicaciones
+            .filter(ubi => ubi.status === 'active' || ubi.id === equiposEditar?.location_id)
+            .map(ubi => ({ valor: ubi.id, etiqueta: ubi.status === 'active' ? ubi.name : `${ubi.name} (Inactiva)` }))
+    ];
+
     return(
         <Form
             titulo={esEdicion?"Editar Equipo":"Agregar Nuevo Equipo"}
@@ -271,7 +279,7 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
                     name="ubicacion"
                     value={locationid}
                     onChange={(e) => setLocationid(e.target.value)}
-                    opciones={[{valor:"", etiqueta:"Seleccione una ubicacion"},...ubicaciones.map((u)=>({valor: u.id, etiqueta: u.name}))]}
+                    opciones={opcionesUbicaciones}
                     required
                 />
             </div>
