@@ -250,42 +250,57 @@
     gap: 1.3rem;
     justify-content: left !important;
     align-items: center;
-    padding: 0.4rem 0.2rem;
+    padding: 0.65rem 0.7rem;
     text-decoration: none;
     white-space: nowrap;
     overflow: hidden; 
-    margin: 0 0.5rem;
+    margin: 0;
     color: var(--blanco);
     text-align: justify;
     transition: .3s;
 }
 
 .sidebar > ul > li {
-    padding: 0.8rem;
+    position: relative;
+    margin: 0.15rem 0.65rem;
+    padding: 0.15rem;
     border-radius: 0.5rem;
 }
 
 .sidebar li:hover { background:var(--hover-principal); }
-.sidebar .active  { background:  rgba(25, 195, 166, .16);
-                    /* border-left: 4px solid #19C3A6;*/
-                    border-left:4px solid var(--acento-mantía); 
-                } 
-
-.sidebar .active i {
-    color: var(--acento-mantía);
+.sidebar li:has(> a.active) {
+    background: rgba(25, 195, 166, .16);
+    border-radius: 0.5rem;
 }
 
-.sidebar .submenu{ list-style: none; padding-left: 1rem; margin-top: 10px; display: none;  }
-.submenu li{border-radius: 0.5rem;}
+.sidebar li:has(> a.active)::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 22%;
+    bottom: 22%;
+    width: 4px;
+    border-radius: 0 4px 4px 0;
+    background: var(--acento-mantia);
+    pointer-events: none;
+}
+
+.sidebar a.active i {
+    color: var(--acento-mantia);
+}
+
+.sidebar .submenu{ list-style: none; padding-left: 0; margin: 10px 0 0; display: none; }
+.sidebar .submenu li {
+    position: relative;
+    margin: 0.15rem 0.65rem;
+    padding: 0.15rem;
+    border-radius: 0.5rem;
+}
 .menu-desplegable .submenu{ display: none;  }
 .menu-desplegable.activo .submenu{ display: block; }
 
 .flecha { transition: 0.3s; }
 .menu-desplegable.activo .flecha { transform: rotate(180deg); }
-
- .sidebar .submenu{
-            padding-left: 0;
-         }  
 
 /* Sidebar cerrado estilos */
 .sidebar.cerrado{ 

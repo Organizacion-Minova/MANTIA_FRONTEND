@@ -1,8 +1,7 @@
 //este componente es el dueño layout (estructura principal) de la aplicación,
 //  que contiene el header, el sidebar, el contenido y el footer
-import { Outlet, useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
-import { Boton, BotonLink } from "../../components/common/Button";
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { BotonLink } from "../../components/common/Button";
 import "../../styles/global.css";
 import "../../styles/variables.css";
 import "../../styles/Tables/table.css";
@@ -28,10 +27,15 @@ import { mapearNotificacionBackend } from '../../utils/notificaciones';
 function AppLayout({ children }) {
     const { usuario, isAuthenticated, logout } = useAuth();
     const navigate = useNavigate();
+    const { pathname } = useLocation();
     const [cerrado, setCerrado] = useState(false);
     const [herramientasAbierto, setHerramientasAbierto] = useState(false);
+    const [formatosAbierto, setFormatosAbierto] = useState(false);
     const [openAlertas, setOpenAlertas] = useState(false);
     const [openPerfil, setOpenPerfil] = useState(false);
+    const herramientasRutaActiva = pathname.startsWith("/consumables/tools")
+        || pathname.startsWith("/noconsumables/tools");
+    const formatosRutaActiva = ["/dailyuse", "/gases", "/inspection"].some((ruta) => pathname.startsWith(ruta));
 
     const { notificar } = useToast();
     const [notificaciones, setNotificaciones] = useState([]);
@@ -188,20 +192,20 @@ function AppLayout({ children }) {
             <aside className={`sidebar ${cerrado ? "cerrado" : ""}`} id="sidebar">
                 <ul>
                     <li>
-                        <Link 
+                        <NavLink 
                             to="/dashboard"
                             title="Ir al panel de control"
                         >
                             <i className="fa-solid fa-solar-panel"></i>
                             <span>Panel de Control</span>
-                        </Link>
+                        </NavLink>
                     </li>
 
                     {isAuthenticated && (
                         <>
-                            <li className={`menu-desplegable ${herramientasAbierto ? "activo" : ""}`}>
+                            <li className={`menu-desplegable ${herramientasAbierto || herramientasRutaActiva ? "activo" : ""}`}>
 
-                                <a className="menu-titulo"
+                                <a className={`menu-titulo ${herramientasRutaActiva ? "active" : ""}`}
                                     onClick={() => setHerramientasAbierto(!herramientasAbierto)}
                                 >
                                     <i className="fa-solid fa-screwdriver-wrench"></i>
@@ -210,98 +214,98 @@ function AppLayout({ children }) {
 
                                 <ul className="submenu">
                                     <li>
-                                        <Link 
+                                        <NavLink 
                                              to="/consumables/tools"
                                             title="Ir a consumibles"
                                         >
                                             <i className="fa-solid fa-wrench"></i>
                                             <span>Consumibles</span>
-                                        </Link>
+                                        </NavLink>
                                     </li>
                                     <li>
-                                        <Link 
+                                        <NavLink 
                                             to="/noconsumables/tools"
                                             title="Ir a no consumibles"
                                         >
                                             <i className="fa-solid fa-tools"></i>
                                             <span>No consumibles</span>
-                                        </Link>
+                                        </NavLink>
                                     </li>
                                 </ul>
                             </li>
 
                             <li>
-                                <Link 
+                                <NavLink 
                                     to="/equipment"
                                     title="Ir a equipos"
                                 >
                                     <i className="fa-solid fa-gears"></i>
                                     <span>Equipos</span>
-                                </Link>
+                                </NavLink>
                             </li>
                             <li>
-                                <Link 
+                                <NavLink 
                                     to="/machines"
                                     title="Ir a máquinas"
                                 >
                                     <i className="fa-solid fa-industry"></i>
                                     <span>Máquinas</span>
-                                </Link>
+                                </NavLink>
                                 
                             </li>
                             <li>
-                                <Link 
+                                <NavLink 
                                     to="/ubications"
                                     title="Ir a ubicaciones"
                                 >
                                     <i className="fa-solid fa-map-marker-alt"></i>
                                     <span>Ubicaciones</span>
-                                </Link>
+                                </NavLink>
                             </li>
                             <li>
-                                <Link 
+                                <NavLink 
                                     to="/companies"
                                     title="Ir a empresas"
                                 >
                                     <i className="fa-solid fa-clipboard-check"></i>
                                     <span>Empresas</span>
-                                </Link>
+                                </NavLink>
                             </li>
                         </>
                     )}
 
-                    <li className={`menu-desplegable ${herramientasAbierto ? "activo" : ""}`}> 
-                        <a className="menu-titulo" onClick={() => setHerramientasAbierto(!herramientasAbierto)} > 
+                    <li className={`menu-desplegable ${formatosAbierto || formatosRutaActiva ? "activo" : ""}`}> 
+                        <a className={`menu-titulo ${formatosRutaActiva ? "active" : ""}`} onClick={() => setFormatosAbierto(!formatosAbierto)} > 
                             <i className="fa-solid fa-file-alt"></i> 
                             <span>Formatos</span> 
                         </a> 
                         <ul className="submenu"> 
                             <li> 
-                                <Link 
+                                <NavLink 
                                     to="/dailyuse" 
                                     title="Ir al formato de uso diario" 
                                 > 
                                     <i className="fa-solid fa-calendar-alt"></i> 
                                     <span>Uso Diario</span> 
-                                </Link> 
+                                </NavLink> 
                             </li> 
                             <li> 
-                                <Link 
+                                <NavLink 
                                     to="/gases" 
                                     title="Ir al formato de medicion de gases" 
                                 > 
                                     <i className="fa-solid fa-gas-pump"></i> 
                                     <span>Medición de Gases</span> 
-                                </Link> 
+                                </NavLink> 
                             </li> 
                             <li> 
-                                <Link 
+                                <NavLink 
                                     to="/inspection" 
                                     title="Ir al formato de inspección" 
                                 > 
                                     <i className="fa-solid fa-search"></i> 
                                     <span>Inspección</span> 
-                                </Link> 
+                                </NavLink> 
                             </li> 
                             <li> 
                                 <Link 
@@ -316,16 +320,16 @@ function AppLayout({ children }) {
                     </li>
 
                     <li>
-                        <Link to="/about" title="Ir a acerca de">
+                        <NavLink to="/about" title="Ir a acerca de">
                             <i className="fa-solid fa-info-circle"></i>
                             <span>Acerca de</span>
-                        </Link>
+                        </NavLink>
                     </li>
                     <li>
-                        <Link to="/help" title="Ir a ayuda">
+                        <NavLink to="/help" title="Ir a ayuda">
                             <i className="fa-solid fa-circle-question"></i>
                             <span>Ayuda</span>
-                        </Link>
+                        </NavLink>
                     </li>
                     <li>
                         {isAuthenticated ? (

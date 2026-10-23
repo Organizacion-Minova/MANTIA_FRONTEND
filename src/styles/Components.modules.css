@@ -70,7 +70,7 @@ main.cerrado{
     justify-content: center;
     gap:           0.5rem;
     transition:    background 0.2s, transform 0.15s, box-shadow 0.2s;
-    box-shadow:    0 0.25rem 1.125rem rgba(57,76,170,0.35);
+   
     letter-spacing: 0.0125rem;
     text-decoration: none;
     width:         fit-content;
@@ -91,7 +91,7 @@ main.cerrado{
     justify-content: center;
     gap:           0.5rem;
     transition:    background 0.2s, transform 0.15s, box-shadow 0.2s;
-    box-shadow:    0 0.25rem 1.125rem rgba(57,76,170,0.35);
+   
     letter-spacing: 0.0125rem;
     text-decoration: none;
     width:         fit-content;

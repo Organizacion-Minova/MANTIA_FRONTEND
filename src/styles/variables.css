@@ -5,7 +5,7 @@
      /* =========================================
        TIPOGRAFÍA MANTIA
        ========================================= */
-
+    --transition-speed: 1s;
     --fuente-principal: 'Archivo', sans-serif;
     --fuente-secundaria: 'Barlow', sans-serif;
 
@@ -129,13 +129,13 @@ html.dark-theme {
     --principal:
         linear-gradient(
             115deg,
-            #151A27 0%,
-            #19313A 32%,
-            #165B58 67%,
-            #15927F 100%
+            #111520 0%,
+            #14282f 32%,
+            #10413f 67%,
+            #0a453c 100%
         );
 
-    --secundario: #148F80;
+    --secundario: #183d39;
 
     --sidebar: #11151E;
 
@@ -144,18 +144,18 @@ html.dark-theme {
        SUPERFICIES
        ========================================= */
 
-    --fondo: #151820;
+    --fondo: #101218;
 
     --contenedor: #20252D;
 
-    --blanco: #F4F7F6;
+    --blanco: #b8bcba;
 
 
     /* =========================================
        TEXTO
        ========================================= */
 
-    --texto: #F1F5F4;
+    --texto: #b5b5b5;
 
     --texto2: #AAB5B5;
 
@@ -164,7 +164,7 @@ html.dark-theme {
        ESTRUCTURA
        ========================================= */
 
-    --borde-contenedor: #343B40;
+    --borde-contenedor: #4d575e;
 
 
     /* =========================================
@@ -192,8 +192,8 @@ html.dark-theme {
     /* --acento-mantia: #3F8F82; */
   
     /* --acento-mantia: #4E9F94; */
-    --acento-mantia: #3F8F82;
-     --acento-mantia2: #57cdba;
+    --acento-mantia: #21584f;
+     --acento-mantia2: #215d54;
 
     /* =========================================
        ESTADOS
