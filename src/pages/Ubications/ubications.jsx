@@ -155,9 +155,6 @@ function Ubicaciones() {
                 cargarDatos();
             } catch (err) {
                 console.error("Error al eliminar la ubicación:", err);
-                if (err.response && err.response.data && err.response.data.message) {
-                    alert(err.response.data.message);
-                }
             }
         }
     };

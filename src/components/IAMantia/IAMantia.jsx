@@ -10,6 +10,8 @@
    Requiere IA_Mantia.css, Font Awesome 6 y las fuentes Archivo + Barlow.
    ===================================================================== */
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { esRutaPermitida, sugerenciasPorPantalla } from '../../utils/sugerenciasIA';
 
 
 let contador = 0;
@@ -24,17 +26,32 @@ const aHistorial = (mensajes) =>
     .filter((m) => !m.bienvenida && !m.escribiendo && !m.excluir)
     .map((m) => ({ role: m.rol === 'user' ? 'user' : 'assistant', content: m.texto }));
 
-// Renderiza **negrita** y saltos de línea como elementos de React.
-// No usa dangerouslySetInnerHTML, así que no hay riesgo de XSS.
-function Texto({ children }) {
+// Renderiza **negrita** dentro de un fragmento de texto.
+const conNegrita = (texto, clave) =>
+  texto.split(/\*\*(.+?)\*\*/g).map((parte, j) => (j % 2 ? <b key={`${clave}-${j}`}>{parte}</b> : parte));
+
+// Renderiza **negrita**, saltos de línea y enlaces [texto](/ruta) como elementos de React.
+// Los enlaces solo funcionan si la ruta está en la lista permitida (utils/sugerenciasIA.js);
+// si la IA escribe otra ruta, se muestra solo el texto. No usa dangerouslySetInnerHTML (sin XSS).
+function Texto({ children, onIr }) {
   return String(children)
     .split('\n')
     .map((linea, i) => (
       <Fragment key={i}>
         {i > 0 && <br />}
-        {linea
-          .split(/\*\*(.+?)\*\*/g)
-          .map((parte, j) => (j % 2 ? <b key={j}>{parte}</b> : parte))}
+        {linea.split(/(\[[^\]]+\]\([^)\s]+\))/g).map((trozo, j) => {
+          const enlace = trozo.match(/^\[([^\]]+)\]\(([^)\s]+)\)$/);
+          if (!enlace) return <Fragment key={j}>{conNegrita(trozo, j)}</Fragment>;
+
+          const [, etiqueta, ruta] = enlace;
+          if (!esRutaPermitida(ruta)) return <Fragment key={j}>{etiqueta}</Fragment>;
+
+          return (
+            <button key={j} type="button" className="mc-link" onClick={() => onIr(ruta)} title={etiqueta}>
+              {etiqueta} <i className="fa-solid fa-arrow-right" aria-hidden="true" />
+            </button>
+          );
+        })}
       </Fragment>
     ));
 }
@@ -43,14 +60,18 @@ export default function IAMantia({
   titulo = 'Asistente MANTIA',
   estado = 'en línea',
   placeholder = 'Pregúntale algo a MANTIA IA…',
-  bienvenida = '¡Hola! Soy el asistente de **MANTIA**. Puedo resumir inspecciones, revisar mediciones de gases y decirte qué máquinas necesitan mantenimiento.',
-  chips = ['Máquinas en mantenimiento', 'Resumir última inspección'],
+  bienvenida = '¡Hola! Soy **MANTIA IA**. Puedo consultar máquinas, equipos, herramientas, gases, uso diario, inspecciones y alertas, y explicarte cómo usar la plataforma. Solo respondo preguntas sobre MANTIA.',
+  chips, // opcional: si no se pasa, las sugerencias dependen de la pantalla actual
   abiertoInicial = false,
   onSend = async () => 'Aún no hay un backend conectado. Pasa la prop onSend a <IAMantia />.',
 }) {
   const crearBienvenida = () => ({
     id: nuevoId(), rol: 'ia', texto: bienvenida, hora: hora(), bienvenida: true,
   });
+
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const sugerencias = chips ?? sugerenciasPorPantalla(pathname);
 
   const [abierto, setAbierto] = useState(abiertoInicial);
   const [sinLeer, setSinLeer] = useState(!abiertoInicial);
@@ -61,7 +82,20 @@ export default function IAMantia({
   const mensajesRef = useRef(null);
   const textareaRef = useRef(null);
 
-  const mostrarChips = !mensajes.some((m) => m.rol === 'user');
+  // Pantalla desde la que se envió la última pregunta
+  const [pantallaUltimaPregunta, setPantallaUltimaPregunta] = useState(null);
+
+  // Se muestran al empezar y cada vez que el usuario cambia de pantalla
+  const mostrarChips = !enviando && pathname !== pantallaUltimaPregunta;
+
+  // Lleva al usuario a la pantalla del enlace. En celular se cierra el chat para que vea la página.
+  const irA = useCallback(
+    (ruta) => {
+      navigate(ruta);
+      if (window.matchMedia('(max-width: 600px)').matches) setAbierto(false);
+    },
+    [navigate]
+  );
 
   // Al abrir: quita el badge y enfoca el campo de texto
   useEffect(() => {
@@ -103,6 +137,7 @@ export default function IAMantia({
       const idIA = nuevoId();
 
       setEnviando(true);
+      setPantallaUltimaPregunta(pathname);
       setValor('');
       setMensajes((prev) => [
         ...prev,
@@ -111,7 +146,7 @@ export default function IAMantia({
       ]);
 
       try {
-        const respuesta = await onSend(texto, historial);
+        const respuesta = await onSend(texto, historial, pathname);
         setMensajes((prev) =>
           prev.map((m) => (m.id === idIA ? { ...m, texto: String(respuesta), escribiendo: false } : m))
         );
@@ -129,10 +164,13 @@ export default function IAMantia({
         textareaRef.current?.focus();
       }
     },
-    [enviando, mensajes, onSend]
+    [enviando, mensajes, onSend, pathname]
   );
 
-  const limpiar = () => setMensajes([crearBienvenida()]);
+  const limpiar = () => {
+    setMensajes([crearBienvenida()]);
+    setPantallaUltimaPregunta(null);
+  };
 
   const alTeclear = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -199,7 +237,7 @@ export default function IAMantia({
                   {m.escribiendo ? (
                     <span className="mc-typing"><span /><span /><span /></span>
                   ) : (
-                    <Texto>{m.texto}</Texto>
+                    <Texto onIr={irA}>{m.texto}</Texto>
                   )}
                 </div>
                 <div className="mc-time">{m.hora}</div>
@@ -210,7 +248,7 @@ export default function IAMantia({
 
         {mostrarChips && (
           <div className="mc-chips">
-            {chips.map((texto) => (
+            {sugerencias.map((texto) => (
               <button type="button" key={texto} className="mc-chip" onClick={() => enviar(texto)}>
                 {texto}
               </button>

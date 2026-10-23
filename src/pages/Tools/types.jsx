@@ -95,7 +95,6 @@ function FormConsumibles({onCancel,onGuardado,categoriaEditar }){
                     required
                 />
             </div>
-            {errores.name && <p className="error-texto">{errores.name[0]}</p>}
             <div className="col-span-6">
                 <Textarea
                     label="Descripción:"
@@ -212,7 +211,6 @@ function FormNoConsumibles({onCancel, onGuardado, categoriaEditar}){
                     required
                 />
             </div>
-            {errores.name && <p className="error-texto">{errores.name[0]}</p>}
             <div className="col-span-6">
                 <Textarea
                     label="Descripción:"
@@ -225,7 +223,6 @@ function FormNoConsumibles({onCancel, onGuardado, categoriaEditar}){
                     required
                 />
             </div>
-            {errores.description && <p className="error-texto">{errores.description[0]}</p>}
             {esEdicion && (
                 <div className="col-span-6">
                     <Select

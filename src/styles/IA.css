@@ -9,19 +9,30 @@
 /* =====================================================================
    CONTENEDOR FLOTANTE (fija el botón abajo a la derecha)
    ===================================================================== */
-#mantia-chat{position:fixed;right:5.5rem;bottom:0;z-index:9998}
+/* Queda a la izquierda del botón de accesibilidad y alineado con él */
+#mantia-chat{position:fixed;right:6.25rem;bottom:1.25rem;z-index:9998}
 
 /* =====================================================================
-   BOTÓN FLOTANTE · asistente con identidad minera sutil
-   ===================================================================== */
-.mc-toggle{position:relative;right:1.5rem;bottom:1.5rem;z-index:9998;height:62px;min-width:166px;padding:.45rem 1rem .45rem .5rem;
-border:1px solid rgba(255,255,255,.24);border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:.7rem;
+   BOTÓN FLOTANTE · asistente con identidad minera sut/* Cerrado es un círculo con el robot; con el cursor encima (o al enfocarlo
+   con el teclado) se despliega hacia la izquierda mostrando "MANTIA IA". */
+.mc-toggle{--mc-ease:cubic-bezier(.22,1,.36,1);
+position:relative;z-index:9998;height:62px;padding:.45rem .5rem;
+border:1px solid rgba(255,255,255,.24);border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:0;
 background:var(--principal);color:#fff;text-align:left;
 box-shadow:0 7px 20px rgba(6,59,56,.24),inset 0 1px rgba(255,255,255,.16);
-transition:box-shadow .22s,transform .22s,background .22s}
-.mc-toggle:hover{box-shadow:0 10px 25px rgba(6,59,56,.3),0 0 0 4px rgba(25,195,166,.12);transform:translateY(-2px)}
-/* Mientras la IA está pensando: brillo pulsante */
+transition:padding .45s var(--mc-ease),gap .45s var(--mc-ease),box-shadow .3s ease,transform .3s var(--mc-ease);
+animation:mc-entrada .6s var(--mc-ease) both}
+.mc-toggle:hover,.mc-toggle:focus-visible{padding-right:1.1rem;gap:.7rem;
+box-shadow:0 12px 28px rgba(6,59,56,.32),0 0 0 4px rgba(25,195,166,.14);transform:translateY(-2px)}
+.mc-toggle:active{transform:translateY(0) scale(.97)}
+/* Mientras la IA está pensando: halo */
 .mc-toggle.mc-hablando{box-shadow:0 0 0 4px rgba(25,195,166,.16),0 10px 25px rgba(6,59,56,.3)}
+/* Halo suave que "respira" para invitar a usarlo (solo cerrado) */
+.mc-toggle::before{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;
+box-shadow:0 0 0 0 rgba(25,195,166,.45);animation:mc-respira 3.2s ease-out 1.2s infinite}
+.mc-toggle:hover::before,.mc-toggle:focus-visible::before,.mc-toggle[aria-expanded="true"]::before{animation:none}
+
+lando{box-shadow:0 0 0 4px rgba(25,195,166,.16),0 10px 25px rgba(6,59,56,.3)}
 
 /* Robot del botón (casco minero) */
 .mc-bot{position:relative;flex:0 0 46px;width:46px;height:46px;border-radius:50%;
@@ -48,9 +59,19 @@ border-radius:50%;background:var(--acento-mantia2);box-shadow:0 0 6px rgba(189,2
 .mc-toggle.mc-hablando .mc-orbit1{animation-duration:3s}
 .mc-toggle.mc-hablando .mc-orbit2{animation-duration:1.4s}
 
-.mc-toggle-label{display:flex;flex-direction:column;gap:1px;line-height:1.15}
+/* Texto oculto: se despliega con el cursor */
+.mc-toggle-label{display:flex;flex-direction:column;gap:1px;line-height:1.15;white-space:nowrap;overflow:hidden;
+max-width:0;opacity:0;transition:max-width .45s var(--mc-ease),opacity .25s ease}
+.mc-toggle-label strong,.mc-toggle-label small{transform:translateX(-10px);opacity:0;
+transition:transform .4s var(--mc-ease),opacity .3s ease}
 .mc-toggle-label strong{font:700 .85rem var(--fuente-principal);letter-spacing:.055em}
-.mc-toggle-label small{font:500 .7rem var(--fuente-principal);opacity:.78}
+.mc-toggle-label small{font:500 .7rem var(--fuente-principal)}
+.mc-toggle:hover .mc-toggle-label,.mc-toggle:focus-visible .mc-toggle-label{max-width:9rem;opacity:1;transition-delay:0s}
+.mc-toggle:hover .mc-toggle-label strong,.mc-toggle:focus-visible .mc-toggle-label strong{transform:none;opacity:1;transition-delay:.12s}
+.mc-toggle:hover .mc-toggle-label small,.mc-toggle:focus-visible .mc-toggle-label small{transform:none;opacity:.78;transition-delay:.2s}
+/* El robot saluda al pasar el cursor */
+.mc-bot{transition:transform .45s var(--mc-ease)}
+.mc-toggle:hover .mc-bot,.mc-toggle:focus-visible .mc-bot{animation:mc-saludo .7s ease-in-out}
 
 /* Indicador "en línea" pegado al robot */
 .mc-online{position:absolute;left:calc(.5rem + 33px);bottom:9px;width:11px;height:11px;background:#91e36f;border:2px solid #07554d;border-radius:50%}
@@ -61,6 +82,9 @@ background:var(--acento-mantia);color:var(--sidebar);font:700 .62rem var(--fuent
 display:flex;align-items:center;justify-content:center;border:2px solid var(--fondo)}
 
 @keyframes mc-giro{to{transform:rotate(360deg)}}
+@keyframes mc-entrada{from{opacity:0;transform:translateY(16px) scale(.8)}to{opacity:1;transform:none}}
+@keyframes mc-respira{0%{box-shadow:0 0 0 0 rgba(25,195,166,.45)}70%,100%{box-shadow:0 0 0 12px rgba(25,195,166,0)}}
+@keyframes mc-saludo{0%,100%{transform:rotate(0)}25%{transform:rotate(-12deg)}55%{transform:rotate(9deg)}80%{transform:rotate(-4deg)}}
 @keyframes mc-parpadeo{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
 @keyframes mc-lampara{0%,100%{opacity:1}50%{opacity:.55}}
 
@@ -130,10 +154,17 @@ display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:
 .mc-win button:focus-visible,.mc-toggle:focus-visible{outline:3px solid var(--acento-mantia);outline-offset:2px}
 
 @media (max-width:480px){
-  .mc-toggle{right:1rem;bottom:1rem;min-width:156px}
+  #mantia-chat{right:5.5rem;bottom:1rem}
   .mc-win{width:calc(100vw - 1rem);right:.5rem;bottom:.5rem;height:calc(100dvh - 1rem);max-height:calc(100dvh - 1rem);border-radius:1rem}
 }
 @media (prefers-reduced-motion:reduce){
   .mc-win,.mc-typing span{animation:none!important;transition:none!important}
   .mc-toggle,.mc-toggle *{animation:none!important;transition:none!important}
 }
+/* Enlaces de la IA: botones que llevan a la pantalla mencionada */
+.mc-link{display:inline-flex;align-items:center;gap:.35rem;margin:.3rem .3rem 0 0;padding:.3rem .7rem;cursor:pointer;
+font:600 .74rem var(--fuente-principal);color:var(--texto);background:var(--contenedor);
+border:1px solid var(--secundario);border-radius:2rem;transition:background .18s,transform .18s}
+.mc-link i{font-size:.65rem;color:var(--secundario)}
+.mc-link:hover{background:var(--hover-principal);transform:translateY(-1px)}
+.mc-link:focus-visible{outline:2px solid var(--secundario);outline-offset:2px}
