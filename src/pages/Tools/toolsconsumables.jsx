@@ -97,6 +97,14 @@ function Formulario({onCancel,onGuardado, herramientaEditar}){
             }
         }
     }
+
+    const opcionesUbicaciones = [
+        { valor: "", etiqueta: "Seleccione una ubicación" },
+        ...ubicaciones
+            .filter(ubi => ubi.status === 'active' || ubi.id === herramientaEditar?.location_id)
+            .map(ubi => ({ valor: ubi.id, etiqueta: ubi.status === 'active' ? ubi.name : `${ubi.name} (Inactiva)` }))
+    ];
+
     return(
         <Form
             titulo={esEdicion?"Editar herramienta":"Agregar nueva herramienta"}
@@ -193,7 +201,7 @@ function Formulario({onCancel,onGuardado, herramientaEditar}){
                     name="ubicacion"
                     value={locationId}
                     onChange={(e) => setLocationId(e.target.value)}
-                    opciones={[{valor:"", etiqueta:"Seleccione una ubicacion"},...ubicaciones.map((u) => ({ valor: u.id, etiqueta: u.name }))]}
+                    opciones={opcionesUbicaciones}
                     required
                 />
             </div>
