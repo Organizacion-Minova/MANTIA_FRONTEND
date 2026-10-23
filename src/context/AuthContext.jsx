@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { login as loginRequest, logout as logoutRequest, getUser, quickLogin } from "../api/auth";
+import { mensajeDeError } from "../utils/errores";
 
 const AuthContext = createContext(null);
 
@@ -14,10 +15,11 @@ export function AuthProvider({ children }) {
             const data = await loginRequest(email, password);
             setUsuario(data);
         } catch (err) {
-            if (err.response?.status === 401) {
-                throw new Error("Credenciales incorrectas.");
-            }
-            throw new Error("No se pudo conectar con el servidor.");
+        if (err.response?.status === 401) {
+        throw new Error("Credenciales incorrectas.");
+    }
+        // Deja pasar el mensaje real del backend (cuenta pendiente, rechazada, 422, sin conexión...)
+        throw new Error(mensajeDeError(err, "No se pudo iniciar sesión."));
         }
     }
 

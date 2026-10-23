@@ -9,12 +9,14 @@ import { Link, useNavigate } from "react-router-dom";
 import AuthScene from "./AuthScene";
 import { useAuth } from "../../context/AuthContext.jsx";
 import LoadingScreen from "../../components/LoadingScreen.jsx";
+import { useToast } from "../../context/ToastContext.jsx";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const { login, loginConLetra } = useAuth();
+    const { peligro, advertencia } = useToast();
     const [cargandoLogin, setCargandoLogin] = useState(false);
     const navigate = useNavigate();
 
@@ -31,29 +33,28 @@ const Login = () => {
     };
 
     const handleSubmit = async (event) => {
-        event.preventDefault();
-        setError("");
+    event.preventDefault();
 
-        const esLetraDev = /^[A-Za-z]$/.test(email.trim());
+    const esLetraDev = /^[A-Za-z]$/.test(email.trim());
 
-        if (!esLetraDev && (!email || !password)) {
-            setError("Debes completar ambos campos.");
-            return;
+    if (!esLetraDev && (!email.trim() || !password)) {
+        advertencia("Debes completar ambos campos.", "Campos incompletos");
+        return;
+    }
+
+    setCargandoLogin(true);
+    try {
+        if (esLetraDev) {
+            await loginConLetra(email.trim().toUpperCase());
+        } else {
+            await login(email, password);
         }
-
-        setCargandoLogin(true);
-        try {
-            if (esLetraDev) {
-                await loginConLetra(email.trim().toUpperCase());
-            } else {
-                await login(email, password);
-            }
-            navigate("/machines");
-        } catch (err) {
-            setError(err.message);
-            setCargandoLogin(false);
-        }
-    };
+        navigate("/machines");
+    } catch (err) {
+        peligro(err.message, "No se pudo iniciar sesión");
+        setCargandoLogin(false);
+    }
+};
 
     // 👇 AQUÍ VA — dentro del componente, antes del return del formulario
     if (cargandoLogin) {
@@ -71,7 +72,7 @@ const Login = () => {
                     <div className="container-login">
                         <h3>Inicia Sesión</h3>
 
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit} noValidate>
                             <div className="input-box">
                                 <label htmlFor="email">
                                     Correo electrónico:
@@ -124,7 +125,7 @@ const Login = () => {
                             </div>
                         </form>
 
-                        {error && <p className="error-message">{error}</p>}
+
                     </div>
                 </div>
             </div>

@@ -8,6 +8,8 @@ import { Boton } from "../../components/common/Button";
 import loginImage from "../../assets/img/Mantia2..png";
 import AuthScene from "./AuthScene";
 import { register } from "../../api/auth";
+import { useToast } from "../../context/ToastContext.jsx";
+import { mensajeDeError } from "../../utils/errores";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -22,46 +24,72 @@ const Register = () => {
         requestedRole: "",
         technicianType: ""
     });
-    const [error, setError] = useState("");
-    const [successMessage, setSuccessMessage] = useState("");
-    const [loading, setLoading] = useState(false);
-
+        const { peligro, advertencia } = useToast();
+        const [loading, setLoading] = useState(false);
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError("");
-        setSuccessMessage("");
+const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        if (formData.password !== formData.confirmPassword) {
-            setError("Las contraseñas no coinciden");
-            return;
-        }
+    const obligatorios = [
+        ["nombre", "Nombre"],
+        ["apellido", "Apellido"],
+        ["email", "Correo electrónico"],
+        ["password", "Contraseña"],
+        ["confirmPassword", "Confirmar contraseña"],
+        ["documentType", "Tipo de documento"],
+        ["documentNumber", "Número de documento"],
+        ["requestedRole", "Solicitar rol"],
+    ];
+    if (formData.requestedRole === "Tecnico") {
+        obligatorios.push(["technicianType", "Tipo de técnico"]);
+    }
 
-        try {
-            setLoading(true);
-            await register({
-                name: formData.nombre,
-                last_name: formData.apellido,
-                email: formData.email,
-                password: formData.password,
-                document_type: formData.documentType,
-                document_number: formData.documentNumber,
-                requested_role: formData.requestedRole,
-                technician_type: formData.requestedRole === "Tecnico" ? formData.technicianType : null
-            });
-            setSuccessMessage("¡Registro exitoso! Tu cuenta está pendiente de aprobación por el administrador. Te notificaremos por correo cuando sea aprobada.");
-            setTimeout(() => {
-                navigate("/login");
-            }, 4000);
-        } catch (err) {
-            setError(err.response?.data?.message || "Ocurrió un error al registrarse");
-        } finally {
-            setLoading(false);
-        }
-    };
+    const faltante = obligatorios.find(([campo]) => !String(formData[campo] ?? "").trim());
+    if (faltante) {
+        advertencia(`Completa el campo: ${faltante[1]}.`, "Campos incompletos");
+        return;
+    }
+
+    if (!/^\S+@\S+\.\S+$/.test(formData.email.trim())) {
+        advertencia("Ingresa un correo electrónico válido.", "Correo inválido");
+        return;
+    }
+
+    if (formData.password.length < 8) {
+        advertencia("La contraseña debe tener al menos 8 caracteres.", "Contraseña muy corta");
+        return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+        peligro("Las contraseñas no coinciden.", "Contraseñas distintas");
+        return;
+    }
+
+    try {
+        setLoading(true);
+        await register({
+            name: formData.nombre,
+            last_name: formData.apellido,
+            email: formData.email,
+            password: formData.password,
+            document_type: formData.documentType,
+            document_number: formData.documentNumber,
+            requested_role: formData.requestedRole,
+            technician_type: formData.requestedRole === "Tecnico" ? formData.technicianType : null
+        });
+        // El aviso de éxito lo muestra api/axios.js
+        setTimeout(() => {
+            navigate("/login");
+        }, 4000);
+    } catch (err) {
+        peligro(mensajeDeError(err, "Ocurrió un error al registrarse."), "No se pudo registrar");
+    } finally {
+        setLoading(false);
+    }
+};
 
     return (
         <AuthScene>
@@ -85,10 +113,7 @@ const Register = () => {
                             Los campos marcados con <span className="required-mark">*</span> son obligatorios.
                         </p>
 
-                        {error && <div style={{ color: "#d9534f", marginBottom: "15px", fontSize: "14px" }}>{error}</div>}
-                        {successMessage && <div style={{ color: "#5cb85c", marginBottom: "15px", fontSize: "14px" }}>{successMessage}</div>}
-
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit} noValidate>
                             <div
                                 className="form-row"
                             >

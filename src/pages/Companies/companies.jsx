@@ -174,9 +174,7 @@ function Empresas() {
                 cargarLista();
             } catch (err) {
                 console.error("Error al eliminar la empresa:", err);
-                if (err.response && err.response.data && err.response.data.message) {
-                    alert(err.response.data.message);
-                }
+                
             }
         }
     };

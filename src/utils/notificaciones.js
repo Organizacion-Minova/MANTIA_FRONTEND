@@ -5,7 +5,7 @@ export const PUNTO_POR_TIPO = {
     info: "punto-azul",
 };
 
-const ETIQUETAS_CATEGORIA = {
+export const ETIQUETAS_CATEGORIA = {
     login: "Inicio de sesión",
     logout: "Cierre de sesión",
     maquina: "Máquina",
@@ -38,6 +38,8 @@ export function mapearNotificacionBackend(registro) {
         tipo: nivel, // 'info' | 'warning' | 'danger'
         titulo: ETIQUETAS_CATEGORIA[categoria] ?? categoria,
         mensaje,
+        categoria,
+        fecha: registro.created_at,
         hora: formatearHora(registro.created_at),
         leida: registro.read_at !== null,
     };
