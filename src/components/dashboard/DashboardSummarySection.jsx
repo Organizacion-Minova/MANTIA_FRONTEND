@@ -3,15 +3,15 @@ import SummaryCard from "./SummaryCard";
 
 const CARDS = [
   { dataKey: "machines", title: "Máquinas", to: "/machines" },
-  { dataKey: "equipment", title: "Equipos", to: "/equipment" },
-  { dataKey: "consumables", title: "Consumibles", to: "/tools/consumables" },
-  { dataKey: "nonConsumables", title: "No consumibles", to: "/tools/noconsumables" },
+  { dataKey: "equipments", title: "Equipos", to: "/equipment" },
+  { dataKey: "consumables", title: "Consumibles", to: "/consumables/tools" },
+  { dataKey: "nonConsumables", title: "No consumibles", to: "/noconsumables/tools" },
 ];
 
 export default function DashboardSummarySection({ data, sections }) {
   return (
     <section className="dashboard-summary-section">
-      {CARDS.map(({ dataKey, title, to }) => (
+      {CARDS.filter(({ dataKey }) => sections[dataKey] !== undefined).map(({ dataKey, title, to }) => (
         <SummaryCard
           key={dataKey}
           title={title}

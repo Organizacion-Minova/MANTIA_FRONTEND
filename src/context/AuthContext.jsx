@@ -54,7 +54,13 @@ export function AuthProvider({ children }) {
         cargarUsuarioActual().finally(() => setCargando(false));
     }, []);
 
-    const value = { usuario, isAuthenticated, login, loginConLetra, logout, cargarUsuarioActual, cargando };
+    // Permisos y roles que llegan desde el backend (GET /api/user)
+    const permisos = usuario?.permission_names ?? [];
+    const roles = (usuario?.roles ?? []).map((r) => r.name);
+    const tienePermiso = (permiso) => permisos.includes(permiso);
+    const tieneRol = (...nombres) => nombres.some((n) => roles.includes(n));
+
+    const value = { usuario, isAuthenticated, login, loginConLetra, logout, cargarUsuarioActual, cargando, tienePermiso, tieneRol, roles };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
