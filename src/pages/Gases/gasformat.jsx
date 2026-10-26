@@ -7,19 +7,57 @@ import { obtenerMedicionPorId, actualizarDetalleGases, actualizarCabeceraGases }
 import { useSearch } from "../../hooks/useSearch";
 import LoadingScreen from "../../components/LoadingScreen";
 import { useToast } from "../../context/ToastContext.jsx";
+import { validarGroserias } from "../../components/common/Validations";
 
 const gases = [
-    { key: 'oxygen', label: 'O2', nombre: 'Oxígeno', simbolo: '%' },
-    { key: 'methane', label: 'CH4', nombre: 'Metano', simbolo: '%' },
-    { key: 'carbon_dioxide', label: 'CO2', nombre: 'Dióxido de carbono', simbolo: '%' },
-    { key: 'carbon_monoxide', label: 'CO', nombre: 'Monóxido de carbono', simbolo: 'PPM' },
-    { key: 'hydrogen_sulfide', label: 'H2S', nombre: 'Ácido sulfhídrico', simbolo: 'PPM'},
-    { key: 'nitrogen_dioxide', label: 'NO₂', nombre: 'Dióxido de nitrógeno', simbolo: 'PPM' },
+    { key: 'oxygen', label: 'O2', nombre: 'Oxígeno', simbolo: '%', max: 100 },
+    { key: 'methane', label: 'CH4', nombre: 'Metano', simbolo: '%', max: 100 },
+    { key: 'carbon_dioxide', label: 'CO2', nombre: 'Dióxido de carbono', simbolo: '%', max: 100 },
+    { key: 'carbon_monoxide', label: 'CO', nombre: 'Monóxido de carbono', simbolo: 'PPM', max: 999 },
+    { key: 'hydrogen_sulfide', label: 'H2S', nombre: 'Ácido sulfhídrico', simbolo: 'PPM', max: 999 },
+    { key: 'nitrogen_dioxide', label: 'NO₂', nombre: 'Dióxido de nitrógeno', simbolo: 'PPM', max: 999 },
 ];
 
 const camposBusqueda = [...gases.map((g) => g.key), 'responsible_name', 'observation'];
 
-const diligenciada = (detalle) => gases.some((g) => detalle[g.key] !== null);
+const diligenciada = (detalle) => {
+    if (!detalle) return false;
+    return gases.some((g) => {
+        const val = detalle[g.key];
+        return val !== null && val !== undefined && String(val).trim() !== "";
+    });
+};
+
+const regex_responsable = /^[\p{L}\s.'\-]+$/u;
+const regex_observacion = /^[\p{L}\p{N}\s.,;:()\-/%°#¿?¡!]+$/u;
+const tipos_firma = ['image/png', 'image/jpeg', 'image/webp'];
+const peso_maximo_firma = 2 * 1024 * 1024;
+
+const validar = (datos) => {
+    for (const g of gases) {
+        const valor = datos[g.key];
+        if (valor === null) continue;
+        if (!/^-?\d+(\.\d+)?$/.test(valor)) return `El valor de ${g.nombre.toLowerCase()} debe ser un número.`;
+        if (Number(valor) < 0) return `${g.nombre} no puede ser menor a 0.`;
+        if (Number(valor) > g.max) return `${g.nombre} no puede superar ${g.max}${g.simbolo === '%' ? '%' : ''}.`;
+        if (!/^\d+(\.\d{1,2})?$/.test(valor)) return `${g.nombre} admite máximo 2 decimales.`;
+    }
+    if (datos.responsible_name) {
+        if (datos.responsible_name.length > 100) return "El nombre del responsable no puede superar los 100 caracteres.";
+        if (!regex_responsable.test(datos.responsible_name)) return "El nombre del responsable solo puede contener letras, espacios, puntos, apóstrofes y guiones.";
+    }
+    if (datos.observation) {
+        if (datos.observation.length > 100) return "La observación no puede superar los 100 caracteres.";
+        if (!regex_observacion.test(datos.observation)) return "La observación contiene caracteres no permitidos.";
+    }
+    const erroresGroserias = validarGroserias({ 
+        responsible_name: datos.responsible_name, 
+        observation: datos.observation
+    });
+    if (erroresGroserias.responsible_name) return erroresGroserias.responsible_name;
+    if (erroresGroserias.observation) return erroresGroserias.observation;
+    return null;
+};
 
 function FormularioGases({ detalle, onCancel, onSuccess }) {
     const isEditing = diligenciada(detalle);
@@ -29,7 +67,7 @@ function FormularioGases({ detalle, onCancel, onSuccess }) {
         observation: detalle.observation ?? ''
     });
     const [cargando, setCargando] = useState(false);
-    const [error, setError] = useState(null);
+    const { advertencia } = useToast(); 
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -37,16 +75,23 @@ function FormularioGases({ detalle, onCancel, onSuccess }) {
 
     const handleSubmit = async (e) => {
         if (e && e.preventDefault) e.preventDefault();
+        const datos = Object.fromEntries(Object.entries(formData).map(([campo, valor]) => [campo, String(valor).trim() === '' ? null : String(valor).trim()]));
+        const errorValidacion = validar(datos);
+        if (errorValidacion) {
+            advertencia(errorValidacion, "Error de validación"); 
+            return;
+        }
+
         setCargando(true);
-        setError(null);
+
         try {
-            const datos = Object.fromEntries(Object.entries(formData).map(([campo, valor]) => [campo, valor === '' ? null : valor]));
             await actualizarDetalleGases(detalle.id, datos);
             onSuccess();
             onCancel();
         } catch (err) {
             const errores = err.response?.data?.errors;
-            setError(errores ? Object.values(errores).flat()[0] : err.response?.data?.message || "Error al procesar la solicitud.");
+            const mensajeError = errores ? Object.values(errores).flat()[0] : err.response?.data?.message || "Error al procesar la solicitud.";
+            advertencia(mensajeError, "Error del servidor"); 
         } finally {
             setCargando(false);
         }
@@ -61,11 +106,6 @@ function FormularioGases({ detalle, onCancel, onSuccess }) {
             textoBoton={cargando ? "Guardando..." : isEditing ? "Actualizar" : "Guardar"}
             iconoBoton="fa-solid fa-floppy-disk"
         >
-            {error && (
-                <div className="col-span-6">
-                    {error}
-                </div>
-            )}
             <div className="col-span-6">
                 <Text
                     label="Ubicación:"
@@ -84,10 +124,10 @@ function FormularioGases({ detalle, onCancel, onSuccess }) {
                         type="number"
                         step="any"
                         min="0"
+                        max={g.max}
                         placeholder={`Nivel de ${g.label}`}
                         value={formData[g.key]}
                         onChange={handleChange}
-                        required
                     />
                 </div>
             ))}
@@ -99,7 +139,7 @@ function FormularioGases({ detalle, onCancel, onSuccess }) {
                     placeholder="Nombre responsable"
                     value={formData.responsible_name}
                     onChange={handleChange}
-                    required
+                    maxLength={100}
                 />
             </div>
             <div className="col-span-6">
@@ -112,7 +152,6 @@ function FormularioGases({ detalle, onCancel, onSuccess }) {
                     placeholder="Observaciones"
                     value={formData.observation}
                     onChange={handleChange}
-                    required
                 />
             </div>
         </Form>
@@ -168,8 +207,12 @@ export function FormatoGases() {
         const archivo = e.target.files[0];
         e.target.value = '';
         if (!archivo) return;
-        if (!archivo.type.startsWith('image/')) {
-            advertencia("La firma debe ser una imagen.", "Archivo no válido");
+        if (!tipos_firma.includes(archivo.type)) {
+            advertencia("La firma debe ser una imagen PNG, JPG o WEBP.");
+            return;
+        }
+        if (archivo.size > peso_maximo_firma) {
+            advertencia("La firma es demasiado pesada (máx. 2 MB).");
             return;
         }
         const lector = new FileReader();
@@ -283,7 +326,7 @@ export function FormatoGases() {
                                             <Boton
                                                 clase="btn-azul"
                                                 icono={diligenciada(d) ? "fa-solid fa-edit" : "fa-solid fa-plus"}
-                                                title={diligenciada(d) ? "Editar" : "Agregar"}
+                                                titulo={diligenciada(d) ? "Editar registro" : "Agregar registro"}
                                                 onClick={() => setDetalleEditar(d)}
                                             />
                                         </div>
@@ -326,12 +369,12 @@ export function FormatoGases() {
                                     label="FIRMA DE JEFE DE MINA:"
                                     id="firmaJefeMina"
                                     name="firmaJefeMina"
-                                    ayuda=""
-                                    accept="image/*"
-                                    preview={medicion?.chief_signature || ""} 
+                                    ayuda="Formatos de imagen, hasta 2 MB"
+                                    accept="image/png,image/jpeg,image/webp"
+                                    preview={medicion?.chief_signature || ""}
                                     previewLabel="Firma Jefe"
                                     onChange={handleFirma('chief_signature')}
-                                    onRemove={() => guardarCabecera({ chief_signature: null })} 
+                                    onRemove={() => guardarCabecera({ chief_signature: null })}
                                 />
                             </td>
                             <td colSpan="4">
@@ -339,12 +382,12 @@ export function FormatoGases() {
                                     label="Vo. Bo. LIDER SST:"
                                     id="firmaResponsable"
                                     name="firmaResponsable"
-                                    ayuda=""
-                                    accept="image/*"
-                                    preview={medicion?.sst_signature || ""} 
-                                    previewLabel="Firma SST" 
+                                    ayuda="Formatos de imagen, hasta 2 MB"
+                                    accept="image/png,image/jpeg,image/webp"
+                                    preview={medicion?.sst_signature || ""}
+                                    previewLabel="Firma SST"
                                     onChange={handleFirma('sst_signature')}
-                                    onRemove={() => guardarCabecera({ sst_signature: null })} 
+                                    onRemove={() => guardarCabecera({ sst_signature: null })}
                                 />
                             </td>
                         </tr>
@@ -356,17 +399,20 @@ export function FormatoGases() {
                     clase="btn-azul"
                     icono="fa-solid fa-file-excel"
                     texto="Exportar Excel"
+                    titulo="Exportar en un archivo de Excel"
                 />
                 <Boton
                     clase="btn-azul"
                     icono="fa-solid fa-file-pdf"
                     texto="Exportar PDF"
+                    titulo="Exportar en un archivo PDF"
                 />
                 <BotonLink
                     link="/gases"
                     clase="btn-2"
                     icono="fa-solid fa-arrow-left"
                     texto="Regresar"
+                    titulo="Ir a la página de Medición de gases"
                 />
             </div>
             {detalleEditar && (

@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Boton, BotonLink } from "../../components/common/Button";
+import { Select, Text } from '../../components/common/forms';
 import { PageWelcome } from "../../components/common/welcome";
+import LoadingScreen from "../../components/LoadingScreen";
 import { obtenerMedicionesGases } from "../../api/gasMeasurement";
 import { obtenerUbicaciones } from "../../api/location";
 import {
@@ -89,15 +91,21 @@ function CompararGases() {
     const [mediciones, setMediciones] = useState([]);
     const [ubicaciones, setUbicaciones] = useState([]);
     const [ubicacionId, setUbicacionId] = useState('');
+    const [cargando, setCargando] = useState(true);
     const metaAmpliada = gasAmpliadoKey ? limitesGases[gasAmpliadoKey] : null;
 
     useEffect(() => {
         const cargarDatos = async () => {
-            const [respuestaMediciones, respuestaUbicaciones] = await Promise.all([obtenerMedicionesGases(), obtenerUbicaciones()]);
-            const mina = (respuestaUbicaciones.ubicaciones || []).filter((u) => u.location_category?.name === 'Mina');
-            setMediciones(respuestaMediciones.data || []);
-            setUbicaciones(mina);
-            setUbicacionId(mina[0]?.id ?? '');
+            try {
+                const [respuestaMediciones, respuestaUbicaciones] = await Promise.all([obtenerMedicionesGases(), obtenerUbicaciones()]);
+                const mina = (respuestaUbicaciones.ubicaciones || []).filter((u) => u.location_category?.name === 'Mina');
+                setMediciones(respuestaMediciones.data || []);
+                setUbicaciones(mina);
+                setUbicacionId(mina[0]?.id ?? '');
+            } catch (err) {
+            } finally {
+                setCargando(false);
+            }
         };
         cargarDatos();
     }, []);
@@ -111,6 +119,7 @@ function CompararGases() {
     const [ultimo, penultimo] = registros;
     const comparados = [...registros].reverse(); 
 
+    if (cargando) return <LoadingScreen indeterminado/>
     return (
         <div className="cards-grid">
             <PageWelcome
@@ -119,25 +128,27 @@ function CompararGases() {
             />
             <section className="seccion1">
                 <div className="panel-filtros-horizontal">
-                    <div className="control-input">
-                        <label>Ubicación</label>
-                        <select value={ubicacionId} onChange={(e) => setUbicacionId(e.target.value)}>
-                            {ubicaciones.map((ubi) => (
-                            <option key={ubi.id} value={ubi.id}>
-                                {ubi.name}
-                            </option>
-                            ))}
-                        </select>
+                    <div>
+                        <Select
+                            label="Ubicación"
+                            value={ubicacionId}
+                            onChange={(e) => setUbicacionId(e.target.value)}
+                            opciones={ubicaciones.map((ubi) => ({ valor: ubi.id, etiqueta: ubi.name }))}
+                        />
                     </div>
-
-                    <div className="control-input">
-                        <label>Último Registro</label>
-                        <input readOnly value={ultimo ? formatearFecha(ultimo.fecha) : ''} />
+                    <div>
+                        <Text
+                            label="Último Registro"
+                            disabled
+                            value={ultimo ? formatearFecha(ultimo.fecha) : ''}
+                        />
                     </div>
-
-                    <div className="control-input">
-                        <label>Penúltimo Registro</label>
-                        <input readOnly value={penultimo ? formatearFecha(penultimo.fecha) : ''} />
+                    <div>
+                        <Text
+                            label="Penúltimo Registro"
+                            disabled
+                            value={penultimo ? formatearFecha(penultimo.fecha) : ''}
+                        />
                     </div>
                 </div>
             </section>
@@ -152,6 +163,7 @@ function CompararGases() {
                                 clase="btn-azul"
                                 onClick={() => setGasAmpliadoKey(null)}
                                 icono="fa-solid fa-xmark"
+                                titulo="Disminuir gráfica"
                             />
                         </div>
                         <div style={{ height: '400px', width: '100%' }}>
@@ -196,6 +208,7 @@ function CompararGases() {
                     clase="btn-2"
                     icono="fa-solid fa-arrow-left"
                     texto="Regresar"
+                    titulo="Ir a la página de Medición de gases"
                 />
             </div>
         </div>

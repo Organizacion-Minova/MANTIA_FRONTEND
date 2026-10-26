@@ -46,7 +46,7 @@ export function Form({ titulo, descripcion, onSubmit, onCancel, children, textoB
 }
 
 // Campo de texto
-export function Text({ label, id, name, type = "text", placeholder, value, onChange, prefix, required = false, disabled }) {
+export function Text({ label, id, name, type = "text", placeholder, value, onChange, prefix, required = false, disabled, min, max, step }) {
     return (
         <div className="form-field-wrapper">
             <label htmlFor={id} className="form-label">
@@ -66,6 +66,9 @@ export function Text({ label, id, name, type = "text", placeholder, value, onCha
                         disabled={disabled}
                         className={`form-input ${prefix ? 'with-prefix' : ''}`}
                         maxLength={type === "text" ? 50 : undefined}
+                        min={min}
+                        max={max}
+                        step={step}
                     />
                 </div>
             </div>
