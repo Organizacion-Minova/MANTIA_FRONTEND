@@ -6,6 +6,8 @@ import { obtenerCategoriasUbicacion, guardarCategoriaUbicacion, actualizarCatego
 import { useSearch } from "../../hooks/useSearch";
 import LoadingScreen from "../../components/LoadingScreen";
 import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
+import { validarGroserias } from "../../components/common/Validations";
+import { useToast } from "../../context/ToastContext";
 
 const opciones_estado = [
     { valor: "active", etiqueta: "Activo" },
@@ -27,6 +29,14 @@ const validar = ({ nombre, descripcion }) => {
     if (!regex_nombre.test(nombre)) return "El nombre solo puede contener letras, números, espacios y guiones.";
     if (!descripcion) return "La descripción es obligatoria.";
     if (descripcion.length > 5000) return "La descripción no puede superar los 5000 caracteres.";
+
+    const erroresGroserias = validarGroserias({ 
+        name: nombre, 
+        description: descripcion 
+    });
+    if (erroresGroserias.name) return erroresGroserias.name;
+    if (erroresGroserias.description) return erroresGroserias.description;
+
     return null;
 };
 
@@ -37,8 +47,7 @@ function Formulario({ onCancel, onSuccess, categoriaEditar = null }) {
         estado: categoriaEditar ? categoriaEditar.status : 'active'
     });
     const [cargando, setCargando] = useState(false);
-    const [error, setError] = useState(null);
-
+    const { advertencia } = useToast(); 
     const isEditing = Boolean(categoriaEditar);
 
     const handleChange = (e) => {
@@ -52,10 +61,12 @@ function Formulario({ onCancel, onSuccess, categoriaEditar = null }) {
         if (e && e.preventDefault) e.preventDefault();
         const datos = { ...formData, nombre: formData.nombre.trim(), descripcion: formData.descripcion.trim() };
         const errorValidacion = validar(datos);
-        if (errorValidacion) return setError(errorValidacion);
+        if (errorValidacion) {
+            advertencia(errorValidacion, "Error de validación"); 
+            return;
+        }
 
         setCargando(true);
-        setError(null);
 
         try {
             if (isEditing) {
@@ -81,11 +92,6 @@ function Formulario({ onCancel, onSuccess, categoriaEditar = null }) {
             textoBoton={cargando ? "Guardando..." : isEditing ? "Actualizar" : "Guardar"}
             iconoBoton="fa-solid fa-floppy-disk"
         >
-            {error && (
-                <div className="col-span-6">
-                    {error}
-                </div>
-            )}
             <div className="col-span-6">
                 <Text
                     label="Nombre:"

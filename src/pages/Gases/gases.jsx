@@ -5,12 +5,10 @@ import { obtenerMedicionesGases, crearMedicionGases, eliminarMedicionGases } fro
 import { useSearch } from "../../hooks/useSearch";
 import LoadingScreen from "../../components/LoadingScreen";
 import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
-import { useToast } from "../../context/ToastContext.jsx";
 
 function Gases() {
     const [mediciones, setMediciones] = useState([]);
     const [cargando, setCargando] = useState(true);
-    const { advertencia } = useToast();
 
     const { busqueda, setBusqueda, rangoFecha, setRangoFecha, itemsFiltrados: medicionesFiltradas } = useSearch(
         mediciones,
@@ -38,10 +36,6 @@ function Gases() {
 
     const handleCrear = async () => {
         const hoy = new Date().toLocaleDateString('en-CA');
-        if (mediciones.some((m) => m.measurement_date === hoy)) {
-            advertencia("Ya existe una medición de gases registrada para el día de hoy.", "Medición duplicada");
-            return;
-        }
         try {
             await crearMedicionGases({});
             cargarDatos();
@@ -58,7 +52,7 @@ function Gases() {
                 await eliminarMedicionGases(id);
                 cargarDatos();
             } catch (err) {
-                alert(err.response?.data?.message || "No se pudo eliminar la medición de gases.");
+                setCargando(false);
             }
         }
     };
@@ -106,13 +100,13 @@ function Gases() {
                                                 link={`/gases/gas_format/${m.id}`}
                                                 clase="btn-azul"
                                                 icono="fa-solid fa-eye"
-                                                title="Ver detalle"
+                                                titulo="Ver registro"
                                             />
                                             <Boton
                                                 clase="btn-2"
                                                 icono="fa-solid fa-trash"
-                                                title="Eliminar"
                                                 onClick={() => handleEliminar(m.id)}
+                                                titulo="Eliminar registro"
                                             />
                                         </div>
                                     </td>
@@ -134,14 +128,15 @@ function Gases() {
                         clase="btn-azul"
                         icono="fa-solid fa-plus"
                         texto="Nueva Medición"
-                        title="Crear el formato de hoy"
                         onClick={handleCrear}
+                        titulo="Registrar nueva medición de gases"
                     />
                     <BotonLink
                         link="/gases/compare_gases"
                         clase="btn-azul"
                         icono="fa-solid fa-chart-line"
                         texto="Comparar mediciones"
+                        titulo="Ir a la página de Comparación de gases"
                     />
                 </div>
                 <Paginacion

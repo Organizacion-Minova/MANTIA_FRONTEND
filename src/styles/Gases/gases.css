@@ -9,26 +9,6 @@
     box-shadow: var(--sombra-contenedor);
 }
 
-.control-input {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-}
-
-.control-input select, 
-.control-input input {
-    padding: 0.6rem;
-    border: 1px solid var(--borde-contenedor);
-    border-radius: 6px;
-    background: var(--contenedor);
-    color: var(--texto);
-    font-size: 0.9rem;
-    outline: none;
-    width: 100%;
-    box-sizing: border-box;
-    cursor: default;
-}
-
 .grid-multigas {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
