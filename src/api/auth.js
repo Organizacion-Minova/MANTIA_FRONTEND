@@ -31,7 +31,9 @@ export async function register(userData) {
 export async function quickLogin(letra) {
     await api.get('/sanctum/csrf-cookie');
     const { data } = await api.post(`/api/dev-login/${letra}`);
-    return data.user;   // ← extraemos el usuario de adentro del wrapper
+    // El wrapper no trae roles ni permisos: se piden completos
+    const { data: completo } = await api.get('/api/user');
+    return completo;
 }
 
 

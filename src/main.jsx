@@ -26,17 +26,17 @@ import Register from './pages/login/Register'
 import AcercaDe from "./pages/Others/acerca_de";
 import Ayuda from "./pages/Others/ayuda";
 import MantiaInicio from "./pages/Index/index";
-import Profile from './pages/Profile/profile.jsx'
 import Alerts from './pages/Alerts/alerts.jsx';
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 import EscuchaToasts from "./components/Alertas/EscuchaToasts.jsx";
 import RutaPrivada from "./components/RutaPrivada.jsx";
+import RutaConPermiso from "./components/RutaConPermiso.jsx";
 import LoadingScreen from "./components/LoadingScreen.jsx";
 import Dashboard from "./pages/Dashboard/dashboard.jsx";
 import { ToastProvider } from './context/ToastContext.jsx';
 import NotFound from './pages/Others/not_found.jsx';
 import TermnsAndConditions from "./pages/Others/TermnsAndConditions.jsx";
-
+import AdministrationPanel from "./pages/Role/administration panel.jsx";
 // import PoliticaPrivacidad from "./pages/PoliticaPrivacidad";
 
 
@@ -58,27 +58,27 @@ createRoot(document.getElementById('root')).render(
             <Route path="/" element={<MantiaInicio />} />
             <Route path="/" element={<RutaPrivada><App /></RutaPrivada>}>
               <Route path='dashboard' element={<Dashboard />} />
-              <Route path='ubications' element={<Ubicaciones />} />
-              <Route path='ubications/categoriesubications' element={<CategoriasUbicacion />} />
-              <Route path='machines' element={<Maquinas />} />
-              <Route path='machines/categoriesmachines' element={<CategoriasMaquinas />} />
-              <Route path='machines/cardMachine/:id' element={<CardMachine />} />
-              <Route path='inspection' element={<AgregarInspeccion />} />
-              <Route path='inspection/completeinspection' element={<LlenarInspeccion />} />
-              <Route path='inspection/completeinspection/showinspection' element={<MostrarInspeccion />} />
-              <Route path='equipment' element={<Equipos />} />
-              <Route path='equipment/cardequipment/:id' element={<CardEquipment />} />
-              <Route path='companies' element={<Empresas />} />
-              <Route path='consumables/tools/types' element={<Consumibles />} />
-              <Route path='noconsumables/tools/types' element={<No_Consumibles />} />
-              <Route path='consumables/tools' element={<ToolsConsumables />} />
-              <Route path='noconsumables/tools' element={<ToolsNoConsumables />} />
-              <Route path='dailyuse' element={<UsoDiario />} />
-              <Route path='gases' element={<Gases />} />
-              <Route path='gases/compare_gases' element={<CompararGases />} />
-              <Route path='gases/gas_format/:id' element={<FormatoGases />} />
-              <Route path='profile' element={<Profile />} />
+              <Route path='ubications' element={<RutaConPermiso permiso="location.update"><Ubicaciones /></RutaConPermiso>} />
+              <Route path='ubications/categoriesubications' element={<RutaConPermiso permiso="location-category.update"><CategoriasUbicacion /></RutaConPermiso>} />
+              <Route path='machines' element={<RutaConPermiso permiso="machine.view"><Maquinas /></RutaConPermiso>} />
+              <Route path='machines/categoriesmachines' element={<RutaConPermiso permiso="machine-category.update"><CategoriasMaquinas /></RutaConPermiso>} />
+              <Route path='machines/cardMachine/:id' element={<RutaConPermiso permiso="machine.view"><CardMachine /></RutaConPermiso>} />
+              <Route path='inspection' element={<RutaConPermiso permiso="inspection.view"><AgregarInspeccion /></RutaConPermiso>} />
+              <Route path='inspection/completeinspection' element={<RutaConPermiso permiso="inspection.view"><LlenarInspeccion /></RutaConPermiso>} />
+              <Route path='inspection/completeinspection/showinspection' element={<RutaConPermiso permiso="inspection.view"><MostrarInspeccion /></RutaConPermiso>} />
+              <Route path='equipment' element={<RutaConPermiso permiso="equipment.view"><Equipos /></RutaConPermiso>} />
+              <Route path='equipment/cardequipment/:id' element={<RutaConPermiso permiso="equipment.view"><CardEquipment /></RutaConPermiso>} />
+              <Route path='companies' element={<RutaConPermiso permiso="company.update"><Empresas /></RutaConPermiso>} />
+              <Route path='consumables/tools/types' element={<RutaConPermiso permiso="category-tools.view"><Consumibles /></RutaConPermiso>} />
+              <Route path='noconsumables/tools/types' element={<RutaConPermiso permiso="category-tools.view"><No_Consumibles /></RutaConPermiso>} />
+              <Route path='consumables/tools' element={<RutaConPermiso permiso="tool.view"><ToolsConsumables /></RutaConPermiso>} />
+              <Route path='noconsumables/tools' element={<RutaConPermiso permiso="tool.view"><ToolsNoConsumables /></RutaConPermiso>} />
+              <Route path='dailyuse' element={<RutaConPermiso permiso="daily-use.view"><UsoDiario /></RutaConPermiso>} />
+              <Route path='gases' element={<RutaConPermiso permiso="gas-measurements.view"><Gases /></RutaConPermiso>} />
+              <Route path='gases/compare_gases' element={<RutaConPermiso permiso="gas-measurements.view"><CompararGases /></RutaConPermiso>} />
+              <Route path='gases/gas_format/:id' element={<RutaConPermiso permiso="gas-measurements.view"><FormatoGases /></RutaConPermiso>} />
               <Route path='alerts' element={<Alerts />} />
+              <Route path='admin' element={<RutaConPermiso roles={["Jefe de mina"]}><AdministrationPanel /></RutaConPermiso>} />
               <Route path="*" element={<NotFound />} /> 
             </Route>
             <Route path="login" element={<Login />} />

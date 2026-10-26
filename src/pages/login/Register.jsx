@@ -20,9 +20,7 @@ const Register = () => {
         password: "",
         confirmPassword: "",
         documentType: "",
-        documentNumber: "",
-        requestedRole: "",
-        technicianType: ""
+        documentNumber: ""
     });
         const { peligro, advertencia } = useToast();
         const [loading, setLoading] = useState(false);
@@ -41,11 +39,7 @@ const handleSubmit = async (e) => {
         ["confirmPassword", "Confirmar contraseña"],
         ["documentType", "Tipo de documento"],
         ["documentNumber", "Número de documento"],
-        ["requestedRole", "Solicitar rol"],
     ];
-    if (formData.requestedRole === "Tecnico") {
-        obligatorios.push(["technicianType", "Tipo de técnico"]);
-    }
 
     const faltante = obligatorios.find(([campo]) => !String(formData[campo] ?? "").trim());
     if (faltante) {
@@ -76,9 +70,7 @@ const handleSubmit = async (e) => {
             email: formData.email,
             password: formData.password,
             document_type: formData.documentType,
-            document_number: formData.documentNumber,
-            requested_role: formData.requestedRole,
-            technician_type: formData.requestedRole === "Tecnico" ? formData.technicianType : null
+            document_number: formData.documentNumber
         });
         // El aviso de éxito lo muestra api/axios.js
         setTimeout(() => {
@@ -233,46 +225,6 @@ const handleSubmit = async (e) => {
                                     />
                                 </div>
                             </div>
-
-                            <div className="input-box">
-                                <label htmlFor="requestedRole">
-                                    Solicitar rol <span className="required-mark">*</span>
-                                </label>
-                                <select
-                                    id="requestedRole"
-                                    name="requestedRole"
-                                    className="form-select"
-                                    value={formData.requestedRole}
-                                    onChange={handleChange}
-                                    required
-                                >
-                                    <option value="">Selecciona...</option>
-                                    <option value="Administrador">Administrador</option>
-                                    <option value="Invitado">Invitado</option>
-                                    <option value="Tecnico">Técnico</option>
-                                </select>
-                            </div>
-
-                            {formData.requestedRole === "Tecnico" && (
-                                <div className="input-box">
-                                    <label htmlFor="technicianType">
-                                        Tipo de técnico <span className="required-mark">*</span>
-                                    </label>
-                                    <select
-                                        id="technicianType"
-                                        name="technicianType"
-                                        className="form-select"
-                                        value={formData.technicianType}
-                                        onChange={handleChange}
-                                        required
-                                    >
-                                        <option value="">Selecciona...</option>
-                                        <option value="Electricista">Electricista</option>
-                                        <option value="Minero">Minero</option>
-                                        <option value="Mecanico">Mecánico</option>
-                                    </select>
-                                </div>
-                            )}
 
                             <Boton
                                 clase="btn-azul"

@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../styles/animations/login.css";
 import "../../styles/variables.css";
 import loginImage from "../../assets/img/Mantia2..png";
 import "../../styles/global.css";
 import "../../styles/Components.modules.css";
 import { Boton } from "../../components/common/Button";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import AuthScene from "./AuthScene";
 import { useAuth } from "../../context/AuthContext.jsx";
 import LoadingScreen from "../../components/LoadingScreen.jsx";
@@ -16,9 +16,19 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const { login, loginConLetra } = useAuth();
-    const { peligro, advertencia } = useToast();
+    const { peligro, advertencia, exito } = useToast();
     const [cargandoLogin, setCargandoLogin] = useState(false);
     const navigate = useNavigate();
+    const [params] = useSearchParams();
+
+    // Resultado del enlace de verificación que llega por correo
+    useEffect(() => {
+        const resultado = params.get("verificado");
+        if (resultado === "1") exito("Correo verificado. Ya puedes iniciar sesión.", "Cuenta activada");
+        if (resultado === "expirado") advertencia("El enlace expiró. Regístrate de nuevo.", "Enlace vencido");
+        if (resultado === "0") peligro("El enlace de verificación no es válido.", "Enlace inválido");
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -49,7 +59,7 @@ const Login = () => {
         } else {
             await login(email, password);
         }
-        navigate("/machines");
+        navigate("/dashboard");
     } catch (err) {
         peligro(err.message, "No se pudo iniciar sesión");
         setCargandoLogin(false);
