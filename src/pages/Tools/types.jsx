@@ -294,6 +294,7 @@ export function Consumibles(){
                 <PageWelcome
                     titulo="CATEGORIAS DE HERRAMIENTAS CONSUMIBLES"
                     descripcion="Este es el formato de las categorias de herramientas consumibles."
+                    mostrarHistorial={true}
                 />
                 <Searcher
                     value={busqueda}

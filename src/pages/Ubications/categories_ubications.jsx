@@ -200,6 +200,7 @@ function CategoriasUbicacion() {
                 <PageWelcome
                     titulo="CATEGORÍAS UBICACIONES"
                     descripcion="Este es el formato de las categorías de las ubicaciones."
+                    mostrarHistorial={true}
                 />
                     <Searcher
                         value={busqueda}

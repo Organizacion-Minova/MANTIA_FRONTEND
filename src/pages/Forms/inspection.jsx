@@ -47,6 +47,7 @@ function AgregarInspeccion(){
             <PageWelcome
                 titulo="AGREGAR PREGUNTAS INSPECCIÓN"
                 descripcion="Este es el formato para agregar una nueva inspección."
+                mostrarHistorial={true}
             />
 
             <div className="card">

@@ -1,6 +1,11 @@
 import { Select } from '../../components/common/forms.jsx';
+import NavigationHistory from "../navigation/NavigationHistory";
 
-function PageWelcome({ titulo, descripcion }) {
+function PageWelcome({
+    titulo,
+    descripcion,
+    mostrarHistorial = false,
+}) {
     const fechaActual = new Date().toLocaleDateString("es-CO", {
         weekday: "long",
         day: "numeric",
@@ -9,23 +14,27 @@ function PageWelcome({ titulo, descripcion }) {
     });
 
     return (
-        <div className="welcome">
+        <>
             <div>
-                <h1 >
-                    {titulo}
-                </h1>
-                <p>
-                    {descripcion}
-                </p>
-            </div>
+            {mostrarHistorial && <NavigationHistory />}
 
-            <div className="date">
-                <i className="fa-solid fa-calendar-days" ></i>
-                <span id="fecha" > {fechaActual} </span>
+            <div className="welcome">
+                <div>
+                    <h1>{titulo}</h1>
+                    <p>{descripcion}</p>
+                </div>
+
+                <div className="date">
+                    <i className="fa-solid fa-calendar-days"></i>
+                    <span id="fecha"> {fechaActual}</span>
+                </div>
             </div>
-        </div>
+            </div>
+        </>
     );
 }
+
+
 
 function Searcher({ value, onChange, placeholder = "Buscar...", rangoFecha, onRangoFechaChange, filtrosAdicionales = null, 
     filtrosFechas = [

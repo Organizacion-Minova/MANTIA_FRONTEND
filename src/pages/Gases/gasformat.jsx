@@ -243,6 +243,7 @@ export function FormatoGases() {
                 <PageWelcome
                     titulo="FORMATO DE GASES"
                     descripcion="Este es el formato de la medición de gases."
+                    mostrarHistorial={true}
                 />
                 <Searcher
                     value={busqueda}

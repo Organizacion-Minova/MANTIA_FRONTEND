@@ -186,6 +186,7 @@ function Empresas() {
                 <PageWelcome
                     titulo="Empresas"
                     descripcion="Este es el formato de las empresas"
+                    mostrarHistorial={true}
                 />
                 <Searcher
                     value={busqueda}

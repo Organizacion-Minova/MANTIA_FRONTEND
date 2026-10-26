@@ -112,6 +112,10 @@
 
     }
 
+    #toggleSidebar:not(.cerrado) div:nth-child(2){
+        opacity:1;
+    }
+
     /* Sidebar desplegado = X */
 
     #toggleSidebar.cerrado{
@@ -344,26 +348,28 @@
     transition:all 0.2s ease;
 }
 
-/* diagonal superior */
+/* Sidebar abierto = X */
 #toggleSidebar div:first-child{
 
-    width:0.7rem;
-
-    transform:
-        rotate(-45deg)
-        translate(-0.12rem,0.06rem);
-}
-/* cuerpo */
-
-
-/* diagonal inferior */
-#toggleSidebar div:last-child{
-
-    width:0.7rem;
+    width:1.5rem;
 
     transform:
         rotate(45deg)
-        translate(-0.12rem,-0.06rem);
+        translate(0.24rem,0.24rem);
+}
+/* La barra central se oculta para formar la X */
+#toggleSidebar div:nth-child(2){
+    opacity:0;
+}
+
+
+#toggleSidebar div:last-child{
+
+    width:1.5rem;
+
+    transform:
+        rotate(-45deg)
+        translate(0.24rem,-0.24rem);
 
 }
 
@@ -372,6 +378,7 @@
     width:1.5rem;
 
     transform:none;
+    opacity:1;
 
 }
 

@@ -64,6 +64,7 @@ function Gases() {
                 <PageWelcome
                     titulo="MEDICIÓN DE GASES"
                     descripcion="Este es el formato con el registro de gases."
+                    mostrarHistorial={true}
                 />
                 <Searcher
                     value={busqueda}

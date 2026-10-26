@@ -22,10 +22,13 @@ import CampanaNotificaciones from '../Alertas/CampanaNotificaciones';
 import { obtenerNotificaciones, marcarComoLeida, marcarTodasComoLeidas } from '../../api/notificaciones';
 import { useToast } from '../../context/ToastContext.jsx';
 import { mapearNotificacionBackend } from '../../utils/notificaciones';
+import { NavigationHistoryProvider } from "../../context/NavigationHistoryContext.jsx";
 
 
 function AppLayout({ children }) {
-    const { usuario, isAuthenticated, logout } = useAuth();
+   const { usuario, isAuthenticated, logout, tienePermiso, tieneRol } = useAuth();
+    const nombreRol = usuario?.roles?.[0]?.name || "Sin rol";
+    const veFormatos = tienePermiso("daily-use.view") || tienePermiso("gas-measurements.view") || tienePermiso("inspection.view");
     const navigate = useNavigate();
     const { pathname } = useLocation();
     const [cerrado, setCerrado] = useState(false);
@@ -98,6 +101,7 @@ function AppLayout({ children }) {
     };
 
     return (
+         <NavigationHistoryProvider>
         <div className="app-layout" onClick={() => { setOpenPerfil(false); setOpenAlertas(false); }}>
             <header className="topbar">
                 <div className="izquierda">
@@ -122,7 +126,7 @@ function AppLayout({ children }) {
 
                 <nav className="derecha">
 
-                    <button className="profile-btn" id="btnPerfil" title="Perfil" onClick={(e) => { e.stopPropagation(); setOpenPerfil(!openPerfil); setOpenAlertas(false); }}>
+                     <button className="profile-btn" id="btnPerfil" title="Perfil" onClick={(e) => { e.stopPropagation(); setOpenPerfil(!openPerfil); setOpenAlertas(false); }}>
                         <img
                             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDnLesNChl-l86u_LACs0pBkjqaot3ramr_A&s"
                             alt="Foto de perfil"
@@ -130,7 +134,7 @@ function AppLayout({ children }) {
                         <div>
                             <h4>{usuario?.name || "Invitado"}</h4>
                             <span className="role-tag">
-                                <i className="fa-solid fa-code"></i> Desarrollador
+                                <i className="fa-solid fa-user-shield"></i> {nombreRol}
                             </span>
                         </div>
                     </button>
@@ -148,12 +152,12 @@ function AppLayout({ children }) {
                     <div className={`overlay-panel ${openPerfil ? "open" : ""}`} id="overlayPerfil">
                         <div className="perfil-header">
                             <img
-                                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDnLesNChl-l86u_LACs0pBkjqaot3ramr_A&s"
+                             
                                 alt="Perfil"
                                 className="perfil-avatar"
                             />
                             <h3>{usuario?.name || "Invitado"}</h3>
-                            <span>Área de desarrollo</span>
+                            <span>{nombreRol}</span>
                         </div>
                         <div className="perfil-info">
                             <p>
@@ -169,28 +173,12 @@ function AppLayout({ children }) {
                                 texto="Ver mi perfil"
                                 title="Ver el perfil"
                             />
-                            <BotonLink
-                                link=""
-                                clase="btn-azul"
-                                icono="fa-solid fa-shield-halved"
-                                texto="Panel de superadministrador"
-                                title="Panel de superadministrador"
-                            />
-                        </div>
-                        <div className="perfil-footer">
-                            <BotonLink
-                                link="/login"
-                                clase="btn-azul"
-                                icono="fa-solid fa-right-from-bracket"
-                                texto="Cerrar sesión"
-                                title="Cerrar sesión"
-                            />
                         </div>
                     </div>
                 </nav>
             </header>
             <aside className={`sidebar ${cerrado ? "cerrado" : ""}`} id="sidebar">
-                <ul>
+                  <ul>
                     <li>
                         <NavLink 
                             to="/dashboard"
@@ -200,9 +188,20 @@ function AppLayout({ children }) {
                             <span>Panel de Control</span>
                         </NavLink>
                     </li>
-
+                    {tieneRol("Jefe de mina") && (
+                        <li>
+                            <NavLink
+                                to="/admin"
+                                title="Ir al panel de administración"
+                            >
+                                <i className="fa-solid fa-shield-halved"></i>
+                                <span>Panel administracion</span>
+                            </NavLink>
+                        </li>
+                    )}
                     {isAuthenticated && (
                         <>
+                            {tienePermiso("tool.view") && (
                             <li className={`menu-desplegable ${herramientasAbierto || herramientasRutaActiva ? "activo" : ""}`}>
 
                                 <a className={`menu-titulo ${herramientasRutaActiva ? "active" : ""}`}
@@ -233,7 +232,9 @@ function AppLayout({ children }) {
                                     </li>
                                 </ul>
                             </li>
+                            )}
 
+                            {tienePermiso("equipment.view") && (
                             <li>
                                 <NavLink 
                                     to="/equipment"
@@ -243,6 +244,8 @@ function AppLayout({ children }) {
                                     <span>Equipos</span>
                                 </NavLink>
                             </li>
+                            )}
+                            {tienePermiso("machine.view") && (
                             <li>
                                 <NavLink 
                                     to="/machines"
@@ -253,6 +256,8 @@ function AppLayout({ children }) {
                                 </NavLink>
                                 
                             </li>
+                            )}
+                            {tienePermiso("location.update") && (
                             <li>
                                 <NavLink 
                                     to="/ubications"
@@ -262,6 +267,8 @@ function AppLayout({ children }) {
                                     <span>Ubicaciones</span>
                                 </NavLink>
                             </li>
+                            )}
+                            {tienePermiso("company.update") && (
                             <li>
                                 <NavLink 
                                     to="/companies"
@@ -271,16 +278,19 @@ function AppLayout({ children }) {
                                     <span>Empresas</span>
                                 </NavLink>
                             </li>
+                            )}
                         </>
                     )}
 
+                    {veFormatos && (
                     <li className={`menu-desplegable ${formatosAbierto || formatosRutaActiva ? "activo" : ""}`}> 
                         <a className={`menu-titulo ${formatosRutaActiva ? "active" : ""}`} onClick={() => setFormatosAbierto(!formatosAbierto)} > 
                             <i className="fa-solid fa-file-alt"></i> 
                             <span>Formatos</span> 
                         </a> 
                         <ul className="submenu"> 
-                            <li> 
+                            {tienePermiso("daily-use.view") && (
+                        <li> 
                                 <NavLink 
                                     to="/dailyuse" 
                                     title="Ir al formato de uso diario" 
@@ -288,8 +298,10 @@ function AppLayout({ children }) {
                                     <i className="fa-solid fa-calendar-alt"></i> 
                                     <span>Uso Diario</span> 
                                 </NavLink> 
-                            </li> 
-                            <li> 
+                        </li>
+                            )} 
+                            {tienePermiso("gas-measurements.view") && (
+                        <li> 
                                 <NavLink 
                                     to="/gases" 
                                     title="Ir al formato de medicion de gases" 
@@ -297,7 +309,9 @@ function AppLayout({ children }) {
                                     <i className="fa-solid fa-gas-pump"></i> 
                                     <span>Medición de Gases</span> 
                                 </NavLink> 
-                            </li> 
+                         </li>
+                            )} 
+                            {tienePermiso("inspection.view") && (
                             <li> 
                                 <NavLink 
                                     to="/inspection" 
@@ -306,7 +320,9 @@ function AppLayout({ children }) {
                                     <i className="fa-solid fa-search"></i> 
                                     <span>Inspección</span> 
                                 </NavLink> 
-                            </li> 
+                            </li>
+                            )} 
+                            {tienePermiso("inspection.view") && (
                             <li> 
                                 <Link 
                                     to="" 
@@ -315,9 +331,11 @@ function AppLayout({ children }) {
                                     <i className="fa-solid fa-cogs"></i> 
                                     <span>Preoperacional</span> 
                                 </Link> 
-                            </li> 
+                            </li>
+                        )} 
                         </ul> 
                     </li>
+                        )}
 
                     <li>
                         <NavLink to="/about" title="Ir a acerca de">
@@ -365,6 +383,7 @@ function AppLayout({ children }) {
                 </div>
             </footer>
         </div>
+        </NavigationHistoryProvider>
     );
 }
 

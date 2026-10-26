@@ -125,6 +125,7 @@ function CompararGases() {
             <PageWelcome
                 titulo="COMPARACIÓN DE GASES"
                 descripcion="Este es el análisis comparativo de gases."
+                mostrarHistorial={true}
             />
             <section className="seccion1">
                 <div className="panel-filtros-horizontal">

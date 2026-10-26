@@ -312,6 +312,7 @@ function ToolsConsumables(){
                 <PageWelcome
                     titulo={`HERRAMIENTAS CONSUMIBLES` }  
                     descripcion={`Este es el formato de las herramientas consumibles .`}
+                    mostrarHistorial={true}
                 />
                 
                 <Searcher
