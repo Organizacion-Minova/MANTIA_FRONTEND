@@ -183,6 +183,7 @@ function CategoriasMaquinas(){
                 <PageWelcome
                     titulo="CATEGORIAS MÁQUINAS"
                     descripcion="Este es el formato de las categorias de las máquinas."
+                    mostrarHistorial={true}
                 />
                 <Searcher
                     value={busqueda}

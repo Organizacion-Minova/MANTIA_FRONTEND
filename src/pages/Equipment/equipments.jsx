@@ -426,6 +426,7 @@ function Equipos(){
                 <PageWelcome
                     titulo="Equipos"
                     descripcion="Este es el formato de los equipos"
+                    mostrarHistorial={true}
                 />
                 <Searcher
                     value={busqueda}

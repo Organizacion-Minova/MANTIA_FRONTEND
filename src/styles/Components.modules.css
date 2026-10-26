@@ -42,6 +42,7 @@ main.cerrado{
     color: var(--texto);
     padding: 15px 25px;
     border-radius: 12px;
+    
 }
 .btn-container {
     display: flex;

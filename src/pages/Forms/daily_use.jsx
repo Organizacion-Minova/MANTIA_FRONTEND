@@ -251,6 +251,7 @@ export function UsoDiario(){
                 <PageWelcome
                     titulo={"USO DIARIO"}
                     descripcion={"Este es el formato de uso diario de la"}
+                    mostrarHistorial={true}
                 />
                 <Searcher
                     value={busqueda}

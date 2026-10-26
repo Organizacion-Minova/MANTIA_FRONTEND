@@ -225,6 +225,7 @@ function Ubicaciones() {
                 <PageWelcome
                     titulo="UBICACIONES"
                     descripcion="Este es el formato de las ubicaciones."
+                    mostrarHistorial={true}
                 />
                 <Searcher
                     value={busqueda}

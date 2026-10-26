@@ -42,6 +42,7 @@ export function CardMachine() {
             <PageWelcome
                 titulo={`Detalles de ${maquina.name}`}
                 descripcion="Hoja de vida de la máquina."
+                mostrarHistorial={true}
             />
                 <section className="cards">
                     <div className="card">

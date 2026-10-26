@@ -40,6 +40,7 @@ export default function Dashboard() {
       <PageWelcome 
         titulo="Panel poderoso de control OMG"
         descripcion="Monitorea todas tus actividades 100% real no fake"
+        mostrarHistorial={true}
       />
    
       <DashboardSummarySection data={data} sections={meta.sections} />

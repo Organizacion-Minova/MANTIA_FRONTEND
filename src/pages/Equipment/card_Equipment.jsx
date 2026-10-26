@@ -42,6 +42,7 @@ export function CardEquipment() {
             <PageWelcome
                 titulo={`Detalles de ${equipo.name}`}
                 descripcion="Detalles del equipo."
+                mostrarHistorial={true}
             />
             <section className="cards">
                 <div className="card">

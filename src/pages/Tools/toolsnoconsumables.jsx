@@ -305,6 +305,7 @@ function ToolsNoConsumables(){
                 <PageWelcome
                     titulo={`HERRAMIENTAS NO CONSUMIBLES `}
                     descripcion={`Este es el formato de las herramientas no consumibles .`}
+                    mostrarHistorial={true}
                 />
                 <Searcher
                     value={busqueda}
