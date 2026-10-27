@@ -289,6 +289,12 @@
 }
 .alerta-item.leida { opacity: .6; }
 
+/* Alertas que llevan a una pantalla (ej: la ficha de la máquina) */
+.alerta-item.con-enlace { cursor: pointer; }
+.alerta-item.con-enlace:hover { background: var(--hover-principal); opacity: 1; }
+.alerta-item.con-enlace:focus-visible { outline: 2px solid var(--secundario); outline-offset: -2px; }
+.alerta-ir { align-self: center; font-size: 0.688rem; color: var(--texto2); flex-shrink: 0; }
+
 .alerta-icono {
     width: 34px; height: 34px;
     border-radius: 50%;

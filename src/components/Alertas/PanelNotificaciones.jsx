@@ -71,7 +71,7 @@ function PanelNotificaciones({ abierto, animar, notificaciones, onMarcarTodas, o
                     </div>
                 ) : (
                     visibles.map((n) => (
-                        <NotificacionItem key={n.id} notificacion={n} onMarcarUna={onMarcarUna} />
+                        <NotificacionItem key={n.id} notificacion={n} onMarcarUna={onMarcarUna} onCerrar={onCerrar} />
                     ))
                 )}
             </div>

@@ -6,12 +6,14 @@
 
    onSend recibe el texto del usuario y el historial
    [{ role: 'user' | 'assistant', content: '...' }] y debe devolver
-   (o resolver con) el texto de la respuesta. Ahí conectas tu backend.
+   (o resolver con) el texto de la respuesta, o { respuesta, acciones }
+   cuando hay acciones de administrador por confirmar. Ahí conectas tu backend.
    Requiere IA_Mantia.css, Font Awesome 6 y las fuentes Archivo + Barlow.
    ===================================================================== */
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { esRutaPermitida, sugerenciasPorPantalla } from '../../utils/sugerenciasIA';
+import TarjetaAccion from './TarjetaAccion.jsx';
 
 
 let contador = 0;
@@ -146,9 +148,12 @@ export default function IAMantia({
       ]);
 
       try {
-        const respuesta = await onSend(texto, historial, pathname);
+        const resultado = await onSend(texto, historial, pathname);
+        // onSend puede devolver solo el texto o { respuesta, acciones } (acciones de administrador)
+        const { respuesta, acciones = [] } =
+          typeof resultado === 'object' && resultado !== null ? resultado : { respuesta: resultado };
         setMensajes((prev) =>
-          prev.map((m) => (m.id === idIA ? { ...m, texto: String(respuesta), escribiendo: false } : m))
+          prev.map((m) => (m.id === idIA ? { ...m, texto: String(respuesta), acciones, escribiendo: false } : m))
         );
       } catch (error) {
         setMensajes((prev) =>
@@ -240,6 +245,9 @@ export default function IAMantia({
                     <Texto onIr={irA}>{m.texto}</Texto>
                   )}
                 </div>
+                {m.acciones?.map((accion) => (
+                  <TarjetaAccion key={accion.id} accion={accion} />
+                ))}
                 <div className="mc-time">{m.hora}</div>
               </div>
             </div>

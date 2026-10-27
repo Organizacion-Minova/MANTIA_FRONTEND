@@ -1,0 +1,26 @@
+/* =====================================================================
+   MANTIA IA · Tarjeta de acción de administrador (TarjetaAccion.jsx)
+   Usa las mismas variables de tema que IA.css (modo claro, oscuro y
+   alto contraste). Prefijo .mc- para no chocar con otros estilos.
+   ===================================================================== */
+.mc-accion{margin-top:.45rem;padding:.7rem .8rem;max-width:100%;
+font:500 .8rem var(--fuente-principal);color:var(--texto);
+background:var(--contenedor);border:1px solid var(--secundario);border-radius:.8rem}
+.mc-accion-titulo{margin:0 0 .55rem;line-height:1.35}
+.mc-accion-titulo i{margin-right:.3rem;color:var(--secundario)}
+
+.mc-accion-botones{display:flex;gap:.45rem;flex-wrap:wrap}
+.mc-accion-botones button{padding:.35rem .9rem;border-radius:2rem;cursor:pointer;
+font:600 .76rem var(--fuente-principal);transition:background .18s,transform .18s,opacity .18s}
+.mc-accion-botones button:disabled{opacity:.6;cursor:wait}
+.mc-accion-botones button:not(:disabled):hover{transform:translateY(-1px)}
+.mc-accion-botones button:focus-visible{outline:2px solid var(--secundario);outline-offset:2px}
+.mc-accion-confirmar{border:1px solid var(--principal);background:var(--principal);color:#fff}
+.mc-accion-cancelar{border:1px solid var(--borde-contenedor);background:transparent;color:var(--texto)}
+.mc-accion-cancelar:not(:disabled):hover{background:var(--hover-principal)}
+
+.mc-accion-resultado{margin:0;color:var(--texto2)}
+.mc-accion-hecha{border-color:var(--secundario)}
+.mc-accion-cancelada{border-color:var(--borde-contenedor)}
+.mc-accion-error{border-color:#c0392b}
+.mc-accion-error .mc-accion-resultado{color:#c0392b}

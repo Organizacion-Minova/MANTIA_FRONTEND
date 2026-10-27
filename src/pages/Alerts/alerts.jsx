@@ -7,25 +7,13 @@ import { obtenerNotificaciones, marcarComoLeida, marcarTodasComoLeidas } from ".
 import { GetMachine } from "../../api/machinesapi";
 import { GetEquipments } from "../../api/Equipmentsapi";
 import { obtenerMedicionesGases } from "../../api/gasMeasurement";
-import { mapearNotificacionBackend, ETIQUETAS_CATEGORIA } from "../../utils/notificaciones";
+import { mapearNotificacionBackend, rutaDeAlerta, ETIQUETAS_CATEGORIA } from "../../utils/notificaciones";
 
 // Nivel del backend (AlertaSistema) → cómo se ve en la tabla (mismas clases del diseño original)
 const NIVELES = {
     danger: { clave: "grave", texto: "GRAVE", badge: "badge-grave", icono: "fa-solid fa-circle-exclamation" },
     warning: { clave: "importante", texto: "IMPORTANTE", badge: "badge-importante", icono: "fa-solid fa-triangle-exclamation" },
     info: { clave: "bien", texto: "BIEN", badge: "badge-bien", icono: "fa-solid fa-circle-check" },
-};
-
-// Pantalla a la que lleva cada tipo de alerta (botones "Escalar" y "Ver")
-const RUTA_POR_CATEGORIA = {
-    gas: "/gases",
-    maquina: "/machines",
-    equipo: "/equipment",
-    herramienta: "/types/consumables",
-    ubicacion: "/ubications",
-    empresa: "/companies",
-    categoria: "/machines/categoriesmachines",
-    inspeccion: "/inspection",
 };
 
 const OPCIONES_NIVEL = [
@@ -142,9 +130,9 @@ function Alerts() {
         refrescarCampana();
     };
 
-    // "Escalar" y "Ver": llevan a la pantalla del módulo para revisar o corregir
+    // "Escalar" y "Ver": llevan a la pantalla del registro (ej: la ficha de la máquina)
     const irAlModulo = (alerta) => {
-        const ruta = RUTA_POR_CATEGORIA[alerta.categoria];
+        const ruta = rutaDeAlerta(alerta);
         if (ruta) navigate(ruta);
     };
 
