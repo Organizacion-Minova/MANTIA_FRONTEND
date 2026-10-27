@@ -5,7 +5,7 @@ import { Boton } from '../../components/common/Button.jsx';
 import '../../styles/Form/form.css';
 
 // Base del formulario
-export function Form({ titulo, descripcion, onSubmit, onCancel, children, textoBoton = "Guardar", iconoBoton = "fa-solid fa-floppy-disk", noValidate = false }) {
+export function Form({ titulo, descripcion, onSubmit, onCancel, children, textoBoton = "Guardar", iconoBoton = "fa-solid fa-floppy-disk", tituloBoton = "Guardar", noValidate = false }) {
     return (
         <div className="form-modal-overlay" onClick={onCancel}>
             <form onSubmit={onSubmit} className="form-container" onClick={(e) => e.stopPropagation()} noValidate={noValidate}>
@@ -37,7 +37,7 @@ export function Form({ titulo, descripcion, onSubmit, onCancel, children, textoB
                         clase="btn-azul"
                         icono={iconoBoton}
                         texto={textoBoton}
-                        titulo="Guardar"
+                        titulo={tituloBoton}
                     />
                 </div>
             </form>
