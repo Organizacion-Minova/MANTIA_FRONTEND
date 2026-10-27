@@ -25,9 +25,15 @@ export function ToastProvider({ children }) {
     }, []);
 
     // Función genérica: notificar('warning', 'Quedan 2 unidades', 'Stock bajo')
+    // Si ya hay un aviso igual en pantalla (mismo tipo, título y mensaje) no se apila otro:
+    // se reemplaza por el nuevo, que vuelve a contar su tiempo. Así, pulsar "Guardar" varias
+    // veces con campos vacíos muestra un solo aviso y no una columna de avisos repetidos.
     const notificar = useCallback((tipo, mensaje, titulo, duracion = 4000) => {
         const id = ++idRef.current;
-        setToasts((prev) => [...prev, { id, tipo, mensaje, titulo, duracion }]);
+        setToasts((prev) => [
+            ...prev.filter((t) => !(t.tipo === tipo && t.titulo === titulo && t.mensaje === mensaje)),
+            { id, tipo, mensaje, titulo, duracion },
+        ]);
         return id;
     }, []);
 
