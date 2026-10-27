@@ -153,7 +153,6 @@ const categoriasPrivadas = [
     { id: "herramientas", icono: "fa-solid fa-screwdriver-wrench", nombre: "Herramientas" },
     { id: "maquinas", icono: "fa-solid fa-gears", nombre: "Máquinas e inspecciones" },
     { id: "equipos", icono: "fa-solid fa-wind", nombre: "Equipos y gases" },
-    { id: "empresas", icono: "fa-solid fa-building", nombre: "Empresas" },
     { id: "soporte", icono: "fa-solid fa-headset", nombre: "Alertas y soporte" },
 ];
 
@@ -162,13 +161,13 @@ const preguntas = [
     {
         id: "g1", categoria: "general", visible: "todos",
         pregunta: "¿Qué es MANTIA?",
-        respuesta: "MANTIA es un sistema web de mantenimiento e inventario de activos para el sector minero. Centraliza en un solo lugar el control de máquinas, equipos, herramientas, ubicaciones, empresas, inspecciones y mediciones de gases.",
+        respuesta: "MANTIA es un sistema web de mantenimiento e inventario de activos para el sector minero. Centraliza en un solo lugar el control de máquinas, equipos, herramientas, ubicaciones, inspecciones y mediciones de gases.",
         claves: ["que es", "para que sirve", "sistema", "plataforma", "aplicacion", "mantenimiento", "inventario"],
     },
     {
         id: "g2", categoria: "general", visible: "todos",
         pregunta: "¿Qué puedo hacer dentro de MANTIA?",
-        respuesta: "Puedes registrar y consultar ubicaciones, herramientas consumibles y no consumibles, máquinas, equipos y empresas; llevar la hoja de vida de cada máquina o equipo; registrar el uso diario, las inspecciones y las mediciones de gases; y exportar algunos formatos a Excel o PDF.",
+        respuesta: "Puedes registrar y consultar ubicaciones, herramientas consumibles y no consumibles, máquinas y equipos; llevar la hoja de vida de cada máquina o equipo; registrar el uso diario, las inspecciones y las mediciones de gases; y exportar algunos formatos a Excel o PDF.",
         claves: ["funciones", "modulos", "servicios", "caracteristicas", "opciones"],
     },
     {
@@ -444,20 +443,6 @@ const preguntas = [
         pregunta: "¿Puedo exportar el formato de gases?",
         respuesta: "Sí. Abre el formato de la medición y usa 'Exportar Excel' o 'Exportar PDF'.",
         claves: ["exportar gases", "pdf", "excel", "descargar formato", "imprimir"],
-    },
-
-    /* ---------------- Empresas ---------------- */
-    {
-        id: "em1", categoria: "empresas", visible: "privado",
-        pregunta: "¿Cómo registro una empresa?",
-        respuesta: "Entra a Empresas desde el menú lateral, presiona 'Nueva Empresa' y completa NIT, nombre, teléfono, correo electrónico y dirección.",
-        claves: ["agregar empresa", "nueva empresa", "proveedor", "contratista", "nit"],
-    },
-    {
-        id: "em2", categoria: "empresas", visible: "privado",
-        pregunta: "¿Cómo busco una empresa?",
-        respuesta: "Usa el buscador del módulo Empresas: puedes buscar por NIT, nombre, teléfono, correo electrónico o dirección.",
-        claves: ["buscar empresa", "encontrar empresa", "nit"],
     },
 
     /* ---------------- Alertas y soporte ---------------- */

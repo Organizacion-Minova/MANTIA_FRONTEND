@@ -17,7 +17,6 @@ const rutasDelPanel = [
   { path: '/ubications', nombre: 'Ubicaciones' },
   { path: '/machines', nombre: 'Máquinas' },
   { path: '/equipment', nombre: 'Equipos' },
-  { path: '/companies', nombre: 'Empresas' },
   { path: '/types/consumables', nombre: 'Consumibles' },
   { path: '/types/noconsumables', nombre: 'No consumibles' },
   { path: '/gases', nombre: 'Gases' },
@@ -44,9 +43,6 @@ test('el menú lateral navega a cada módulo (clic real, no goto)', async ({ pag
 
   await page.getByRole('link', { name: 'Ubicaciones' }).click();
   await expect(page).toHaveURL(/\/ubications/);
-
-  await page.getByRole('link', { name: 'Empresas' }).click();
-  await expect(page).toHaveURL(/\/companies/);
 });
 
 test('cerrar sesión devuelve a /login y bloquea de nuevo las rutas privadas', async ({ page }) => {

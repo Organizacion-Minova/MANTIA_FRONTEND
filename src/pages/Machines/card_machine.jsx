@@ -61,7 +61,7 @@ export function CardMachine() {
 
                             <li><strong>NOMBRE:</strong> <span >{maquina.name}</span></li>
                             <li><strong>CÓDIGO PROGRAMA:</strong> <span>{maquina.code}</span></li>
-                            <li><strong>MARCA:</strong> <span id="eb_marca">{maquina.company?.name||""}</span></li>
+                            <li><strong>MARCA:</strong> <span id="eb_marca">{maquina.brand}</span></li>
                             <li><strong>MODELO:</strong> <span id="eb_modelo">{maquina.model}</span></li>
                             <li><strong>GARANTIA:</strong> <span id="eb_garantia">{maquina.warranty}</span></li>
                             <li><strong>USO:</strong> <span id="eb_uso"> {maquina.machine_usage} </span></li>

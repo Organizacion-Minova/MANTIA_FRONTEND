@@ -75,9 +75,6 @@ Call log:
       - link " Ubicaciones":
         - /url: /ubications
     - listitem:
-      - link " Empresas":
-        - /url: /companies
-    - listitem:
       - link " Acerca de":
         - /url: /about
     - listitem:
@@ -88,7 +85,7 @@ Call log:
   - heading "MAQUINAS" [level=1]
   - paragraph: Este es el formato de las máquinas.
   - text:  martes, 20 de octubre de 2026 
-  - textbox "Buscar por codigo, nombre, responsable, modelo, ubicacion o empresa"
+  - textbox "Buscar por codigo, nombre, responsable, modelo o ubicacion"
   - combobox:
     - option "Todas las categorías" [selected]
   - combobox:
@@ -158,7 +155,7 @@ Call log:
   17 |   { path: '/ubications', nombre: 'Ubicaciones' },
   18 |   { path: '/machines', nombre: 'Máquinas' },
   19 |   { path: '/equipment', nombre: 'Equipos' },
-  20 |   { path: '/companies', nombre: 'Empresas' },
+  20 |  
   21 |   { path: '/types/consumables', nombre: 'Consumibles' },
   22 |   { path: '/types/noconsumables', nombre: 'No consumibles' },
   23 |   { path: '/gases', nombre: 'Gases' },
@@ -186,8 +183,8 @@ Call log:
   45 |   await page.getByRole('link', { name: 'Ubicaciones' }).click();
   46 |   await expect(page).toHaveURL(/\/ubications/);
   47 | 
-  48 |   await page.getByRole('link', { name: 'Empresas' }).click();
-  49 |   await expect(page).toHaveURL(/\/companies/);
+  48 | 
+  49 |  
   50 | });
   51 | 
   52 | test('cerrar sesión devuelve a /login y bloquea de nuevo las rutas privadas', async ({ page }) => {

@@ -268,17 +268,6 @@ function AppLayout({ children }) {
                                 </NavLink>
                             </li>
                             )}
-                            {tienePermiso("company.update") && (
-                            <li>
-                                <NavLink 
-                                    to="/companies"
-                                    title="Ir a empresas"
-                                >
-                                    <i className="fa-solid fa-clipboard-check"></i>
-                                    <span>Empresas</span>
-                                </NavLink>
-                            </li>
-                            )}
                         </>
                     )}
 

@@ -5,7 +5,6 @@ import { Form, Text, Textarea, Dropzone, Select, Date } from '../../components/c
 import LoadingScreen from "../../components/LoadingScreen";
 import { GetCategoryMachine ,GetMachine, CreateMachine, UpdateMachine, DeleteMachine } from "../../api/machinesapi";
 import { obtenerUbicaciones } from "../../api/location";
-import { obtenerEmpresas } from "../../api/company";
 import { usePaginacion,Paginacion } from "../../components/common/Paginacion";
 import { useSearch } from "../../hooks/useSearch";
 import { capitalizarPrimeraLetra, sinCaracteresEspeciales, validarCaracteresEspeciales, validarGroserias } from "../../components/common/Validations";
@@ -31,14 +30,13 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
     const [archivoImagen, setArchivoImagen] = useState(null);
     const [categoriaid, setCategoriaid] = useState(valorSelect(maquinaEditar?.category_maquina?.id ?? maquinaEditar?.category_id));
     const [locationid, setLocationid] = useState(valorSelect(maquinaEditar?.ubicacion?.id ?? maquinaEditar?.location?.id ?? maquinaEditar?.location_id));
-    const [companyid, setCompanyid] = useState(valorSelect(maquinaEditar?.company?.id ?? maquinaEditar?.company_id));
+    const [marca, setMarca] = useState(maquinaEditar?.brand || "");
     const [responsable, setResponsable] = useState(maquinaEditar?.responsible || "");
     const [usoMaquina, setUsoMaquina] = useState(maquinaEditar?.machine_usage || "");
     const [maquinaEnOperacion, setMaquinaEnOperacion] = useState(valorOperacion(maquinaEditar?.in_operation));
     const [caracteristicas, setCaracteristicas] = useState(maquinaEditar?.characteristics || "");
     const [categorias,setCategorias]=useState([]);
     const [ubicaciones, setUbicaciones] = useState([]);
-    const [empresas, setEmpresas] = useState([]);
     const [errorImagen, setErrorImagen] = useState("");
     const [vistaPrevia, setVistaPrevia] = useState(null);
     const [errores, setErrores] = useState({});
@@ -52,9 +50,6 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
         obtenerUbicaciones()
             .then((data) => setUbicaciones(Array.isArray(data?.ubicaciones) ? data.ubicaciones : []))
             .catch((error) => console.error("Error al traer ubicaciones:", error));
-        obtenerEmpresas()
-            .then((data) => setEmpresas(Array.isArray(data) ? data : []))
-            .catch((error) => console.error("Error al traer empresas:", error));
     }, [])
 
     useEffect(()=>{
@@ -104,7 +99,7 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
             "Número de serie": numeroSerie,
             "Fecha de adquisición": fechaAdquisicion,
             "Costo de adquisición": costoAdquisicion,
-            "Marca": companyid,
+            "Marca": marca,
             "Ubicación": locationid,
             "Uso de la máquina": usoMaquina,
             "Responsable": responsable,
@@ -147,7 +142,7 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
                 garantia===maquinaEditar.warranty &&
                 categoriaid===valorSelect(maquinaEditar.category_maquina?.id ?? maquinaEditar.category_id) &&
                 locationid===valorSelect(maquinaEditar.ubicacion?.id ?? maquinaEditar.location?.id ?? maquinaEditar.location_id) &&
-                companyid===valorSelect(maquinaEditar.company?.id ?? maquinaEditar.company_id) &&
+                marca===maquinaEditar.brand &&
                 responsable===maquinaEditar.responsible &&
                 caracteristicas===maquinaEditar.characteristics &&
                 usoMaquina===maquinaEditar.machine_usage &&
@@ -170,7 +165,7 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
             datos.append("warranty", garantia);
             datos.append("machine_category_id", categoriaid);
             datos.append("location_id", locationid);
-            datos.append("company_id", companyid);
+            datos.append("brand", marca);
             datos.append("responsible", responsable);
             datos.append("machine_usage", usoMaquina);
             datos.append("in_operation", maquinaEnOperacion);
@@ -253,13 +248,13 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
                 />
             </div>
             <div className="col-span-3">
-                <Select
+                <Text
                     label="Marca:"
                     id="marca"
                     name="marca"
-                    value={companyid}
-                    onChange={(e) => setCompanyid(e.target.value)}
-                    opciones={[{valor:"", etiqueta:"Seleccione una marca"},...empresas.map((u)=>({valor: u.id, etiqueta: u.name}))]}
+                    placeholder="Marca de la máquina"
+                    value={marca}
+                    onChange={(e) => setMarca(e.target.value)}
                     required
                 />
             </div>
@@ -430,22 +425,11 @@ function Maquinas(){
     maquina.map((maquina)=>({
         ...maquina,
         categoriaBusqueda: maquina.category_maquina?.name || "",
-        marcaBusqueda: maquina.company?.name || "",
         ubicacionBusqueda: maquina.ubicacion?.name || ""
     }));
     const { busqueda, setBusqueda, filtrosEspeciales, setFiltroEspecial, itemsFiltrados: maquinasFiltrados } = useSearch(
         maquina,
         ["code","name","responsible","model","ubicacionBusqueda","marcaBusqueda"]
-    );
-    const marcasUnicas = Array.from(
-        new Map(
-            maquina
-                .filter((maquina) => maquina.company?.id != null)
-                .map((maquina) => [
-                    String(maquina.company.id),
-                    { valor: maquina.company.id, etiqueta: maquina.company.name },
-                ])
-        ).values()
     );
     const ubicacionesUnicas = Array.from(
         new Map(
@@ -515,7 +499,7 @@ function Maquinas(){
                 <Searcher
                     value={busqueda}
                     onChange={(e)=>setBusqueda(e.target.value)}
-                    placeholder="Buscar por codigo, nombre, responsable, modelo, ubicacion o empresa"
+                    placeholder="Buscar por codigo, nombre, responsable, modelo, ubicacion"
                     filtrosAdicionales={
                         <div className="btn-container">
                             <Select
@@ -536,17 +520,6 @@ function Maquinas(){
                                 opciones={[
                                     { valor: "", etiqueta: "Todas las ubicaciones" },
                                     ...ubicacionesUnicas,
-                                ]}
-                            
-                            />
-                            <Select
-                                id="filtro-marca"
-                                name="filtro-marca"
-                                value={filtrosEspeciales.company_id || ""}
-                                onChange={(e) => setFiltroEspecial("company_id", e.target.value)}
-                                opciones={[
-                                    { valor: "", etiqueta: "Todas las marcas" },
-                                    ...marcasUnicas,
                                 ]}
                             
                             />
@@ -574,7 +547,7 @@ function Maquinas(){
                                 <td>{m.name}</td>
                                 <td>{m.serial_number}</td>
                                 <td>{m.category_maquina?.name||""}</td>
-                                <td>{m.company?.name||""}</td>
+                                <td>{m.brand}</td>
                                 <td>{m.ubicacion?.name||""}</td>
                                 <td>{m.status==="active"?"Activo":m.status==="inactive"?"Inactivo":m.status==="maintenance"?"En mantenimiento":"Desconocido"}</td>
                                 <td>

@@ -61,7 +61,7 @@ export function CardEquipment() {
                 <div className="card" style={{ listStyle: "none", fontSize: "1.25rem" }}> 
                     <li><strong>CÓDIGO:</strong><span>{equipo.code}</span></li>
                     <li><strong>NOMBRE:</strong><span>{equipo.name}</span></li>
-                    <li><strong>MARCA:</strong> <span>{equipo.company.name}</span></li>
+                    <li><strong>MARCA:</strong> <span>{equipo.brand}</span></li>
                     <li><strong>MODELO:</strong> <span>{equipo.model}</span></li>
                     <li><strong>NÚMERO DE SERIE:</strong> <span>{equipo.serial_number}</span></li>
                     <li><strong>RESPONSABLE:</strong> <span>{equipo.responsible}</span></li>

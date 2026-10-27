@@ -11,7 +11,6 @@ const RECURSOS = {
     'location-category': { nombre: 'Categoría de ubicación', f: true },
     'category-tools': { nombre: 'Categoría de herramienta', f: true },
     'gas-measurements': { nombre: 'Medición de gas', f: true },
-    'company': { nombre: 'Empresa', f: true },
     'location': { nombre: 'Ubicación', f: true },
     'machines': { nombre: 'Máquina', f: true },
     'equipment': { nombre: 'Equipo', f: false },

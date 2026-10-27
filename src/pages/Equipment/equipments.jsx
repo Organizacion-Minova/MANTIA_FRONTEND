@@ -4,7 +4,6 @@ import { PageWelcome,Searcher } from "../../components/common/welcome";
 import { Form, Text, Textarea, Dropzone, Select, Date } from "../../components/common/forms";
 import { GetEquipments, DeleteEquipment, CreateEquipment, UpdateEquipment } from "../../api/Equipmentsapi";
 import { obtenerUbicaciones } from "../../api/location";
-import { obtenerEmpresas } from "../../api/company";
 import LoadingScreen from "../../components/LoadingScreen";
 import { usePaginacion,Paginacion } from "../../components/common/Paginacion";
 import { useSearch } from "../../hooks/useSearch";
@@ -30,12 +29,11 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
     const [responsable, setResponsable] = useState(equiposEditar?.responsible || "");
     const [estado, setEstado] = useState(equiposEditar?.status || "active");
     const [fechaIngreso, setFechaIngreso] = useState(equiposEditar?.registration_date || "");
-    const [companyid, setCompanyid] = useState(equiposEditar?.company?.id || "");
+    const [marca, setMarca] = useState(equiposEditar?.brand || "");
     const [locationid, setLocationid] = useState(equiposEditar?.ubicacion?.id || equiposEditar?.location?.id || "");
     const [archivoImagen, setArchivoImagen] = useState(null);
     const [modelo, setModelo] = useState(equiposEditar?.model || "");
     const [ubicaciones, setUbicaciones] = useState([]);
-    const [empresas, setEmpresas] = useState([]);
     const [errores, setErrores] = useState({});
     const [errorImagen, setErrorImagen] = useState("");
     const [vistaPrevia, setVistaPrevia] = useState(null);
@@ -45,9 +43,6 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
         obtenerUbicaciones()
             .then((data) => setUbicaciones(Array.isArray(data?.ubicaciones) ? data.ubicaciones : []))
             .catch((error) => console.error("Error al traer ubicaciones:", error));
-        obtenerEmpresas()
-            .then((data) => setEmpresas(Array.isArray(data) ? data : []))
-            .catch((error) => console.error("Error al traer empresas:", error));
     },[]);
 
     useEffect(() => {
@@ -96,7 +91,7 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
             "Nombre": nombre,
             "Descripción": descripcion,
             "Número de serie": serie,
-            "Marca": companyid,
+            "Marca": marca,
             "Fecha de ingreso": fechaIngreso,
             "Ubicación": locationid,
             "Responsable": responsable,
@@ -135,7 +130,7 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
                 estado === equiposEditar.status &&
                 responsable === equiposEditar.responsible &&
                 fechaIngreso === equiposEditar.registration_date &&
-                companyid === equiposEditar.company?.id &&
+                marca === equiposEditar.brand &&
                 locationid === (equiposEditar.location?.id || "") &&
                 !archivoImagen &&
                 modelo === equiposEditar.model;
@@ -152,7 +147,7 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
             datos.append("responsible", responsable);
             datos.append("status", estado);
             datos.append("registration_date", fechaIngreso);
-            datos.append("company_id", companyid);
+            datos.append("brand", marca);
             datos.append("location_id", locationid);
             datos.append("model", modelo);
             if (archivoImagen) datos.append("image", archivoImagen);
@@ -252,13 +247,13 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
                 />
             </div>
             <div className="col-span-3">
-                <Select
+                <Text
                     label="Marca:"
                     id="marca"
                     name="marca"
-                    value={companyid}
-                    onChange={(e) => setCompanyid(e.target.value)}
-                    opciones={[{valor:"", etiqueta:"Seleccione una marca"},...empresas.map((u)=>({valor: u.id, etiqueta: u.name}))]}
+                    placeholder="Ingrese la marca del equipo"
+                    value={marca}
+                    onChange={(e) => setMarca(e.target.value)}
                     required
                 />
             </div>
@@ -353,23 +348,12 @@ function Equipos(){
     const [cargando, setCargando] = useState(true);
     equipo.map((equipo)=>({
         ...equipo,
-        ubicacionBusqueda:equipo.ubicacion?.name || "",
-        empresaBusqueda:equipo.company?.name||""
+        ubicacionBusqueda:equipo.ubicacion?.name || ""
     }))
 
     const { busqueda, setBusqueda, filtrosEspeciales, setFiltroEspecial, itemsFiltrados: equiposFiltrados } = useSearch(
         equipo,
-        ["code","name", "description","responsible","model","ubicacionBusqueda","empresaBusqueda"]
-    );
-    const marcasUnicas = Array.from(
-        new Map(
-            equipo
-                .filter((equipo) => equipo.company?.id != null)
-                .map((equipo) => [
-                    String(equipo.company.id),
-                    { valor: equipo.company.id, etiqueta: equipo.company.name },
-                ])
-        ).values()
+        ["code","name", "description","responsible","model","ubicacionBusqueda"]
     );
     const ubicacionesUnicas = Array.from(
         new Map(
@@ -444,16 +428,6 @@ function Equipos(){
                                     ...ubicacionesUnicas,
                                 ]}
                             />
-                            <Select
-                                id="filtro-marca"
-                                name="filtro-marca"
-                                value={filtrosEspeciales.company_id || ""}
-                                onChange={(e) => setFiltroEspecial("company_id", e.target.value)}
-                                opciones={[
-                                    { valor: "", etiqueta: "Todas las marcas" },
-                                    ...marcasUnicas,
-                                ]}
-                            />
                         </div>
                     }
                 />
@@ -479,7 +453,7 @@ function Equipos(){
                         <td>{e.name}</td>
                         <td>{e.serial_number}</td>
                         <td>{e.responsible}</td>
-                        <td>{e.company.name}</td>
+                        <td>{e.brand}</td>
                         <td>{e.ubicacion.name}</td>
                         <td>{e.status==='active'?'Activo':'Inactivo'}</td>
                         <td>

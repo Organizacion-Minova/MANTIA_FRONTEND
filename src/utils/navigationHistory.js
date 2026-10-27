@@ -46,10 +46,6 @@ export const RUTAS_HISTORIAL = [
         titulo: "Detalle del equipo",
     },
     {
-        path: "/companies",
-        titulo: "Empresas",
-    },
-    {
         path: "/consumables/tools/types",
         titulo: "Tipos de consumibles",
     },
