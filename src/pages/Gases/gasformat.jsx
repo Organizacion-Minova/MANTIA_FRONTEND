@@ -8,6 +8,7 @@ import { useSearch } from "../../hooks/useSearch";
 import LoadingScreen from "../../components/LoadingScreen";
 import { useToast } from "../../context/ToastContext.jsx";
 import { validarGroserias } from "../../components/common/Validations";
+import { exportarGasExcelUnitario, exportarGasPdfUnitario } from "../../api/gasMeasurement";
 
 const gases = [
     { key: 'oxygen', label: 'O2', nombre: 'Oxígeno', simbolo: '%', max: 100 },
@@ -400,12 +401,14 @@ export function FormatoGases() {
                     clase="btn-azul"
                     icono="fa-solid fa-file-excel"
                     texto="Exportar Excel"
+                    onClick={() => exportarGasExcelUnitario(medicion.id, medicion.measurement_date)}
                     titulo="Exportar en un archivo de Excel"
                 />
                 <Boton
                     clase="btn-azul"
                     icono="fa-solid fa-file-pdf"
                     texto="Exportar PDF"
+                    onClick={() => exportarGasPdfUnitario(medicion.id, medicion.measurement_date)}
                     titulo="Exportar en un archivo PDF"
                 />
                 <BotonLink
