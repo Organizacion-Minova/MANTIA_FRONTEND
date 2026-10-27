@@ -43,10 +43,6 @@ const REGLAS = [
         chips: ['¿Qué hay en el Almacén Central?', '¿Qué ubicaciones tienen más activos?'],
     },
     {
-        patron: /^\/companies/i,
-        chips: ['¿Qué empresas están registradas?', '¿Cómo registro una empresa?'],
-    },
-    {
         patron: /^\/alerts/i,
         chips: ['¿Tengo alertas graves sin atender?', 'Resume mis alertas recientes'],
     },

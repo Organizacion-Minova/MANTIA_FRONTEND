@@ -3,7 +3,7 @@
 Pruebas con [Playwright](https://playwright.dev) que abren un navegador real y
 recorren la página completa: inicio, "Acerca de", ayuda, registro, login,
 y todos los módulos del panel (dashboard, máquinas, equipos, ubicaciones,
-empresas, herramientas, gases, alertas, perfil), más el cierre de sesión.
+herramientas, gases, alertas, perfil), más el cierre de sesión.
 
 ## 1. Instalación (una sola vez)
 
@@ -78,7 +78,7 @@ npx playwright show-report
 
 ## 5. Siguientes pasos (opcional)
 
-- Agregar pruebas de **CRUD** por módulo (crear/editar/borrar una empresa,
+- Agregar pruebas de **CRUD** por módulo (crear/editar/borrar
   una ubicación, una máquina), una vez el equipo confirme que los
   formularios de cada módulo ya están estables.
 - Agregar `@playwright/test` al pipeline de CI (GitHub Actions) para que

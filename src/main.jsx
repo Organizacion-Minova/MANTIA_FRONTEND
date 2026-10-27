@@ -8,7 +8,6 @@ import { CardMachine } from './pages/Machines/card_machine';
 import AgregarInspeccion from './pages/Forms/inspection';
 import LlenarInspeccion from './pages/Forms/completeinspection';
 import MostrarInspeccion from './pages/Forms/showinspection';
-import Empresas from "./pages/Companies/companies"
 import CategoriasMaquinas from './pages/Machines/categories_machines';
 import { createRoot } from 'react-dom/client'
 import Equipos from './pages/Equipment/equipments';
@@ -77,7 +76,6 @@ createRoot(document.getElementById('root')).render(
               <Route path='equipment/:id/inspection/complete' element={<LlenarInspeccionEquipo />} />
               <Route path='equipment/:id/inspection/show' element={<MostrarInspeccionEquipo />} />
               <Route path='equipment/:id/inspection/show/:inspectionId' element={<MostrarInspeccionEquipo />} />
-              <Route path='companies' element={<RutaConPermiso permiso="company.update"><Empresas /></RutaConPermiso>} />
               <Route path='consumables/tools/types' element={<RutaConPermiso permiso="category-tools.view"><Consumibles /></RutaConPermiso>} />
               <Route path='noconsumables/tools/types' element={<RutaConPermiso permiso="category-tools.view"><No_Consumibles /></RutaConPermiso>} />
               <Route path='consumables/tools' element={<RutaConPermiso permiso="tool.view"><ToolsConsumables /></RutaConPermiso>} />
