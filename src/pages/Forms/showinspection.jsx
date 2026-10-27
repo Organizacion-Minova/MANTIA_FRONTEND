@@ -1,8 +1,6 @@
 import React from "react";
 import { PageWelcome } from "../../components/common/welcome";
 
-// Datos de prueba, escritos aquí mismo — cuando conectemos el backend,
-// esto vendrá de una petición a la API en vez de estar escrito a mano.
 const datosGeneralesEjemplo = [
     { id: "fecha", texto: "Fecha de inspección", valor: "2026-03-18" },
     { id: "persona", texto: "Persona que inspecciona", valor: "Juan Pérez" },
