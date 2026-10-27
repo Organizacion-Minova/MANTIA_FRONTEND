@@ -3,16 +3,14 @@ import useDashboard from "../../hooks/useDashboard";
 import DashboardSummarySection from "../../components/dashboard/DashboardSummarySection";
 import DashboardInsightsSection from "../../components/dashboard/DashboardInsightsSection";
 import DashboardLookupSection from "../../components/dashboard/DashboardLookupSection";
-
+import LoadingScreen from "../../components/LoadingScreen";
 
 export default function Dashboard() {
   const { data, meta, loading, error, reload } = useDashboard();
 
   if (loading) {
     return (
-      <p className="dashboard-state" role="status">
-        Cargando dashboard…
-      </p>
+      <LoadingScreen indeterminado />
     );
   }
 

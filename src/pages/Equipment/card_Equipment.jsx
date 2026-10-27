@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { PageWelcome } from "../../components/common/welcome"; 
-import { Boton,BotonLink } from "../../components/common/Button";
+import { BotonLink } from "../../components/common/Button";
 import { GetEquipmentById } from "../../api/Equipmentsapi";
 import api from "../../api/axios";
 import LoadingScreen from "../../components/LoadingScreen";
@@ -79,20 +79,10 @@ export function CardEquipment() {
                         texto="Regresar"
                     />
                     <BotonLink
-                        link="/gases"
+                        link={`/equipment/${id}/inspection`}
                         clase="btn-azul"
                         icono="fas fa-wind"
-                        texto="Medición gases"
-                    />
-                    <Boton
-                        clase="btn-azul"
-                        icono="fas fa-calendar-alt"
-                        texto="Calibración"
-                    />
-                    <Boton 
-                        clase="btn-azul"
-                        icono="fas fa-stethoscope"
-                        texto="Diagnóstico"
+                        texto="Inspeccion"
                     />
                 </div>
 

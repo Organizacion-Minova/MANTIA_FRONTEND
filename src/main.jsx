@@ -37,6 +37,10 @@ import { ToastProvider } from './context/ToastContext.jsx';
 import NotFound from './pages/Others/not_found.jsx';
 import TermnsAndConditions from "./pages/Others/TermnsAndConditions.jsx";
 import AdministrationPanel from "./pages/Role/administration panel.jsx";
+import InspeccionEquipo from './pages/Forms/equipments/inspectionequipment.jsx';
+import LlenarInspeccionEquipo from './pages/Forms/equipments/completeinspectionequipment.jsx';
+import AgregarInspeccionEquipo from './pages/Forms/equipments/questioninspectionequipment.jsx';
+import MostrarInspeccionEquipo from './pages/Forms/equipments/showinspectionequipment.jsx';
 // import PoliticaPrivacidad from "./pages/PoliticaPrivacidad";
 
 
@@ -68,6 +72,11 @@ createRoot(document.getElementById('root')).render(
               <Route path='inspection/completeinspection/showinspection' element={<RutaConPermiso permiso="inspection.view"><MostrarInspeccion /></RutaConPermiso>} />
               <Route path='equipment' element={<RutaConPermiso permiso="equipment.view"><Equipos /></RutaConPermiso>} />
               <Route path='equipment/cardequipment/:id' element={<RutaConPermiso permiso="equipment.view"><CardEquipment /></RutaConPermiso>} />
+              <Route path='equipment/:id/inspection' element={<InspeccionEquipo />} />
+              <Route path='equipment/:id/inspection/questions' element={<AgregarInspeccionEquipo />} />
+              <Route path='equipment/:id/inspection/complete' element={<LlenarInspeccionEquipo />} />
+              <Route path='equipment/:id/inspection/show' element={<MostrarInspeccionEquipo />} />
+              <Route path='equipment/:id/inspection/show/:inspectionId' element={<MostrarInspeccionEquipo />} />
               <Route path='companies' element={<RutaConPermiso permiso="company.update"><Empresas /></RutaConPermiso>} />
               <Route path='consumables/tools/types' element={<RutaConPermiso permiso="category-tools.view"><Consumibles /></RutaConPermiso>} />
               <Route path='noconsumables/tools/types' element={<RutaConPermiso permiso="category-tools.view"><No_Consumibles /></RutaConPermiso>} />
