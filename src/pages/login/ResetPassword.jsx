@@ -10,6 +10,7 @@ import AuthScene from "./AuthScene";
 import api from "../../api/axios";
 import { useToast } from "../../context/ToastContext.jsx";
 import { mensajeDeError } from "../../utils/errores";
+import Turnstile, { CAPTCHA_ACTIVO } from "../../components/Turnstile.jsx";
 
 const ResetPassword = () => {
     const navigate = useNavigate();
@@ -20,6 +21,8 @@ const ResetPassword = () => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [captchaToken, setCaptchaToken] = useState("");
+    const [reinicioCaptcha, setReinicioCaptcha] = useState(0);
 
     // Los avisos de éxito (código enviado / contraseña actualizada) los muestra api/axios.js.
     // Aquí solo se avisan los errores y las validaciones locales.
@@ -37,12 +40,18 @@ const ResetPassword = () => {
             return;
         }
 
+        if (CAPTCHA_ACTIVO && !captchaToken) {
+            advertencia("Completa la verificación de seguridad.", "Captcha pendiente");
+            return;
+        }
+
         try {
             setLoading(true);
             await api.get('/sanctum/csrf-cookie');
-            await api.post('/api/forgot-password', { email: email.trim() });
+            await api.post('/api/forgot-password', { email: email.trim(), captcha_token: captchaToken });
             setStep(2);
         } catch (err) {
+            setReinicioCaptcha((n) => n + 1); // el captcha se usa una sola vez
             peligro(
                 mensajeDeError(err, "No se pudo enviar el código. Verifica el correo."),
                 "No se pudo enviar el código"
@@ -128,6 +137,8 @@ const ResetPassword = () => {
                                             required
                                         />
                                     </div>
+
+                                    <Turnstile onToken={setCaptchaToken} reiniciar={reinicioCaptcha} />
 
                                     <Boton
                                         clase="btn-azul"
