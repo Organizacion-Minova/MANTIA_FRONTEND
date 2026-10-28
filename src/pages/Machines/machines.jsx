@@ -551,6 +551,7 @@ function Maquinas(){
                                 <td>{m.ubicacion?.name||""}</td>
                                 <td>{m.status==="active"?"Activo":m.status==="inactive"?"Inactivo":m.status==="maintenance"?"En mantenimiento":"Desconocido"}</td>
                                 <td>
+                                <div className="btn-container">
                                 <BotonLink
                                     link={`/machines/cardmachine/${m.id}`}
                                     clase="btn-azul"
@@ -569,6 +570,7 @@ function Maquinas(){
                                     onClick={() => handleEliminar(m.id)}
                                     titulo="Eliminar equipo"
                                 />
+                                </div>
                                 </td>
                             </tr>
                         ))}

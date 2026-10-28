@@ -247,7 +247,7 @@ export function Consumibles(){
     let [categorias, setCategorias] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [categoriaEditar, setCategoriaEditar] = useState(null);
-    categorias = categorias.filter((cat) => Number(cat.category_group_id) === 2)
+    categorias = categorias.filter((cat) => Number(cat.category_group_id) === 1)
     const { busqueda, setBusqueda, filtrosEspeciales, setFiltroEspecial, itemsFiltrados: categoriasFiltradas } = useSearch(
         categorias,
         ["name", "description", "status"]
@@ -332,7 +332,7 @@ export function Consumibles(){
                             <td>{cat.description}</td>
                             <td>{cat.status}</td>                           
                             <td>
-                                
+                                <div className="btn-container">
                                 <Boton
                                     clase="btn-azul"
                                     icono="fa-solid fa-edit"
@@ -345,6 +345,7 @@ export function Consumibles(){
                                     onClick={() => handleEliminar(cat.id)}
                                     titulo="Eliminar categoria consumible"
                                 />
+                                </div>
                             </td>
                          </tr>
                          ))}
@@ -436,6 +437,7 @@ export function No_Consumibles(){
                 <PageWelcome
                     titulo="CATEGORIAS DE HERRAMIENTAS NO CONSUMIBLES"
                     descripcion="Este es el formato de las categorias de herramientas no consumibles."
+                    mostrarHistorial={true}
                 />
                 <Searcher
                     value={busqueda}
@@ -473,24 +475,20 @@ export function No_Consumibles(){
                             <td>{cat.description}</td>
                             <td>{cat.status}</td>
                             <td>
-                                <BotonLink
-                                    link={`/noconsumables/tools/${cat.id}`}
-                                    clase="btn-azul"
-                                    icono="fa-solid fa-eye"
-                                    titulo="Ver herramientas consumibles de la categoria"
-                                />
-                                <Boton
-                                    clase="btn-azul"
-                                    icono="fa-solid fa-edit"
-                                    onClick={() => handleAbrirEditar(cat)}
-                                    titulo="Editar categoria consumible"
-                                />
-                                <Boton
-                                    clase="btn-2"
-                                    icono="fa-solid fa-trash"
-                                    onClick={() => handleEliminar(cat.id)}
-                                    titulo="Eliminar categoria consumible"
-                                />
+                                <div className="btn-container">
+                                    <Boton
+                                        clase="btn-azul"
+                                        icono="fa-solid fa-edit"
+                                        onClick={() => handleAbrirEditar(cat)}
+                                        titulo="Editar categoria consumible"
+                                    />
+                                    <Boton
+                                        clase="btn-2"
+                                        icono="fa-solid fa-trash"
+                                        onClick={() => handleEliminar(cat.id)}
+                                        titulo="Eliminar categoria consumible"
+                                    />
+                                </div>
                             </td>
                          </tr>
                          ))}

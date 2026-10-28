@@ -149,6 +149,35 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
                 return;
             }
         }
+        
+        const camposConLongitudMinima = [
+            { nombre: "Código", valor: codigo, minimo: 2 },
+            { nombre: "Nombre", valor: nombre, minimo: 3 },
+            { nombre: "Modelo", valor: modelo, minimo: 2 },
+            { nombre: "Número de serie", valor: serie, minimo: 3 },
+            { nombre: "Responsable", valor: responsable, minimo: 3 },
+            { nombre: "Marca", valor: marca, minimo: 2 },
+            { nombre: "Placa", valor: placa, minimo: 3 },
+            { nombre: "Combustible", valor: combustible, minimo: 2, opcional: true },
+            { nombre: "Descripción", valor: descripcion, minimo: 10 },
+        ];
+        const camposInvalidos = camposConLongitudMinima.filter(({ valor, minimo, opcional }) => {
+            const longitud = Array.from(String(valor).trim()).length;
+            return (opcional && longitud === 0) ? false : longitud < minimo;
+        });
+        if (camposInvalidos.length > 0) {
+            window.dispatchEvent(new CustomEvent("app:toast", {
+                detail: {
+                    tipo: "warning",
+                    titulo: "Mínimo de caracteres",
+                    mensaje: camposInvalidos
+                        .map(({ nombre, minimo }) => `${nombre}: mínimo ${minimo} caracteres`)
+                        .join(". "),
+                },
+            }));
+            return;
+        }
+
         const datos = new FormData();
             datos.append("code", codigo);
             datos.append("name", nombre);
@@ -285,7 +314,7 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
                     name="marca"
                     placeholder="Ingrese la marca del equipo"
                     value={marca}
-                    onChange={(e) => setMarca(e.target.value)}
+                    onChange={(e) => setMarca(capitalizarPrimeraLetra(e.target.value))}
                     required
                 />
             </div>
@@ -507,24 +536,26 @@ function Equipos(){
                         <td>{e.ubicacion.name}</td>
                         <td>{e.status==='active'?'Activo':'Inactivo'}</td>
                         <td>
-                            <BotonLink
-                                link={`/equipment/cardequipment/${e.id}`}
-                                clase="btn-azul"
-                                icono="fa-solid fa-eye"
-                                titulo="Ver detalles del equipo"
-                            />
-                            <Boton
-                                clase="btn-2"
-                                icono="fa-solid fa-edit"
-                                onClick={()=>handleAbrirEditar(e)}
-                                titulo="Editar equipo"
-                            />
-                            <Boton
-                                clase="btn-2"
-                                icono="fa-solid fa-trash"
-                                onClick={() => handleEliminar(e.id)}
-                                titulo="Eliminar equipo"
-                            />
+                            <div className="btn-container">
+                                <BotonLink
+                                    link={`/equipment/cardequipment/${e.id}`}
+                                    clase="btn-azul"
+                                    icono="fa-solid fa-eye"
+                                    titulo="Ver detalles del equipo"
+                                />
+                                <Boton
+                                    clase="btn-2"
+                                    icono="fa-solid fa-edit"
+                                    onClick={()=>handleAbrirEditar(e)}
+                                    titulo="Editar equipo"
+                                />
+                                <Boton
+                                    clase="btn-2"
+                                    icono="fa-solid fa-trash"
+                                    onClick={() => handleEliminar(e.id)}
+                                    titulo="Eliminar equipo"
+                                />
+                            </div>
                         </td>
                     </tr>
                     ))}
@@ -532,6 +563,7 @@ function Equipos(){
             </table>
             </div>
             <div className="btn-container-page">
+                <div className="btn-container2">
                 <Boton
                     clase="btn-azul"
                     icono="fa-solid fa-plus"
@@ -540,6 +572,7 @@ function Equipos(){
                     titulo="Agregar nuevo equipo"
 
                 />
+                </div>
                 <Paginacion
                     paginaActual={paginaActual}
                     totalPaginas={totalPaginas}

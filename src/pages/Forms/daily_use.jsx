@@ -309,7 +309,7 @@ export function UsoDiario(){
                                                 titulo="Editar registro"
                                             />
                                             <Boton
-                                                clase="btn-azul"
+                                                clase="btn-2"
                                                 icono="fa-solid fa-trash"
                                                 onClick={() => handleEliminarRegistro(r.id)}
                                                 titulo="Eliminar registro"

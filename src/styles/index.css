@@ -46,6 +46,57 @@ body{
   box-shadow: var(--sombra-contenedor);
 }
 
+@media (max-width: 992px) {
+  .mt-header {
+    padding: 0.9rem 1.5rem;
+  }
+
+  .mt-header .mt-logo-img {
+    width: 8rem;
+  }
+
+  .mt-right-nav {
+    gap: 1.25rem;
+  }
+
+  .mt-navlinks {
+    gap: 1rem;
+  }
+
+  .mt-login-btn {
+    padding: 0.55rem 0.9rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 991px) {
+  .mt-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .mt-header .mt-logo-img {
+    width: 7.5rem;
+  }
+
+  .mt-right-nav {
+    gap: 0.75rem;
+  }
+
+  .mt-navlinks {
+    gap: 0.75rem;
+  }
+
+  .mt-navlinks a {
+    font-size: 0.8rem;
+  }
+
+  .mt-login-btn {
+    gap: 0.4rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+  }
+}
+
 .mt-main { padding: 0; }
 .mt-app main.mt-main { margin: 0; padding: 0; }
 
@@ -242,10 +293,17 @@ body{
 .mt-footer-linklist a:hover svg { opacity: 1; }
 
 .mt-footer-contact-list { display: flex; flex-direction: column; gap: 1.1rem; width: 100%; }
-.mt-footer-contact-row { display: flex; align-items: flex-start; gap: 0.85rem; width: 100%; }
-.mt-footer-contact-row div { text-align: left; }
+.mt-footer-contact-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  width: 100%;
+}
+.mt-footer-contact-row div { text-align: center;justify-content: center; }
+
 .mt-footer-contact-icon {
-  width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+  width: 30px; height: 30px; border-radius: 9px; flex-shrink: 0;
   background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
   display: flex; align-items: center; justify-content: center; color: var(--acento-mantia);
   margin-top: 0.05rem;
@@ -294,8 +352,10 @@ body{
 }
 
 @media (max-width: 720px) {
-  .mt-header { padding: 1.1rem 1.3rem; }
+  .mt-header { padding: 0.65rem 0.85rem; }
+  .mt-header .mt-logo-img { width: 7rem; }
   .mt-navlinks { display: none; }
+  .mt-login-btn { padding: 0.5rem 0.65rem; }
   .mt-dots-wrap, .mt-counter { display: none; }
   .mt-footer-top { padding: 2.2rem 1.5rem 1rem 1.5rem; }
 }

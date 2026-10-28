@@ -296,13 +296,13 @@ function TermnsAndConditions() {
               y la política de privacidad de MANTIA CM.
             </p>
 
-            <Link
+            {/* <Link
               to="/privacy"
               className="mt-legal__enlace-documento"
             >
               Consultar política de privacidad
               <span aria-hidden="true"> →</span>
-            </Link>
+            </Link> */}
           </section>
 
           <section id="cambios" className="mt-legal__seccion">

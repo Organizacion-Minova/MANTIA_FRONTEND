@@ -174,7 +174,7 @@ function Gases() {
                                     <td>{m.measurement_date.split('-').reverse().join('/')}</td>
                                     <td>{m.measurement_time?.slice(0, 5)}</td>
                                     <td>
-                                        <div className="btn-container">
+                                     
                                             <BotonLink
                                                 link={`/gases/gas_format/${m.id}`}
                                                 clase="btn-azul"
@@ -187,7 +187,7 @@ function Gases() {
                                                 onClick={() => handleEliminar(m.id)}
                                                 titulo="Eliminar registro"
                                             />
-                                        </div>
+                                        
                                     </td>
                                 </tr>
                             ))

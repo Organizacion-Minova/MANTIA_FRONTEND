@@ -45,6 +45,7 @@ export function CardEquipment() {
                 mostrarHistorial={true}
             />
             <section className="cards">
+                <div className="table-responsive">
                     <table className="form">
                         <tbody>
                             <tr>
@@ -124,9 +125,10 @@ export function CardEquipment() {
                             </tr>
                         </tbody>
                     </table>
+                    </div>
 
             </section>
-                <div className="btn-container" >
+                <div className="btn-container">
                     <BotonLink
                         link="/equipment"
                         clase="btn-2"

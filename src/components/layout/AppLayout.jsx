@@ -43,6 +43,11 @@ function AppLayout({ children }) {
     const { notificar } = useToast();
     const [notificaciones, setNotificaciones] = useState([]);
     const conocidas = useRef(null); // null = todavía no se hizo la primera carga
+    useEffect(() => {
+        if (window.matchMedia("(max-width: 767px)").matches) {
+            setCerrado(false);
+        }
+    }, [pathname]);
 
     const cargarNotificaciones = useCallback(async () => {
         try {
@@ -195,7 +200,7 @@ function AppLayout({ children }) {
                                 title="Ir al panel de administración"
                             >
                                 <i className="fa-solid fa-shield-halved"></i>
-                                <span>Panel administracion</span>
+                                <span>Panel administración</span>
                             </NavLink>
                         </li>
                     )}

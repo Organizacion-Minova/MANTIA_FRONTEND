@@ -247,7 +247,7 @@ function CategoriasUbicacion() {
                                                 icono="fa-solid fa-edit"
                                             />
                                             <Boton
-                                                clase="btn-azul"
+                                                clase="btn-2"
                                                 onClick={() => handleEliminar(cat.id)}
                                                 titulo="Eliminar registro"
                                                 icono="fa-solid fa-trash"
