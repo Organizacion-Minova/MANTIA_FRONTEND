@@ -323,3 +323,97 @@
   }
 }
 
+/* GRID DE LA PAGINA ACERCA DE */
+.about-grid {
+  display: grid;
+  box-sizing: border-box;
+  grid-template-columns: minmax(0, 1.35fr) minmax(16rem, 0.9fr);
+  grid-template-areas:
+      "bienvenida bienvenida"
+      "motivo motivo"
+      "valores valores"
+      "contacto contacto"
+      "botones botones";
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+.public-page.about-grid {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding-top: 5rem;
+  padding-bottom: 1rem;
+}
+
+.contenido .public-page.about-grid {
+  padding-top: 1rem;
+}
+
+.about-grid-authenticated {
+  grid-template-areas:
+      "bienvenida bienvenida"
+      "motivo motivo"
+      "valores valores"
+      "equipo contacto"
+      "botones botones";
+}
+
+.about-intro { grid-area: bienvenida; min-width: 0; }
+.about-reason { grid-area: motivo; min-width: 0; }
+.about-values {
+  grid-area: valores;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 1.25rem;
+  min-width: 0;
+}
+.about-team { grid-area: equipo; min-width: 0; }
+.about-contact { grid-area: contacto; min-width: 0; }
+.about-actions { grid-area: botones; min-width: 0; }
+
+@media (max-width: 991px) {
+  .about-grid,
+  .about-grid-authenticated {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+          "bienvenida"
+          "motivo"
+          "valores"
+          "equipo"
+          "contacto"
+          "botones";
+      gap: 1rem;
+  }
+
+  .about-grid:not(.about-grid-authenticated) {
+      grid-template-areas:
+          "bienvenida"
+          "motivo"
+          "valores"
+          "contacto"
+          "botones";
+  }
+}
+
+@media (max-width: 990px) {
+  .public-page.about-grid {
+    padding-top: 5rem;
+    padding-bottom: 1rem;
+  }
+
+  .about-values {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.85rem;
+  }
+}
+
+@media (max-width: 40rem) {
+  .public-page.about-grid {
+    padding: 5rem 1rem 1rem;
+  }
+
+  .contenido .public-page.about-grid {
+    padding-top: 1rem;
+  }
+}

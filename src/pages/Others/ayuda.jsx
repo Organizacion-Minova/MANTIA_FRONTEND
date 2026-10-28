@@ -649,7 +649,7 @@ function Ayuda() {
     /* ================= CON SESIÓN: centro de ayuda completo ================= */
     return (
         <Layout>
-        <div className="public-page">
+        <div className="publicpage">
             <PageWelcome
                 titulo="Centro de ayuda"
                 descripcion="Busca cómo usar cada módulo de MANTIA o escríbenos directamente."

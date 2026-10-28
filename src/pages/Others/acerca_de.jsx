@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import "../../styles/Components.modules.css";
+import "../../styles/grid_content.css";
 import { useAuth } from "../../context/AuthContext.jsx";
 import AppLayout from "../../components/layout/AppLayout.jsx";
 import PublicLayout from "../../components/layout/PublicLayout.jsx";
@@ -207,49 +208,35 @@ function AcercaDe() {
 
     return (
         <Layout>
-        <div className="public-page">
-            <PageWelcome
-                titulo="Acerca de MANTIA"
-                descripcion="Mantenimiento e inventario de activos, pensado para la industria minera colombiana."
-            />
-            <p style={{ color: "var(--texto2)", marginBottom: "2rem" }}>
-                <i className="fa-solid fa-graduation-cap" aria-hidden="true"></i>{" "}
-                Proyecto formativo del SENA, Centro Nacional Minero.
-            </p>
+        <div className={`public-page about-grid${isAuthenticated ? " about-grid-authenticated" : ""}`}>
+            <section className="about-intro">
+                <PageWelcome
+                    titulo="Acerca de MANTIA"
+                    descripcion="Mantenimiento e inventario de activos, pensado para la industria minera colombiana."
+                />
+                <p style={{ color: "var(--texto2)", marginBottom: "0" }}>
+                    <i className="fa-solid fa-graduation-cap" aria-hidden="true"></i>{" "}
+                    Proyecto formativo del SENA, Centro Nacional Minero.
+                </p>
+            </section>
 
             {/* ================= POR QUÉ EXISTE ================= */}
 
-            <h2>¿Por qué existe MANTIA?</h2>
-
-            <br />
-
-            <p
-                style={{
-                    color: "var(--texto2)",
-                    maxWidth: "50rem",
-                }}
-            >
-                Las operaciones mineras dependen de maquinaria pesada y
-                herramientas críticas: un daño no previsto o un repuesto
-                agotado pueden detener una línea completa. MANTIA
-                centraliza el registro y seguimiento de esos activos para
-                anticipar fallas y mantener la trazabilidad de cada
-                ubicación, equipo y herramienta.
-            </p>
-
-            <br />
-            <br />
+            <section className="about-reason">
+                <h2>¿Por qué existe MANTIA?</h2>
+                <p>
+                    Las operaciones mineras dependen de maquinaria pesada y
+                    herramientas críticas: un daño no previsto o un repuesto
+                    agotado pueden detener una línea completa. MANTIA
+                    centraliza el registro y seguimiento de esos activos para
+                    anticipar fallas y mantener la trazabilidad de cada
+                    ubicación, equipo y herramienta.
+                </p>
+            </section>
 
             {/* ================= VALORES ================= */}
 
-            <div
-                style={{
-                    display: "grid",
-                    gridTemplateColumns:
-                        "repeat(auto-fit, minmax(16rem, 1fr))",
-                    gap: "1.25rem",
-                }}
-            >
+            <section className="about-values">
                 {valores.map((v) => (
                     <Tarjeta
                         key={v.titulo}
@@ -258,26 +245,14 @@ function AcercaDe() {
                         texto={v.texto}
                     />
                 ))}
-            </div>
-
-            <br />
-            <br />
-
+            </section>
 
             {/* ================= EQUIPO SENA ================= */}
             {/* Tabla con nombres y fotos: solo visible con sesión iniciada */}
 
-            <div
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr",
-                    gap: "1.25rem",
-                }}
-            >
-
-                {isAuthenticated && (
+            {isAuthenticated && (
                 <div
-                    className="date"
+                    className="date about-team"
                     style={{
                         textAlign: "left",
                         width: "100%",
@@ -434,12 +409,12 @@ function AcercaDe() {
                         </table>
                     </div>
                 </div>
-                )}
+            )}
 
                 {/* ================= CONTACTO ================= */}
 
                 <div
-                    className="date"
+                    className="date about-contact"
                     style={{
                         textAlign: "left",
                         width: "100%",
@@ -473,14 +448,9 @@ function AcercaDe() {
                     />
                 </div>
 
-            </div>
-
-            <br />
-            <br />
-
             {/* ================= BOTONES ================= */}
 
-                <div className="btn-container">
+                <div className="btn-container about-actions">
 
                 {/* <a href="mailto:mantiadso@gmail.com" className="btn-azul">
         <i className="fa-solid fa-envelope"></i>
@@ -495,8 +465,6 @@ function AcercaDe() {
                 </Link>
 
             </div>
-
-            <br />
 
         </div>
         </Layout>

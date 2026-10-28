@@ -379,18 +379,20 @@ function ToolsNoConsumables(){
                             <td>{h.ubicacion.name}</td>
                             <td>{h.categoria?.name || "Sin categoría"}</td>
                             <td>
-                                <Boton
-                                    clase="btn-azul"
-                                    icono="fa-solid fa-edit"
-                                    onClick={() => handleAbrirEditar(h)}
-                                    titulo="Editar herramienta"
-                                />
-                                <Boton
-                                    clase="btn-2"
-                                    icono="fa-solid fa-trash"
-                                    onClick={() => handleEliminar(h.id)}
-                                    titulo="Eliminar herramienta"
-                                />
+                                <div className="btn-container">
+                                     <Boton
+                                         clase="btn-azul"
+                                         icono="fa-solid fa-edit"
+                                         onClick={() => handleAbrirEditar(h)}
+                                         titulo="Editar herramienta"
+                                     />
+                                     <Boton
+                                         clase="btn-2"
+                                         icono="fa-solid fa-trash"
+                                         onClick={() => handleEliminar(h.id)}
+                                         titulo="Eliminar herramienta"
+                                     />
+                                </div>
                             </td>
                         </tr>
                         )})}

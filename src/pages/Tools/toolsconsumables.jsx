@@ -387,6 +387,7 @@ function ToolsConsumables(){
                             <td>{h.ubicacion.name}</td>
                             <td>{h.categoria?.name || "Sin categoría"}</td>
                             <td>
+                                <div className="btn-container">
                                 <Boton
                                     clase="btn-azul"
                                     icono="fa-solid fa-edit"
@@ -399,6 +400,7 @@ function ToolsConsumables(){
                                     onClick={() => handleEliminar(h.id)}
                                     titulo="Eliminar herramienta"
                                 />
+                                </div>
                             </td>
                         </tr>
                         )})}

@@ -328,3 +328,101 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
+
+@media (max-width: 991px) {
+    .overlay-panel#overlayAlertas {
+        right: 0;
+        width: min(22rem, calc(100vw - 2rem));
+        max-height: min(32rem, 72dvh, calc(100dvh - 8rem));
+        box-sizing: border-box;
+    }
+
+    .overlay-panel#overlayAlertas .alerts-header {
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        padding: 0.75rem 0.9rem;
+    }
+
+    .alerts-header h3 {
+        justify-content: center;
+        flex-wrap: wrap;
+        min-width: 0;
+        width: 100%;
+        font-size: 0.82rem;
+        text-align: center;
+    }
+
+    .alerts-header .mark-all {
+        margin-inline: auto;
+    }
+
+    .alerts-tabs {
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        padding: 0.55rem 0.75rem;
+    }
+
+    .alerts-tab {
+        min-height: 2.5rem;
+        padding: 0.4rem 0.65rem;
+    }
+
+    .alerta-item {
+        gap: 0.6rem;
+        padding: 0.7rem 0.9rem;
+    }
+
+    .alerts-footer {
+        padding: 0.65rem 0.9rem;
+    }
+}
+
+@media (max-width: 990px) {
+    .overlay-panel#overlayAlertas {
+        width: min(20rem, calc(100vw - 1rem));
+        max-height: min(28rem, 68dvh, calc(100dvh - 7rem));
+    }
+
+    .overlay-panel#overlayAlertas .alerts-header {
+        gap: 0.35rem;
+        padding: 0.65rem 0.75rem;
+    }
+
+    .alerts-header .mark-all {
+        min-height: 2.5rem;
+        margin-inline: auto;
+        padding: 0.35rem 0.5rem;
+        font-size: 0.68rem;
+    }
+
+    .alerts-tabs {
+        padding: 0.45rem 0.6rem;
+    }
+
+    .alerts-tab {
+        flex: 1 1 auto;
+        padding: 0.35rem 0.5rem;
+        font-size: 0.68rem;
+    }
+
+    .alerta-item {
+        min-height: 3.5rem;
+        padding: 0.65rem 0.75rem;
+    }
+
+    .alerta-icono {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    .alerta-titulo {
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 0.2rem 0.45rem;
+    }
+
+    .alerts-footer {
+        padding: 0.55rem 0.75rem;
+    }
+}

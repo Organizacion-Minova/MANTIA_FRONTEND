@@ -5,12 +5,12 @@
     position: fixed;
     bottom: 1.25rem;
     right: 1.25rem;
-    background: var(--secundario);
+    background: var(--principal);
     color: var(--blanco);
    
     padding: 0.5rem;
-    border-radius: 50%;
-    border: 1px solid var(--acento-mantia);
+    border-radius: 40%;
+    border: 2px solid var(--acento-mantia);
     font-size: 2rem;
     cursor: pointer;
     z-index: 50;
@@ -198,3 +198,114 @@
 
 }
 
+@media (max-width: 991px) {
+    .panel-accesibilidad {
+        width: min(22rem, calc(100vw - 4rem));
+        max-height: calc(100vh - 5rem);
+        padding: 1rem;
+        box-sizing: border-box;
+        overflow-y: auto;
+    }
+
+    .header-accesibilidad {
+        padding: 0.65rem;
+        margin-bottom: 0.65rem;
+        gap: 0.65rem;
+    }
+
+    .header-accesibilidad img {
+        width: 1.75rem;
+        height: 1.75rem;
+        flex: 0 0 auto;
+    }
+
+    .texto-header h3 {
+        margin: 0;
+        font-size: 1.05rem;
+    }
+
+    .texto-header small {
+        font-size: 0.8rem;
+    }
+
+    .contenedor-btns {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.6rem;
+    }
+
+    .contenedor-btns > button,
+    .panel-accesibilidad > button,
+    .contenedor-texto {
+        min-width: 0;
+        min-height: 3.5rem;
+        margin: 0.25rem 0;
+        padding: 0.7rem 0.5rem;
+        font-size: 0.9rem;
+        overflow-wrap: anywhere;
+    }
+
+    .grupo-botones {
+        gap: 0.5rem;
+    }
+
+    .grupo-botones .btn-texto {
+        width: 1.75rem;
+        height: 1.75rem;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+@media (max-width: 990px) {
+    
+
+    .panel-accesibilidad {
+        right: 0.65rem;
+        bottom: 3.75rem;
+        width: min(17rem, calc(100vw - 2rem));
+        max-height: calc(100vh - 4.5rem);
+        padding: 0.75rem;
+    }
+
+    .header-accesibilidad {
+        padding: 0.5rem;
+        gap: 0.45rem;
+    }
+
+    .header-accesibilidad img {
+        width: 1.6rem;
+        height: 1.6rem;
+    }
+
+    .texto-header h3 {
+        font-size: 0.9rem;
+    }
+
+    .texto-header small {
+        font-size: 0.7rem;
+    }
+
+    .contenedor-btns {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.45rem;
+    }
+
+    .contenedor-btns > button,
+    .panel-accesibilidad > button,
+    .contenedor-texto {
+        min-height: 3.25rem;
+        padding: 0.6rem 0.35rem;
+        font-size: 0.8rem;
+    }
+
+    .contenedor-texto > i,
+    .contenedor-btns > button > i,
+    .panel-accesibilidad > button > i {
+        font-size: 1rem;
+    }
+
+    .grupo-botones .btn-texto {
+        width: 1.65rem;
+        height: 1.65rem;
+    }
+}

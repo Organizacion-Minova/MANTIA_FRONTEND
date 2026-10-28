@@ -276,11 +276,11 @@ function Ubicaciones() {
                                     <td>{etiqueta_estado[ubi.status]}</td>
                                     <td>
                                         <div className="btn-container">
-                                            <Boton
+                                            {/* <Boton
                                                 clase="btn-azul"
                                                 titulo="Ver registro"
                                                 icono="fa-solid fa-eye"
-                                            />
+                                            /> */}
                                             <Boton
                                                 clase="btn-azul"
                                                 onClick={() => handleEditar(ubi)}
@@ -288,7 +288,7 @@ function Ubicaciones() {
                                                 icono="fa-solid fa-edit"
                                             />
                                             <Boton
-                                                clase="btn-azul"
+                                                clase="btn-2"
                                                 onClick={() => handleEliminar(ubi.id)}
                                                 titulo="Eliminar registro"
                                                 icono="fa-solid fa-trash"
