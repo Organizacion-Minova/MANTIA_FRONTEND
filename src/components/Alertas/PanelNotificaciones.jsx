@@ -76,9 +76,6 @@ function PanelNotificaciones({ abierto, animar, notificaciones, onMarcarTodas, o
                 )}
             </div>
 
-            <div className="alerts-footer" onClick={() => onCerrar?.()}>
-                <BotonLink link="/Alerts" clase="btn-azul" icono="fa-solid fa-triangle-exclamation" texto="Ver todas las alertas" />
-            </div>
         </div>
     );
 }
