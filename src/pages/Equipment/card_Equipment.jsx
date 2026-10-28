@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { PageWelcome } from "../../components/common/welcome"; 
-import { BotonLink } from "../../components/common/Button";
+import { Boton, BotonLink } from "../../components/common/Button";
 import { GetEquipmentById } from "../../api/Equipmentsapi";
 import api from "../../api/axios";
 import LoadingScreen from "../../components/LoadingScreen";
 import imagenPorDefecto from "../../assets/img/Mantia - logo.png";
+import { exportarFichaTecnicaEquipoExcelUnitario, exportarFichaTecnicaEquipoPdfUnitario } from "../../api/Equipmentsapi";
 
 function obtenerUrlImagen(imagen) {
     if (!imagen) return imagenPorDefecto;
@@ -54,7 +55,7 @@ export function CardEquipment() {
                                 </td>
                             </tr>
                             <tr>
-                                <td colSpan="2">SISTEMA DE GESTION DE SEGURIDAD Y SALUD EN EL TRABAJO</td>
+                                <td colSpan="2">SISTEMA DE GESTIÓN DE SEGURIDAD Y SALUD EN EL TRABAJO</td>
                                 <td>CODIGO:</td>
                                 <td>FT-SST 002</td>
                             </tr>
@@ -130,16 +131,30 @@ export function CardEquipment() {
             </section>
                 <div className="btn-container">
                     <BotonLink
-                        link="/equipment"
-                        clase="btn-2"
-                        icono="fa-solid fa-arrow-left"
-                        texto="Regresar"
-                    />
-                    <BotonLink
                         link={`/equipment/${id}/inspection`}
                         clase="btn-azul"
                         icono="fas fa-wind"
                         texto="Inspeccion"
+                    />
+                    <Boton
+                        clase="btn-azul"
+                        icono="fa-solid fa-file-excel"
+                        texto="Exportar Excel"
+                        onClick={() => exportarFichaTecnicaEquipoExcelUnitario(equipo.id, equipo.name)}
+                        titulo="Exportar en un archivo de Excel"
+                    />
+                    <Boton
+                        clase="btn-azul"
+                        icono="fa-solid fa-file-pdf"
+                        texto="Exportar PDF"
+                        onClick={() => exportarFichaTecnicaEquipoPdfUnitario(equipo.id, equipo.name)}
+                        titulo="Exportar en un archivo PDF"
+                    />
+                    <BotonLink
+                        link="/equipment"
+                        clase="btn-2"
+                        icono="fa-solid fa-arrow-left"
+                        texto="Regresar"
                     />
                 </div>
 
