@@ -62,3 +62,25 @@ export async function GetEquipmentInspectionById(id) {
     const { data } = await api.get(`/api/equipment-inspections/${id}`);
     return data;
 }
+
+// Exportaciones
+
+export const exportarFichaTecnicaEquipoExcelUnitario = async (id, name) => {
+    const response = await api.get(`/api/equipment/${id}/export/excel`, { responseType: 'blob' });
+    descargarBlob(response.data, `Ficha_técnica_${name}.xlsx`);
+};
+
+export const exportarFichaTecnicaEquipoPdfUnitario = async (id, name) => {
+    const response = await api.get(`/api/equipment/${id}/export/pdf`, { responseType: 'blob' });
+    descargarBlob(response.data, `Ficha_técnica_${name}.pdf`, 'application/pdf');
+};
+
+const descargarBlob = (data, filename, mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') => {
+    const blob = new Blob([data], { type: mimeType });
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+};
