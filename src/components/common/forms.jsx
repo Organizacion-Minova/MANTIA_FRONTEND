@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { PhotoIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import { ChevronDownIcon } from '@heroicons/react/16/solid';
 import { Boton } from '../../components/common/Button.jsx';
@@ -6,9 +6,30 @@ import '../../styles/Form/form.css';
 
 // Base del formulario
 export function Form({ titulo, descripcion, onSubmit, onCancel, children, textoBoton = "Guardar", iconoBoton = "fa-solid fa-floppy-disk", tituloBoton = "Guardar", noValidate = false }) {
+    // Evita que varios clics en "Guardar" manden la misma petición varias veces:
+    // mientras el guardado anterior no termina, los demás envíos se ignoran.
+    // Se usa un ref porque el estado no alcanza a cambiar entre dos clics muy seguidos.
+    const enviandoRef = useRef(false);
+    const [enviando, setEnviando] = useState(false);
+
+    const manejarEnvio = async (e) => {
+        if (enviandoRef.current) {
+            e.preventDefault();
+            return;
+        }
+        enviandoRef.current = true;
+        setEnviando(true);
+        try {
+            await onSubmit?.(e);
+        } finally {
+            enviandoRef.current = false;
+            setEnviando(false);
+        }
+    };
+
     return (
         <div className="form-modal-overlay" onClick={onCancel}>
-            <form onSubmit={onSubmit} className="form-container" onClick={(e) => e.stopPropagation()} noValidate={noValidate}>
+            <form onSubmit={manejarEnvio} className="form-container" onClick={(e) => e.stopPropagation()} noValidate={noValidate}>
                 {onCancel && (
                 <button
                     type="button"
@@ -36,8 +57,9 @@ export function Form({ titulo, descripcion, onSubmit, onCancel, children, textoB
                     <Boton
                         clase="btn-azul"
                         icono={iconoBoton}
-                        texto={textoBoton}
+                        texto={enviando ? "Guardando..." : textoBoton}
                         titulo={tituloBoton}
+                        disabled={enviando}
                     />
                 </div>
             </form>
