@@ -19,7 +19,7 @@ const TABS = [
     { id: "solicitudes", texto: "Solicitudes", icono: "fa-solid fa-user-clock" },
     { id: "usuarios", texto: "Usuarios", icono: "fa-solid fa-users" },
     { id: "roles", texto: "Roles", icono: "fa-solid fa-user-shield" },
-    { id: "backups", texto: "Backups", icono: "fa-solid fa-database" },
+    { id: "copias-seguridad", texto: "Copias de Seguridad", icono: "fa-solid fa-database" },
 ];
 
 // ---------- 1. Solicitudes de cuenta ----------
@@ -536,11 +536,11 @@ function PanelBackups() {
         setGenerando(true);
         try {
             await crearBackup(seleccionadas);
-            exito("Backup generado correctamente.");
+            exito("Copia de seguridad generada correctamente.");
             setSeleccionadas([]);
             cargar();
         } catch (err) {
-            peligro(err.response?.data?.message || "No se pudo generar el backup.");
+            peligro(err.response?.data?.message || "No se pudo generar la copia de seguridad.");
         } finally {
             setGenerando(false);
         }
@@ -550,18 +550,18 @@ function PanelBackups() {
         try {
             await descargarBackup(archivo);
         } catch {
-            peligro("No se pudo descargar el backup.");
+            peligro("No se pudo descargar la copia de seguridad.");
         }
     };
 
     const handleEliminar = async (archivo) => {
-        if (!window.confirm("¿Eliminar este backup? No se podrá recuperar.")) return;
+        if (!window.confirm("¿Eliminar esta copia de seguridad? No se podrá recuperar.")) return;
         try {
             await eliminarBackup(archivo);
-            exito("Backup eliminado.");
+            exito("Copia de seguridad eliminada.");
             cargar();
         } catch {
-            peligro("No se pudo eliminar el backup.");
+            peligro("No se pudo eliminar la copia de seguridad.");
         }
     };
 
@@ -571,7 +571,7 @@ function PanelBackups() {
         <>
             {error && <div style={{ color: "#d9534f", marginBottom: "1rem" }}>{error}</div>}
             <div className="form-container" style={{ marginBottom: "1.5rem" }}>
-                <h3 className="form-title">Generar nuevo backup</h3>
+                <h3 className="form-title">Generar nueva copia de seguridad</h3>
                 <p className="form-description">Selecciona qué información quieres respaldar.</p>
                 <div className="form-grid">
                     {opciones.map((op) => (
@@ -589,7 +589,7 @@ function PanelBackups() {
                 <div className="btn-container" style={{ marginTop: "1rem" }}>
                     <Boton
                         clase="btn-azul"
-                        texto={generando ? "Generando..." : "Generar backup"}
+                        texto={generando ? "Generando..." : "Generar copia de seguridad"}
                         icono="fa-solid fa-database"
                         disabled={generando}
                         onClick={handleGenerar}
@@ -620,11 +620,11 @@ function PanelBackups() {
                                 <td>
                                     <div className="btn-container">
                                         <Boton
-                                            clase="btn-azul" icono="fa-solid fa-download" titulo="Descargar backup"
+                                            clase="btn-azul" icono="fa-solid fa-download" titulo="Descargar copia de seguridad"
                                             onClick={() => handleDescargar(b.archivo)}
                                         />
                                         <Boton
-                                            clase="btn-2" icono="fa-solid fa-trash" titulo="Eliminar backup"
+                                            clase="btn-2" icono="fa-solid fa-trash" titulo="Eliminar copia de seguridad"
                                             onClick={() => handleEliminar(b.archivo)}
                                         />
                                     </div>
@@ -632,7 +632,7 @@ function PanelBackups() {
                             </tr>
                         )) : (
                             <tr>
-                                <td colSpan="6" style={{ textAlign: "center" }}>Aún no se ha generado ningún backup.</td>
+                                <td colSpan="6" style={{ textAlign: "center" }}>Aún no se ha generado ninguna copia de seguridad.</td>
                             </tr>
                         )}
                     </tbody>
@@ -692,7 +692,7 @@ function AdministrationPanel() {
             {tabActiva === "solicitudes" && <PanelSolicitudes onCambioConteo={setConteoSolicitudes} />}
             {tabActiva === "usuarios" && <PanelUsuarios />}
             {tabActiva === "roles" && <PanelRoles />}
-            {tabActiva === "backups" && <PanelBackups />}
+          {tabActiva === "copias-seguridad" && <PanelBackups />}
         </div>
     );
 }

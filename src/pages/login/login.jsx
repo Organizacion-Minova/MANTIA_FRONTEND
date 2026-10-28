@@ -10,6 +10,7 @@ import AuthScene from "./AuthScene";
 import { useAuth } from "../../context/AuthContext.jsx";
 import LoadingScreen from "../../components/LoadingScreen.jsx";
 import { useToast } from "../../context/ToastContext.jsx";
+import Turnstile, { CAPTCHA_ACTIVO } from "../../components/Turnstile.jsx";
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -18,6 +19,8 @@ const Login = () => {
     const { login, loginConLetra } = useAuth();
     const { peligro, advertencia, exito } = useToast();
     const [cargandoLogin, setCargandoLogin] = useState(false);
+    const [captchaToken, setCaptchaToken] = useState("");
+    const [reinicioCaptcha, setReinicioCaptcha] = useState(0);
     const navigate = useNavigate();
     const [params] = useSearchParams();
 
@@ -52,17 +55,24 @@ const Login = () => {
         return;
     }
 
+    // El login rápido por letra (solo desarrollo) no usa captcha
+    if (!esLetraDev && CAPTCHA_ACTIVO && !captchaToken) {
+        advertencia("Completa la verificación de seguridad.", "Captcha pendiente");
+        return;
+    }
+
     setCargandoLogin(true);
     try {
         if (esLetraDev) {
             await loginConLetra(email.trim().toUpperCase());
         } else {
-            await login(email, password);
+            await login(email, password, captchaToken);
         }
         navigate("/dashboard");
     } catch (err) {
         peligro(err.message, "No se pudo iniciar sesión");
         setCargandoLogin(false);
+        setReinicioCaptcha((n) => n + 1); // el captcha se usa una sola vez
     }
 };
 
@@ -109,6 +119,8 @@ const Login = () => {
                                     placeholder="••••••••"
                                 />
                             </div>
+                            <Turnstile onToken={setCaptchaToken} reiniciar={reinicioCaptcha} />
+
                             <Boton
                                 clase="btn-azul"
                                 texto="Iniciar Sesión"

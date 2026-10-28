@@ -10,6 +10,7 @@ import AuthScene from "./AuthScene";
 import { register } from "../../api/auth";
 import { useToast } from "../../context/ToastContext.jsx";
 import { mensajeDeError } from "../../utils/errores";
+import Turnstile, { CAPTCHA_ACTIVO } from "../../components/Turnstile.jsx";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -24,6 +25,8 @@ const Register = () => {
     });
         const { peligro, advertencia } = useToast();
         const [loading, setLoading] = useState(false);
+        const [captchaToken, setCaptchaToken] = useState("");
+        const [reinicioCaptcha, setReinicioCaptcha] = useState(0);
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -62,6 +65,11 @@ const handleSubmit = async (e) => {
         return;
     }
 
+    if (CAPTCHA_ACTIVO && !captchaToken) {
+        advertencia("Completa la verificación de seguridad.", "Captcha pendiente");
+        return;
+    }
+
     try {
         setLoading(true);
         await register({
@@ -70,7 +78,8 @@ const handleSubmit = async (e) => {
             email: formData.email,
             password: formData.password,
             document_type: formData.documentType,
-            document_number: formData.documentNumber
+            document_number: formData.documentNumber,
+            captcha_token: captchaToken
         });
         // El aviso de éxito lo muestra api/axios.js
         setTimeout(() => {
@@ -78,6 +87,7 @@ const handleSubmit = async (e) => {
         }, 4000);
     } catch (err) {
         peligro(mensajeDeError(err, "Ocurrió un error al registrarse."), "No se pudo registrar");
+        setReinicioCaptcha((n) => n + 1); // el captcha se usa una sola vez
     } finally {
         setLoading(false);
     }
@@ -225,6 +235,8 @@ const handleSubmit = async (e) => {
                                     />
                                 </div>
                             </div>
+
+                            <Turnstile onToken={setCaptchaToken} reiniciar={reinicioCaptcha} />
 
                             <Boton
                                 clase="btn-azul"

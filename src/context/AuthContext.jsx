@@ -10,9 +10,9 @@ export function AuthProvider({ children }) {
 
     const isAuthenticated = !!usuario;
 
-    async function login(email, password) {
+    async function login(email, password, captchaToken) {
         try {
-            const data = await loginRequest(email, password);
+            const data = await loginRequest(email, password, captchaToken);
             setUsuario(data);
         } catch (err) {
         if (err.response?.status === 401) {
