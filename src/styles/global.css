@@ -696,7 +696,11 @@ footer{
     border-right:5px solid var(--blanco);
     padding-right:20px;
 }
-
+.logoSena{
+    height:90px;
+    width:auto;
+    padding-right:20px;
+}
 .logoSmaqFooter{
     height:20px;
     width:auto;

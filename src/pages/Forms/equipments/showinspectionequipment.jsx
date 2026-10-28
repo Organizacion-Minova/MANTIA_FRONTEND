@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { PageWelcome } from "../../../components/common/welcome";
 import { Boton, BotonLink } from "../../../components/common/Button";
 import LoadingScreen from "../../../components/LoadingScreen";
@@ -40,47 +41,93 @@ function formatearFecha(fecha) {
     const [y, m, d] = fecha.slice(0, 10).split("-");
     return `${d}/${m}/${y}`;
 }
-function MostrarInspeccionEquipo() {
-    const { id, inspectionId } = useParams();
+
+function ListaInspecciones({ equipmentId }) {
+    const [inspecciones, setInspecciones] = useState([]);
+    const [cargando, setCargando] = useState(true);
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        setCargando(true);
+        setError("");
+        GetEquipmentInspections(equipmentId)
+            .then((res) => setInspecciones(res.data ?? res)) 
+            .catch(() => setError("No se pudieron cargar las inspecciones."))
+            .finally(() => setCargando(false));
+    }, [equipmentId]);
+
+    if (cargando) return <LoadingScreen indeterminado />;
+
+    return(
+        <div className="list-grid">
+            <header>
+                <PageWelcome
+                    titulo="INSPECCIONES REALIZADAS"
+                    descripcion="Selecciona una inspección para ver su formato."
+                />
+            </header>
+
+            <div className="btn-container">
+                <BotonLink
+                    link={`/equipment/${equipmentId}/inspection/complete`}
+                    clase="btn-azul"
+                    icono="fa-solid fa-plus"
+                    texto="Nueva inspección"
+                />
+            </div>
+            {inspecciones.length > 0 && (
+                <div className="table-responsive">
+                    <table className="form">
+                        <thead>
+                            <tr>
+                                <th>FECHA</th>
+                                <th>EQUIPO</th>
+                                <th>RESPONSABLE</th>
+                                <th>ÁREA</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {inspecciones.map((i) => (
+                                <tr key={i.id}>
+                                    <td>{formatearFecha(i.inspection_date)}</td>
+                                    <td>{i.equipo?.name}</td>
+                                    <td>{i.inspector_name}</td>
+                                    <td>{i.area}</td>
+                                    <td>
+                                        <Link to={`/equipment/${equipmentId}/inspection/show/${i.id}`}>
+                                            Ver formato
+                                        </Link>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+        </div>
+    );
+}
+
+function FormatoInspeccion({ equipmentId, inspectionId }) {
     const [inspeccion, setInspeccion] = useState(null);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState("");
 
     useEffect(() => {
-        const cargar = async () => {
-            setCargando(true);
-            setError("");
-            try {
-                let idFinal = inspectionId;
-
-
-                if (!idFinal) {
-                    const lista = await GetEquipmentInspections(id);
-                    if (!lista.data?.length) {
-                        setError("Este equipo aún no tiene inspecciones.");
-                        return;
-                    }
-                    idFinal = lista.data[0].id;
-                }
-
-                setInspeccion(await GetEquipmentInspectionById(idFinal));
-            } catch {
-                setError("No se pudo cargar la inspección.");
-            } finally {
-                setCargando(false);
-            }
-        };
-        cargar();
-    }, [id, inspectionId]);
+        setCargando(true);
+        setError("");
+        GetEquipmentInspectionById(inspectionId)
+            .then(setInspeccion)
+            .catch(() => setError("No se pudo cargar la inspección."))
+            .finally(() => setCargando(false));
+    }, [inspectionId]);
 
     if (cargando) return <LoadingScreen indeterminado />;
     if (error || !inspeccion) {
         return (
             <div>
-                <PageWelcome
-                    titulo="INSPECCIÓN EQUIPO"
-                    descripcion="No se pudo cargar el resumen de la inspección."
-                />
+                <PageWelcome titulo="INSPECCIÓN" descripcion="No se pudo cargar el resumen de la inspección." />
                 <p role="alert">{error || "No se encontró la inspección."}</p>
             </div>
         );
@@ -89,9 +136,10 @@ function MostrarInspeccionEquipo() {
     const respuestas = [...inspeccion.answers].sort(
         (a, b) => (a.question?.position ?? 0) - (b.question?.position ?? 0)
     );
-
     const firmaResp = urlFirma(inspeccion.responsible_signature);
     const firmaAlm = urlFirma(inspeccion.warehouse_manager_signature);
+    const nombreEquipo = (inspeccion.equipo?.name ?? "").toUpperCase();
+
     return (
         <div className="list-grid">
             <header>
@@ -100,41 +148,42 @@ function MostrarInspeccionEquipo() {
                     descripcion="Resumen del formulario diligenciado."
                 />
             </header>
+
             <div className="btn-container">
                 <BotonLink
-                    link={`/equipment/${id}/inspection/complete`}
+                    link={`/equipment/${equipmentId}/inspection/show`}
+                    clase="btn-2"
+                    icono="fa-solid fa-list"
+                    texto="Todas las inspecciones"
+                />
+                <BotonLink
+                    link={`/equipment/${equipmentId}/inspection/complete`}
                     clase="btn-2"
                     icono="fa-solid fa-plus"
                     texto="Nueva inspección"
                 />
-                <Boton
-                    clase="btn-azul"
-                    icono="fa-solid fa-print"
-                    texto="Imprimir"
-                />
+                <Boton clase="btn-azul" icono="fa-solid fa-print" texto="Imprimir" onClick={() => window.print()} />
             </div>
+
             <div className="table-responsive">
                 <table className="form">
                     <tbody>
                         <tr>
-                            <td rowSpan="3" >
+                            <td rowSpan="3">
                                 <img className="logoSenaFooter" src="/src/assets/img/logo-sena-blanco.png" alt="SENA" />
                             </td>
-                            <td rowSpan="3" >
-                                    INSPECCIÓN EQUIPO SOLDADURA
-                            </td>
-                            <td ><strong>FORMATO</strong> {FORMATO.codigo}</td>
+                            <td rowSpan="3">INSPECCIÓN {nombreEquipo}</td>
+                            <td><strong>FORMATO</strong> {FORMATO.codigo}</td>
                         </tr>
                         <tr>
-                            <td ><strong>VERSIÓN</strong> {FORMATO.version}</td>
+                            <td><strong>VERSIÓN</strong> {FORMATO.version}</td>
                         </tr>
                         <tr>
-                            <td >
-                                <strong>FECHA DE REALIZACIÓN:</strong> {FORMATO.fecha}
-                            </td>
+                            <td><strong>FECHA DE REALIZACIÓN:</strong> {FORMATO.fecha}</td>
                         </tr>
                     </tbody>
                 </table>
+
                 <table className="form">
                     <tbody>
                         <tr>
@@ -154,13 +203,14 @@ function MostrarInspeccionEquipo() {
                         </tr>
                     </tbody>
                 </table>
+
                 <table className="form">
                     <thead>
                         <tr>
                             <th>ASPECTOS A EVALUAR</th>
-                            <th >SI</th>
-                            <th >NO</th>
-                            <th >N/A</th>
+                            <th>SI</th>
+                            <th>NO</th>
+                            <th>N/A</th>
                             <th>OBSERVACIONES</th>
                         </tr>
                     </thead>
@@ -176,6 +226,7 @@ function MostrarInspeccionEquipo() {
                         ))}
                     </tbody>
                 </table>
+
                 <table className="form">
                     <tbody>
                         <tr>
@@ -205,6 +256,14 @@ function MostrarInspeccionEquipo() {
             </div>
         </div>
     );
+}
+
+function MostrarInspeccionEquipo() {
+    const { id, inspectionId } = useParams();
+    
+    return inspectionId
+        ? <FormatoInspeccion equipmentId={id} inspectionId={inspectionId} />
+        : <ListaInspecciones equipmentId={id} />;
 }
 
 export default MostrarInspeccionEquipo
