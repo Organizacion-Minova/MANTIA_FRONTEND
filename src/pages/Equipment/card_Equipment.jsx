@@ -45,31 +45,86 @@ export function CardEquipment() {
                 mostrarHistorial={true}
             />
             <section className="cards">
-                <div className="card">
-                    <div className="equipment-image-container">
-                        <img
-                            src={obtenerUrlImagen(equipo.image)}
-                            alt="Imagen del equipo"
-                            onError={(e) => {
-                                e.currentTarget.onerror = null;
-                                e.currentTarget.src = imagenPorDefecto;
-                            }}
-                        />
-                    </div>
-                </div>
-            
-                <div className="card" style={{ listStyle: "none", fontSize: "1.25rem" }}> 
-                    <li><strong>CÓDIGO:</strong><span>{equipo.code}</span></li>
-                    <li><strong>NOMBRE:</strong><span>{equipo.name}</span></li>
-                    <li><strong>MARCA:</strong> <span>{equipo.brand}</span></li>
-                    <li><strong>MODELO:</strong> <span>{equipo.model}</span></li>
-                    <li><strong>NÚMERO DE SERIE:</strong> <span>{equipo.serial_number}</span></li>
-                    <li><strong>RESPONSABLE:</strong> <span>{equipo.responsible}</span></li>
-                    <li><strong>UBICACIÓN:</strong> <span>{equipo.ubicacion.name}</span></li>
-                    <li><strong>ESTADO:</strong> <span>{equipo.status="active"?"Activo":"Inactivo"}</span></li>
-                    <li><strong>FECHA DE REGISTRO:</strong> <span>{equipo.registration_date}</span></li>
-                    <li><strong>DESCRIPCIÓN:</strong> <span>{equipo.description}</span></li>
-                </div>
+                    <table className="form">
+                        <tbody>
+                            <tr>
+                                <td colSpan="2" rowSpan="4">
+                                    <img className="logoSena" src="/src/assets/img/sena-logo-naranja.png" alt="SENA" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colSpan="2">SISTEMA DE GESTION DE SEGURIDAD Y SALUD EN EL TRABAJO</td>
+                                <td>CODIGO:</td>
+                                <td>FT-SST 002</td>
+                            </tr>
+                            <tr>
+                                <td colSpan="2">PROGRAMA DE MANTENIMIENTO</td>
+                                <td>VERSION:</td>
+                                <td>1.0</td>
+                            </tr>
+                            <tr>
+                                <td colSpan="2">FICHA TECNICA {equipo.name}</td>
+                                <td>FECHA:</td>
+                                <td>8/09/2021</td>
+                            </tr>
+                            <tr>
+                                <td colSpan="6">IMAGEN:</td>
+                            </tr>
+                            <tr>
+                                <td colSpan="6">
+                                    <div className="equipment-image-container">
+                                        <img
+                                            src={obtenerUrlImagen(equipo.image)}
+                                            alt="Imagen del equipo"
+                                            onError={(e) => {
+                                                e.currentTarget.onerror = null;
+                                                e.currentTarget.src = imagenPorDefecto;
+                                            }}
+                                        />
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>CÓDIGO:</td>
+                                <td>{equipo.code}</td>
+                                <td>NOMBRE:</td>
+                                <td>{equipo.name}</td>
+                                <td>Placa:</td>
+                                <td>{equipo.plate}</td>
+                            </tr>
+                            <tr>
+                                <td>MODELO:</td>
+                                <td>{equipo.model}</td>
+                                <td>NÚMERO DE SERIE:</td>
+                                <td>{equipo.serial_number}</td>
+                                <td>FECHA DE INICIO:</td>
+                                <td>{equipo.start_up_date}</td>
+                            </tr>
+                            <tr>
+                                <td>UBICACIÓN:</td>
+                                <td>{equipo.ubicacion.name}</td>
+                                <td>RESPONSABLE:</td>
+                                <td>{equipo.responsible}</td>
+                                <td>ESTADO:</td>
+                                <td>{equipo.status="active"?"Activo":"Inactivo"}</td>
+                            </tr>
+                            <tr>
+                                <td>CONSUMIBLE:</td>
+                                <td>{equipo.fuel}</td>
+                                <td>POTENCIA:</td>
+                                <td>{equipo.power}</td>
+                                <td>VOLTAJE:</td>
+                                <td>{equipo.voltage}</td>
+                            </tr>
+                            <tr>
+                                <td colSpan="6"> DESCRIPCION: </td>
+                            </tr>
+                            <tr>
+                                <td colSpan="6">{equipo.description}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
             </section>
                 <div className="btn-container" >
                     <BotonLink

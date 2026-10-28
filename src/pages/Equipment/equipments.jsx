@@ -24,15 +24,19 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
     const esEdicion = equiposEditar != null;
     const [codigo, setCodigo] = useState(equiposEditar?.code || "");
     const [nombre, setNombre] = useState(equiposEditar?.name || "");
+    const [modelo, setModelo] = useState(equiposEditar?.model || "");
     const [descripcion, setDescripcion] = useState(equiposEditar?.description || "");
     const [serie, setSerie] = useState(equiposEditar?.serial_number || "");
     const [responsable, setResponsable] = useState(equiposEditar?.responsible || "");
     const [estado, setEstado] = useState(equiposEditar?.status || "active");
-    const [fechaIngreso, setFechaIngreso] = useState(equiposEditar?.registration_date || "");
+    const [fechaIngreso, setFechaIngreso] = useState(equiposEditar?.start_up_date || "");
     const [marca, setMarca] = useState(equiposEditar?.brand || "");
+    const [placa, setPlaca] = useState(equiposEditar?.plate || "");
+    const [combustible, setCombustible] = useState(equiposEditar?.fuel || "");
+    const [potencia, setPotencia] = useState(equiposEditar?.power || "");
+    const [voltaje, setVoltaje] = useState(equiposEditar?.voltage || "");
     const [locationid, setLocationid] = useState(equiposEditar?.ubicacion?.id || equiposEditar?.location?.id || "");
     const [archivoImagen, setArchivoImagen] = useState(null);
-    const [modelo, setModelo] = useState(equiposEditar?.model || "");
     const [ubicaciones, setUbicaciones] = useState([]);
     const [errores, setErrores] = useState({});
     const [errorImagen, setErrorImagen] = useState("");
@@ -92,6 +96,7 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
             "Descripción": descripcion,
             "Número de serie": serie,
             "Marca": marca,
+            "Placa": placa,
             "Fecha de ingreso": fechaIngreso,
             "Ubicación": locationid,
             "Responsable": responsable,
@@ -125,15 +130,20 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
             const sincambios=
                 codigo === equiposEditar.code &&
                 nombre === equiposEditar.name &&
-                descripcion === equiposEditar.description &&
+                modelo === equiposEditar.model &&
                 serie === equiposEditar.serial_number &&
                 estado === equiposEditar.status &&
                 responsable === equiposEditar.responsible &&
                 fechaIngreso === equiposEditar.registration_date &&
                 marca === equiposEditar.brand &&
-                locationid === (equiposEditar.location?.id || "") &&
-                !archivoImagen &&
-                modelo === equiposEditar.model;
+                combustible === equiposEditar.fuel &&
+                placa === equiposEditar.plate &&
+                potencia === equiposEditar.power &&
+                voltaje === equiposEditar.voltage &&
+                locationid === (equiposEditar.location?.id || "") && 
+                descripcion === equiposEditar.description &&
+                !archivoImagen 
+                
             if (sincambios){
                 onCancel();
                 return;
@@ -142,14 +152,19 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
         const datos = new FormData();
             datos.append("code", codigo);
             datos.append("name", nombre);
-            datos.append("description", descripcion);
+            datos.append("model", modelo);
             datos.append("serial_number", serie);
             datos.append("responsible", responsable);
             datos.append("status", estado);
-            datos.append("registration_date", fechaIngreso);
+            datos.append("start_up_date", fechaIngreso);
             datos.append("brand", marca);
+            datos.append("plate", placa);
+            datos.append("fuel", combustible);
+            datos.append("power", potencia);
+            datos.append("voltage", voltaje);
             datos.append("location_id", locationid);
-            datos.append("model", modelo);
+            datos.append("description", descripcion);
+            
             if (archivoImagen) datos.append("image", archivoImagen);
         try {
             if (esEdicion){
@@ -187,15 +202,7 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
             onSubmit={handleSubmit}
             noValidate
         >
-            {Object.keys(errores).length > 0 && (
-                <div className="col-span-6" role="alert">
-                    {Object.entries(errores).map(([campo, mensajes]) => (
-                        <p key={campo}>
-                            {campo}: {Array.isArray(mensajes) ? mensajes.join(" ") : String(mensajes)}
-                        </p>
-                    ))}
-                </div>
-            )}
+
             <div className="col-span-3">
                 <Text
                     label="Código:"
@@ -223,15 +230,14 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
                     required
                 />
             </div>
-            <div className="col-span-6">
-                <Textarea
-                    label="Descripcion:"
-                    id="descripcion"
-                    name="descripcion"
-                    placeholder="Descripcion del equipo"
-                    rows="4"
-                    value={descripcion}
-                    onChange={(e) => setDescripcion(capitalizarPrimeraLetra(e.target.value))}
+            <div className="col-span-3">
+                <Text
+                    label="Modelo:"
+                    id="modelo"
+                    name="modelo"
+                    placeholder="Modelo de la máquina"
+                    value={modelo}
+                    onChange={(e) => setModelo(capitalizarPrimeraLetra(e.target.value))}
                     required
                 />
             </div>
@@ -243,38 +249,6 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
                     placeholder="Ingrese el número de serie del equipo"
                     value={serie}
                     onChange={(e) => setSerie(e.target.value)}
-                    required
-                />
-            </div>
-            <div className="col-span-3">
-                <Text
-                    label="Marca:"
-                    id="marca"
-                    name="marca"
-                    placeholder="Ingrese la marca del equipo"
-                    value={marca}
-                    onChange={(e) => setMarca(e.target.value)}
-                    required
-                />
-            </div>
-            <div className="col-span-3">
-                <Date
-                    label="Fecha ingreso:"
-                    id="fechaingreso"
-                    name="fechaingreso"
-                    value={fechaIngreso}
-                    onChange={(e) => setFechaIngreso(e.target.value)}
-                    required
-                />
-            </div>
-            <div className="col-span-3">
-                <Select
-                    label="Ubicacion: "
-                    id="ubicacion"
-                    name="ubicacion"
-                    value={locationid}
-                    onChange={(e) => setLocationid(e.target.value)}
-                    opciones={opcionesUbicaciones}
                     required
                 />
             </div>
@@ -294,17 +268,81 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
                     required
                 />
             </div>
+            
+            <div className="col-span-3">
+                <Date
+                    label="Fecha de inicio:"
+                    id="fechainicio"
+                    name="fechainicio"
+                    value={fechaIngreso}
+                    onChange={(e) => setFechaIngreso(e.target.value)}
+                />
+            </div>
             <div className="col-span-3">
                 <Text
-                    label="Modelo:"
-                    id="modelo"
-                    name="modelo"
-                    placeholder="Modelo de la máquina"
-                    value={modelo}
-                    onChange={(e) => setModelo(capitalizarPrimeraLetra(e.target.value))}
+                    label="Marca:"
+                    id="marca"
+                    name="marca"
+                    placeholder="Ingrese la marca del equipo"
+                    value={marca}
+                    onChange={(e) => setMarca(e.target.value)}
                     required
                 />
             </div>
+            <div className="col-span-3">
+                <Text
+                    label="Placa:"
+                    id="placa"
+                    name="placa"
+                    placeholder="Ingrese la placa del equipo"
+                    value={placa}
+                    onChange={(e) => setPlaca(e.target.value)}
+                    required
+                />
+            </div>
+            <div className="col-span-3">
+                <Text
+                    label="Combustible:"
+                    id="combustible"
+                    name="combustible"
+                    placeholder="Ingrese el combustible del equipo"
+                    value={combustible}
+                    onChange={(e) => setCombustible(e.target.value)}
+
+                />
+            </div>
+            <div className="col-span-3">
+                <Text
+                    label="Potencia:"
+                    id="potencia"
+                    name="potencia"
+                    placeholder="Ingrese la potencia del equipo"
+                    value={potencia}
+                    onChange={(e) => setPotencia(e.target.value)}
+                />
+            </div>
+            <div className="col-span-3">
+                <Text
+                    label="Voltaje:"
+                    id="voltaje"
+                    name="voltaje"
+                    placeholder="Ingrese el voltaje del equipo"
+                    value={voltaje}
+                    onChange={(e) => setVoltaje(e.target.value)}
+                />
+            </div>
+            <div className="col-span-3">
+                <Select
+                    label="Ubicacion: "
+                    id="ubicacion"
+                    name="ubicacion"
+                    value={locationid}
+                    onChange={(e) => setLocationid(e.target.value)}
+                    opciones={opcionesUbicaciones}
+                    required
+                />
+            </div>
+            
             {esEdicion && (
                 <div className="col-span-6">
                     <Select
@@ -336,6 +374,18 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
                     previewLabel={archivoImagen?.name || "Imagen actual"}
                     error={errorImagen}
                     required={!esEdicion && !archivoImagen}
+                />
+            </div>
+            <div className="col-span-6">
+                <Textarea
+                    label="Descripcion:"
+                    id="descripcion"
+                    name="descripcion"
+                    placeholder="Descripcion del equipo"
+                    rows="4"
+                    value={descripcion}
+                    onChange={(e) => setDescripcion(capitalizarPrimeraLetra(e.target.value))}
+                    required
                 />
             </div>
         </Form>
