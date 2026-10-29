@@ -3,8 +3,8 @@ import { useAuth } from "../../context/AuthContext.jsx";
 
 const navLinks = [
   { texto: "Inicio", ruta: "/" },
-  { texto: "Acerca de", ruta: "/about" },
-  { texto: "Ayuda", ruta: "/help" },
+  // { texto: "Acerca de", ruta: "/about" },
+  // { texto: "Ayuda", ruta: "/help" },
 ];
 
 const loginIcon =

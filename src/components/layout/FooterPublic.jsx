@@ -87,10 +87,16 @@ export default function FooterPublic() {
         </div>
 
         <div className="mt-footer-col">
-          <h4>Términos y condiciones</h4>
+          <h4>Términos y informacion</h4>
           <ul className="mt-footer-linklist">
             <li>
               <Link to="/terms">Términos de uso</Link>
+            </li>
+            <li>
+              <Link to="/about">Acerca de</Link>
+            </li>
+            <li>
+             <Link to="/help">Ayuda</Link>
             </li>
           </ul>
         </div>
