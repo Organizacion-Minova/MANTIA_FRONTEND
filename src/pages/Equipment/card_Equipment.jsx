@@ -141,14 +141,14 @@ export function CardEquipment() {
                         icono="fa-solid fa-file-excel"
                         texto="Exportar Excel"
                         onClick={() => exportarFichaTecnicaEquipoExcelUnitario(equipo.id, equipo.name)}
-                        titulo="Exportar en un archivo de Excel"
+                        titulo="Exportar ficha técnica en un archivo de Excel"
                     />
                     <Boton
                         clase="btn-azul"
                         icono="fa-solid fa-file-pdf"
                         texto="Exportar PDF"
                         onClick={() => exportarFichaTecnicaEquipoPdfUnitario(equipo.id, equipo.name)}
-                        titulo="Exportar en un archivo PDF"
+                        titulo="Exportar ficha técnica en un archivo PDF"
                     />
                     <BotonLink
                         link="/equipment"

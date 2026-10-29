@@ -9,7 +9,7 @@ import { exportarGasExcelRango, exportarGasPdfRango } from "../../api/gasMeasure
 import { useToast } from "../../context/ToastContext.jsx";
 import { Form, Date as InputDate } from "../../components/common/forms";
 
-function RangoFormModal({ tipo, onCancel, onSuccess }) {
+function RangoFormModal({ tipo, onCancel, onSuccess, mediciones }) {
     const [formData, setFormData] = useState({ fecha_inicio: '', fecha_fin: '' });
     const { advertencia } = useToast();
 
@@ -37,6 +37,16 @@ function RangoFormModal({ tipo, onCancel, onSuccess }) {
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
         if (diffDays > 31) {
             advertencia("El rango máximo permitido es de 31 días.");
+            return;
+        }
+
+        const existeRegistroEnRango = mediciones.some(m => {
+            const fechaMedicion = m.measurement_date; 
+            return fechaMedicion >= fecha_inicio && fechaMedicion <= fecha_fin;
+        });
+
+        if (!existeRegistroEnRango) {
+            advertencia("No se encontraron registros de medición de gases en el rango de fechas seleccionado.");
             return;
         }
 
@@ -174,7 +184,7 @@ function Gases() {
                                     <td>{m.measurement_date.split('-').reverse().join('/')}</td>
                                     <td>{m.measurement_time?.slice(0, 5)}</td>
                                     <td>
-                                     
+                                        <div className="btn-container">
                                             <BotonLink
                                                 link={`/gases/gas_format/${m.id}`}
                                                 clase="btn-azul"
@@ -187,7 +197,7 @@ function Gases() {
                                                 onClick={() => handleEliminar(m.id)}
                                                 titulo="Eliminar registro"
                                             />
-                                        
+                                        </div>
                                     </td>
                                 </tr>
                             ))
@@ -232,10 +242,10 @@ function Gases() {
                         titulo="Ir a la página de Comparación de gases"
                     />
                 </div>
-
                 {showRangoModal && (
                     <RangoFormModal
                         tipo={showRangoModal}
+                        mediciones={mediciones} 
                         onCancel={() => setShowRangoModal(null)}
                         onSuccess={() => setShowRangoModal(null)}
                     />
