@@ -23,10 +23,20 @@ const camposBusqueda = [...gases.map((g) => g.key), 'responsible_name', 'observa
 
 const diligenciada = (detalle) => {
     if (!detalle) return false;
-    return gases.some((g) => {
+        const gasesCompletos = gases.every((g) => {
         const val = detalle[g.key];
         return val !== null && val !== undefined && String(val).trim() !== "";
     });
+
+    const responsableCompleto = detalle.responsible_name !== null && 
+                                detalle.responsible_name !== undefined && 
+                                String(detalle.responsible_name).trim() !== "";
+
+    const observacionCompleta = detalle.observation !== null && 
+                                detalle.observation !== undefined && 
+                                String(detalle.observation).trim() !== "";
+
+    return gasesCompletos && responsableCompleto && observacionCompleta;
 };
 
 const regex_responsable = /^[\p{L}\s.'\-]+$/u;
