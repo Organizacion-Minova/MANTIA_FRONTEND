@@ -157,3 +157,8 @@ export function validarGroserias(campos) {
 export function capitalizarPrimeraLetra(texto) {
     return String(texto ?? "").replace(/\p{L}/u, (letra) => letra.toLocaleUpperCase("es"));
 }
+
+export function formatearFechaCorta(fecha) {
+    if (!fecha) return "—";
+    return new Date(`${fecha.slice(0, 10)}T00:00:00`).toLocaleDateString("es-CO");
+}
