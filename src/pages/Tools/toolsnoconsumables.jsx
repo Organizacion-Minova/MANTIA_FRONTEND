@@ -32,7 +32,7 @@ function Formulario({onCancel,onGuardado, herramientaEditar}){
                         setCategoria(
                             lista.filter((c) => Number(c.category_group_id) === 2)
                         );
-            })            .catch((error) => console.error("Error al traer categorias:", error));
+            })            .catch((error) => console.error("Error al traer categorías:", error));
     }, []);
 
     const handleSubmit = async (e) =>{
@@ -133,12 +133,12 @@ function Formulario({onCancel,onGuardado, herramientaEditar}){
             </div>
             <div className="col-span-3">
                 <Select
-                    label="Categoria: "
+                    label="Categoría: "
                     id="categoria"
-                    name="categoria"
+                    name="categoría"
                     value={categoryId}
                     onChange={(e) => setCategoryId(e.target.value)}
-                    opciones={[{valor:"", etiqueta:"Seleccione una categoria"},...categoria.map((c) => ({ valor: c.id, etiqueta: c.name }))]}
+                    opciones={[{valor:"", etiqueta:"Seleccione una categoría"},...categoria.map((c) => ({ valor: c.id, etiqueta: c.name }))]}
                     required
                 />
             </div>
@@ -195,7 +195,7 @@ function Formulario({onCancel,onGuardado, herramientaEditar}){
             </div>
             <div className="col-span-3">
                 <Select
-                    label="Ubicacion: "
+                    label="Ubicación: "
                     id="ubicacion"
                     name="ubicacion"
                     value={locationId}
@@ -244,7 +244,7 @@ function ToolsNoConsumables(){
                 String(herramienta.category_id),
                 {
                     id: herramienta.category_id,
-                    name: herramienta.categoria?.name || `Categoria ${herramienta.category_id}`,
+                    name: herramienta.categoria?.name || `Categoría ${herramienta.category_id}`,
                 }
             ])
     ).values()]
@@ -328,11 +328,11 @@ function ToolsNoConsumables(){
                             />
                             <Select
                                 id="filtro-categoria"
-                                name="filtro-categoria"
+                                name="filtro-categoría"
                                 value={filtrosEspeciales.category_id || ""}
                                 onChange={(e) => setFiltroEspecial("category_id", e.target.value)}
                                 opciones={[
-                                    { valor: "", etiqueta: "Todas las categorias" },
+                                    { valor: "", etiqueta: "Todas las categorías" },
                                     ...categoriasDisponibles.map((c) => ({
                                         valor: c.id,
                                         etiqueta: c.name,
@@ -348,10 +348,10 @@ function ToolsNoConsumables(){
                     <thead>
                         <tr>
                             <th>Nombre</th>
-                            <th>Condicion</th>
+                            <th>Condición</th>
                             <th>Cantidad</th>
-                            <th>Ubicacion</th>
-                            <th>Categoria</th>
+                            <th>Ubicación</th>
+                            <th>Categoría</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -412,8 +412,8 @@ function ToolsNoConsumables(){
                         link="/noconsumables/tools/types"
                         clase="btn-2"
                         icono="fa-solid fa-list"
-                        texto="Ir a las categorias de las herramientas no consumibles"
-                        titulo="Ir a las categorias de las herramientas no consumibles"
+                        texto="Ir a las categorías de las herramientas no consumibles"
+                        titulo="Ir a las categorías de las herramientas no consumibles"
                     />
                 </div>
                 <Paginacion

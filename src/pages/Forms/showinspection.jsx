@@ -12,7 +12,7 @@ const datosGeneralesEjemplo = [
 
 const preguntasEjemplo = [
     { id: 1, texto: "Tornillería y tuercas", respuesta: "SI", observacion: "" },
-    { id: 2, texto: "Revisión del carcasa o estructura metálica", respuesta: "NO", observacion: "Se observa corrosión leve en la base" },
+    { id: 2, texto: "Revisión de la carcasa o estructura metálica", respuesta: "NO", observacion: "Se observa corrosión leve en la base" },
     { id: 3, texto: "Voltaje del motor", respuesta: "N/A", observacion: "" },
 ];
 
@@ -52,7 +52,7 @@ function MostrarInspeccion() {
                         ))}
                         <tr>
                             <th colSpan="2">Pregunta</th>
-                            <th>SI</th>
+                            <th>SÍ</th>
                             <th>NO</th>
                             <th>N/A</th>
                             <th>Observaciones</th>

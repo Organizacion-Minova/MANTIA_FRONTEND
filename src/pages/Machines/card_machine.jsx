@@ -63,7 +63,7 @@ export function CardMachine() {
                             <li><strong>CÓDIGO PROGRAMA:</strong> <span>{maquina.code}</span></li>
                             <li><strong>MARCA:</strong> <span id="eb_marca">{maquina.brand}</span></li>
                             <li><strong>MODELO:</strong> <span id="eb_modelo">{maquina.model}</span></li>
-                            <li><strong>GARANTIA:</strong> <span id="eb_garantia">{maquina.warranty}</span></li>
+                            <li><strong>GARANTÍA:</strong> <span id="eb_garantia">{maquina.warranty}</span></li>
                             <li><strong>USO:</strong> <span id="eb_uso"> {maquina.machine_usage} </span></li>
 
                     </div>
@@ -71,10 +71,10 @@ export function CardMachine() {
                 <section className="cards2">
                     <div className="card" style={{ listStyle: 'none', fontSize: '1.25rem' }}>        
                             <li><strong>EMPRESA:</strong> <span id="eb_empresaPrincipal">Sena Centro Minero</span></li>
-                            <li><strong>LUGAR DE TRABAJO:</strong> <span id="eb_lugarTrabajo">Mina didactica</span></li>
+                            <li><strong>LUGAR DE TRABAJO:</strong> <span id="eb_lugarTrabajo">Mina didáctica</span></li>
                             <li><strong>UBICACIÓN:</strong> <span id="eb_ubicacionGeneral">{maquina.location}</span></li>
                             <li><strong>CIUDAD:</strong> <span id="eb_ciudad">Sogamoso</span></li>
-                            <li><strong>FECHA ADQUISICION:</strong> <span id="eb_fecha">{maquina.acquisition_date}</span></li>
+                            <li><strong>FECHA ADQUISICIÓN:</strong> <span id="eb_fecha">{maquina.acquisition_date}</span></li>
                             <li><strong>EQUIPO EN OPERACIÓN:</strong> <span id="eb_equipoOperacion">{maquina.in_operation}</span></li>
                             <li><strong>ESTADO:</strong> <span id="eb_estado">{maquina.status==="active"?"Activo":maquina.status==="inactive"?"Inactivo":maquina.status==="maintenance"?"En mantenimiento":"Desconocido"}</span></li>
                         </div>
@@ -113,4 +113,3 @@ export function CardMachine() {
         </div>
     )
 }
-

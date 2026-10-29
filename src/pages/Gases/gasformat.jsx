@@ -381,7 +381,7 @@ export function FormatoGases() {
                             </td>
                             <td colSpan="4">
                                 <Dropzone
-                                    label="Vo. Bo. LIDER SST:"
+                                    label="Vo. Bo. LÍDER SST:"
                                     id="firmaResponsable"
                                     name="firmaResponsable"
                                     ayuda="Formatos de imagen, hasta 2 MB"

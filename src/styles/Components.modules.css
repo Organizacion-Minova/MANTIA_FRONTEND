@@ -94,40 +94,6 @@ main.cerrado{
     display: flex;
     gap: 15px;
     justify-content: space-between;
-
-}
-
-.roles-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid var(--borde-contenedor);
-}
-
-.roles-toolbar-title {
-    margin: 0;
-    color: var(--texto);
-    font-size: 1.1rem;
-}
-
-.roles-toolbar-description {
-    margin: 0.25rem 0 0;
-    color: var(--texto2);
-    font-size: 0.875rem;
-}
-
-@media (max-width: 990px) {
-    .roles-toolbar {
-        align-items: stretch;
-        flex-direction: column;
-    }
-
-    .roles-toolbar .btn-azul {
-        width: 100%;
-    }
 }
 
 /* Este boton se usa para la opcion mas probable a escoger por el usuario */

@@ -85,6 +85,13 @@ export const RUTAS_HISTORIAL = [
         path: "/alerts",
         titulo: "Alertas",
     },
+       {
+        path: "/admin",
+        titulo: "Panel de administración",
+    },
+   
+    
+    
 ];
 
 export function obtenerInterfazHistorial(pathname) {
