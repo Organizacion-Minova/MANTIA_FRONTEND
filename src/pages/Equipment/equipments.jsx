@@ -10,6 +10,7 @@ import { useSearch } from "../../hooks/useSearch";
 import api from "../../api/axios";
 import { capitalizarPrimeraLetra, sinCaracteresEspeciales, validarCaracteresEspeciales, validarGroserias } from "../../components/common/Validations";
 import { validarCamposRequeridos } from "../../components/common/requiredFields";
+import { useToast } from "../../context/ToastContext";
 
 function obtenerUrlImagen(imagen) {
     if (!imagen) return null;
@@ -22,6 +23,7 @@ function obtenerUrlImagen(imagen) {
 
 function Formulario({onCancel, onGuardado, equiposEditar}){
     const esEdicion = equiposEditar != null;
+    const { advertencia } = useToast();
     const [codigo, setCodigo] = useState(equiposEditar?.code || "");
     const [nombre, setNombre] = useState(equiposEditar?.name || "");
     const [modelo, setModelo] = useState(equiposEditar?.model || "");
@@ -107,11 +109,22 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
             if (imagenFaltante) setErrorImagen("Debe seleccionar una imagen.");
             return;
         }
+        const erroresGroserias = validarGroserias({
+            name: nombre,
+            description: descripcion,
+            responsible: responsable,
+            model: modelo,
+        });
+        if (Object.keys(erroresGroserias).length > 0) {
+            advertencia("Se han detectado palabras inapropiadas en los campos: " + Object.keys(erroresGroserias).join(", "));
+            return;
+        }
 
         const erroresLocales = validarCaracteresEspeciales({
             name: nombre,
             responsible: responsable,
         });
+        
         Object.assign(erroresLocales, validarGroserias({
             name: nombre,
             description: descripcion,

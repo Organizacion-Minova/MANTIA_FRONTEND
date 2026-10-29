@@ -7,8 +7,10 @@ import { GetCategoryMachine ,GetMachine, CreateMachine, UpdateMachine, DeleteMac
 import { obtenerUbicaciones } from "../../api/location";
 import { usePaginacion,Paginacion } from "../../components/common/Paginacion";
 import { useSearch } from "../../hooks/useSearch";
+import { useRolesResponsables } from "../../hooks/useRolesResponsables";
 import { capitalizarPrimeraLetra, sinCaracteresEspeciales, validarCaracteresEspeciales, validarGroserias } from "../../components/common/Validations";
 import { validarCamposRequeridos } from "../../components/common/requiredFields";
+import { useToast } from "../../context/ToastContext";
 
 const valorSelect = (valor) => (valor == null ? "" : String(valor));
 const valorOperacion = (valor) => {
@@ -19,6 +21,7 @@ const valorOperacion = (valor) => {
 
 function Formulario({onCancel, onGuardado, maquinaEditar}){
     const esEdicion=maquinaEditar!=null;
+    const { advertencia } = useToast();
     const [codigo, setCodigo] = useState(maquinaEditar?.code || "");
     const [nombre, setNombre] = useState(maquinaEditar?.name || "");
     const [modelo, setModelo] = useState(maquinaEditar?.model || "");
@@ -42,6 +45,7 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
     const [errores, setErrores] = useState({});
     const [mensajeError, setMensajeError] = useState("");
     const imagenActual = maquinaEditar?.image || null;
+    const opcionesResponsable = useRolesResponsables(maquinaEditar?.responsible);
 
     useEffect(()=>{
         GetCategoryMachine()
@@ -111,6 +115,18 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
             ...(imagenFaltante ? { "Imagen": "" } : {}),
         })) {
             if (imagenFaltante) setErrorImagen("Debe seleccionar una imagen.");
+            return;
+        }
+
+        const erroresGroserias = validarGroserias({
+            name: nombre,
+            model: modelo,
+            machine_usage: usoMaquina,
+            responsible: responsable,
+            characteristics: caracteristicas,
+        });
+        if (Object.keys(erroresGroserias).length > 0) {
+            advertencia("Se han detectado palabras inapropiadas en los campos: " + Object.keys(erroresGroserias).join(", "));
             return;
         }
 
@@ -292,13 +308,13 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
                 />
             </div>
             <div className="col-span-3">
-                <Text
+                <Select
                     label="Responsable:"
                     id="responsable"
                     name="responsable"
-                    placeholder="Ingresa el responsable"
                     value={responsable}
-                    onChange={(e) => setResponsable(capitalizarPrimeraLetra(e.target.value))}
+                    onChange={(e) => setResponsable(e.target.value)}
+                    opciones={opcionesResponsable}
                     required
                 />
             </div>
