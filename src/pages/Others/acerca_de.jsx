@@ -435,11 +435,11 @@ function AcercaDe() {
                         texto="MantiaCM@gmail.com"
                     />
 
-                    <FilaContacto
+                    {/* <FilaContacto
                         icono="fa-solid fa-phone"
                         titulo="Mesa de ayuda"
                         texto="320 5783729 (SENA)"
-                    />
+                    /> */}
 
                     <FilaContacto
                         icono="fa-solid fa-location-dot"
@@ -458,7 +458,7 @@ function AcercaDe() {
             </a> */}
 
                 <Link to="/help">
-                    <button className="btn-2">
+                    <button className="btn-2" title="ir a ayuda">
                         <i className="fa-solid fa-circle-question"></i>
                         Ir a Ayuda
                     </button>

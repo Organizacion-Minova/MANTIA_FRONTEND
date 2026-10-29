@@ -56,16 +56,16 @@ export function CardEquipment() {
                             </tr>
                             <tr>
                                 <td colSpan="2">SISTEMA DE GESTIÓN DE SEGURIDAD Y SALUD EN EL TRABAJO</td>
-                                <td>CODIGO:</td>
+                                <td>CÓDIGO:</td>
                                 <td>FT-SST 002</td>
                             </tr>
                             <tr>
                                 <td colSpan="2">PROGRAMA DE MANTENIMIENTO</td>
-                                <td>VERSION:</td>
+                                <td>VERSIÓN:</td>
                                 <td>1.0</td>
                             </tr>
                             <tr>
-                                <td colSpan="2">FICHA TECNICA {equipo.name}</td>
+                                <td colSpan="2">FICHA TÉCNICA {equipo.name}</td>
                                 <td>FECHA:</td>
                                 <td>8/09/2021</td>
                             </tr>
@@ -119,7 +119,7 @@ export function CardEquipment() {
                                 <td>{equipo.voltage}</td>
                             </tr>
                             <tr>
-                                <td colSpan="6"> DESCRIPCION: </td>
+                                <td colSpan="6"> DESCRIPCIÓN: </td>
                             </tr>
                             <tr>
                                 <td colSpan="6">{equipo.description}</td>
@@ -134,7 +134,7 @@ export function CardEquipment() {
                         link={`/equipment/${id}/inspection`}
                         clase="btn-azul"
                         icono="fas fa-wind"
-                        texto="Inspeccion"
+                        texto="Inspección"
                     />
                     <Boton
                         clase="btn-azul"

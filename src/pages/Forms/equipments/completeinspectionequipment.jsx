@@ -165,7 +165,7 @@ function LlenarInspeccionEquipo() {
         <div>
             <PageWelcome
                 titulo="LLENAR INSPECCIÓN"
-                descripcion="Completa el formato de inspeccion de la maquina."
+                descripcion="Completa el formato de inspección de la máquina."
             />
             <form onSubmit={handleSubmit}>
                 <div className="card" style={{ display: 'grid', gridTemplateColumns: 'repeat(6, minmax(0, 1fr))', gap: '16px' }}>
@@ -240,7 +240,7 @@ function LlenarInspeccionEquipo() {
                             name={`pregunta-${pregunta.id}`}
                             value={respuestas[pregunta.id]?.valor || ""}
                             onChange={(e) => actualizarRespuesta(pregunta.id, "valor", e.target.value)}
-                            opciones={["SI", "NO", "N/A"]}
+                            opciones={[{ valor: "SI", etiqueta: "SÍ" }, "NO", "N/A"]}
                         />
                         <br />
 

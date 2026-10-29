@@ -362,7 +362,7 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
             </div>
             <div className="col-span-3">
                 <Select
-                    label="Ubicacion: "
+                    label="Ubicación: "
                     id="ubicacion"
                     name="ubicacion"
                     value={locationid}
@@ -407,10 +407,10 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
             </div>
             <div className="col-span-6">
                 <Textarea
-                    label="Descripcion:"
+                    label="Descripción:"
                     id="descripcion"
                     name="descripcion"
-                    placeholder="Descripcion del equipo"
+                    placeholder="Descripción del equipo"
                     rows="4"
                     value={descripcion}
                     onChange={(e) => setDescripcion(capitalizarPrimeraLetra(e.target.value))}
@@ -567,7 +567,7 @@ function Equipos(){
                 <Boton
                     clase="btn-azul"
                     icono="fa-solid fa-plus"
-                    texto="Nueva Equipo"
+                    texto="Nuevo equipo"
                     onClick={handleAbrirCrear}
                     titulo="Agregar nuevo equipo"
 

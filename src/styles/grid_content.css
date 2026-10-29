@@ -417,3 +417,55 @@
     padding-top: 1rem;
   }
 }
+
+/* GRID DEL PANEL DE ADMINISTRACION */
+.administration-grid {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "bienvenida"
+    "admin-tabs"
+    "admin-content";
+  align-content: start;
+}
+
+.administration-grid > .bienvenida { grid-area: bienvenida; }
+.administration-grid > .admin-tabs {
+  grid-area: admin-tabs;
+  margin-bottom: 0 !important;
+}
+.administration-grid > .admin-content {
+  grid-area: admin-content;
+  min-width: 0;
+}
+.administration-grid > p { grid-area: admin-content; }
+
+.administration-grid .roles-actions {
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+@media (max-width: 991px) {
+  .administration-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "bienvenida"
+      "admin-tabs"
+      "admin-content";
+  }
+}
+
+@media (max-width: 990px) {
+  .administration-grid .admin-tabs {
+    align-items: stretch;
+  }
+
+  .administration-grid .admin-tabs > button {
+    flex: 1 1 10rem;
+    min-width: 0;
+  }
+
+  .administration-grid .roles-actions {
+    align-items: flex-start;
+  }
+}

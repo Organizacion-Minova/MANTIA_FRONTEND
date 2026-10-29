@@ -96,7 +96,7 @@ function Formulario({onCancel, onGuardado, registroEditar}){
         >
             <div className="col-span-3">
                 <Select
-                    label="Maquina:"
+                    label="Máquina:"
                     id="maquina" 
                     name="maquina"
                     value={machineId}
@@ -266,10 +266,10 @@ export function UsoDiario(){
                 <table className="form">
                     <tbody>
                         <tr>
-                            <th colSpan="7">REGISTRO DIARIO DE USO DE MAQUINARIA Y EQUIPOS MINA DIDACTICA</th>
+                            <th colSpan="7">REGISTRO DIARIO DE USO DE MAQUINARIA Y EQUIPOS MINA DIDÁCTICA</th>
                         </tr>
                         <tr>
-                            <th colSpan="2">NOMBRE MAQUINA:</th>
+                            <th colSpan="2">NOMBRE MÁQUINA:</th>
                             <td colSpan="5" >
                                 <Select
                                     id="maquinas"
@@ -285,9 +285,9 @@ export function UsoDiario(){
                         </tr>
                         <tr>
                             <th>Fecha</th>
-                            <th>Verificacion de estado de <br/> funcionamiento de la máquina</th>
-                            <th>Inicio de operacion</th>
-                            <th>Fin de operacion</th>
+                            <th>Verificación de estado de <br/> funcionamiento de la máquina</th>
+                            <th>Inicio de operación</th>
+                            <th>Fin de operación</th>
                             <th>Responsable a cargo</th>
                             <th>Observaciones</th>
                             <th>Acciones</th>

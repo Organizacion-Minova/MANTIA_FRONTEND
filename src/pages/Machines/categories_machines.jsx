@@ -72,8 +72,8 @@ function Formulario({ onCancel, onGuardado, categoriaEditar }) {
 
     return (
         <Form
-            titulo={esEdicion ? "Editar categoria" : "Agregar nueva categoria"}
-            descripcion={esEdicion ? "Modifique los datos de la categoria" : "Ingrese los datos de la nueva categoria"}
+            titulo={esEdicion ? "Editar categoría" : "Agregar nueva categoría"}
+            descripcion={esEdicion ? "Modifique los datos de la categoría" : "Ingrese los datos de la nueva categoría"}
             onCancel={onCancel}
             textoBoton="Guardar"
             iconoBoton="fa-solid fa-floppy-disk"
@@ -82,10 +82,10 @@ function Formulario({ onCancel, onGuardado, categoriaEditar }) {
         >
             <div className="col-span-6">
                 <Text
-                    label="Nombre de la categoria:"
+                    label="Nombre de la categoría:"
                     id="nombre"
                     name="nombre"
-                    placeholder="Ingrese el nombre de la categoria"
+                    placeholder="Ingrese el nombre de la categoría"
                     value={nombre}
                     onChange={(e) => {
                         const valor = e.target.value;
@@ -99,7 +99,7 @@ function Formulario({ onCancel, onGuardado, categoriaEditar }) {
 
             <div className="col-span-6">
                 <Textarea
-                    label="Descripcion"
+                    label="Descripción"
                     id="descripcion"
                     name="descripcion"
                     rows={4}
@@ -181,8 +181,8 @@ function CategoriasMaquinas(){
         <div className="list-grid">
             <header className="bienvenida">
                 <PageWelcome
-                    titulo="CATEGORIAS MÁQUINAS"
-                    descripcion="Este es el formato de las categorias de las máquinas."
+                    titulo="CATEGORÍAS DE MÁQUINAS"
+                    descripcion="Este es el formato de las categorías de las máquinas."
                     mostrarHistorial={true}
                 />
                 <Searcher
@@ -208,7 +208,7 @@ function CategoriasMaquinas(){
                 <table className="table">
                     <thead>
                         <tr>
-                            <th>Nombre de la categoria</th>
+                            <th>Nombre de la categoría</th>
                             <th>Descripción</th>
                             <th>Estado</th>
                             <th>Acciones</th>
@@ -225,13 +225,13 @@ function CategoriasMaquinas(){
                                     clase="btn-azul"
                                     icono="fa-solid fa-edit"
                                     onClick={() => handleAbrirEditar(cat)}
-                                    titulo="Editar categoria"
+                                    titulo="Editar categoría"
                                 />
                                 <Boton
                                     clase="btn-2"
                                     icono="fa-solid fa-trash"
                                     onClick={() => handleEliminar(cat.id)}
-                                    titulo="Eliminar categoria"
+                                    titulo="Eliminar categoría"
                                 />
                             </td>
                         </tr>
@@ -244,16 +244,16 @@ function CategoriasMaquinas(){
                     <Boton
                         clase="btn-azul"
                         icono="fa-solid fa-plus"
-                        texto="Nueva Categoria"
+                        texto="Nueva categoría"
                         onClick={handleAbrirCrear}
-                        titulo="Agregar nueva categoria"
+                        titulo="Agregar nueva categoría"
                     />
                     <BotonLink
                         link="/machines"
                         clase="btn-2"
                         icono="fa-solid fa-list"
-                        texto="Maquinas"
-                        titulo="Volver a listado de maquinas"
+                        texto="Máquinas"
+                        titulo="Volver al listado de máquinas"
                     />
                 </div>
                 <Paginacion

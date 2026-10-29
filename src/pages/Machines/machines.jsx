@@ -271,7 +271,7 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
             </div>
             <div className="col-span-3">
                 <Select
-                    label="Ubicacion: "
+                    label="Ubicación: "
                     id="ubicacion"
                     name="ubicacion"
                     value={locationid}
@@ -282,10 +282,10 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
             </div>
             <div className="col-span-3">
                 <Text
-                    label="Uso de la maquina: "
+                    label="Uso de la máquina: "
                     id="usoMaquina"
                     name="usoMaquina"
-                    placeholder="Uso de la maquina"
+                    placeholder="Uso de la máquina"
                     value={usoMaquina}
                     onChange={(e) => setUsoMaquina(capitalizarPrimeraLetra(e.target.value))}
                     required
@@ -345,7 +345,7 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
             
             <div className={esEdicion?"col-span-3":"col-span-6"}>
                 <Select
-                    label="Maquina en operación:"
+                    label="Máquina en operación:"
                     id="maquinaenoperacion"
                     name="maquinaenoperacion"
                     value={maquinaEnOperacion}
@@ -386,10 +386,10 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
             </div>
             <div className="col-span-6">
                 <Textarea
-                    label="Caracteristicas:"
+                    label="Características:"
                     id="caracteristicas"
                     name="caracteristicas"
-                    placeholder="Características de la maquina"
+                    placeholder="Características de la máquina"
                     rows="4"
                     value={caracteristicas}
                     onChange={(e) => setCaracteristicas(capitalizarPrimeraLetra(e.target.value))}
@@ -499,7 +499,7 @@ function Maquinas(){
                 <Searcher
                     value={busqueda}
                     onChange={(e)=>setBusqueda(e.target.value)}
-                    placeholder="Buscar por codigo, nombre, responsable, modelo, ubicacion"
+                    placeholder="Buscar por código, nombre, responsable, modelo o ubicación"
                     filtrosAdicionales={
                         <div className="btn-container">
                             <Select
@@ -533,7 +533,7 @@ function Maquinas(){
                             <th>Código</th>
                             <th>Nombre</th>
                             <th>Número de serie</th>
-                            <th>Categoria</th>
+                            <th>Categoría</th>
                             <th>Marca</th>
                             <th>Ubicación</th>
                             <th>Estado</th>
@@ -582,16 +582,16 @@ function Maquinas(){
                     <BotonLink
                         link="/machines/categoriesmachines"
                         clase="btn-2"
-                        texto="Categorias Maquinas"
+                        texto="Categorías de máquinas"
                         icono="fa-solid fa-list"
-                        titulo="Volver a categorias de maquinas"
+                        titulo="Volver a categorías de máquinas"
                     />
                     <Boton
                         clase="btn-azul"
                         icono="fa-solid fa-plus"
                         texto="Nueva Máquina"
                         onClick={handleAbrirCrear}
-                        titulo="Agregar nueva maquina"
+                        titulo="Agregar nueva máquina"
                     />
                 </div>
                 <Paginacion

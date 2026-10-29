@@ -16,10 +16,10 @@ import {
 } from "../../api/admin";
 
 const TABS = [
-    { id: "solicitudes", texto: "Solicitudes", icono: "fa-solid fa-user-clock" },
-    { id: "usuarios", texto: "Usuarios", icono: "fa-solid fa-users" },
-    { id: "roles", texto: "Roles", icono: "fa-solid fa-user-shield" },
-    { id: "copias-seguridad", texto: "Copias de Seguridad", icono: "fa-solid fa-database" },
+    { id: "solicitudes", texto: "Solicitudes", icono: "fa-solid fa-user-clock",titulo:"Gestionar solicitudes" },
+    { id: "usuarios", texto: "Usuarios", icono: "fa-solid fa-users", titulo:"Gestionar usuarios" },
+    { id: "roles", texto: "Roles", icono: "fa-solid fa-user-shield", titulo:"Gestionar de roles" },
+    { id: "copias-seguridad", texto: "Copias de seguridad", icono: "fa-solid fa-cloud", titulo:"Gestionar backups" },
 ];
 
 // ---------- 1. Solicitudes de cuenta ----------
@@ -476,13 +476,12 @@ function PanelRoles() {
                     </tbody>
                 </table>
             </div>
-            <div className="btn-container-page">
-                <div className="btn-container">
+            <div className="btn-container-page roles-actions">
                     <Boton
                         clase="btn-azul" texto="Nuevo rol" icono="fa-solid fa-plus"
                         onClick={() => { setRolAEditar(null); setMostrarFormulario(true); }}
+                        titulo="Añadir nuevo rol"
                     />
-                </div>
             </div>
             {mostrarFormulario && (
                 <FormularioRol
@@ -513,8 +512,8 @@ function PanelBackups() {
             setOpciones(Array.isArray(listaOpciones) ? listaOpciones : []);
             setBackups(Array.isArray(listaBackups) ? listaBackups : []);
         } catch (err) {
-            console.error("Error al cargar backups:", err);
-            setError(err.response?.data?.message || "No se pudieron cargar los backups.");
+            console.error("Error al cargar copias de seguridad:", err);
+            setError(err.response?.data?.message || "No se pudieron cargar las copias de seguridad.");
         } finally {
             setCargando(false);
         }
@@ -569,7 +568,6 @@ function PanelBackups() {
 
     return (
         <>
-            {error && <div style={{ color: "#d9534f", marginBottom: "1rem" }}>{error}</div>}
             <div className="form-container" style={{ marginBottom: "1.5rem" }}>
                 <h3 className="form-title">Generar nueva copia de seguridad</h3>
                 <p className="form-description">Selecciona qué información quieres respaldar.</p>
@@ -632,7 +630,7 @@ function PanelBackups() {
                             </tr>
                         )) : (
                             <tr>
-                                <td colSpan="6" style={{ textAlign: "center" }}>Aún no se ha generado ninguna copia de seguridad.</td>
+                                <td colSpan="6" style={{ textAlign: "center" }}>Aún no se ha generado ningún backup.</td>
                             </tr>
                         )}
                     </tbody>
@@ -652,7 +650,7 @@ function AdministrationPanel() {
 
     if (!esAdministrador) {
         return (
-            <div className="list-grid">
+            <div className="list-grid administration-grid">
                 <header className="bienvenida">
                     <PageWelcome
                         titulo="Panel de administración"
@@ -665,17 +663,19 @@ function AdministrationPanel() {
     }
 
     return (
-        <div className="list-grid">
+        <div className="list-grid administration-grid">
             <header className="bienvenida">
                 <PageWelcome
                     titulo="Panel de administración"
                     descripcion="Gestiona solicitudes de cuenta, usuarios, roles y backups del sistema."
+                    mostrarHistorial={true}
                 />
             </header>
 
-            <div className="btn-container" style={{ marginBottom: "1.5rem" }}>
+            <div className="btn-container admin-tabs">
                 {TABS.map((tab) => (
                     <Boton
+                        
                         key={tab.id}
                         clase={tabActiva === tab.id ? "btn-azul" : "btn-2"}
                         icono={tab.icono}
@@ -684,15 +684,18 @@ function AdministrationPanel() {
                                 ? `${tab.texto} (${conteoSolicitudes})`
                                 : tab.texto
                         }
+                        titulo={tab.titulo}
                         onClick={() => setTabActiva(tab.id)}
                     />
                 ))}
             </div>
 
-            {tabActiva === "solicitudes" && <PanelSolicitudes onCambioConteo={setConteoSolicitudes} />}
-            {tabActiva === "usuarios" && <PanelUsuarios />}
-            {tabActiva === "roles" && <PanelRoles />}
-          {tabActiva === "copias-seguridad" && <PanelBackups />}
+            <div className="admin-content">
+                {tabActiva === "solicitudes" && <PanelSolicitudes onCambioConteo={setConteoSolicitudes} />}
+                {tabActiva === "usuarios" && <PanelUsuarios />}
+                {tabActiva === "roles" && <PanelRoles />}
+                {tabActiva === "copias-seguridad" && <PanelBackups />}
+            </div>
         </div>
     );
 }

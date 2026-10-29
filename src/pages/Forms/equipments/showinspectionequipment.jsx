@@ -208,7 +208,7 @@ function FormatoInspeccion({ equipmentId, inspectionId }) {
                     <thead>
                         <tr>
                             <th>ASPECTOS A EVALUAR</th>
-                            <th>SI</th>
+                            <th>SÍ</th>
                             <th>NO</th>
                             <th>N/A</th>
                             <th>OBSERVACIONES</th>

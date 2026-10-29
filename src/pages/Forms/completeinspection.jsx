@@ -5,7 +5,7 @@ import { Boton, BotonLink } from "../../components/common/Button";
 
 const preguntasEjemplo = [
     { id: 1, texto: "Tornillería y tuercas", tipo: "Sí / No / N.A.", agregarObservacion: true },
-    { id: 2, texto: "Revisión del carcasa o estructura metálica", tipo: "Sí / No / N.A.", agregarObservacion: true },
+    { id: 2, texto: "Revisión de la carcasa o estructura metálica", tipo: "Sí / No / N.A.", agregarObservacion: true },
     { id: 3, texto: "Voltaje del motor", tipo: "Número", agregarObservacion: false },
     { id: 4, texto: "Fecha de última revisión", tipo: "Fecha", agregarObservacion: false },
 ];
@@ -41,7 +41,7 @@ function LlenarInspeccion() {
                         name={`pregunta-${pregunta.id}`}
                         value={valorActual}
                         onChange={(e) => actualizarRespuesta(pregunta.id, "valor", e.target.value)}
-                        opciones={["SI", "NO", "N/A"]}
+                        opciones={[{ valor: "SI", etiqueta: "SÍ" }, "NO", "N/A"]}
                     />
                 );
             case "Número":
@@ -79,7 +79,7 @@ function LlenarInspeccion() {
         <div>
             <PageWelcome
                 titulo="LLENAR INSPECCIÓN"
-                descripcion="Completa el formato de inspeccion de la maquina."
+                descripcion="Completa el formato de inspección de la máquina."
             />
             <form onSubmit={handleSubmit}>
                 {preguntasEjemplo.map((pregunta) => (

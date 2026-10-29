@@ -379,7 +379,7 @@ const preguntas = [
     {
         id: "m2", categoria: "maquinas", visible: "privado",
         pregunta: "¿Cómo creo categorías de máquinas?",
-        respuesta: "En Máquinas presiona 'Categorias Maquinas'. Allí puedes crear con 'Nueva Categoria', editar, cambiar su estado o eliminarlas.",
+        respuesta: "En Máquinas, presiona 'Categorías de máquinas'. Allí puedes crear una con 'Nueva categoría', editarla, cambiar su estado o eliminarla.",
         claves: ["categoria maquina", "tipo de maquina", "clasificar maquinas"],
     },
     {
@@ -417,7 +417,7 @@ const preguntas = [
     {
         id: "e1", categoria: "equipos", visible: "privado",
         pregunta: "¿Cómo registro un equipo?",
-        respuesta: "Entra a Equipos desde el menú lateral y presiona 'Nueva Equipo'. Completa código, nombre, marca, modelo, número de serie, ubicación, responsable, estado, fecha de ingreso, descripción e imagen.",
+        respuesta: "Entra a Equipos desde el menú lateral y presiona 'Nuevo equipo'. Completa el código, nombre, marca, modelo, número de serie, ubicación, responsable, estado, fecha de ingreso, descripción e imagen.",
         claves: ["agregar equipo", "nuevo equipo", "crear equipo", "registrar equipo", "detector"],
     },
     {
@@ -620,8 +620,7 @@ function Ayuda() {
                 <br />
                 <div className="date" style={{ boxShadow: "var(--sombra-contenedor)" }}>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(15rem, 1fr))" }}>
-                        <FilaContacto icono="fa-solid fa-envelope" titulo="Correo" texto="mantiadso@gmail.com" />
-                        <FilaContacto icono="fa-solid fa-phone" titulo="Mesa de ayuda" texto="320 5783729 (SENA)" />
+                        <FilaContacto icono="fa-solid fa-envelope" titulo="Correo" texto="mantiaCM@gmail.com" />
                         <FilaContacto icono="fa-solid fa-location-dot" titulo="Ubicación" texto="Centro Nacional Minero, Sogamoso, Boyacá" />
                     </div>
                 </div>
@@ -629,12 +628,12 @@ function Ayuda() {
                 <br /><br />
 
                 <div className="btn-container">
-                    <a href="mailto:mantiadso@gmail.com" className="btn-azul">
+                    {/* <a href="mailto:mantiadso@gmail.com" className="btn-azul">
                         <i className="fa-solid fa-headset"></i>
                         Contactar soporte
-                    </a>
+                    </a> */}
                     <Link to="/about">
-                        <button className="btn-2">
+                        <button className="btn-2" title="ir a acerca de">
                             <i className="fa-solid fa-info-circle"></i>
                             Acerca de MANTIA
                         </button>
@@ -818,12 +817,9 @@ function Ayuda() {
             <br /><br />
 
             <div className="btn-container">
-                {/* <a href="mailto:mantiadso@gmail.com" className="btn-azul">
-                    <i className="fa-solid fa-headset"></i>
-                    Contactar soporte
-                </a> */}
+             
                 <Link to="/about">
-                    <button className="btn-2">
+                    <button className="btn-2" title="ir a acerca de">
                         <i className="fa-solid fa-info-circle"></i>
                         Acerca de MANTIA
                     </button>

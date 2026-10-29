@@ -25,7 +25,6 @@ import Register from './pages/login/Register'
 import AcercaDe from "./pages/Others/acerca_de";
 import Ayuda from "./pages/Others/ayuda";
 import MantiaInicio from "./pages/Index/index";
-import Alerts from './pages/Alerts/alerts.jsx';
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 import EscuchaToasts from "./components/Alertas/EscuchaToasts.jsx";
 import RutaPrivada from "./components/RutaPrivada.jsx";
@@ -84,7 +83,7 @@ createRoot(document.getElementById('root')).render(
               <Route path='gases' element={<RutaConPermiso permiso="gas-measurements.view"><Gases /></RutaConPermiso>} />
               <Route path='gases/compare_gases' element={<RutaConPermiso permiso="gas-measurements.view"><CompararGases /></RutaConPermiso>} />
               <Route path='gases/gas_format/:id' element={<RutaConPermiso permiso="gas-measurements.view"><FormatoGases /></RutaConPermiso>} />
-              <Route path='alerts' element={<Alerts />} />
+         
               <Route path='admin' element={<RutaConPermiso roles={["Jefe de mina"]}><AdministrationPanel /></RutaConPermiso>} />
               <Route path="*" element={<NotFound />} /> 
             </Route>

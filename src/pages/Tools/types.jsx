@@ -71,8 +71,8 @@ function FormConsumibles({onCancel,onGuardado,categoriaEditar }){
     
     return(
         <Form
-            titulo={esEdicion? "Editar categoria consumible":"Agregar nueva categoria consumible"}
-            descripcion={esEdicion ? "Modifique los datos de la categoria" : "Ingrese los datos de la nueva categoria"}
+            titulo={esEdicion? "Editar categoría consumible":"Agregar nueva categoría consumible"}
+            descripcion={esEdicion ? "Modifique los datos de la categoría" : "Ingrese los datos de la nueva categoría"}
             onCancel={onCancel}
             textoBoton="Guardar"
             iconoBoton="fa-solid fa-floppy-disk"
@@ -81,10 +81,10 @@ function FormConsumibles({onCancel,onGuardado,categoriaEditar }){
         >
             <div className="col-span-6">
                 <Text
-                    label="Nombre de la categoria:"
+                    label="Nombre de la categoría:"
                     id="nombre"
                     name="nombre"
-                    placeholder="Ingrese el nombre de la categoria"
+                    placeholder="Ingrese el nombre de la categoría"
                     value={nombre}
                     onChange={(e) => {
                         const valor = e.target.value;
@@ -101,7 +101,7 @@ function FormConsumibles({onCancel,onGuardado,categoriaEditar }){
                     id="descripcion"
                     name="descripcion"
                     rows="4"
-                    placeholder="Descripcion"
+                    placeholder="Descripción"
                     value={descripcion}
                     onChange={(e) => setDescripcion(capitalizarPrimeraLetra(e.target.value))}
                     required
@@ -187,8 +187,8 @@ function FormNoConsumibles({onCancel, onGuardado, categoriaEditar}){
     };  
     return(
         <Form
-            titulo={esEdicion? "Editar categoria No consumible":"Agregar nueva categoria no consumible"}
-            descripcion={esEdicion ? "Modifique los datos de la categoria" : "Ingrese los datos de la nueva categoria"}
+            titulo={esEdicion? "Editar categoría No consumible":"Agregar nueva categoría no consumible"}
+            descripcion={esEdicion ? "Modifique los datos de la categoría" : "Ingrese los datos de la nueva categoría"}
             onCancel={onCancel}
             textoBoton="Guardar"
             iconoBoton="fa-solid fa-floppy-disk"
@@ -197,10 +197,10 @@ function FormNoConsumibles({onCancel, onGuardado, categoriaEditar}){
         >
             <div className="col-span-6">
                 <Text
-                    label="Nombre de la categoria:"
+                    label="Nombre de la categoría:"
                     id="nombre"
                     name="nombre"
-                    placeholder="Ingrese el nombre de la categoria"
+                    placeholder="Ingrese el nombre de la categoría"
                     value={nombre}
                     onChange={(e) => {
                         const valor = e.target.value;
@@ -217,7 +217,7 @@ function FormNoConsumibles({onCancel, onGuardado, categoriaEditar}){
                     id="descripcion"
                     name="descripcion"
                     rows="4"
-                    placeholder="Descripcion"
+                    placeholder="Descripción"
                     value={descripcion}
                     onChange={(e) => setDescripcion(capitalizarPrimeraLetra(e.target.value))}
                     required
@@ -292,8 +292,8 @@ export function Consumibles(){
         <div className="list-grid">
             <header className="bienvenida">
                 <PageWelcome
-                    titulo="CATEGORIAS DE HERRAMIENTAS CONSUMIBLES"
-                    descripcion="Este es el formato de las categorias de herramientas consumibles."
+                    titulo="CATEGORÍAS DE HERRAMIENTAS CONSUMIBLES"
+                    descripcion="Este es el formato de las categorías de herramientas consumibles."
                     mostrarHistorial={true}
                 />
                 <Searcher
@@ -337,13 +337,13 @@ export function Consumibles(){
                                     clase="btn-azul"
                                     icono="fa-solid fa-edit"
                                     onClick={() => handleAbrirEditar(cat)}
-                                    titulo="Editar categoria consumible"
+                                    titulo="Editar categoría consumible"
                                 />
                                 <Boton
                                     clase="btn-2"
                                     icono="fa-solid fa-trash"
                                     onClick={() => handleEliminar(cat.id)}
-                                    titulo="Eliminar categoria consumible"
+                                    titulo="Eliminar categoría consumible"
                                 />
                                 </div>
                             </td>
@@ -366,7 +366,7 @@ export function Consumibles(){
                         icono="fa-solid fa-plus"
                         texto="Agregar tipo herramienta"
                         onClick={handleAbrirCrear}
-                        titulo="Agregar nueva categoria consumible"
+                        titulo="Agregar nueva categoría consumible"
                     />
                 </div>
                 <Paginacion
@@ -435,8 +435,8 @@ export function No_Consumibles(){
         <div className="list-grid">
             <header className="bienvenida">
                 <PageWelcome
-                    titulo="CATEGORIAS DE HERRAMIENTAS NO CONSUMIBLES"
-                    descripcion="Este es el formato de las categorias de herramientas no consumibles."
+                    titulo="CATEGORÍAS DE HERRAMIENTAS NO CONSUMIBLES"
+                    descripcion="Este es el formato de las categorías de herramientas no consumibles."
                     mostrarHistorial={true}
                 />
                 <Searcher
@@ -480,13 +480,13 @@ export function No_Consumibles(){
                                         clase="btn-azul"
                                         icono="fa-solid fa-edit"
                                         onClick={() => handleAbrirEditar(cat)}
-                                        titulo="Editar categoria consumible"
+                                        titulo="Editar categoría consumible"
                                     />
                                     <Boton
                                         clase="btn-2"
                                         icono="fa-solid fa-trash"
                                         onClick={() => handleEliminar(cat.id)}
-                                        titulo="Eliminar categoria consumible"
+                                        titulo="Eliminar categoría consumible"
                                     />
                                 </div>
                             </td>
@@ -509,7 +509,7 @@ export function No_Consumibles(){
                         icono="fa-solid fa-plus"
                         texto="Agregar tipo herramienta"
                         onClick={handleAbrirCrear}
-                        titulo="Agregar nueva categoria no consumible"
+                        titulo="Agregar nueva categoría no consumible"
                     />
                 </div>
                 <Paginacion
