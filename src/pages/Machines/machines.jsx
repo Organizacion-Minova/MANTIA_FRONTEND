@@ -9,6 +9,7 @@ import { usePaginacion,Paginacion } from "../../components/common/Paginacion";
 import { useSearch } from "../../hooks/useSearch";
 import { capitalizarPrimeraLetra, sinCaracteresEspeciales, validarCaracteresEspeciales, validarGroserias } from "../../components/common/Validations";
 import { validarCamposRequeridos } from "../../components/common/requiredFields";
+import { useToast } from "../../context/ToastContext";
 
 const valorSelect = (valor) => (valor == null ? "" : String(valor));
 const valorOperacion = (valor) => {
@@ -19,6 +20,7 @@ const valorOperacion = (valor) => {
 
 function Formulario({onCancel, onGuardado, maquinaEditar}){
     const esEdicion=maquinaEditar!=null;
+    const { advertencia } = useToast();
     const [codigo, setCodigo] = useState(maquinaEditar?.code || "");
     const [nombre, setNombre] = useState(maquinaEditar?.name || "");
     const [modelo, setModelo] = useState(maquinaEditar?.model || "");
@@ -114,14 +116,19 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
             return;
         }
 
-        const erroresLocales = validarCaracteresEspeciales({ name: nombre });
-        Object.assign(erroresLocales, validarGroserias({
+        const erroresGroserias = validarGroserias({
             name: nombre,
             model: modelo,
             machine_usage: usoMaquina,
             responsible: responsable,
             characteristics: caracteristicas,
-        }));
+        });
+        if (Object.keys(erroresGroserias).length > 0) {
+            advertencia("No se permiten palabras inapropiadas.", "Palabras inapropiadas");
+            return;
+        }
+
+        const erroresLocales = validarCaracteresEspeciales({ name: nombre });
         if (Object.keys(erroresLocales).length > 0) {
             setErrores(erroresLocales);
             return;

@@ -131,7 +131,7 @@ export function CardEquipment() {
             </section>
                 <div className="btn-container">
                     <BotonLink
-                        link={`/equipment/${id}/inspection`}
+                        link={`/equipment/cardequipment/${id}/inspection`}
                         clase="btn-azul"
                         icono="fas fa-wind"
                         texto="Inspección"

@@ -1,157 +1,68 @@
-import { useEffect,useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { BotonLink } from "../../../components/common/Button";
 import { PageWelcome } from "../../../components/common/welcome";
-import { Text,  Radio, Dropzone } from "../../../components/common/forms";
-import { Boton, BotonLink } from "../../../components/common/Button";
+import { Date as CampoFecha } from "../../../components/common/forms";
 import LoadingScreen from "../../../components/LoadingScreen";
-import { GetEquipmentQuestions, CreateEquipmentInspection } from "../../../api/Equipmentsapi";
+import FormatoInspeccion from "./Forminspection";
+import { GetEquipmentInspectionFormat, GetInspectionWeek, SaveInspection } from "../../../api/Equipmentsapi";
+import { fechaHoy } from "../daily_use";
 
-const ANSWER_MAP = { SI: "yes", NO: "no", "N/A": "na" };
-const TIPOS_IMAGEN_FIRMA = ["image/png", "image/jpeg", "image/webp"];
-const TAMANO_MAXIMO_FIRMA = 2 * 1024 * 1024;
-
-const initialHeader = {
-    inspector_name: "",
-    inspection_date: "",
-    inspection_time: "",
-    equipment_brand: "",
-    voltage: "",
-    serial_number: "",
-    area: "",
-    general_observations: "",
-    responsible_position: "",
-    warehouse_manager_name: "",
-};
-
-function LlenarInspeccionEquipo() {
+export default function LlenarInspeccion() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [preguntas, setPreguntas] = useState([]);
-    const [respuestas, setRespuestas] = useState({});
-    const [header, setHeader] = useState(initialHeader);
-    const [firmas, setFirmas] = useState({
-        responsible_signature: null,
-        warehouse_manager_signature: null,
-    });
-    const [previews, setPreviews] = useState({});
-    const [erroresFirma, setErroresFirma] = useState({});
+    const [searchParams] = useSearchParams();
+    const [datos, setDatos] = useState(null);
+    const [semana, setSemana] = useState(searchParams.get("week") || fechaHoy());
+    const [semanaInfo, setSemanaInfo] = useState(null);
     const [cargando, setCargando] = useState(true);
+    const [cargandoSemana, setCargandoSemana] = useState(false);
+    const [error, setError] = useState(false);
     const [enviando, setEnviando] = useState(false);
-    const [error, setError] = useState("");
-    const [erroresCampos, setErroresCampos] = useState({});
+    const [errores, setErrores] = useState([]);
 
     useEffect(() => {
-        setCargando(true);
-        GetEquipmentQuestions(id)
-            .then(setPreguntas)
+        GetEquipmentInspectionFormat(id)
+            .then((data) => {
+                if (!data.format) {
+                    navigate(`/equipment/cardequipment/${id}/inspection/questions`, { replace: true });
+                    return;
+                }
+                setDatos(data);
+            })
             .catch((err) => {
-                console.error("Error al cargar las preguntas de inspección:", err);
-                setPreguntas([]);
-                setError("No se pudieron cargar las preguntas. Verifica la conexión con el servidor.");
+                console.error("Error al cargar el formato:", err);
+                setError(true);
             })
             .finally(() => setCargando(false));
     }, [id]);
 
-    const actualizarHeader = (campo, valor) =>
-        setHeader((prev) => ({ ...prev, [campo]: valor }));
+    useEffect(() => {
+        if (!datos || !semana) return;
+        setCargandoSemana(true);
+        GetInspectionWeek(datos.format.id, semana)
+            .then((data) => setSemanaInfo(data))
+            .catch((err) => console.error("Error al cargar la semana:", err))
+            .finally(() => setCargandoSemana(false));
+    }, [datos, semana]);
 
-    const actualizarRespuesta = (idPregunta, campo, valor) => {
-        setRespuestas((prev) => ({
-            ...prev,
-            [idPregunta]: { ...prev[idPregunta], [campo]: valor },
-        }));
-    };
-
-    const seleccionarFirma = (campo, archivo) => {
-        if (!archivo) return;
-
-        if (!TIPOS_IMAGEN_FIRMA.includes(archivo.type)) {
-            setErroresFirma((prev) => ({
-                ...prev,
-                [campo]: "La firma debe ser una imagen PNG, JPG o WEBP.",
-            }));
-            return;
-        }
-
-        if (archivo.size > TAMANO_MAXIMO_FIRMA) {
-            setErroresFirma((prev) => ({
-                ...prev,
-                [campo]: "La firma no puede superar los 2 MB.",
-            }));
-            return;
-        }
-
-        const lector = new FileReader();
-        lector.onload = () => {
-            if (typeof lector.result !== "string") {
-                setErroresFirma((prev) => ({
-                    ...prev,
-                    [campo]: "No se pudo generar la vista previa de la firma.",
-                }));
-                return;
-            }
-
-            setFirmas((prev) => ({ ...prev, [campo]: archivo }));
-            setPreviews((prev) => ({ ...prev, [campo]: lector.result }));
-            setErroresFirma((prev) => ({ ...prev, [campo]: "" }));
-        };
-        lector.onerror = () => {
-            setErroresFirma((prev) => ({
-                ...prev,
-                [campo]: "No se pudo leer la imagen. Intenta seleccionarla de nuevo.",
-            }));
-        };
-        lector.readAsDataURL(archivo);
-    };
-
-    const quitarFirma = (campo) => {
-        setFirmas((prev) => ({ ...prev, [campo]: null }));
-        setPreviews((prev) => ({ ...prev, [campo]: "" }));
-        setErroresFirma((prev) => ({ ...prev, [campo]: "" }));
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError("");
-        setErroresCampos({});
-
-        // Todas las preguntas deben tener respuesta (el backend también lo exige)
-        const sinResponder = preguntas.filter((p) => !respuestas[p.id]?.valor);
-        if (sinResponder.length > 0) {
-            setError(`Faltan ${sinResponder.length} pregunta(s) por responder.`);
-            return;
-        }
-
-        // Armar el FormData
-        const formData = new FormData();
-        formData.append("equipment_id", id);
-
-        Object.entries(header).forEach(([campo, valor]) => {
-            if (valor !== "") formData.append(campo, valor); // los vacíos no se envían (son nullable)
-        });
-
-        Object.entries(firmas).forEach(([campo, archivo]) => {
-            if (archivo) formData.append(campo, archivo);
-        });
-
-        preguntas.forEach((p, i) => {
-            formData.append(`answers[${i}][question_id]`, p.id);
-            formData.append(`answers[${i}][answer]`, ANSWER_MAP[respuestas[p.id].valor]);
-            const obs = respuestas[p.id]?.observacion?.trim();
-            if (obs) formData.append(`answers[${i}][observation]`, obs);
-        });
-
+    const guardar = async (contenido) => {
+        if (enviando) return;
+        setErrores([]);
         setEnviando(true);
         try {
-            await CreateEquipmentInspection(formData);
-            navigate(`/equipment/${id}/inspection/show`);
+            const guardada = await SaveInspection({
+                format_id: datos.format.id,
+                week_start: semanaInfo.week_start,
+                ...contenido,
+            });
+            navigate(`/equipment/${id}/inspection/records/${guardada.id}`);
         } catch (err) {
-            const errors = err.response?.data?.errors;
-            if (errors) {
-                setErroresCampos(errors);
-                setError(err.response.data.message || "Revisa los campos marcados.");
+            if (err.response?.status === 422) {
+                setErrores(Object.values(err.response.data.errors).flat());
             } else {
-                setError("No se pudo guardar la inspección.");
+                console.error("Error al guardar la inspección:", err);
+                setErrores(["No se pudo guardar la inspección."]);
             }
         } finally {
             setEnviando(false);
@@ -160,158 +71,72 @@ function LlenarInspeccionEquipo() {
 
     if (cargando) return <LoadingScreen indeterminado />;
 
-    
-    return (
-        <div>
-            <PageWelcome
-                titulo="LLENAR INSPECCIÓN"
-                descripcion="Completa el formato de inspección de la máquina."
-            />
-            <form onSubmit={handleSubmit}>
-                <div className="card" style={{ display: 'grid', gridTemplateColumns: 'repeat(6, minmax(0, 1fr))', gap: '16px' }}>
-                    <div className="col-span-3">
-                        <Text 
-                            id="inspector_name" 
-                            name="inspector_name" 
-                            label="Nombre del responsable de la inspección" 
-                            required
-                            value={header.inspector_name}
-                            onChange={(e) => actualizarHeader("inspector_name", e.target.value)} 
-                        />
-                    </div>
-                    <div className="col-span-3">
-                        <Text 
-                            id="inspection_date" 
-                            name="inspection_date" 
-                            type="date" 
-                            label="Fecha" 
-                            required
-                            value={header.inspection_date}
-                            onChange={(e) => actualizarHeader("inspection_date", e.target.value)} 
-                        />
-                    </div>
-                    <div className="col-span-3">
-                        <Text 
-                            id="equipment_brand" 
-                            name="equipment_brand" 
-                            label="Marca de la herramienta" 
-                            required
-                            value={header.equipment_brand}
-                            onChange={(e) => actualizarHeader("equipment_brand", e.target.value)} 
-                        />
-                    </div>
-                    <div className="col-span-3">
-                        <Text 
-                            id="voltage" 
-                            name="voltage" 
-                            label="Voltaje"    
-                            value={header.voltage}
-                            onChange={(e) => actualizarHeader("voltage", e.target.value)} 
-                        />
-                    </div>
-                    <div className="col-span-3">
-                        <Text 
-                            id="serial_number" 
-                            name="serial_number" 
-                            label="Serial"
-                            value={header.serial_number}
-                            onChange={(e) => actualizarHeader("serial_number", e.target.value)} 
-                        />
-                    </div>
-                    <div className="col-span-3">
-                        <Text 
-                            id="area" 
-                            name="area" 
-                            label="Área" 
-                            required
-                            value={header.area}
-                            onChange={(e) => actualizarHeader("area", e.target.value)} 
-                        />
-                    </div>
-                </div>
-                <br />
-                {preguntas.map((pregunta) => (
-                    
-                    <div key={pregunta.id} className="card" style={{ marginBottom: "16px" }}>
-                        <label>{pregunta.text}</label>
-
-                        <Radio
-                            id={`pregunta-${pregunta.id}`}
-                            name={`pregunta-${pregunta.id}`}
-                            value={respuestas[pregunta.id]?.valor || ""}
-                            onChange={(e) => actualizarRespuesta(pregunta.id, "valor", e.target.value)}
-                            opciones={[{ valor: "SI", etiqueta: "SÍ" }, "NO", "N/A"]}
-                        />
-                        <br />
-
-                        <Text
-                            id={`obs-${pregunta.id}`}
-                            name={`obs-${pregunta.id}`}
-                            label="Observaciones"
-                            placeholder="Escribe una observación (opcional)"
-                            value={respuestas[pregunta.id]?.observacion || ""}
-                            onChange={(e) => actualizarRespuesta(pregunta.id, "observacion", e.target.value)}
-                        />
-                    </div>
-                    
-                ))}
-                <div className="card" style={{ display: 'grid', gridTemplateColumns: 'repeat(6, minmax(0, 1fr))', gap: '16px'}}>
-                    <div className="col-span-3">
-                        <Text 
-                            id="general_observations" 
-                            name="general_observations" 
-                            label="Observaciones generales"
-                            value={header.general_observations}
-                            onChange={(e) => actualizarHeader("general_observations", e.target.value)} 
-                        />
-                    </div>
-                    <div className="col-span-3">
-                        <Text 
-                            id="responsible_position" 
-                            name="responsible_position" 
-                            label="Cargo del responsable"
-                            value={header.responsible_position}
-                            onChange={(e) => actualizarHeader("responsible_position", e.target.value)} 
-                            required
-                        />
-                    </div>
-                    <div className="col-span-6">
-                        <Dropzone
-                            label="Firma del responsable"
-                            id="responsible_signature"
-                            name="responsible_signature"
-                            accept="image/png,image/jpeg,image/webp"
-                            ayuda="PNG, JPG o WEBP hasta 2 MB"
-                            error={erroresFirma.responsible_signature}
-                            preview={previews.responsible_signature}
-                            previewLabel={firmas.responsible_signature?.name}
-                            previewAlt="Firma del responsable"
-                            onChange={(e) => {
-                                seleccionarFirma("responsible_signature", e.target.files?.[0]);
-                                e.target.value = "";
-                            }}
-                            onFileDrop={(e) => seleccionarFirma("responsible_signature", e.dataTransfer.files?.[0])}
-                            onRemove={() => quitarFirma("responsible_signature")}
-                        />
-                    </div>
-                </div>
-                <br />
+    if (error || !datos) {
+        return (
+            <div className="list-grid">
+                <p>No se pudo cargar el formato de inspección.</p>
                 <div className="btn-container">
-                    <Boton 
-                        clase="btn-azul"
-                        icono="fa-solid fa-check"
-                        texto={enviando ? "Enviando..." : "Enviar Inspección"}
-                        disabled={enviando} 
-                    />
-                    <BotonLink
-                        link={`/equipment/${id}/inspection/show`}
-                        clase="btn-2"
-                        icono="fa-solid fa-eye"
-                        texto="Ver inspección"
+                    <BotonLink link={`/equipment/${id}`} clase="btn-2" icono="fa-solid fa-arrow-left" texto="Regresar" />
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="list-grid">
+            <header className="bienvenida">
+                <PageWelcome
+                    titulo={`Inspección preoperacional ${datos.equipment.name}`}
+                    descripcion="Complete el formato de la semana y guárdelo."
+                />
+            </header>
+
+            <div className="form-grid">
+                <div className="col-span-3">
+                    <CampoFecha
+                        label="Semana que incluye el día:"
+                        id="semana"
+                        name="semana"
+                        value={semana}
+                        onChange={(e) => setSemana(e.target.value)}
                     />
                 </div>
-            </form>
+            </div>
+
+            {semanaInfo?.inspection && (
+                <p>Ya hay una inspección guardada de esta semana: al guardar se actualiza.</p>
+            )}
+
+            {cargandoSemana || !semanaInfo ? (
+                <p>Cargando semana...</p>
+            ) : (
+                <FormatoInspeccion
+                    key={semanaInfo.week_start}
+                    format={datos.format}
+                    equipment={datos.equipment}
+                    weekStart={semanaInfo.week_start}
+                    weekEnd={semanaInfo.week_end}
+                    inspection={semanaInfo.inspection}
+                    onSave={guardar}
+                    enviando={enviando}
+                    errores={errores}
+                />
+            )}
+
+            <div className="btn-container">
+                <BotonLink
+                    link={`/equipment/cardequipment/${id}/inspection/records`}
+                    clase="btn-azul"
+                    icono="fa-solid fa-list"
+                    texto="Ver formatos guardados"
+                />
+                <BotonLink
+                    link={`/equipment/cardequipment/${id}`}
+                    clase="btn-2"
+                    icono="fa-solid fa-arrow-left"
+                    texto="Regresar"
+                />
+            </div>
         </div>
     );
 }
-export default LlenarInspeccionEquipo;

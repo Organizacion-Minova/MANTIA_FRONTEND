@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
-import { GetEquipmentQuestions } from "../../../api/Equipmentsapi";
+import { BotonLink } from "../../../components/common/Button";
+import { GetEquipmentInspectionFormat } from "../../../api/Equipmentsapi";
 import LoadingScreen from "../../../components/LoadingScreen";
 
 function InspeccionEquipo() {
@@ -12,12 +13,12 @@ function InspeccionEquipo() {
         setDestino(null);
         setError(false);
 
-        GetEquipmentQuestions(id)
-            .then((preguntas) => {
+        GetEquipmentInspectionFormat(id)
+            .then((datos) => {
                 setDestino(
-                    preguntas.length > 0
-                        ? `/equipment/${id}/inspection/complete`
-                        : `/equipment/${id}/inspection/questions`
+                    datos?.format
+                        ? `/equipment/cardequipment/${id}/inspection/complete`
+                        : `/equipment/cardequipment/${id}/inspection/questions`
                 );
             })
             .catch((err) => {
@@ -26,7 +27,21 @@ function InspeccionEquipo() {
             });
     }, [id]);
 
-    if (error) return <p>No se pudo verificar el formato de inspección.</p>;
+    if (error) {
+        return (
+            <div className="list-grid">
+                <p>No se pudo verificar el formato de inspección.</p>
+                <div className="btn-container">
+                    <BotonLink
+                        link={`/equipment/cardequipment/${id}`}
+                        clase="btn-2"
+                        icono="fa-solid fa-arrow-left"
+                        texto="Regresar"
+                    />
+                </div>
+            </div>
+        );
+    }
     if (!destino) return <LoadingScreen indeterminado />;
 
     return <Navigate to={destino} replace />;
