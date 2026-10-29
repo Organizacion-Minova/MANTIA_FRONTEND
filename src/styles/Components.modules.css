@@ -19,6 +19,50 @@ main.cerrado{
 .welcome h1 { color: var(--texto);text-transform: uppercase; }
 .welcome p  { color: var(--texto2); }
 
+.mt-legal__ruta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 0 1rem;
+    color: var(--texto2);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+}
+
+.mt-legal__ruta a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 0.5rem;
+    color: var(--texto2);
+    text-decoration: none;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.mt-legal__ruta a:hover {
+    background: var(--hover-principal);
+    color: var(--secundario);
+}
+
+.mt-legal__ruta a:focus-visible {
+    outline: 0.125rem solid var(--secundario);
+    outline-offset: 0.125rem;
+}
+
+.mt-legal__ruta > span[aria-hidden="true"] {
+    opacity: 0.65;
+}
+
+.mt-legal__ruta > span:last-child {
+    padding: 0.35rem 0.5rem;
+    color: var(--texto);
+    font-weight: 600;
+}
+
 @media (max-width:991px){
       .welcome{
             flex-direction:column;
@@ -35,6 +79,14 @@ main.cerrado{
              text-align:center;
             gap:1rem;
         }
+}
+
+@media (max-width: 40rem) {
+    .mt-legal__ruta {
+        gap: 0.125rem;
+        margin-bottom: 0.75rem;
+        font-size: 0.75rem;
+    }
 }
 
 .date {

@@ -208,8 +208,15 @@ function AcercaDe() {
 
     return (
         <Layout>
+            
         <div className={`public-page about-grid${isAuthenticated ? " about-grid-authenticated" : ""}`}>
+            
             <section className="about-intro">
+            <div className="mt-legal__ruta">
+                <Link to="/">Inicio</Link>
+                <span aria-hidden="true">/</span>
+                <span>Acerca de</span>
+            </div>
                 <PageWelcome
                     titulo="Acerca de MANTIA"
                     descripcion="Mantenimiento e inventario de activos, pensado para la industria minera colombiana."

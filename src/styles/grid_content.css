@@ -327,13 +327,14 @@
 .about-grid {
   display: grid;
   box-sizing: border-box;
-  grid-template-columns: minmax(0, 1.35fr) minmax(16rem, 0.9fr);
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   grid-template-areas:
       "bienvenida bienvenida"
-      "motivo motivo"
-      "valores valores"
+      "motivo valores"
+      "motivo valores"
       "contacto contacto"
       "botones botones";
+  align-content: start;
   gap: 1.25rem;
   min-width: 0;
 }
@@ -353,18 +354,33 @@
 .about-grid-authenticated {
   grid-template-areas:
       "bienvenida bienvenida"
-      "motivo motivo"
-      "valores valores"
+      "motivo valores"
+      "motivo valores"
       "equipo contacto"
       "botones botones";
 }
 
 .about-intro { grid-area: bienvenida; min-width: 0; }
-.about-reason { grid-area: motivo; min-width: 0; }
+.about-reason {
+  grid-area: motivo;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1.75rem;
+  border: 0.0625rem solid var(--borde-contenedor);
+  border-radius: 1.1rem;
+  background: var(--contenedor);
+}
+.about-reason p {
+  margin-bottom: 0;
+  color: var(--texto2);
+  line-height: 1.6;
+}
 .about-values {
   grid-area: valores;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.25rem;
   min-width: 0;
 }
@@ -401,11 +417,6 @@
     padding-top: 5rem;
     padding-bottom: 1rem;
   }
-
-  .about-values {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 0.85rem;
-  }
 }
 
 @media (max-width: 40rem) {
@@ -415,6 +426,124 @@
 
   .contenido .public-page.about-grid {
     padding-top: 1rem;
+  }
+
+  .about-values {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.85rem;
+  }
+
+  .about-reason {
+    padding: 1.5rem 1.35rem;
+  }
+}
+
+/* GRID DE LA PAGINA DE AYUDA */
+.help-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "bienvenida"
+    "busqueda"
+    "preguntas"
+    "contacto"
+    "botones";
+  align-content: start;
+  gap: 1.25rem;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.public-page.help-grid {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding-top: 5rem;
+  padding-bottom: 1rem;
+}
+
+.contenido .public-page.help-grid {
+  padding-top: 1rem;
+}
+
+.help-grid-authenticated {
+  grid-template-columns: minmax(14rem, 0.75fr) minmax(0, 1.5fr);
+  grid-template-areas:
+    "bienvenida bienvenida"
+    "busqueda busqueda"
+    "sugerencias sugerencias"
+    "categorias resultados"
+    "categorias preguntas"
+    "contacto contacto"
+    "botones botones";
+}
+
+.help-intro { grid-area: bienvenida; min-width: 0; }
+.help-search { grid-area: busqueda; min-width: 0; }
+.help-suggestions { grid-area: sugerencias; min-width: 0; }
+.help-categories { grid-area: categorias; min-width: 0; }
+.help-category-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: 1rem;
+}
+.help-results-heading {
+  grid-area: resultados;
+  min-width: 0;
+}
+.help-results-heading h2,
+.help-contact h2 {
+  margin-top: 0;
+}
+.help-faq { grid-area: preguntas; min-width: 0; }
+.help-contact { grid-area: contacto; min-width: 0; }
+.help-actions { grid-area: botones; min-width: 0; }
+
+@media (max-width: 991px) {
+  .help-grid,
+  .help-grid-authenticated {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "bienvenida"
+      "busqueda"
+      "sugerencias"
+      "categorias"
+      "resultados"
+      "preguntas"
+      "contacto"
+      "botones";
+    gap: 1rem;
+  }
+
+  .help-grid:not(.help-grid-authenticated) {
+    grid-template-areas:
+      "bienvenida"
+      "busqueda"
+      "preguntas"
+      "contacto"
+      "botones";
+  }
+}
+
+@media (max-width: 990px) {
+  .public-page.help-grid {
+    padding-top: 5rem;
+    padding-bottom: 1rem;
+  }
+}
+
+@media (max-width: 40rem) {
+  .public-page.help-grid {
+    padding: 5rem 1rem 1rem;
+  }
+
+  .contenido .public-page.help-grid {
+    padding-top: 1rem;
+  }
+
+  .help-category-list {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.85rem;
   }
 }
 

@@ -190,7 +190,7 @@ function AppLayout({ children }) {
                             title="Ir al panel de control"
                         >
                             <i className="fa-solid fa-solar-panel"></i>
-                            <span>Panel de Control</span>
+                            <span>Panel de control</span>
                         </NavLink>
                     </li>
                     {tieneRol("Jefe de mina") && (
@@ -290,7 +290,7 @@ function AppLayout({ children }) {
                                     title="Ir al formato de uso diario" 
                                 > 
                                     <i className="fa-solid fa-calendar-alt"></i> 
-                                    <span>Uso Diario</span> 
+                                    <span>Uso diario</span> 
                                 </NavLink> 
                         </li>
                             )} 
@@ -301,7 +301,7 @@ function AppLayout({ children }) {
                                     title="Ir al formato de medicion de gases" 
                                 > 
                                     <i className="fa-solid fa-gas-pump"></i> 
-                                    <span>Medición de Gases</span> 
+                                    <span>Medición de gases</span> 
                                 </NavLink> 
                          </li>
                             )} 

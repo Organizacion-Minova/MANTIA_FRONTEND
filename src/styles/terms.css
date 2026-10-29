@@ -20,25 +20,6 @@
   margin-bottom: 1.25rem;
 }
 
-.mt-legal__ruta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1.25rem;
-  color: var(--texto2);
-  font-size: 0.8125rem;
-}
-
-.mt-legal__ruta a {
-  color: var(--texto2);
-  text-decoration: none;
-}
-
-.mt-legal__ruta a:hover {
- background:var(--hover-principal);
-}
-
 .mt-legal__titulo-fila {
   display: flex;
   align-items: flex-start;

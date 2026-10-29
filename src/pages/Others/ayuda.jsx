@@ -1,6 +1,7 @@
 
 import { Link } from "react-router-dom";
 import "../../styles/Components.modules.css";
+import "../../styles/grid_content.css";
 import { useAuth } from "../../context/AuthContext.jsx";
 import AppLayout from "../../components/layout/AppLayout.jsx";
 import PublicLayout from "../../components/layout/PublicLayout.jsx";
@@ -553,13 +554,20 @@ function Ayuda() {
     if (!isAuthenticated) {
         return (
             <PublicLayout>
-            <div className="public-page">
+            <div className="public-page help-grid">
+                <section className="help-intro">
+                <div className="mt-legal__ruta">
+                    <Link to="/">Inicio</Link>
+                    <span aria-hidden="true">/</span>
+                    <span>Ayuda</span>
+                </div>
                 <PageWelcome
                     titulo="Centro de ayuda"
                     descripcion="Resuelve tus dudas sobre MANTIA, tu cuenta y el acceso, o escríbenos directamente."
                 />
+                </section>
 
-                <div className="search-main">
+                <div className="search-main help-search">
                     <div className="search-wrapper">
                         <i className="fa-solid fa-magnifying-glass"></i>
                         <input
@@ -577,11 +585,9 @@ function Ayuda() {
                     </button>
                 </div>
 
-                <br />
-
-                <h2 ref={resultadosRef} style={{ scrollMarginTop: "6rem" }}>Preguntas frecuentes</h2>
-                <br />
-                <div className="date" style={{ boxShadow: "var(--sombra-contenedor)" }}>
+                <section className="help-faq">
+                    <h2 ref={resultadosRef} style={{ scrollMarginTop: "6rem" }}>Preguntas frecuentes</h2>
+                    <div className="date" style={{ boxShadow: "var(--sombra-contenedor)" }}>
                     {preguntasFiltradas.length === 0 && (
                         <p style={{ color: "var(--texto2)" }}>No encontramos resultados para tu búsqueda.</p>
                     )}
@@ -612,26 +618,20 @@ function Ayuda() {
                             </li>
                         ))}
                     </ul>
-                </div>
-
-                <br /><br />
-
-                <h2>¿Necesitas más ayuda?</h2>
-                <br />
-                <div className="date" style={{ boxShadow: "var(--sombra-contenedor)" }}>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(15rem, 1fr))" }}>
-                        <FilaContacto icono="fa-solid fa-envelope" titulo="Correo" texto="mantiaCM@gmail.com" />
-                        <FilaContacto icono="fa-solid fa-location-dot" titulo="Ubicación" texto="Centro Nacional Minero, Sogamoso, Boyacá" />
                     </div>
-                </div>
+                </section>
 
-                <br /><br />
+                <section className="help-contact">
+                    <h2>¿Necesitas más ayuda?</h2>
+                    <div className="date" style={{ boxShadow: "var(--sombra-contenedor)" }}>
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(15rem, 1fr))" }}>
+                            <FilaContacto icono="fa-solid fa-envelope" titulo="Correo" texto="mantiaCM@gmail.com" />
+                            <FilaContacto icono="fa-solid fa-location-dot" titulo="Ubicación" texto="Centro Nacional Minero, Sogamoso, Boyacá" />
+                        </div>
+                    </div>
+                </section>
 
-                <div className="btn-container">
-                    {/* <a href="mailto:mantiadso@gmail.com" className="btn-azul">
-                        <i className="fa-solid fa-headset"></i>
-                        Contactar soporte
-                    </a> */}
+                <div className="btn-container help-actions">
                     <Link to="/about">
                         <button className="btn-2" title="ir a acerca de">
                             <i className="fa-solid fa-info-circle"></i>
@@ -639,7 +639,6 @@ function Ayuda() {
                         </button>
                     </Link>
                 </div>
-                <br />
             </div>
             </PublicLayout>
         );
@@ -648,13 +647,15 @@ function Ayuda() {
     /* ================= CON SESIÓN: centro de ayuda completo ================= */
     return (
         <Layout>
-        <div className="publicpage">
-            <PageWelcome
-                titulo="Centro de ayuda"
-                descripcion="Busca cómo usar cada módulo de MANTIA o escríbenos directamente."
-            />
+        <div className="public-page help-grid help-grid-authenticated">
+            <section className="help-intro">
+                <PageWelcome
+                    titulo="Centro de ayuda"
+                    descripcion="Busca cómo usar cada módulo de MANTIA o escríbenos directamente."
+                />
+            </section>
 
-            <form className="search-main" onSubmit={ejecutarBusqueda} role="search">
+            <form className="search-main help-search" onSubmit={ejecutarBusqueda} role="search">
                 <div className="search-wrapper">
                     <i className="fa-solid fa-magnifying-glass"></i>
                     <input
@@ -680,7 +681,7 @@ function Ayuda() {
                 </button>
             </form>
 
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.5rem", marginTop: "0.5rem" }}>
+            <div className="help-suggestions" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.5rem", marginTop: "0.5rem" }}>
                 <span style={{ color: "var(--texto2)", fontSize: "0.85rem" }}>Búsquedas frecuentes:</span>
                 {sugerencias.map((s) => (
                     <button
@@ -703,27 +704,25 @@ function Ayuda() {
                 ))}
             </div>
 
-            <br />
-
-            <h2>Explora por tema</h2>
-            <br />
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(13rem, 1fr))", gap: "1rem" }}>
-                {categorias.map((c) => (
-                    <TarjetaCategoria
-                        key={c.id}
-                        icono={c.icono}
-                        nombre={c.nombre}
-                        cantidad={contarPorCategoria(c.id)}
-                        activa={categoriaActiva === c.id}
-                        onClick={() => alternarCategoria(c.id)}
-                    />
-                ))}
-            </div>
-
-            <br /><br />
+            <section className="help-categories">
+                <h2>Explora por tema</h2>
+                <div className="help-category-list">
+                    {categorias.map((c) => (
+                        <TarjetaCategoria
+                            key={c.id}
+                            icono={c.icono}
+                            nombre={c.nombre}
+                            cantidad={contarPorCategoria(c.id)}
+                            activa={categoriaActiva === c.id}
+                            onClick={() => alternarCategoria(c.id)}
+                        />
+                    ))}
+                </div>
+            </section>
 
             <div
                 ref={resultadosRef}
+                className="help-results-heading"
                 style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline", justifyContent: "space-between", gap: "0.5rem", scrollMarginTop: "6rem" }}
             >
                 <h2>
@@ -742,8 +741,7 @@ function Ayuda() {
                     )}
                 </span>
             </div>
-            <br />
-            <div className="date" style={{ boxShadow: "var(--sombra-contenedor)" }}>
+            <div className="date help-faq" style={{ boxShadow: "var(--sombra-contenedor)" }}>
                 {preguntasFiltradas.length === 0 && (
                     <div style={{ color: "var(--texto2)" }}>
                         <p>
@@ -803,37 +801,24 @@ function Ayuda() {
                 </ul>
             </div>
 
-            <br /><br />
-
-            <h2>¿Necesitas más ayuda?</h2>
-            <br />
-            <div className="date" style={{ boxShadow: "var(--sombra-contenedor)" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(15rem, 1fr))" }}>
-                    <FilaContacto icono="fa-solid fa-envelope" titulo="Correo" texto="MantiaCM@gmail.com" />
-                    <FilaContacto icono="fa-solid fa-location-dot" titulo="Ubicación" texto="Centro Nacional Minero, Sogamoso, Boyacá" />
+            <section className="help-contact">
+                <h2>¿Necesitas más ayuda?</h2>
+                <div className="date" style={{ boxShadow: "var(--sombra-contenedor)" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(15rem, 1fr))" }}>
+                        <FilaContacto icono="fa-solid fa-envelope" titulo="Correo" texto="MantiaCM@gmail.com" />
+                        <FilaContacto icono="fa-solid fa-location-dot" titulo="Ubicación" texto="Centro Nacional Minero, Sogamoso, Boyacá" />
+                    </div>
                 </div>
-            </div>
+            </section>
 
-            <br /><br />
-
-            <div className="btn-container">
-             
+            <div className="btn-container help-actions">
                 <Link to="/about">
                     <button className="btn-2" title="ir a acerca de">
                         <i className="fa-solid fa-info-circle"></i>
                         Acerca de MANTIA
                     </button>
                 </Link>
-                {!isAuthenticated && (
-                    <Link to="/login">
-                        <button className="btn-2">
-                            <i className="fa-solid fa-right-to-bracket"></i>
-                            Iniciar sesión
-                        </button>
-                    </Link>
-                )}
             </div>
-            <br />
         </div>
         </Layout>
     );
