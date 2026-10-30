@@ -12,6 +12,10 @@ const HIGHLIGHTS = {
     icon: "fa-solid fa-clock",
     text: (n) => (n === 1 ? "1 calibración próxima" : `${n} calibraciones próximas`),
   },
+  low_stock_tools: {
+    icon: "fa-solid fa-triangle-exclamation",
+    text: (n) => (n === 1 ? "1 herramienta con stock bajo" : `${n} herramientas con stock bajo`),
+  },
 };
 
 export function getHighlight(key, value) {
