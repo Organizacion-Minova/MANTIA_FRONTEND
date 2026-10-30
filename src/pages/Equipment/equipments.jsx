@@ -120,14 +120,7 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
             return;
         }
 
-        const erroresGroserias = validarGroserias({
-            name: nombre,
-            description: descripcion,
-            responsible: responsable,
-            model: modelo,
-        });
-        
-        Object.assign(erroresLocales, validarGroserias({
+        const erroresLocales = validarCaracteresEspeciales({
             name: nombre,
             responsible: responsable,
         });
