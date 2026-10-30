@@ -23,13 +23,13 @@ function TopbarPublic({ solid = false }) {
     <header className={`mt-header${solid ? " mt-header-solid" : ""}`}>
       <img src="src/assets/img/mantia-cm.jpg" alt="MANTIA" className="mt-logo-img" />
       <div className="mt-right-nav">
-        <nav className="mt-navlinks">
+        {/* <nav className="mt-navlinks">
           {navLinks.map((link) => (
             <Link key={link.texto} to={link.ruta}>
               {link.texto}
             </Link>
           ))}
-        </nav>
+        </nav> */}
         {isAuthenticated ? (
           <button className="mt-login-btn" onClick={handleLogout}>
             <Icon />

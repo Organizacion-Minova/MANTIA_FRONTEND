@@ -7,6 +7,7 @@ import { GetMachine } from "../../api/machinesapi";
 import LoadingScreen from "../../components/LoadingScreen";
 import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
 import { useSearch } from "../../hooks/useSearch";
+import { useRolesResponsables } from "../../hooks/useRolesResponsables";
 
 export function fechaHoy() {
     const hoy = new Date();
@@ -30,6 +31,7 @@ function Formulario({onCancel, onGuardado, registroEditar}){
     const [machineId, setMachineId] = useState(registroEditar?.machine_id || "");
     const [machines, setMachines] = useState([]);
     const [timeError, setTimeError] = useState("");
+    const opcionesResponsable = useRolesResponsables(registroEditar?.responsible);
 
     useEffect(() => {
         GetMachine()
@@ -147,13 +149,13 @@ function Formulario({onCancel, onGuardado, registroEditar}){
                 {timeError && <p className="form-dropzone-error" role="alert">{timeError}</p>}
             </div>
             <div className="col-span-6">
-                <Text
+                <Select
                     label="Responsable a cargo:"
                     id="responsable"
                     name="responsable"
-                    placeholder="Responsable a cargo:"
                     value={responsible}
                     onChange={(e) => setResponsible(e.target.value)}
+                    opciones={opcionesResponsable}
                     required
                 />
             </div>

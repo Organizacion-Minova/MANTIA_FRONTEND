@@ -109,7 +109,6 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
             if (imagenFaltante) setErrorImagen("Debe seleccionar una imagen.");
             return;
         }
-
         const erroresGroserias = validarGroserias({
             name: nombre,
             description: descripcion,
@@ -117,11 +116,18 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
             model: modelo,
         });
         if (Object.keys(erroresGroserias).length > 0) {
-            advertencia("No se permiten palabras inapropiadas.", "Palabras inapropiadas");
+            advertencia("Se han detectado palabras inapropiadas en los campos: " + Object.keys(erroresGroserias).join(", "));
             return;
         }
 
-        const erroresLocales = validarCaracteresEspeciales({
+        const erroresGroserias = validarGroserias({
+            name: nombre,
+            description: descripcion,
+            responsible: responsable,
+            model: modelo,
+        });
+        
+        Object.assign(erroresLocales, validarGroserias({
             name: nombre,
             responsible: responsable,
         });
