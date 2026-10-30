@@ -126,18 +126,11 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
             characteristics: caracteristicas,
         });
         if (Object.keys(erroresGroserias).length > 0) {
-            advertencia("Se han detectado palabras inapropiadas en los campos: " + Object.keys(erroresGroserias).join(", "));
+            advertencia("No se permiten palabras inapropiadas.", "Palabras inapropiadas");
             return;
         }
 
         const erroresLocales = validarCaracteresEspeciales({ name: nombre });
-        Object.assign(erroresLocales, validarGroserias({
-            name: nombre,
-            model: modelo,
-            machine_usage: usoMaquina,
-            responsible: responsable,
-            characteristics: caracteristicas,
-        }));
         if (Object.keys(erroresLocales).length > 0) {
             setErrores(erroresLocales);
             return;

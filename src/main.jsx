@@ -5,9 +5,9 @@ import Ubicaciones from "./pages/Ubications/ubications";
 import CategoriasUbicacion from "./pages/Ubications/categories_ubications";
 import Maquinas from "./pages/Machines/machines";
 import { CardMachine } from './pages/Machines/card_machine';
-import AgregarInspeccion from './pages/Forms/inspection';
-import LlenarInspeccion from './pages/Forms/completeinspection';
-import MostrarInspeccion from './pages/Forms/showinspection';
+// import AgregarInspeccion from './pages/Forms/inspection';
+// import LlenarInspeccion from './pages/Forms/completeinspection';
+// import MostrarInspeccion from './pages/Forms/showinspection';
 import CategoriasMaquinas from './pages/Machines/categories_machines';
 import { createRoot } from 'react-dom/client'
 import Equipos from './pages/Equipment/equipments';
@@ -36,9 +36,10 @@ import NotFound from './pages/Others/not_found.jsx';
 import TermnsAndConditions from "./pages/Others/TermnsAndConditions.jsx";
 import AdministrationPanel from "./pages/Role/administration panel.jsx";
 import InspeccionEquipo from './pages/Forms/equipments/inspectionequipment.jsx';
-import LlenarInspeccionEquipo from './pages/Forms/equipments/completeinspectionequipment.jsx';
-import AgregarInspeccionEquipo from './pages/Forms/equipments/questioninspectionequipment.jsx';
-import MostrarInspeccionEquipo from './pages/Forms/equipments/showinspectionequipment.jsx';
+import ConstructorFormato from './pages/Forms/equipments/questioninspectionequipment.jsx';
+import LlenarInspeccion from './pages/Forms/equipments/completeinspectionequipment.jsx';
+import RegistrosInspeccion from './pages/Forms/equipments/registersinspection.jsx';
+import VerInspeccion from './pages/Forms/equipments/showinspectionequipment.jsx';
 // import PoliticaPrivacidad from "./pages/PoliticaPrivacidad";
 
 
@@ -65,17 +66,16 @@ createRoot(document.getElementById('root')).render(
               <Route path='machines' element={<RutaConPermiso permiso="machine.view"><Maquinas /></RutaConPermiso>} />
               <Route path='machines/categoriesmachines' element={<RutaConPermiso permiso="machine-category.update"><CategoriasMaquinas /></RutaConPermiso>} />
               <Route path='machines/cardMachine/:id' element={<RutaConPermiso permiso="machine.view"><CardMachine /></RutaConPermiso>} />
-              <Route path='inspection' element={<RutaConPermiso permiso="inspection.view"><AgregarInspeccion /></RutaConPermiso>} />
+              {/* <Route path='inspection' element={<RutaConPermiso permiso="inspection.view"><AgregarInspeccion /></RutaConPermiso>} />
               <Route path='inspection/completeinspection' element={<RutaConPermiso permiso="inspection.view"><LlenarInspeccion /></RutaConPermiso>} />
-              <Route path='inspection/completeinspection/showinspection' element={<RutaConPermiso permiso="inspection.view"><MostrarInspeccion /></RutaConPermiso>} />
+              <Route path='inspection/completeinspection/showinspection' element={<RutaConPermiso permiso="inspection.view"><MostrarInspeccion /></RutaConPermiso>} /> */}
               <Route path='equipment' element={<RutaConPermiso permiso="equipment.view"><Equipos /></RutaConPermiso>} />
               <Route path='equipment/cardequipment/:id' element={<RutaConPermiso permiso="equipment.view"><CardEquipment /></RutaConPermiso>} />
-              <Route path='equipment/:id/inspection' element={<InspeccionEquipo />} />
-              <Route path='equipment/:id/inspection/questions' element={<AgregarInspeccionEquipo />} />
-              <Route path='equipment/:id/inspection/complete' element={<LlenarInspeccionEquipo />} />
-              <Route path='equipment/:id/inspection/show' element={<MostrarInspeccionEquipo />} />
-              <Route path='equipment/:id/inspection/show/:inspectionId' element={<MostrarInspeccionEquipo />} />
-              <Route path='consumables/tools/types' element={<RutaConPermiso permiso="category-tools.view"><Consumibles /></RutaConPermiso>} />
+              <Route path="equipment/cardequipment/:id/inspection" element={<InspeccionEquipo />} />
+              <Route path="equipment/cardequipment/:id/inspection/questions" element={<ConstructorFormato />} />
+              <Route path="equipment/cardequipment/:id/inspection/complete" element={<LlenarInspeccion />} />
+              <Route path="equipment/cardequipment/:id/inspection/records" element={<RegistrosInspeccion />} />
+              <Route path="equipment/cardequipment/:id/inspection/records/:inspectionId" element={<VerInspeccion />} />              <Route path='consumables/tools/types' element={<RutaConPermiso permiso="category-tools.view"><Consumibles /></RutaConPermiso>} />
               <Route path='noconsumables/tools/types' element={<RutaConPermiso permiso="category-tools.view"><No_Consumibles /></RutaConPermiso>} />
               <Route path='consumables/tools' element={<RutaConPermiso permiso="tool.view"><ToolsConsumables /></RutaConPermiso>} />
               <Route path='noconsumables/tools' element={<RutaConPermiso permiso="tool.view"><ToolsNoConsumables /></RutaConPermiso>} />

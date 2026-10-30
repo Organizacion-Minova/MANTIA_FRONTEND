@@ -46,20 +46,45 @@ export async function CreateEquipmentQuestion(question) {
 
 // Formato inspeccion
 
-export async function CreateEquipmentInspection(formData) {
-    const { data } = await api.post("/api/equipment-inspections", formData);
+export async function CreateEquipmentInspection(datos) {
+    const { data } = await api.post("/api/inspection-formats-equipment", datos);
     return data;
 }
 
 export async function GetEquipmentInspections(equipmentId) {
-    const { data } = await api.get("/api/equipment-inspections", {
-        params: { equipment_id: equipmentId },
-    });
+    const { data } = await api.get(`/api/equipment/${equipmentId}/inspections`);
     return data;
 }
 
 export async function GetEquipmentInspectionById(id) {
-    const { data } = await api.get(`/api/equipment-inspections/${id}`);
+    const { data } = await api.get(`/api/inspection-formats-equipment/${id}`);
+    return data;
+}
+
+export async function GetEquipmentInspectionFormat(equipmentId) {
+    const { data } = await api.get(`/api/equipment/${equipmentId}/inspection-format`);
+    return data;
+}
+
+export async function CreateInspectionFormat(datos) {
+    const { data } = await api.post("/api/inspection-formats-equipment", datos);
+    return data;
+}
+
+export async function GetInspectionWeek(formatId, weekStart) {
+    const { data } = await api.get(`/api/inspection-formats/${formatId}/week`, {
+        params: { week_start: weekStart },
+    });
+    return data;
+}
+
+export async function GetInspection(id) {
+    const { data } = await api.get(`/api/inspections/${id}`);
+    return data;
+}
+
+export async function SaveInspection(datos) {
+    const { data } = await api.post("/api/inspections", datos);
     return data;
 }
 
