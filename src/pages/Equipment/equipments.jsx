@@ -120,17 +120,17 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
             return;
         }
 
-        const erroresGroserias = validarGroserias({
-            name: nombre,
-            description: descripcion,
-            responsible: responsable,
-            model: modelo,
-        });
+        // const erroresGroserias = validarGroserias({
+        //     name: nombre,
+        //     description: descripcion,
+        //     responsible: responsable,
+        //     model: modelo,
+        // });
         
-        Object.assign(erroresLocales, validarGroserias({
-            name: nombre,
-            responsible: responsable,
-        });
+        // Object.assign(erroresLocales, validarGroserias({
+        //     name: nombre,
+        //     responsible: responsable,
+        // });
         if (Object.keys(erroresLocales).length > 0) {
             setErrores(erroresLocales);
             return;
