@@ -1,0 +1,276 @@
+import { useState, useEffect } from "react";
+import { Boton,BotonLink } from "../../components/common/Button";
+import { PageWelcome, Searcher } from "../../components/common/welcome";
+import { Form, Text, Textarea, Select } from '../../components/common/forms';
+import { GetCategoryMachine, CreateCategoryMachine, DeleteCategoryMachine, UpdateCategoryMachine } from "../../api/machinesapi";
+import LoadingScreen from "../../components/LoadingScreen";
+import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
+import { capitalizarPrimeraLetra, soloLetras, sinCaracteresEspeciales, validarCaracteresEspeciales, validarGroserias } from "../../components/common/Validations";
+import { validarCamposRequeridos } from "../../components/common/requiredFields";
+import { useSearch } from "../../hooks/useSearch";
+
+function Formulario({ onCancel, onGuardado, categoriaEditar }) {
+    const esEdicion = categoriaEditar != null;
+    const [nombre, setNombre] = useState(categoriaEditar?.name || "");
+    const [descripcion, setDescripcion] = useState(categoriaEditar?.description || "");
+    const [estado, setEstado] = useState(categoriaEditar?.status || "active");
+    const [errores, setErrores] = useState({});
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setErrores({});
+
+        if (!validarCamposRequeridos({
+            "Nombre de la categoría": nombre,
+            "Descripción": descripcion,
+            ...(esEdicion ? { "Estado": estado } : {}),
+        })) return;
+
+        const erroresLocales = {};
+
+        if (!soloLetras(descripcion)) {
+            erroresLocales.description = ["El contenido solo puede contener letras y espacios."];
+        }
+        Object.assign(erroresLocales, validarCaracteresEspeciales({ name: nombre }));
+        Object.assign(erroresLocales, validarGroserias({ name: nombre, description: descripcion }));
+
+        if (Object.keys(erroresLocales).length > 0) {
+            setErrores(erroresLocales);
+            return; 
+        }
+        if (esEdicion) {
+            const sinCambios =
+                nombre === categoriaEditar.name &&
+                descripcion === categoriaEditar.description &&
+                estado === categoriaEditar.status;
+            if (sinCambios) {
+                onCancel();
+                return;
+            }
+        }   
+        const datos = { name: nombre, description: descripcion };
+        if (esEdicion) {
+            datos.status = estado;
+        }
+
+        try {
+            if (esEdicion) {
+                await UpdateCategoryMachine(categoriaEditar.id, datos);
+            } else {
+                await CreateCategoryMachine(datos);
+            }
+            onGuardado();
+            onCancel();
+        } catch (error) {
+            if (error.response?.status === 422) {
+                setErrores(error.response.data.errors);
+            } else {
+                console.error("Error al guardar categoría:", error);
+            }
+        }
+    };
+
+    return (
+        <Form
+            titulo={esEdicion ? "Editar categoría" : "Agregar nueva categoría"}
+            descripcion={esEdicion ? "Modifique los datos de la categoría" : "Ingrese los datos de la nueva categoría"}
+            onCancel={onCancel}
+            textoBoton="Guardar"
+            iconoBoton="fa-solid fa-floppy-disk"
+            onSubmit={handleSubmit}
+            noValidate
+        >
+            <div className="col-span-6">
+                <Text
+                    label="Nombre de la categoría:"
+                    id="nombre"
+                    name="nombre"
+                    placeholder="Ingrese el nombre de la categoría"
+                    value={nombre}
+                    onChange={(e) => {
+                        const valor = e.target.value;
+                        if (sinCaracteresEspeciales(valor)){
+                            setNombre(capitalizarPrimeraLetra(valor))
+                        }
+                    }}
+                    required
+                />
+            </div>
+
+            <div className="col-span-6">
+                <Textarea
+                    label="Descripción"
+                    id="descripcion"
+                    name="descripcion"
+                    rows={4}
+                    value={descripcion}
+                    onChange={(e) => setDescripcion(capitalizarPrimeraLetra(e.target.value))}
+                    required
+                />
+            </div>
+
+            {esEdicion && (
+                <div className="col-span-6">
+                    <Select
+                        label="Estado"
+                        id="estado"
+                        name="estado"
+                        value={estado}
+                        opciones={[
+                            { valor: "active", etiqueta: "Activo" },
+                            { valor: "inactive", etiqueta: "Inactivo" },
+                        ]}
+                        onChange={(e) => setEstado(e.target.value)}
+                        required
+                    />
+                </div>
+            )}
+        </Form>
+    );
+}
+function CategoriasMaquinas(){
+    const [mostrarFormulario, setMostrarFormulario] = useState(false);
+    const [categoriaEditar, setCategoriaEditar] = useState(null);
+    const [categorias, setCategorias] = useState([]);
+    const [cargando, setCargando] = useState(true);
+
+
+    const { busqueda, setBusqueda, filtrosEspeciales, setFiltroEspecial, itemsFiltrados: categoriasFiltradas } = useSearch(
+        categorias,
+        ['name', 'description', 'status']
+    );
+
+    const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(categoriasFiltradas, 7);
+
+    useEffect(() => {
+        setPaginaActual(1);
+    }, [busqueda, filtrosEspeciales, setPaginaActual]);
+    const cargarCategorias = () => {
+        setCargando(true);
+        GetCategoryMachine()
+            .then((data) => setCategorias(data))
+            .catch((error) => console.error("Error al traer categorías:", error))
+            .finally(() => setCargando(false));
+    };
+    useEffect(() => {
+        cargarCategorias();
+    }, []);
+
+    if (cargando) return <LoadingScreen indeterminado/>;
+
+    const handleEliminar = async (id) => {
+        const confirmar = window.confirm("¿Seguro que quieres eliminar esta categoría?");
+        if (!confirmar) return;
+
+        try {
+            await DeleteCategoryMachine(id);
+            cargarCategorias(); 
+        } catch (error) {
+            console.error("Error al eliminar categoría:", error);
+        }
+    };
+    const handleAbrirCrear = () => {
+        setCategoriaEditar(null);
+        setMostrarFormulario(true);
+    };
+    const handleAbrirEditar = (categoria) => {
+        setCategoriaEditar(categoria);
+        setMostrarFormulario(true);
+    };
+    return(
+        <div className="list-grid">
+            <header className="bienvenida">
+                <PageWelcome
+                    titulo="CATEGORÍAS DE MÁQUINAS"
+                    descripcion="Este es el formato de las categorías de las máquinas."
+                    mostrarHistorial={true}
+                />
+                <Searcher
+                    value={busqueda}
+                    onChange={(e) => setBusqueda(e.target.value)}
+                    placeholder="Buscar por nombre o descripción"
+                    filtrosAdicionales={
+                        <Select
+                            id="filtro-estado-consumibles"
+                            name="filtro-estado-consumibles"
+                            value={filtrosEspeciales.status || ""}
+                            onChange={(e) => setFiltroEspecial("status", e.target.value)}
+                            opciones={[
+                                { valor: "", etiqueta: "Todos los estados" },
+                                { valor: "active", etiqueta: "Activo" },
+                                { valor: "inactive", etiqueta: "Inactivo" },
+                            ]}  
+                        />
+                    }
+                />
+            </header>
+            <div className="table-responsive">
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre de la categoría</th>
+                            <th>Descripción</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {datosPagina.map((cat) => (
+                        <tr key={cat.id}>
+                            <td>{cat.name}</td>
+                            <td>{cat.description}</td>
+                            <td>{cat.status === "active" ? "Activo" : "Inactivo"}</td>
+                            <td>
+                                <Boton
+                                    clase="btn-azul"
+                                    icono="fa-solid fa-edit"
+                                    onClick={() => handleAbrirEditar(cat)}
+                                    titulo="Editar categoría"
+                                />
+                                <Boton
+                                    clase="btn-2"
+                                    icono="fa-solid fa-trash"
+                                    onClick={() => handleEliminar(cat.id)}
+                                    titulo="Eliminar categoría"
+                                />
+                            </td>
+                        </tr>
+                        ))}
+                    </tbody>
+                </table>
+           </div>
+            <div className="btn-container-page">
+                <div className="btn-container">
+                    <Boton
+                        clase="btn-azul"
+                        icono="fa-solid fa-plus"
+                        texto="Nueva categoría"
+                        onClick={handleAbrirCrear}
+                        titulo="Agregar nueva categoría"
+                    />
+                    <BotonLink
+                        link="/machines"
+                        clase="btn-2"
+                        icono="fa-solid fa-list"
+                        texto="Máquinas"
+                        titulo="Volver al listado de máquinas"
+                    />
+                </div>
+                <Paginacion
+                    paginaActual={paginaActual}
+                    totalPaginas={totalPaginas}
+                    setPaginaActual={setPaginaActual}
+                />
+            </div>
+            {mostrarFormulario && (
+                <Formulario 
+                    key={categoriaEditar?.id || "nuevo"}
+                    onCancel={() => setMostrarFormulario(false)}
+                    onGuardado={cargarCategorias}
+                    categoriaEditar={categoriaEditar}
+                />
+            )}
+        </div>
+    )
+}
+export default CategoriasMaquinas;

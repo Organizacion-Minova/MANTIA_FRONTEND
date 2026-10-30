@@ -1,0 +1,211 @@
+
+/* =========================================
+   HISTORIAL DE NAVEGACIÓN — AURORA JADE
+   ========================================= */
+
+.navigation-history {
+    width: 100%;
+    min-width: 0;
+    margin: 0 0 0.10rem;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    font-family: var(--fuente-secundaria, sans-serif);
+    box-sizing: border-box;
+}
+
+/* Encabezado */
+
+.navigation-history__header {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 0 0 0.3rem;
+}
+
+.navigation-history__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--texto2);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    white-space: nowrap;
+}
+
+.navigation-history__label i {
+    color: var(--secundario);
+    font-size: 0.7rem;
+}
+
+.navigation-history__counter {
+    margin-left: auto;
+    flex-shrink: 0;
+    color: var(--texto2);
+    font-size: 0.7rem;
+    font-weight: 500;
+    opacity: 0.75;
+}
+
+/* Lista de interfaces */
+
+.navigation-history__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.15rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.navigation-history__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* Separadores */
+
+.navigation-history__separator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.2rem;
+    color: var(--texto2);
+    opacity: 0.5;
+    font-size: 0.62rem;
+}
+
+/* Interfaces anteriores */
+
+.navigation-history__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    min-height: 30px;
+    padding: 0.3rem 0.5rem;
+    color: var(--texto2);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 500;
+    line-height: 1.3;
+    text-align: left;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+    transition:
+        background-color 0.18s ease,
+        color 0.18s ease;
+}
+
+.navigation-history__link:hover {
+    color: var(--texto);
+    background: var(--hover-principal);
+}
+
+.navigation-history__link:focus-visible {
+    outline: 2px solid var(--secundario);
+    outline-offset: 2px;
+}
+
+/* Interfaz actual */
+
+.navigation-history__current {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    max-width: 100%;
+    min-height: 30px;
+    padding: 0.3rem 0.6rem;
+    color: var(--texto);
+    background: var(--hover-principal);
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.navigation-history__current i {
+    flex-shrink: 0;
+    color: var(--secundario);
+    font-size: 0.72rem;
+}
+
+/* =========================================
+   TABLET
+   ========================================= */
+
+@media (max-width: 991px) {
+
+    .navigation-history__list {
+        justify-content: center;
+        gap: 0.1rem;
+    }
+
+    .navigation-history__link,
+    .navigation-history__current {
+        font-size: 0.79rem;
+    }
+}
+
+/* =========================================
+   MÓVIL
+   ========================================= */
+
+@media (max-width: 767px) {
+    
+
+    .navigation-history__header {
+        margin-bottom: 0.25rem;
+    }
+
+    .navigation-history__label {
+        font-size: 0.68rem;
+    }
+
+    .navigation-history__list {
+        flex-wrap: nowrap;
+        justify-content: safe center;
+        overflow-x: auto;
+        overflow-y: hidden;
+       
+        scrollbar-width: thin;
+        scrollbar-color: var(--borde-contenedor) transparent;
+    }
+
+    .navigation-history__item {
+        flex-shrink: 0;
+        max-width: 75%;
+    }
+
+    .navigation-history__link,
+    .navigation-history__current {
+        min-height: 32px;
+        padding: 0.35rem 0.45rem;
+        font-size: 0.78rem;
+    }
+
+    .navigation-history__separator {
+        padding: 0 0.1rem;
+    }
+}
+
+/* =========================================
+   MOVIMIENTO REDUCIDO
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .navigation-history__link {
+        transition: none;
+    }
+}
