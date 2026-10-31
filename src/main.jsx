@@ -38,7 +38,7 @@ import AdministrationPanel from "./pages/Role/administration panel.jsx";
 import InspeccionEquipo from './pages/Forms/equipments/inspectionequipment.jsx';
 import ConstructorFormato from './pages/Forms/equipments/questioninspectionequipment.jsx';
 import LlenarInspeccion from './pages/Forms/equipments/completeinspectionequipment.jsx';
-import RegistrosInspeccion from './pages/Forms/equipments/registersinspection.jsx';
+import RegistrosInspeccion from './pages/Forms/equipments/registersinspectionequipment.jsx';
 import VerInspeccion from './pages/Forms/equipments/showinspectionequipment.jsx';
 // import PoliticaPrivacidad from "./pages/PoliticaPrivacidad";
 

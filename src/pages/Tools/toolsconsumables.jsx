@@ -16,8 +16,12 @@ function Formulario({onCancel,onGuardado, herramientaEditar}){
     const [stockBueno, setStockBueno] = useState(herramientaEditar?.condiciones?.find(c => c.condition === "bueno")?.stock ?? "");
     const [stockRegular, setStockRegular] = useState(herramientaEditar?.condiciones?.find(c => c.condition === "regular")?.stock ?? "");
     const [stockMalo, setStockMalo] = useState(herramientaEditar?.condiciones?.find(c => c.condition === "malo")?.stock ?? "");
-    const [locationId, setLocationId] = useState(herramientaEditar?.location_id || "");
-    const [categoryId, setCategoryId] = useState(herramientaEditar?.category_id || "");
+    const [locationId, setLocationId] = useState(
+        String(herramientaEditar?.location_id ?? herramientaEditar?.ubicacion?.id ?? "")
+    );
+    const [categoryId, setCategoryId] = useState(
+        String(herramientaEditar?.category_id ?? herramientaEditar?.categoria?.id ?? "")
+    );
     const [categoria, setCategoria]= useState([])
     const [ubicaciones, setUbicaciones] = useState([]);
     const [errores, setErrores] = useState({});
@@ -48,10 +52,11 @@ function Formulario({onCancel,onGuardado, herramientaEditar}){
             "Categoria": categoryId
         })) return;
 
-        const erroresLocales = {};
-
-        Object.assign(erroresLocales, validarCaracteresEspeciales({ name: nombre }));
-        if (tieneGroserias(nombre)) {
+        const validarNombre = !esEdicion || nombre !== herramientaEditar.name;
+        const erroresLocales = validarNombre
+            ? validarCaracteresEspeciales({ name: nombre })
+            : {};
+        if (validarNombre && tieneGroserias(nombre)) {
             erroresLocales.name = ["El nombre contiene palabras inapropiadas."];
         }
         if (Object.keys(erroresLocales).length > 0) {
@@ -64,8 +69,8 @@ function Formulario({onCancel,onGuardado, herramientaEditar}){
                 Number(stockBueno) === herramientaEditar.condiciones?.find(c => c.condition === "bueno")?.stock &&
                 Number(stockRegular) === herramientaEditar.condiciones?.find(c => c.condition === "regular")?.stock &&
                 Number(stockMalo) === herramientaEditar.condiciones?.find(c => c.condition === "malo")?.stock &&
-                Number(locationId) === herramientaEditar.location_id &&
-                Number(categoryId) === herramientaEditar.category_id;
+                locationId === String(herramientaEditar.location_id ?? herramientaEditar.ubicacion?.id ?? "") &&
+                categoryId === String(herramientaEditar.category_id ?? herramientaEditar.categoria?.id ?? "");
             if (sincambios) {
                 onCancel();
                 return;
@@ -101,7 +106,10 @@ function Formulario({onCancel,onGuardado, herramientaEditar}){
     const opcionesUbicaciones = [
         { valor: "", etiqueta: "Seleccione una ubicación" },
         ...ubicaciones
-            .filter(ubi => ubi.status === 'active' || ubi.id === herramientaEditar?.location_id)
+            .filter(ubi =>
+                ubi.status === 'active' ||
+                String(ubi.id) === String(herramientaEditar?.location_id ?? herramientaEditar?.ubicacion?.id)
+            )
             .map(ubi => ({ valor: ubi.id, etiqueta: ubi.status === 'active' ? ubi.name : `${ubi.name} (Inactiva)` }))
     ];
 
@@ -205,6 +213,12 @@ function Formulario({onCancel,onGuardado, herramientaEditar}){
                     required
                 />
             </div>
+
+            {Object.values(errores).flat().map((error, index) => (
+                <p key={`${index}-${error}`} className="error-texto" role="alert">
+                    {error}
+                </p>
+            ))}
 
         </Form>
     )

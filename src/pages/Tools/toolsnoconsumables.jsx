@@ -16,8 +16,8 @@ function Formulario({onCancel,onGuardado, herramientaEditar}){
     const [stockBueno, setStockBueno] = useState(herramientaEditar?.condiciones?.find(c => c.condition === "bueno")?.stock ?? "");
     const [stockRegular, setStockRegular] = useState(herramientaEditar?.condiciones?.find(c => c.condition === "regular")?.stock ?? "");
     const [stockMalo, setStockMalo] = useState(herramientaEditar?.condiciones?.find(c => c.condition === "malo")?.stock ?? "");
-    const [locationId, setLocationId] = useState(herramientaEditar?.location_id || "");
-    const [categoryId, setCategoryId] = useState(herramientaEditar?.category_id || "");
+    const [locationId, setLocationId] = useState(herramientaEditar?.ubicacion?.id || "");
+    const [categoryId, setCategoryId] = useState(herramientaEditar?.catogoria?.id || "");
     const [categoria, setCategoria]= useState([])
     const [ubicaciones, setUbicaciones] = useState([]);
     const [errores, setErrores] = useState({});
