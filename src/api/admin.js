@@ -67,9 +67,17 @@ export async function obtenerPermisosDisponibles() {
     const { data } = await api.get('/api/admin/permissions');
     return data.grupos;
 }
-export async function descargarBackup(archivo) {
-    const response = await api.get(`/api/admin/backups/${archivo}/download`, { responseType: 'blob' });
-    const url = window.URL.createObjectURL(new Blob([response.data]));
+// Las tres acciones siguientes piden la contraseña del usuario.
+export async function descargarBackup(archivo, password) {
+    // Se pide como texto para guardar el archivo EXACTAMENTE como está en el servidor.
+    // Si axios lo convierte en objeto y se vuelve a escribir, el contenido cambia y el hash ya no coincide.
+    const response = await api.post(
+        `/api/admin/backups/${archivo}/download`,
+        { password },
+        { responseType: 'text', transformResponse: [(texto) => texto] }
+    );
+    const blob = new Blob([response.data], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
     const enlace = document.createElement('a');
     enlace.href = url;
     enlace.setAttribute('download', archivo);
@@ -79,7 +87,12 @@ export async function descargarBackup(archivo) {
     window.URL.revokeObjectURL(url);
 }
 
-export async function eliminarBackup(archivo) {
-    const { data } = await api.delete(`/api/admin/backups/${archivo}`);
+export async function eliminarBackup(archivo, password) {
+    const { data } = await api.delete(`/api/admin/backups/${archivo}`, { data: { password } });
+    return data;
+}
+
+export async function restaurarBackup(archivo, password) {
+    const { data } = await api.post(`/api/admin/backups/${archivo}/restore`, { password });
     return data;
 }
