@@ -5,7 +5,7 @@ import { getNoDataMessage } from "./sectionMessages";
 //cards individual para maquinas equipos y herramientas
 
 
-export default function SummaryCard({ title, to, summary, state }) {
+export default function SummaryCard({ title, to, summary, state, totalLabel }) {
   const highlights = (summary?.highlights ?? [])
     .map((h) => getHighlight(h.key, h.value))
     .filter(Boolean);
@@ -16,7 +16,10 @@ export default function SummaryCard({ title, to, summary, state }) {
 
       {summary ? (
         <>
-          <p className="summary-card__total">{summary.total}</p>
+          <p className="summary-card__total">
+            {summary.total}
+            <span className="summary-card__total-label">{totalLabel}</span>
+          </p>
           <ul className="summary-card__breakdown">
             {summary.breakdown.map((item) => (
               <li key={item.key} className={`summary-card__item summary-card__item--${item.status}`}>

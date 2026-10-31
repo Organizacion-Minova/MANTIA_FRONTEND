@@ -12,8 +12,20 @@ export default function LocationsSummary({ locations, state }) {
       <ul className="locations-summary__list">
         {locations.map((loc) => (
           <li key={loc.id} className="locations-summary__item">
-            <span>{loc.name}</span>
-            <strong>{loc.total}</strong>
+            <div className="locations-summary__header">
+              <span>{loc.name}</span>
+              <strong>{loc.total} elementos</strong>
+            </div>
+            <ul className="locations-summary__breakdown">
+              {(loc.items ?? [])
+                .filter((item) => item.quantity > 0)
+                .map((item) => (
+                  <li key={item.key} className="locations-summary__breakdown-item">
+                    <span>{item.label}</span>
+                    <strong>{item.quantity}</strong>
+                  </li>
+                ))}
+            </ul>
           </li>
         ))}
       </ul>
@@ -22,7 +34,7 @@ export default function LocationsSummary({ locations, state }) {
 
   return (
     <div className="locations-summary">
-      <h3 className="dashboard-block__title">Ubicaciones</h3>
+      <h3 className="dashboard-block__title">Total de elementos en ubicaciones</h3>
       {content}
     </div>
   );
