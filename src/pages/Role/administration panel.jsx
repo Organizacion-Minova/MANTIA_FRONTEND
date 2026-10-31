@@ -11,9 +11,9 @@ import {
 import {
     obtenerUsuarios, alternarActivoUsuario, cambiarPasswordUsuario, cambiarRolUsuario,
     obtenerRoles, crearRol, actualizarRol, alternarActivoRol, eliminarRol,
-    obtenerOpcionesBackup, obtenerBackups, crearBackup, descargarBackup, eliminarBackup,
     obtenerPermisosDisponibles
 } from "../../api/admin";
+import PanelBackups from "./PanelBackups";
 
 const TABS = [
     { id: "solicitudes", texto: "Solicitudes", icono: "fa-solid fa-user-clock",titulo:"Gestionar solicitudes" },
@@ -495,150 +495,7 @@ function PanelRoles() {
 }
 
 // ---------- 4. Backups ----------
-function PanelBackups() {
-    const [opciones, setOpciones] = useState([]);
-    const [seleccionadas, setSeleccionadas] = useState([]);
-    const [backups, setBackups] = useState([]);
-    const [cargando, setCargando] = useState(true);
-    const [error, setError] = useState(null);
-    const [generando, setGenerando] = useState(false);
-    const { exito, peligro } = useToast();
-
-    const cargar = useCallback(async () => {
-        setCargando(true);
-        setError(null);
-        try {
-            const [listaOpciones, listaBackups] = await Promise.all([obtenerOpcionesBackup(), obtenerBackups()]);
-            setOpciones(Array.isArray(listaOpciones) ? listaOpciones : []);
-            setBackups(Array.isArray(listaBackups) ? listaBackups : []);
-        } catch (err) {
-            console.error("Error al cargar copias de seguridad:", err);
-            setError(err.response?.data?.message || "No se pudieron cargar las copias de seguridad.");
-        } finally {
-            setCargando(false);
-        }
-    }, []);
-
-    useEffect(() => { cargar(); }, [cargar]);
-
-    const toggleTabla = (tabla) => {
-        setSeleccionadas((prev) =>
-            prev.includes(tabla) ? prev.filter((t) => t !== tabla) : [...prev, tabla]
-        );
-    };
-
-    const handleGenerar = async () => {
-        if (seleccionadas.length === 0) {
-            peligro("Selecciona al menos una tabla para respaldar.");
-            return;
-        }
-        setGenerando(true);
-        try {
-            await crearBackup(seleccionadas);
-            exito("Copia de seguridad generada correctamente.");
-            setSeleccionadas([]);
-            cargar();
-        } catch (err) {
-            peligro(err.response?.data?.message || "No se pudo generar la copia de seguridad.");
-        } finally {
-            setGenerando(false);
-        }
-    };
-
-    const handleDescargar = async (archivo) => {
-        try {
-            await descargarBackup(archivo);
-        } catch {
-            peligro("No se pudo descargar la copia de seguridad.");
-        }
-    };
-
-    const handleEliminar = async (archivo) => {
-        if (!window.confirm("¿Eliminar esta copia de seguridad? No se podrá recuperar.")) return;
-        try {
-            await eliminarBackup(archivo);
-            exito("Copia de seguridad eliminada.");
-            cargar();
-        } catch {
-            peligro("No se pudo eliminar la copia de seguridad.");
-        }
-    };
-
-    if (cargando) return <LoadingScreen indeterminado />;
-
-    return (
-        <>
-            <div className="form-container" style={{ marginBottom: "1.5rem" }}>
-                <h3 className="form-title">Generar nueva copia de seguridad</h3>
-                <p className="form-description">Selecciona qué información quieres respaldar.</p>
-                <div className="form-grid">
-                    {opciones.map((op) => (
-                        <div className="col-span-3" key={op.tabla}>
-                            <Checkbox
-                                id={`tabla-${op.tabla}`}
-                                name={op.tabla}
-                                label={`${op.etiqueta} (${op.registros} registros)`}
-                                checked={seleccionadas.includes(op.tabla)}
-                                onChange={() => toggleTabla(op.tabla)}
-                            />
-                        </div>
-                    ))}
-                </div>
-                <div className="btn-container" style={{ marginTop: "1rem" }}>
-                    <Boton
-                        clase="btn-azul"
-                        texto={generando ? "Generando..." : "Generar copia de seguridad"}
-                        icono="fa-solid fa-database"
-                        disabled={generando}
-                        onClick={handleGenerar}
-                    />
-                </div>
-            </div>
-
-            <div className="table-responsive">
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th>Archivo</th>
-                            <th>Contenido</th>
-                            <th>Creado por</th>
-                            <th>Fecha</th>
-                            <th>Tamaño</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {backups.length > 0 ? backups.map((b) => (
-                            <tr key={b.archivo}>
-                                <td>{b.archivo}</td>
-                                <td>{b.tablas?.join(", ")}</td>
-                                <td>{b.creado_por}</td>
-                                <td>{new Date(b.creado_en).toLocaleString("es-CO")}</td>
-                                <td>{b.peso_kb} KB</td>
-                                <td>
-                                    <div className="btn-container">
-                                        <Boton
-                                            clase="btn-azul" icono="fa-solid fa-download" titulo="Descargar copia de seguridad"
-                                            onClick={() => handleDescargar(b.archivo)}
-                                        />
-                                        <Boton
-                                            clase="btn-2" icono="fa-solid fa-trash" titulo="Eliminar copia de seguridad"
-                                            onClick={() => handleEliminar(b.archivo)}
-                                        />
-                                    </div>
-                                </td>
-                            </tr>
-                        )) : (
-                            <tr>
-                                <td colSpan="6" style={{ textAlign: "center" }}>Aún no se ha generado ningún backup.</td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
-        </>
-    );
-}
+// (ahora vive en PanelBackups.jsx)
 
 // ---------- Panel principal ----------
 function AdministrationPanel() {
