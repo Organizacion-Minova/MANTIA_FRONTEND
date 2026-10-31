@@ -118,13 +118,21 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
             return;
         }
 
-        const erroresGroserias = validarGroserias({
+        const camposTexto = {
             name: nombre,
             model: modelo,
             machine_usage: usoMaquina,
             responsible: responsable,
             characteristics: caracteristicas,
-        });
+        };
+        const camposTextoValidados = esEdicion
+            ? Object.fromEntries(
+                Object.entries(camposTexto).filter(([campo, valor]) =>
+                    valor !== (maquinaEditar[campo] || "")
+                )
+            )
+            : camposTexto;
+        const erroresGroserias = validarGroserias(camposTextoValidados);
         if (Object.keys(erroresGroserias).length > 0) {
             advertencia("No se permiten palabras inapropiadas.", "Palabras inapropiadas");
             return;
