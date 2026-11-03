@@ -1,10 +1,21 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Boton } from "../../../components/common/Button";
-import { Text, Textarea, Select } from "../../../components/common/forms";
+import { Text, Textarea, Select, Dropzone } from "../../../components/common/forms";
 import { formatearFechaCorta } from "../../../components/common/Validations";
 import { useToast } from "../../../context/ToastContext";
+import api from "../../../api/axios";
 
 const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+const TIPOS_FIRMA = ["image/png", "image/jpeg"];
+const PESO_MAXIMO_FIRMA = 2 * 1024 * 1024;
+
+function urlFirma(firma) {
+    if (!firma) return "";
+    if (/^(data:|https?:\/\/)/i.test(firma)) return firma;
+
+    const ruta = firma.replace(/^\/+/, "").replace(/^storage\//, "");
+    return `${api.defaults.baseURL.replace(/\/+$/, "")}/storage/${ruta}`;
+}
 
 function aEstadoInicial(inspeccion) {
     const valores = {};
@@ -15,7 +26,11 @@ function aEstadoInicial(inspeccion) {
     });
     const firmas = {};
     (inspeccion?.signatures || []).forEach((f) => {
-        firmas[f.role] = { name: f.name || "", id_number: f.id_number || "" };
+        firmas[f.role] = {
+            name: f.name || "",
+            id_number: f.id_number || "",
+            signature: f.signature || "",
+        };
     });
     return { valores, observaciones, firmas };
 }
@@ -34,9 +49,10 @@ export default function FormatoInspeccion({
     const [valores, setValores] = useState(inicial.valores);
     const [observaciones, setObservaciones] = useState(inicial.observaciones);
     const [firmas, setFirmas] = useState(inicial.firmas);
+    const [imagenesFirma, setImagenesFirma] = useState({});
     const [headerData, setHeaderData] = useState(inspection?.header_data || {});
     const [generalObs, setGeneralObs] = useState(inspection?.general_observations || "");
-    const { advertencia } = useToast();
+    const { advertencia, peligro } = useToast();
 
     const firmantes = format.signers?.length
         ? format.signers
@@ -52,6 +68,27 @@ export default function FormatoInspeccion({
         setObservaciones((prev) => ({ ...prev, [qid]: texto }));
     const cambiarFirma = (rol, campo, valor) =>
         setFirmas((prev) => ({ ...prev, [rol]: { ...prev[rol], [campo]: valor } }));
+    const cambiarImagenFirma = (rol) => (e) => {
+        const archivo = e.target.files[0];
+        e.target.value = "";
+        if (!archivo) return;
+        if (!TIPOS_FIRMA.includes(archivo.type)) {
+            advertencia("La firma debe ser una imagen PNG o JPG.");
+            return;
+        }
+        if (archivo.size > PESO_MAXIMO_FIRMA) {
+            advertencia("La firma es demasiado pesada (máx. 2 MB).");
+            return;
+        }
+
+        const lector = new FileReader();
+        lector.onload = () => {
+            setImagenesFirma((prev) => ({ ...prev, [rol]: archivo }));
+            cambiarFirma(rol, "signature", lector.result);
+        };
+        lector.onerror = () => peligro("No se pudo leer la imagen de la firma.");
+        lector.readAsDataURL(archivo);
+    };
 
     const guardar = () => {
         const problemas = [];
@@ -102,6 +139,7 @@ export default function FormatoInspeccion({
                     name: firmas[f.key].name.trim(),
                     id_number: firmas[f.key].id_number.trim(),
                 })),
+            signature_images: imagenesFirma,
         });
     };
 
@@ -183,53 +221,56 @@ export default function FormatoInspeccion({
                 )}
             </div>
             <br />
-            {format.sections.map((s) => (
-                <div key={s.id} className="card">
-                    <h3>{s.position}. {s.title}</h3>
-                    {s.instructions && <p>{s.instructions}</p>}
-                    <div className="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>N.°</th>
-                                    <th>Pregunta</th>
-                                    {s.mode === "daily"
-                                        ? DIAS.map((d) => <th key={d}>{d}</th>)
-                                        : <th>Respuesta</th>}
-                                    {s.has_observation && <th>Observaciones</th>}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {preguntasVisibles(s).map((q) => (
-                                    <tr key={q.id}>
-                                        <td>{s.position}.{q.position}</td>
-                                        <td>{q.text}</td>
+            {format.sections.map((s, index) => (
+                <Fragment key={s.id}>
+                    <div className="card">
+                        <h3>{s.position}. {s.title}</h3>
+                        {s.instructions && <p>{s.instructions}</p>}
+                        <div className="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>N.°</th>
+                                        <th>Pregunta</th>
                                         {s.mode === "daily"
-                                            ? DIAS.map((_, i) => <td key={i}>{celda(q.id, i + 1, s)}</td>)
-                                            : <td>{celda(q.id, 0, s)}</td>}
-                                        {s.has_observation && (
-                                            <td>
-                                                {readOnly ? (
-                                                    observaciones[q.id] || ""
-                                                ) : (
-                                                    <Text
-                                                      value={observaciones[q.id] || ""}  
-                                                      onChange={(e) => cambiarObs(q.id, e.target.value)}
-                                                    />
-                                                )}
-                                            </td>
-                                        )}
+                                            ? DIAS.map((d) => <th key={d}>{d}</th>)
+                                            : <th>Respuesta</th>}
+                                        {s.has_observation && <th>Observaciones</th>}
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {preguntasVisibles(s).map((q) => (
+                                        <tr key={q.id}>
+                                            <td>{s.position}.{q.position}</td>
+                                            <td>{q.text}</td>
+                                            {s.mode === "daily"
+                                                ? DIAS.map((_, i) => <td key={i}>{celda(q.id, i + 1, s)}</td>)
+                                                : <td>{celda(q.id, 0, s)}</td>}
+                                            {s.has_observation && (
+                                                <td>
+                                                    {readOnly ? (
+                                                        observaciones[q.id] || ""
+                                                    ) : (
+                                                        <Text
+                                                          value={observaciones[q.id] || ""}
+                                                          onChange={(e) => cambiarObs(q.id, e.target.value)}
+                                                        />
+                                                    )}
+                                                </td>
+                                            )}
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
+                    {index < format.sections.length - 1 && <br />}
+                </Fragment>
             ))}
             <br />
 
             <div className="card">
-                <h3>Observaciones generales</h3>
+                <h3>Observaciones generales (Opcional)</h3>
                 {readOnly ? (
                     <p>{generalObs || "—"}</p>
                 ) : (
@@ -252,10 +293,19 @@ export default function FormatoInspeccion({
                         <div key={f.key} className="col-span-3">
                             <h4>{f.label}</h4>
                             {readOnly ? (
-                                <p>
-                                    {firmas[f.key]?.name || "—"}
-                                    {firmas[f.key]?.id_number ? ` · C.C. ${firmas[f.key].id_number}` : ""}
-                                </p>
+                                <>
+                                    {firmas[f.key]?.signature && (
+                                        <img
+                                            src={urlFirma(firmas[f.key].signature)}
+                                            alt={`Firma de ${f.label}`}
+                                            style={{ display: "block", maxWidth: "100%", maxHeight: "120px", marginBottom: "0.5rem" }}
+                                        />
+                                    )}
+                                    <p>
+                                        {firmas[f.key]?.name || "—"}
+                                        {firmas[f.key]?.id_number ? ` · C.C. ${firmas[f.key].id_number}` : ""}
+                                    </p>
+                                </>
                             ) : (
                                 <>
                                     <Text
@@ -275,6 +325,18 @@ export default function FormatoInspeccion({
                                         required
                                         onChange={(e) => cambiarFirma(f.key, "id_number", e.target.value)}
                                     />
+                                    <Dropzone
+                                        label="Firma:"
+                                        id={`firma-imagen-${f.key}`}
+                                        name={`firma-imagen-${f.key}`}
+                                        accept="image/png,image/jpeg"
+                                        ayuda="PNG o JPG, hasta 2 MB"
+                                        preview={urlFirma(firmas[f.key]?.signature)}
+                                        previewAlt={`Vista previa de la firma de ${f.label}`}
+                                        previewLabel={`Firma de ${f.label}`}
+                                        onChange={cambiarImagenFirma(f.key)}
+                                        required
+                                    />
                                 </>
                             )}
                         </div>
@@ -291,6 +353,7 @@ export default function FormatoInspeccion({
                         icono="fa-solid fa-floppy-disk"
                         texto={enviando ? "Guardando..." : "Guardar inspección"}
                         onClick={guardar}
+                        titulo="Guardar inspección"
                     />
                 </div>
             )}

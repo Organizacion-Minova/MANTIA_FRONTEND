@@ -76,10 +76,20 @@ export default function RegistrosInspeccion() {
 
             <div className="btn-container-page">
                 <div className="btn-container">
-                    <BotonLink link={`/equipment/cardequipment/${id}/inspection/complete`} clase="btn-azul"
-                        icono="fa-solid fa-plus" texto="Nueva inspección" />
-                    <BotonLink link={`/equipment/cardequipment/${id}`} clase="btn-2"
-                        icono="fa-solid fa-arrow-left" texto="Regresar" />
+                    <BotonLink 
+                        link={`/equipment/cardequipment/${id}/inspection/complete`} 
+                        clase="btn-azul"
+                        icono="fa-solid fa-plus" 
+                        texto="Nueva inspección" 
+                        titulo="Crear nueva inspección" 
+                    />
+                    <BotonLink 
+                        link={`/equipment/cardequipment/${id}`} 
+                        clase="btn-2"
+                        icono="fa-solid fa-arrow-left" 
+                        texto="Regresar" 
+                        titulo="Regresar a la página del equipo" 
+                    />
                 </div>
                 <Paginacion paginaActual={paginaActual} totalPaginas={totalPaginas} setPaginaActual={setPaginaActual} />
             </div>

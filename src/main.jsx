@@ -73,6 +73,7 @@ createRoot(document.getElementById('root')).render(
               <Route path='equipment/cardequipment/:id' element={<RutaConPermiso permiso="equipment.view"><CardEquipment /></RutaConPermiso>} />
               <Route path="equipment/cardequipment/:id/inspection" element={<InspeccionEquipo />} />
               <Route path="equipment/cardequipment/:id/inspection/questions" element={<ConstructorFormato />} />
+              <Route path="equipment/cardequipment/:id/inspection/edit" element={<ConstructorFormato editar />} />
               <Route path="equipment/cardequipment/:id/inspection/complete" element={<LlenarInspeccion />} />
               <Route path="equipment/cardequipment/:id/inspection/records" element={<RegistrosInspeccion />} />
               <Route path="equipment/cardequipment/:id/inspection/records/:inspectionId" element={<VerInspeccion />} />              <Route path='consumables/tools/types' element={<RutaConPermiso permiso="category-tools.view"><Consumibles /></RutaConPermiso>} />

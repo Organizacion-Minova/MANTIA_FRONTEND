@@ -119,16 +119,26 @@ export default function LlenarInspeccion() {
 
             <div className="btn-container">
                 <BotonLink
-                    link={`/equipment/cardequipment/${id}/inspection/records`}
-                    clase="btn-azul"
-                    icono="fa-solid fa-list"
-                    texto="Ver formatos guardados"
-                />
-                <BotonLink
                     link={`/equipment/cardequipment/${id}`}
                     clase="btn-2"
                     icono="fa-solid fa-arrow-left"
                     texto="Regresar"
+                    titulo="Regresar a la página del equipo"
+                />
+                <BotonLink
+                    link={`/equipment/cardequipment/${id}/inspection/records`}
+                    clase="btn-azul"
+                    icono="fa-solid fa-list"
+                    texto="Ver formatos guardados"
+                    titulo="Ver inspecciones guardadas"
+                />
+                
+                <BotonLink
+                    link={`/equipment/cardequipment/${id}/inspection/edit`}
+                    clase="btn-azul"
+                    icono="fa-solid fa-pen"
+                    texto="Editar formato"
+                    titulo="Editar el formato de inspección"
                 />
             </div>
         </div>

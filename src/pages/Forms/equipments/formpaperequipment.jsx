@@ -1,6 +1,15 @@
 import { formatearFechaCorta } from "../../../components/common/Validations";
+import api from "../../../api/axios";
 
 const DIAS = ["LU", "MA", "MI", "JU", "VI", "SA", "DO"];
+
+function urlFirma(firma) {
+    if (!firma) return "";
+    if (/^(data:|https?:\/\/)/i.test(firma)) return firma;
+
+    const ruta = firma.replace(/^\/+/, "").replace(/^storage\//, "");
+    return `${api.defaults.baseURL.replace(/\/+$/, "")}/storage/${ruta}`;
+}
 
 export default function FormatoPapel({ format, equipment, weekStart, weekEnd, inspection }) {
     const valores = {};
@@ -129,7 +138,7 @@ export default function FormatoPapel({ format, equipment, weekStart, weekEnd, in
                                                 ))}
                                             </tbody>
                                         </table>
-                                );
+                                    );
                             })}
                         </td>
                     </tr>
@@ -149,7 +158,17 @@ export default function FormatoPapel({ format, equipment, weekStart, weekEnd, in
                                     </tr>
                                     <tr>
                                         <th>FIRMA</th>
-                                        {firmantes.map((f) => <td key={f.key} ></td>)}
+                                        {firmantes.map((f) => (
+                                            <td key={f.key}>
+                                                {firmas[f.key]?.signature && (
+                                                    <img
+                                                        src={urlFirma(firmas[f.key].signature)}
+                                                        alt={`Firma de ${f.label}`}
+                                                        style={{ maxWidth: "150px", maxHeight: "80px" }}
+                                                    />
+                                                )}
+                                            </td>
+                                        ))}
                                     </tr>
                                     <tr>
                                         <th>NOMBRE</th>

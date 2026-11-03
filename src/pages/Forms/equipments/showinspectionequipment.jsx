@@ -51,12 +51,14 @@ export default function VerInspeccion() {
                     clase="btn-azul"
                     icono="fa-solid fa-pen"
                     texto="Editar esta semana"
+                    titulo="Editar la inspección preoperacional de esta semana"
                 />
                 <BotonLink
                     link={`/equipment/cardequipment/${id}/inspection/records`}
                     clase="btn-2"
                     icono="fa-solid fa-list"
                     texto="Formatos guardados"
+                    titulo="Ver inspecciones preoperacionales guardadas"
                 />
             </div>
         </div>
