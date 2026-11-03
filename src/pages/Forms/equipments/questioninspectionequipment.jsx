@@ -184,10 +184,10 @@ export default function ConstructorFormato({ editar = false }) {
     const alternar = (lista, setLista, key) =>
         setLista(lista.includes(key) ? lista.filter((k) => k !== key) : [...lista, key]);
 
-    const cambiarCampo = (campo, valor, validar) => {
+    const cambiarCampo = (campo, valor) => {
         setErrores((prev) => {
             const siguientes = { ...prev };
-            const error = validar(valor);
+            const error = (valor);
             if (error) siguientes[campo] = error;
             else delete siguientes[campo];
             return siguientes;
