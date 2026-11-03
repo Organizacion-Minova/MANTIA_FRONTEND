@@ -39,6 +39,18 @@ const diligenciada = (detalle) => {
     return gasesCompletos && responsableCompleto && observacionCompleta;
 };
 
+// Qué falta por llenar en el formato; [] si está completo (todos los campos son obligatorios)
+const camposFaltantes = (medicion) => {
+    if (!medicion) return [];
+    const faltan = [];
+    if (!medicion.measurement_time) faltan.push('la hora de ingreso');
+    if (!medicion.chief_signature) faltan.push('la firma del jefe de mina');
+    if (!medicion.sst_signature) faltan.push('la firma del líder SST');
+    const sinLlenar = (medicion.detail || []).filter((d) => !diligenciada(d)).length;
+    if (sinLlenar) faltan.push(`${sinLlenar} ubicación(es) sin diligenciar`);
+    return faltan;
+};
+
 const regex_responsable = /^[\p{L}\s.'\-]+$/u;
 const regex_observacion = /^[\p{L}\p{N}\s.,;:()\-/%°#¿?¡!]+$/u;
 const tipos_firma = ['image/png', 'image/jpeg', 'image/webp'];
@@ -47,12 +59,14 @@ const peso_maximo_firma = 2 * 1024 * 1024;
 const validar = (datos) => {
     for (const g of gases) {
         const valor = datos[g.key];
-        if (valor === null) continue;
+        if (valor === null) return `${g.nombre} es obligatorio.`;
         if (!/^-?\d+(\.\d+)?$/.test(valor)) return `El valor de ${g.nombre.toLowerCase()} debe ser un número.`;
         if (Number(valor) < 0) return `${g.nombre} no puede ser menor a 0.`;
         if (Number(valor) > g.max) return `${g.nombre} no puede superar ${g.max}${g.simbolo === '%' ? '%' : ''}.`;
         if (!/^\d+(\.\d{1,2})?$/.test(valor)) return `${g.nombre} admite máximo 2 decimales.`;
     }
+    if (!datos.responsible_name) return "El responsable de la medición es obligatorio.";
+    if (!datos.observation) return "Las observaciones son obligatorias.";
     if (datos.responsible_name) {
         if (datos.responsible_name.length > 100) return "El nombre del responsable no puede superar los 100 caracteres.";
         if (!regex_responsable.test(datos.responsible_name)) return "El nombre del responsable solo puede contener letras, espacios, puntos, apóstrofes y guiones.";
@@ -139,6 +153,7 @@ function FormularioGases({ detalle, onCancel, onSuccess }) {
                         placeholder={`Nivel de ${g.label}`}
                         value={formData[g.key]}
                         onChange={handleChange}
+                        required
                     />
                 </div>
             ))}
@@ -151,6 +166,7 @@ function FormularioGases({ detalle, onCancel, onSuccess }) {
                     value={formData.responsible_name}
                     onChange={handleChange}
                     maxLength={100}
+                    required
                 />
             </div>
             <div className="col-span-6">
@@ -163,6 +179,7 @@ function FormularioGases({ detalle, onCancel, onSuccess }) {
                     placeholder="Observaciones"
                     value={formData.observation}
                     onChange={handleChange}
+                    required
                 />
             </div>
         </Form>
@@ -186,10 +203,14 @@ export function FormatoGases() {
         camposBusqueda
     );
 
-    const cargarDatos = async () => {
+    const cargarDatos = async (avisar = false) => {
         try {
         const respuesta = await obtenerMedicionPorId(id);
         setMedicion(respuesta.data); 
+        if (avisar) {
+            const faltan = camposFaltantes(respuesta.data);
+            if (faltan.length) advertencia(`Falta diligenciar: ${faltan.join(', ')}.`, "Formato incompleto");
+        }
         } catch (err) {
             console.error("Error al cargar la medición:", err);
         } finally {
@@ -198,7 +219,7 @@ export function FormatoGases() {
     };
 
     useEffect(() => {
-        cargarDatos();
+        cargarDatos(true);
     }, [id]);
 
     const guardarCabecera = async (datos) => {
