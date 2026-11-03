@@ -37,6 +37,7 @@ function InspeccionEquipo() {
                         clase="btn-2"
                         icono="fa-solid fa-arrow-left"
                         texto="Regresar"
+                        titulo="Regresar a la página del equipo"
                     />
                 </div>
             </div>

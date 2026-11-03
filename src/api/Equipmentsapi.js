@@ -61,6 +61,11 @@ export async function GetEquipmentInspectionById(id) {
     return data;
 }
 
+export async function UpdateInspectionFormat(id, datos) {
+    const { data } = await api.put(`/api/inspection-formats-equipment/${id}`, datos);
+    return data;
+}
+
 export async function GetEquipmentInspectionFormat(equipmentId) {
     const { data } = await api.get(`/api/equipment/${equipmentId}/inspection-format`);
     return data;
@@ -84,7 +89,15 @@ export async function GetInspection(id) {
 }
 
 export async function SaveInspection(datos) {
-    const { data } = await api.post("/api/inspections", datos);
+    const { signature_images: signatureImages = {}, ...contenido } = datos;
+    const formData = new FormData();
+    formData.append("data", JSON.stringify(contenido));
+
+    Object.entries(signatureImages).forEach(([role, image]) => {
+        if (image) formData.append(`signature_images[${role}]`, image);
+    });
+
+    const { data } = await api.post("/api/inspections", formData);
     return data;
 }
 

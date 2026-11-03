@@ -4,7 +4,10 @@ import { Boton, BotonLink } from "../../../components/common/Button";
 import { PageWelcome } from "../../../components/common/welcome";
 import { Text, Select, Checkbox, Date  } from "../../../components/common/forms";
 import LoadingScreen from "../../../components/LoadingScreen";
-import { GetEquipmentInspectionFormat, CreateInspectionFormat } from "../../../api/Equipmentsapi";
+import { GetEquipmentInspectionFormat, CreateInspectionFormat, UpdateInspectionFormat } from "../../../api/Equipmentsapi";
+import { capitalizarPrimeraLetra, sinCaracteresEspeciales, validarGroserias } from "../../../components/common/Validations";
+import { useToast } from "../../../context/ToastContext";
+import { mensajeDeError } from "../../../utils/errores";
 
 const PRESETS_OPCIONES = {
     "B,M": ["B", "M"],
@@ -24,6 +27,44 @@ const FIRMANTES_OPCIONALES = [
     { key: "reviewer", label: "Revisó (Vo.Bo.)" },
 ];
 
+const validarCodigo = (valor) => {
+    const texto = valor.trim();
+    if (!texto) return "El código del formato es obligatorio.";
+    if (texto.length > 50) return "El código no puede superar los 50 caracteres.";
+    if (!/^[\p{L}\p{N}]+(?:[ -][\p{L}\p{N}]+)*$/u.test(texto)) {
+        return "Usa solo letras, números, espacios y guiones en el código.";
+    }
+    if (Object.keys(validarGroserias({ codigo: texto })).length > 0) {
+        return "El código contiene palabras inapropiadas.";
+    }
+    return "";
+};
+
+const validarVersion = (valor) => {
+    const texto = valor.trim();
+    if (!texto) return "La versión del formato es obligatoria.";
+    if (texto.length > 20) return "La versión no puede superar los 20 caracteres.";
+    if (!/^\d+(?:\.\d+)*$/.test(texto)) {
+        return "La versión debe contener números, opcionalmente separados por puntos.";
+    }
+    return "";
+};
+
+
+
+const validarTexto = (valor, etiqueta, { requerido = false, soloTexto = false } = {}) => {
+    const texto = valor.trim();
+    if (requerido && !texto) return `Completa ${etiqueta.toLocaleLowerCase("es")}.`;
+    if (texto.length > 255) return `${etiqueta} no puede superar los 255 caracteres.`;
+    if (soloTexto && texto && !sinCaracteresEspeciales(texto)) {
+        return `${etiqueta} solo puede contener letras, números y espacios.`;
+    }
+    if (texto && Object.keys(validarGroserias({ texto })).length > 0) {
+        return `${etiqueta} contiene palabras inapropiadas.`;
+    }
+    return "";
+};
+
 let contador = 0;
 const nuevoId = () => ++contador;
 const nuevaPregunta = () => ({ id: nuevoId(), text: "" });
@@ -32,12 +73,13 @@ const nuevaSeccion = () => ({
     title: "",
     mode: "daily",
     opciones: "B,M",
+    marking: "cell",
     instructions: "",
     has_observation: false,
     questions: [nuevaPregunta()],
 });
 
-export default function ConstructorFormato() {
+export default function ConstructorFormato({ editar = false }) {
     const { id } = useParams();
     const navigate = useNavigate();
     const [equipment, setEquipment] = useState(null);
@@ -48,23 +90,61 @@ export default function ConstructorFormato() {
     const [camposEncabezado, setCamposEncabezado] = useState([]);
     const [firmantesExtra, setFirmantesExtra] = useState([]);
     const [secciones, setSecciones] = useState([nuevaSeccion()]);
-    const [errores, setErrores] = useState([]);
+    const [errores, setErrores] = useState({});
     const [enviando, setEnviando] = useState(false);
+    const [formatoId, setFormatoId] = useState(null); 
+    const { advertencia, peligro } = useToast();
 
     useEffect(() => {
         GetEquipmentInspectionFormat(id)
             .then((datos) => {
-                if (datos.format) {
-                    navigate(`/equipment/${id}/inspection/complete`, { replace: true });
-                } else {
-                    setEquipment(datos.equipment);
+                const f = datos.format;
+
+                if (!editar && f) {
+                    navigate(`/equipment/cardequipment/${id}/inspection/complete`, { replace: true });
+                    return;
+                }
+                if (editar && !f) {
+                    navigate(`/equipment/cardequipment/${id}/inspection/questions`, { replace: true });
+                    return;
+                }
+
+                setEquipment(datos.equipment);
+
+                if (editar) {
+                    setFormatoId(f.id);
+                    setCode(f.code || "");
+                    setVersion(f.version || "");
+                    setValidFrom(f.valid_from ? f.valid_from.slice(0, 10) : "");
+                    setCamposEncabezado((f.header_fields || []).map((c) => c.key));
+                    setFirmantesExtra(
+                        (f.signers || []).map((x) => x.key).filter((k) => k !== "inspector")
+                    );
+                    setSecciones(
+                        f.sections.map((s) => ({
+                            id: nuevoId(),
+                            dbId: s.id,
+                            title: s.title,
+                            mode: s.mode,
+                            marking: s.marking || "cell",
+                            opciones: s.options.join(","),
+                            instructions: s.instructions || "",
+                            has_observation: s.has_observation,
+                            questions: s.questions.map((q) => ({
+                                id: nuevoId(),
+                                dbId: q.id,
+                                text: q.text,
+                            })),
+                        }))
+                    );
                 }
             })
             .catch((error) => {
-                console.error("Error al cargar el equipo:", error);
+                console.error("Error al cargar el formato de inspección:", error);
+                peligro(mensajeDeError(error, "No se pudo cargar el formato de inspección."), "No se pudo cargar");
                 setErrorCarga(true);
             });
-    }, [id]);
+    }, [id, editar, navigate, peligro]);
 
     const actualizarSeccion = (seccionId, campo, valor) =>
         setSecciones((prev) => prev.map((s) => (s.id === seccionId ? { ...s, [campo]: valor } : s)));
@@ -72,12 +152,18 @@ export default function ConstructorFormato() {
     const eliminarSeccion = (seccionId) =>
         setSecciones((prev) => prev.filter((s) => s.id !== seccionId));
 
-    const agregarPregunta = (seccionId) =>
+    const agregarPregunta = (seccionId) => {
         setSecciones((prev) =>
             prev.map((s) =>
                 s.id === seccionId ? { ...s, questions: [...s.questions, nuevaPregunta()] } : s
             )
         );
+        setErrores((prev) => {
+            const siguientes = { ...prev };
+            delete siguientes[`section-${seccionId}-questions`];
+            return siguientes;
+        });
+    };
 
     const actualizarPregunta = (seccionId, preguntaId, texto) =>
         setSecciones((prev) =>
@@ -98,18 +184,67 @@ export default function ConstructorFormato() {
     const alternar = (lista, setLista, key) =>
         setLista(lista.includes(key) ? lista.filter((k) => k !== key) : [...lista, key]);
 
+    const cambiarCampo = (campo, valor, validar) => {
+        setErrores((prev) => {
+            const siguientes = { ...prev };
+            const error = validar(valor);
+            if (error) siguientes[campo] = error;
+            else delete siguientes[campo];
+            return siguientes;
+        });
+    };
+
+    const validarFormato = () => {
+        const nuevosErrores = {};
+        const agregarError = (campo, error) => {
+            if (error) nuevosErrores[campo] = error;
+        };
+
+        agregarError("code", validarCodigo(code));
+        agregarError("version", validarVersion(version));
+
+        if (secciones.length === 0) {
+            agregarError("sections", "Agrega al menos una sección al formato.");
+        }
+
+        secciones.forEach((seccion, seccionIndex) => {
+            agregarError(
+                `section-${seccion.id}-title`,
+                validarTexto(seccion.title, `El título de la sección ${seccionIndex + 1}`, {
+                    requerido: true,
+                    soloTexto: true,
+                })
+            );
+            if (seccion.questions.length === 0) {
+                agregarError(
+                    `section-${seccion.id}-questions`,
+                    `Agrega al menos una pregunta a la sección ${seccionIndex + 1}.`
+                );
+            }
+            seccion.questions.forEach((pregunta, preguntaIndex) => {
+                agregarError(
+                    `question-${pregunta.id}`,
+                    validarTexto(pregunta.text, `La pregunta ${seccionIndex + 1}.${preguntaIndex + 1}`, {
+                        requerido: true,
+                    })
+                );
+            });
+            agregarError(
+                `instructions-${seccion.id}`,
+                validarTexto(seccion.instructions, `Las instrucciones de la sección ${seccionIndex + 1}`)
+            );
+        });
+
+        setErrores(nuevosErrores);
+        return nuevosErrores;
+    };
+
     const handleGuardar = async () => {
         if (enviando) return;
 
-        const problemas = [];
-        secciones.forEach((s, i) => {
-            if (!s.title.trim()) problemas.push(`La sección ${i + 1} necesita un título.`);
-            if (!s.questions.some((q) => q.text.trim())) {
-                problemas.push(`La sección ${i + 1} necesita al menos una pregunta.`);
-            }
-        });
-        if (problemas.length > 0) {
-            setErrores(problemas);
+        const erroresFormato = validarFormato();
+        if (Object.keys(erroresFormato).length > 0) {
+            advertencia(Object.values(erroresFormato).join(" "), "Revisa los datos del formato");
             return;
         }
 
@@ -124,26 +259,34 @@ export default function ConstructorFormato() {
                 ...FIRMANTES_OPCIONALES.filter((f) => firmantesExtra.includes(f.key)),
             ],
             sections: secciones.map((s) => ({
+                ...(s.dbId ? { id: s.dbId } : {}),
                 title: s.title.trim(),
                 mode: s.mode,
                 options: PRESETS_OPCIONES[s.opciones],
                 instructions: s.instructions.trim() || null,
                 has_observation: s.has_observation,
-                questions: s.questions.map((q) => q.text.trim()).filter(Boolean),
+                questions: editar
+                    ? s.questions
+                        .filter((q) => q.text.trim())
+                        .map((q) => ({ ...(q.dbId ? { id: q.dbId } : {}), text: q.text.trim() }))
+                    : s.questions.map((q) => q.text.trim()).filter(Boolean),
             })),
         };
 
-        setErrores([]);
         setEnviando(true);
         try {
-            await CreateInspectionFormat(datos);
-            navigate(`/equipment/${id}/inspection/complete`, { replace: true });
+            if (editar) {
+                await UpdateInspectionFormat(formatoId, datos);
+            } else {
+                await CreateInspectionFormat(datos);
+            }
+            navigate(`/equipment/cardequipment/${id}/inspection/complete`, { replace: true });
         } catch (error) {
             if (error.response?.status === 422) {
-                setErrores(Object.values(error.response.data.errors).flat());
+                advertencia(mensajeDeError(error, "Revisa los datos del formato."), "No se pudo guardar");
             } else {
                 console.error("Error al guardar el formato:", error);
-                setErrores(["No se pudo guardar el formato."]);
+                peligro(mensajeDeError(error, "No se pudo guardar el formato."), "No se pudo guardar");
             }
         } finally {
             setEnviando(false);
@@ -159,7 +302,10 @@ export default function ConstructorFormato() {
                         link="/equipment" 
                         clase="btn-2" 
                         icono="fa-solid fa-arrow-left" 
-                        texto="Regresar" />
+                        texto="Regresar" 
+                        titulo="Regresar a la página del equipo"
+                    />
+                        
                 </div>
             </div>
         );
@@ -170,8 +316,8 @@ export default function ConstructorFormato() {
         <div className="list-grid">
             <header className="bienvenida">
                 <PageWelcome
-                    titulo={`Nuevo formato: ${equipment.name}`}
-                    descripcion="Este equipo aún no tiene formato de inspección. Arma el formato por secciones."
+                    titulo={editar ? `Editar formato: ${equipment.name}` : `Nuevo formato: ${equipment.name}`}
+                    descripcion={ editar ? "Modifica las secciones y preguntas del formato." : "Este equipo aún no tiene formato de inspección. Arma el formato por secciones."}
                 />
             </header>
             <div className="card">
@@ -184,7 +330,13 @@ export default function ConstructorFormato() {
                             name="codigo" 
                             placeholder="Ej: HSE-F-035"
                             value={code}
-                            onChange={(e) => setCode(e.target.value)} 
+                            onChange={(e) => {
+                                const valor = capitalizarPrimeraLetra(e.target.value);
+                                setCode(valor);
+                                cambiarCampo("code", valor, validarCodigo);
+                            }}
+                            maxLength={50}
+                            required
                         />
                     </div>
                     <div className="col-span-2">
@@ -193,8 +345,14 @@ export default function ConstructorFormato() {
                             id="version" 
                             name="version" 
                             placeholder="Ej: 01"
+                            type="number"
                             value={version} 
-                            onChange={(e) => setVersion(e.target.value)} 
+                            onChange={(e) => {
+                                setVersion(e.target.value);
+                                cambiarCampo("version", e.target.value, validarVersion);
+                            }}
+                            maxLength={20}
+                            required
                         />
                     </div>
                     <div className="col-span-2">
@@ -203,7 +361,11 @@ export default function ConstructorFormato() {
                             id="vigente" 
                             name="vigente"
                             value={validFrom} 
-                            onChange={(e) => setValidFrom(e.target.value)} 
+                            onChange={(e) => {
+                                setValidFrom(e.target.value);
+                                cambiarCampo("validFrom", e.target.value);
+                            }}
+                            required
                         />
                     </div>
                 </div>
@@ -218,7 +380,8 @@ export default function ConstructorFormato() {
                         id={`campo-${c.key}`} 
                         name={`campo-${c.key}`}
                         checked={camposEncabezado.includes(c.key)}
-                        onChange={() => alternar(camposEncabezado, setCamposEncabezado, c.key)} />
+                        onChange={() => alternar(camposEncabezado, setCamposEncabezado, c.key)} 
+                    />
                 ))}
             </div>
 
@@ -248,7 +411,21 @@ export default function ConstructorFormato() {
                                 name={`titulo-${s.id}`}
                                 placeholder="Ej: Estado mecánico" 
                                 value={s.title}
-                                onChange={(e) => actualizarSeccion(s.id, "title", e.target.value)} />
+                                onChange={(e) => {
+                                    const valor = capitalizarPrimeraLetra(e.target.value);
+                                    actualizarSeccion(s.id, "title", valor);
+                                    cambiarCampo(
+                                        `section-${s.id}-title`,
+                                        valor,
+                                        (texto) => validarTexto(texto, `El título de la sección ${i + 1}`, {
+                                            requerido: true,
+                                            soloTexto: true,
+                                        })
+                                    );
+                                }}
+                                maxLength={255}
+                                required
+                            />
                         </div>
                         <div className="col-span-3">
                             <Select 
@@ -256,7 +433,7 @@ export default function ConstructorFormato() {
                                 id={`modo-${s.id}`} 
                                 name={`modo-${s.id}`}
                                 value={s.mode} 
-                                onChange={(e) => actualizarSeccion(s.id, "mode", e.target.value)}
+                                onChange={(e) => {actualizarSeccion(s.id, "mode", e.target.value)}}
                                 opciones={[
                                     { valor: "daily", etiqueta: "Todos los días" },
                                     { valor: "weekly", etiqueta: "Una vez por semana" },
@@ -282,50 +459,96 @@ export default function ConstructorFormato() {
                                 name={`instrucciones-${s.id}`}
                                 placeholder="Ej: Marque C (cumple), NC (no cumple) o N/A (no aplica)"
                                 value={s.instructions}
-                                onChange={(e) => actualizarSeccion(s.id, "instructions", e.target.value)} />
+                                onChange={(e) => {
+                                    actualizarSeccion(s.id, "instructions", e.target.value);
+                                    cambiarCampo(
+                                        `instructions-${s.id}`,
+                                        e.target.value,
+                                        (texto) => validarTexto(texto, `Las instrucciones de la sección ${i + 1}`)
+                                    );
+                                }}
+                                maxLength={255}
+                            />
                         </div>
                         <div className="col-span-6">
                             <Checkbox 
-                                label="Observación por pregunta" 
+                                label="Observación por pregunta (opcional)" 
                                 id={`obs-${s.id}`} 
                                 name={`obs-${s.id}`}
                                 checked={s.has_observation}
                                 onChange={(e) => actualizarSeccion(s.id, "has_observation", e.target.checked)} />
                         </div>
+                        {s.questions.map((q, j) => (
+                            <div key={q.id} className="col-span-3">
+                                <Text
+                                    label={`Pregunta: ${i + 1}.${j + 1}`}
+                                    id={`pregunta-${s.id}-${q.id}`}
+                                    name={`pregunta-${s.id}-${q.id}`}
+                                    type="text"
+                                    placeholder="Escribe la pregunta"
+                                    value={q.text}
+                                    onChange={(e) => {
+                                        const valor = capitalizarPrimeraLetra(e.target.value);
+                                        actualizarPregunta(s.id, q.id, valor);
+                                        cambiarCampo(
+                                            `question-${q.id}`,
+                                            valor,
+                                            (texto) => validarTexto(texto, `La pregunta ${i + 1}.${j + 1}`, {
+                                                requerido: true,
+                                            })
+                                            
+                                        );
+                                    }} 
+                                    maxLength={255}
+                                    required
+                                />
+                                <br />
+                                <Boton 
+                                    clase="btn-2" 
+                                    icono="fa-solid fa-trash" 
+                                    titulo="Eliminar pregunta"
+                                    onClick={() => eliminarPregunta(s.id, q.id)} />
+                            </div>
+                        ))}
+
                     </div>
-
-                    {s.questions.map((q, j) => (
-                        <div key={q.id} className="pregunta-fila">
-                            <span className="pregunta-numero">{i + 1}.{j + 1}</span>
-                            <Text type="text" placeholder="Escribe la pregunta" value={q.text}
-                                onChange={(e) => actualizarPregunta(s.id, q.id, e.target.value)} />
-                            <Boton clase="btn-2" icono="fa-solid fa-trash" titulo="Eliminar pregunta"
-                                onClick={() => eliminarPregunta(s.id, q.id)} />
-                        </div>
-                    ))}
                     <br />
-
+                    
                     <div className="btn-container">
-                        <Boton clase="btn-azul" icono="fa-solid fa-plus" texto="Agregar pregunta"
+                        <Boton 
+                            clase="btn-azul" 
+                            icono="fa-solid fa-plus" 
+                            texto="Agregar pregunta"
+                            titulo="Agregar pregunta a la sección"
                             onClick={() => agregarPregunta(s.id)} />
                         {secciones.length > 1 && (
-                            <Boton clase="btn-2" icono="fa-solid fa-trash" texto="Eliminar sección"
+                            <Boton 
+                                clase="btn-2" 
+                                icono="fa-solid fa-trash" 
+                                texto="Eliminar sección"
+                                titulo="Eliminar sección"
                                 onClick={() => eliminarSeccion(s.id)} />
                         )}
                     </div>
                 </div>
             ))}
 
-            {errores.map((mensaje, k) => (
-                <p key={k} className="error-texto">{mensaje}</p>
-            ))}
-
             <div className="btn-container">
-                <Boton clase="btn-azul" icono="fa-solid fa-plus" texto="Agregar sección"
+                <Boton 
+                    clase="btn-azul" 
+                    icono="fa-solid fa-plus" 
+                    texto="Agregar sección"
                     onClick={() => setSecciones((prev) => [...prev, nuevaSeccion()])} />
-                <Boton clase="btn-azul" icono="fa-solid fa-floppy-disk"
-                    texto={enviando ? "Guardando..." : "Guardar formato"} onClick={handleGuardar} />
-                <BotonLink link={`/equipment/cardequipment/${id}`} clase="btn-2" icono="fa-solid fa-arrow-left" texto="Cancelar" />
+                <Boton 
+                    clase="btn-azul" 
+                    icono="fa-solid fa-floppy-disk"
+                    texto={enviando ? "Guardando..." : "Guardar formato"} 
+                    onClick={handleGuardar} />
+                <BotonLink 
+                    link={`/equipment/cardequipment/${id}`} 
+                    clase="btn-2" 
+                    icono="fa-solid fa-arrow-left" 
+                    texto="Cancelar" />
             </div>
         </div>
     );

@@ -329,7 +329,7 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
             </div>
             <div className="col-span-3">
                 <Text
-                    label="Combustible:"
+                    label="Combustible (opcional):"
                     id="combustible"
                     name="combustible"
                     placeholder="Ingrese el combustible del equipo"
@@ -340,7 +340,7 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
             </div>
             <div className="col-span-3">
                 <Text
-                    label="Potencia:"
+                    label="Potencia (opcional):"
                     id="potencia"
                     name="potencia"
                     placeholder="Ingrese la potencia del equipo"
@@ -350,7 +350,7 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
             </div>
             <div className="col-span-3">
                 <Text
-                    label="Voltaje:"
+                    label="Voltaje (opcional):"
                     id="voltaje"
                     name="voltaje"
                     placeholder="Ingrese el voltaje del equipo"

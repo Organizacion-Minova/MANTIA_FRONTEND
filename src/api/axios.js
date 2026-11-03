@@ -16,6 +16,7 @@ const RECURSOS = {
     'equipment': { nombre: 'Equipo', f: false },
     'tools': { nombre: 'Herramienta', f: true },
     'inspections': { nombre: 'Inspección', f: true },
+    'inspection-formats-equipment': { nombre: 'Formato de inspección', f: false },
 };
 
 // método -> [masculino, femenino]
@@ -27,7 +28,14 @@ const ACCIONES = {
 };
 
 // Estas pantallas ya muestran sus propios errores en el formulario
-const MANEJAN_SUS_ERRORES = ['login', 'dev-login', 'register', 'forgot-password', 'reset-password'];
+const MANEJAN_SUS_ERRORES = [
+    'login',
+    'dev-login',
+    'register',
+    'forgot-password',
+    'reset-password',
+    'inspection-formats-equipment',
+];
 
 function segmentos(url = '') {
     const ruta = url.replace(/^https?:\/\/[^/]+/, '').split('?')[0];
