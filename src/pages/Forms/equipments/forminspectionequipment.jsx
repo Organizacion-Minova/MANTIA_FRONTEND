@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Boton } from "../../../components/common/Button";
-import { Text, Textarea } from "../../../components/common/forms";
+import { Text, Textarea, Select } from "../../../components/common/forms";
 import { formatearFechaCorta } from "../../../components/common/Validations";
+import { useToast } from "../../../context/ToastContext";
 
 const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
 
@@ -28,7 +29,6 @@ export default function FormatoInspeccion({
     readOnly = false,
     onSave,
     enviando = false,
-    errores = [],
 }) {
     const [inicial] = useState(() => aEstadoInicial(inspection));
     const [valores, setValores] = useState(inicial.valores);
@@ -36,7 +36,7 @@ export default function FormatoInspeccion({
     const [firmas, setFirmas] = useState(inicial.firmas);
     const [headerData, setHeaderData] = useState(inspection?.header_data || {});
     const [generalObs, setGeneralObs] = useState(inspection?.general_observations || "");
-    const [aviso, setAviso] = useState("");
+    const { advertencia } = useToast();
 
     const firmantes = format.signers?.length
         ? format.signers
@@ -54,11 +54,28 @@ export default function FormatoInspeccion({
         setFirmas((prev) => ({ ...prev, [rol]: { ...prev[rol], [campo]: valor } }));
 
     const guardar = () => {
-        if (!firmas.inspector?.name?.trim()) {
-            setAviso("Escribe el nombre de quien realiza la inspección.");
+        const problemas = [];
+        (format.header_fields || []).forEach((campo) => {
+            if (!headerData[campo.key]?.trim()) {
+                problemas.push(`Completa el campo «${campo.label}».`);
+            }
+        });
+        firmantes.forEach((firmante) => {
+            const firma = firmas[firmante.key];
+            if (!firma?.name?.trim()) {
+                problemas.push(`Escribe el nombre del firmante «${firmante.label}».`);
+            }
+            if (!firma?.id_number?.trim()) {
+                problemas.push(`Escribe el número de C.C. del firmante «${firmante.label}».`);
+            } else if (!/^\d+$/.test(firma.id_number.trim())) {
+                problemas.push(`El número de C.C. del firmante «${firmante.label}» debe contener solo números.`);
+            }
+        });
+
+        if (problemas.length > 0) {
+            advertencia(problemas.join(" "), "Revisa los datos obligatorios");
             return;
         }
-        setAviso("");
 
         const filas = new Map();
         Object.entries(valores).forEach(([clave, valor]) => {
@@ -74,15 +91,16 @@ export default function FormatoInspeccion({
         });
 
         onSave({
-            header_data: headerData,
+            header_data: Object.fromEntries(
+                (format.header_fields || []).map((campo) => [campo.key, headerData[campo.key].trim()])
+            ),
             general_observations: generalObs.trim() || null,
             answers: [...filas.values()],
             signatures: firmantes
-                .filter((f) => firmas[f.key]?.name?.trim())
                 .map((f) => ({
                     role: f.key,
                     name: firmas[f.key].name.trim(),
-                    id_number: firmas[f.key].id_number?.trim() || null,
+                    id_number: firmas[f.key].id_number.trim(),
                 })),
         });
     };
@@ -91,16 +109,16 @@ export default function FormatoInspeccion({
         const valor = valores[`${qid}-${dia}`] || "";
         if (readOnly) return valor;
         return (
-            <select
-                className="celda-inspeccion"
+            <Select
                 value={valor}
                 onChange={(e) => cambiarValor(qid, dia, e.target.value)}
-            >
-                <option value=""></option>
-                {seccion.options.map((o) => (
-                    <option key={o} value={o}>{o}</option>
-                ))}
-            </select>
+                opciones={[
+                    { valor: "", etiqueta: "" },
+                    ...seccion.options.map((opcion) => ({
+                        valor: opcion, etiqueta: opcion,
+                    })),
+                ]}
+            />
         );
     };
 
@@ -153,6 +171,7 @@ export default function FormatoInspeccion({
                                         id={`header-${c.key}`}
                                         name={`header-${c.key}`}
                                         value={headerData[c.key] || ""}
+                                        required
                                         onChange={(e) =>
                                             setHeaderData((prev) => ({ ...prev, [c.key]: e.target.value }))
                                         }
@@ -193,11 +212,9 @@ export default function FormatoInspeccion({
                                                 {readOnly ? (
                                                     observaciones[q.id] || ""
                                                 ) : (
-                                                    <input
-                                                        type="text"
-                                                        className="celda-obs"
-                                                        value={observaciones[q.id] || ""}
-                                                        onChange={(e) => cambiarObs(q.id, e.target.value)}
+                                                    <Text
+                                                      value={observaciones[q.id] || ""}  
+                                                      onChange={(e) => cambiarObs(q.id, e.target.value)}
                                                     />
                                                 )}
                                             </td>
@@ -246,6 +263,7 @@ export default function FormatoInspeccion({
                                         id={`firma-nombre-${f.key}`}
                                         name={`firma-nombre-${f.key}`}
                                         value={firmas[f.key]?.name || ""}
+                                        required
                                         onChange={(e) => cambiarFirma(f.key, "name", e.target.value)}
                                     />
                                     <Text
@@ -253,6 +271,8 @@ export default function FormatoInspeccion({
                                         id={`firma-cc-${f.key}`}
                                         name={`firma-cc-${f.key}`}
                                         value={firmas[f.key]?.id_number || ""}
+                                        placeholder="Solo números"
+                                        required
                                         onChange={(e) => cambiarFirma(f.key, "id_number", e.target.value)}
                                     />
                                 </>
@@ -263,10 +283,6 @@ export default function FormatoInspeccion({
             </div>
             <br />
 
-            {aviso && <p className="error-texto">{aviso}</p>}
-            {errores.map((m, k) => (
-                <p key={k} className="error-texto">{m}</p>
-            ))}
 
             {!readOnly && (
                 <div className="btn-container">

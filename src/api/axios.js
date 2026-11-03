@@ -43,6 +43,13 @@ function esIgnorada(url) {
     return url?.includes('csrf-cookie') || partes[1] === 'notificaciones' || partes[1] === 'ai';
 }
 
+// El cuerpo del error puede llegar como texto (descargas): se intenta leer como JSON
+function cuerpoDeError(error) {
+    const datos = error.response?.data;
+    if (typeof datos !== 'string') return datos;
+    try { return JSON.parse(datos); } catch { return null; }
+}
+
 function mensajeExito(metodo, url) {
     const m = metodo.toLowerCase();
     const partes = segmentos(url);
@@ -56,6 +63,14 @@ function mensajeExito(metodo, url) {
     if (recurso === 'admin' && partes[2] === 'approve') return 'Solicitud aprobada correctamente';
     if (recurso === 'admin' && partes[2] === 'reject') return 'Solicitud rechazada correctamente';
     if (recurso === 'gas-measurements' && m === 'post') return 'Medición de gas guardada correctamente';
+    if (recurso === 'profile' && partes[2] === 'password') return 'Contraseña actualizada correctamente';
+    if (recurso === 'profile') return 'Perfil actualizado correctamente';
+    if (recurso === 'admin' && partes[2] === 'backups') {
+        if (partes[4] === 'restore') return 'Copia restaurada correctamente';
+        if (partes[4] === 'download') return 'Copia descargada correctamente';
+        if (m === 'delete') return 'Copia de seguridad eliminada correctamente';
+        return 'Copia de seguridad generada correctamente';
+    }
 
     const info = RECURSOS[recurso];
     const accion = ACCIONES[m];
@@ -68,7 +83,8 @@ function mensajeExito(metodo, url) {
 function mensajeError(error) {
     if (!error.response) return 'No se pudo conectar con el servidor.';
 
-    const { status, data } = error.response;
+    const { status } = error.response;
+    const data = cuerpoDeError(error);
     if (status === 422 && data?.errors) {
         return Object.values(data.errors).flat()[0] ?? 'Revisa los datos del formulario.';
     }
@@ -99,6 +115,14 @@ api.interceptors.response.use(
     },
     (error) => {
         const config = error.config;
+
+        // La cuenta o el rol se desactivaron con la sesión abierta: se avisa y se cierra la sesión
+        const cuerpo = cuerpoDeError(error);
+        if (error.response?.status === 401 && cuerpo?.codigo === 'cuenta_inactiva') {
+            avisar('warning', cuerpo.message, 'Acceso bloqueado', 8000);
+            window.dispatchEvent(new Event('sesion:cerrada'));
+            return Promise.reject(error);
+        }
 
         if (
             config &&

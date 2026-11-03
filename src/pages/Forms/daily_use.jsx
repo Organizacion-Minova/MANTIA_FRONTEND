@@ -8,6 +8,7 @@ import LoadingScreen from "../../components/LoadingScreen";
 import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
 import { useSearch } from "../../hooks/useSearch";
 import { useRolesResponsables } from "../../hooks/useRolesResponsables";
+import { exportarUsoDiarioExcelUnitario, exportarUsoDiarioPdfUnitario } from "../../api/dailyuseapi";
 
 export function fechaHoy() {
     const hoy = new Date();
@@ -240,6 +241,21 @@ export function UsoDiario(){
         setRegistroEditar(registro);
         setMostrarFormulario(true);
     }
+
+    const handleExportarExcel = () => {
+        if (!maquinaSeleccionada) return;
+        const maquinaActiva = maquinas.find((m) => String(m.id) === String(maquinaSeleccionada));
+        const nombreMaquina = maquinaActiva ? maquinaActiva.name : "Maquina";
+        exportarUsoDiarioExcelUnitario(maquinaSeleccionada, nombreMaquina);
+    };
+
+    const handleExportarPdf = () => {
+        if (!maquinaSeleccionada) return;
+        const maquinaActiva = maquinas.find((m) => String(m.id) === String(maquinaSeleccionada));
+        const nombreMaquina = maquinaActiva ? maquinaActiva.name : "Maquina";
+        exportarUsoDiarioPdfUnitario(maquinaSeleccionada, nombreMaquina);
+    };
+
     const registrosFiltrados = itemsFiltrados.filter(
         (r) => r.machine_id === Number(maquinaSeleccionada)
     );
@@ -336,11 +352,13 @@ export function UsoDiario(){
                         clase="btn-azul"
                         icono="fa-solid fa-file-excel"
                         texto="Exportar Excel"
+                        onClick={handleExportarExcel}
                     />
                     <Boton
                         clase="btn-azul"
                         icono="fa-solid fa-file-pdf"
                         texto="Exportar Pdf"
+                        onClick={handleExportarPdf}
                     />
                 </div>
                 <Paginacion

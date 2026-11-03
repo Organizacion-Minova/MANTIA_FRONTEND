@@ -116,16 +116,8 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
             model: modelo,
         });
         if (Object.keys(erroresGroserias).length > 0) {
+            setErrores(erroresGroserias);
             advertencia("Se han detectado palabras inapropiadas en los campos: " + Object.keys(erroresGroserias).join(", "));
-            return;
-        }
-
-        const erroresLocales = validarCaracteresEspeciales({
-            name: nombre,
-            responsible: responsable,
-        });
-        if (Object.keys(erroresLocales).length > 0) {
-            setErrores(erroresLocales);
             return;
         }
         if (!esEdicion && !archivoImagen) {

@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { BotonLink } from "../../../components/common/Button";
 import { PageWelcome } from "../../../components/common/welcome";
 import LoadingScreen from "../../../components/LoadingScreen";
-import FormatoInspeccion from "./Forminspection";
+import FormatoPapel from "./formpaperequipment";
 import { GetInspection } from "../../../api/Equipmentsapi";
 import { formatearFechaCorta } from "../../../components/common/Validations";
 
@@ -37,13 +37,12 @@ export default function VerInspeccion() {
                 />
             </header>
 
-            <FormatoInspeccion
+            <FormatoPapel
                 format={inspeccion.format}
                 equipment={equipo}
                 weekStart={inspeccion.week_start}
                 weekEnd={inspeccion.week_end}
                 inspection={inspeccion}
-                readOnly
             />
 
             <div className="btn-container">

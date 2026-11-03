@@ -4,7 +4,7 @@ import { BotonLink } from "../../../components/common/Button";
 import { PageWelcome } from "../../../components/common/welcome";
 import { Date as CampoFecha } from "../../../components/common/forms";
 import LoadingScreen from "../../../components/LoadingScreen";
-import FormatoInspeccion from "./Forminspection";
+import FormatoInspeccion from "./forminspectionequipment";
 import { GetEquipmentInspectionFormat, GetInspectionWeek, SaveInspection } from "../../../api/Equipmentsapi";
 import { fechaHoy } from "../daily_use";
 
@@ -19,7 +19,6 @@ export default function LlenarInspeccion() {
     const [cargandoSemana, setCargandoSemana] = useState(false);
     const [error, setError] = useState(false);
     const [enviando, setEnviando] = useState(false);
-    const [errores, setErrores] = useState([]);
 
     useEffect(() => {
         GetEquipmentInspectionFormat(id)
@@ -48,7 +47,6 @@ export default function LlenarInspeccion() {
 
     const guardar = async (contenido) => {
         if (enviando) return;
-        setErrores([]);
         setEnviando(true);
         try {
             const guardada = await SaveInspection({
@@ -56,13 +54,10 @@ export default function LlenarInspeccion() {
                 week_start: semanaInfo.week_start,
                 ...contenido,
             });
-            navigate(`/equipment/${id}/inspection/records/${guardada.id}`);
+            navigate(`/equipment/cardequipment/${id}/inspection/records/${guardada.id}`);
         } catch (err) {
-            if (err.response?.status === 422) {
-                setErrores(Object.values(err.response.data.errors).flat());
-            } else {
+            if (err.response?.status !== 422) {
                 console.error("Error al guardar la inspección:", err);
-                setErrores(["No se pudo guardar la inspección."]);
             }
         } finally {
             setEnviando(false);
@@ -119,7 +114,6 @@ export default function LlenarInspeccion() {
                     inspection={semanaInfo.inspection}
                     onSave={guardar}
                     enviando={enviando}
-                    errores={errores}
                 />
             )}
 

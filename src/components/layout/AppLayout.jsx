@@ -1,7 +1,9 @@
 //este componente es el dueño layout (estructura principal) de la aplicación,
 //  que contiene el header, el sidebar, el contenido y el footer
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { BotonLink } from "../../components/common/Button";
+import { Boton } from "../../components/common/Button";
+import PerfilEditor from "./PerfilEditor.jsx";
+import { avatarPorDefecto } from "../../utils/avatar";
 import "../../styles/global.css";
 import "../../styles/variables.css";
 import "../../styles/Tables/table.css";
@@ -36,6 +38,15 @@ function AppLayout({ children }) {
     const [formatosAbierto, setFormatosAbierto] = useState(false);
     const [openAlertas, setOpenAlertas] = useState(false);
     const [openPerfil, setOpenPerfil] = useState(false);
+    const [editandoPerfil, setEditandoPerfil] = useState(false);
+    const [vistaPerfil, setVistaPerfil] = useState("datos");
+    const fotoPerfil = usuario?.photo_url || avatarPorDefecto(`${usuario?.name ?? ""} ${usuario?.last_name ?? ""}`);
+
+    const abrirPerfil = (vista) => {
+        setVistaPerfil(vista);
+        setEditandoPerfil(true);
+        setOpenPerfil(false);
+    };
     const herramientasRutaActiva = pathname.startsWith("/consumables/tools")
         || pathname.startsWith("/noconsumables/tools");
     const formatosRutaActiva = ["/dailyuse", "/gases", "/inspection"].some((ruta) => pathname.startsWith(ruta));
@@ -133,7 +144,7 @@ function AppLayout({ children }) {
 
                      <button className="profile-btn" id="btnPerfil" title="Perfil" onClick={(e) => { e.stopPropagation(); setOpenPerfil(!openPerfil); setOpenAlertas(false); }}>
                         <img
-                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDnLesNChl-l86u_LACs0pBkjqaot3ramr_A&s"
+                            src={fotoPerfil}
                             alt="Foto de perfil"
                         />
                         <div>
@@ -157,7 +168,7 @@ function AppLayout({ children }) {
                     <div className={`overlay-panel ${openPerfil ? "open" : ""}`} id="overlayPerfil">
                         <div className="perfil-header">
                             <img
-                             
+                                src={fotoPerfil}
                                 alt="Perfil"
                                 className="perfil-avatar"
                             />
@@ -171,17 +182,25 @@ function AppLayout({ children }) {
                             </p>
                         </div>
                         <div className="perfil-actions">
-                            <BotonLink
-                                link="/Profile"
+                            <Boton
                                 clase="btn-azul"
-                                icono="fa-solid fa-user"
-                                texto="Ver mi perfil"
-                                title="Ver el perfil"
+                                icono="fa-solid fa-user-pen"
+                                texto="Editar mi perfil"
+                                titulo="Editar mis datos y mi foto"
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); abrirPerfil("datos"); }}
+                            />
+                            <Boton
+                                clase="btn-2"
+                                icono="fa-solid fa-key"
+                                texto="Cambiar contraseña"
+                                titulo="Cambiar mi contraseña"
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); abrirPerfil("password"); }}
                             />
                         </div>
                     </div>
                 </nav>
             </header>
+            {editandoPerfil && <PerfilEditor vista={vistaPerfil} onCerrar={() => setEditandoPerfil(false)} />}
             <aside className={`sidebar ${cerrado ? "cerrado" : ""}`} id="sidebar">
                   <ul>
                     <li>

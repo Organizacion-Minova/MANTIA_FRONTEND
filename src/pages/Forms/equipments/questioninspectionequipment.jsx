@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Boton, BotonLink } from "../../../components/common/Button";
 import { PageWelcome } from "../../../components/common/welcome";
-import { Text, Select, Checkbox, Date as CampoFecha } from "../../../components/common/forms";
+import { Text, Select, Checkbox, Date  } from "../../../components/common/forms";
 import LoadingScreen from "../../../components/LoadingScreen";
 import { GetEquipmentInspectionFormat, CreateInspectionFormat } from "../../../api/Equipmentsapi";
 
@@ -155,7 +155,11 @@ export default function ConstructorFormato() {
             <div className="list-grid">
                 <p>No se pudo cargar el equipo.</p>
                 <div className="btn-container">
-                    <BotonLink link="/equipment" clase="btn-2" icono="fa-solid fa-arrow-left" texto="Regresar" />
+                    <BotonLink 
+                        link="/equipment" 
+                        clase="btn-2" 
+                        icono="fa-solid fa-arrow-left" 
+                        texto="Regresar" />
                 </div>
             </div>
         );
@@ -170,62 +174,101 @@ export default function ConstructorFormato() {
                     descripcion="Este equipo aún no tiene formato de inspección. Arma el formato por secciones."
                 />
             </header>
-
-            <div className="form-grid">
-                <div className="col-span-2">
-                    <Text label="Código del formato:" id="codigo" name="codigo" placeholder="Ej: HSE-F-035"
-                        value={code} onChange={(e) => setCode(e.target.value)} />
-                </div>
-                <div className="col-span-2">
-                    <Text label="Versión:" id="version" name="version" placeholder="Ej: 01"
-                        value={version} onChange={(e) => setVersion(e.target.value)} />
-                </div>
-                <div className="col-span-2">
-                    <CampoFecha label="Vigente desde:" id="vigente" name="vigente"
-                        value={validFrom} onChange={(e) => setValidFrom(e.target.value)} />
+            <div className="card">
+                <div className="form-grid">
+                    
+                    <div className="col-span-2">
+                        <Text 
+                            label="Código del formato:" 
+                            id="codigo" 
+                            name="codigo" 
+                            placeholder="Ej: HSE-F-035"
+                            value={code}
+                            onChange={(e) => setCode(e.target.value)} 
+                        />
+                    </div>
+                    <div className="col-span-2">
+                        <Text 
+                            label="Versión:" 
+                            id="version" 
+                            name="version" 
+                            placeholder="Ej: 01"
+                            value={version} 
+                            onChange={(e) => setVersion(e.target.value)} 
+                        />
+                    </div>
+                    <div className="col-span-2">
+                        <Date
+                            label="Vigente desde:" 
+                            id="vigente" 
+                            name="vigente"
+                            value={validFrom} 
+                            onChange={(e) => setValidFrom(e.target.value)} 
+                        />
+                    </div>
                 </div>
             </div>
-
-            <div className="seccion-card">
+            <div className="card">
                 <h3>Datos adicionales del encabezado</h3>
                 <p>El nombre, la marca, el modelo y la ubicación se llenan solos desde el equipo. Marca lo que además debe escribir quien inspecciona:</p>
                 {CAMPOS_ENCABEZADO.map((c) => (
-                    <Checkbox key={c.key} label={c.label} id={`campo-${c.key}`} name={`campo-${c.key}`}
+                    <Checkbox 
+                        key={c.key} 
+                        label={c.label} 
+                        id={`campo-${c.key}`} 
+                        name={`campo-${c.key}`}
                         checked={camposEncabezado.includes(c.key)}
                         onChange={() => alternar(camposEncabezado, setCamposEncabezado, c.key)} />
                 ))}
             </div>
 
-            <div className="seccion-card">
+            <div className="card">
                 <h3>Firmantes</h3>
                 <p>Siempre firma quien realiza la inspección. Marca quién más firma en este formato:</p>
                 {FIRMANTES_OPCIONALES.map((f) => (
-                    <Checkbox key={f.key} label={f.label} id={`firmante-${f.key}`} name={`firmante-${f.key}`}
+                    <Checkbox 
+                        key={f.key} 
+                        label={f.label} 
+                        id={`firmante-${f.key}`} 
+                        name={`firmante-${f.key}`}
                         checked={firmantesExtra.includes(f.key)}
-                        onChange={() => alternar(firmantesExtra, setFirmantesExtra, f.key)} />
+                        onChange={() => alternar(firmantesExtra, setFirmantesExtra, f.key)} 
+                        />
                 ))}
             </div>
 
             {secciones.map((s, i) => (
-                <div key={s.id} className="seccion-card">
+                <div key={s.id} className="card">
                     <h3>Sección {i + 1}</h3>
                     <div className="form-grid">
                         <div className="col-span-6">
-                            <Text label="Título de la sección:" id={`titulo-${s.id}`} name={`titulo-${s.id}`}
-                                placeholder="Ej: Estado mecánico" value={s.title}
+                            <Text 
+                                label="Título de la sección:" 
+                                id={`titulo-${s.id}`} 
+                                name={`titulo-${s.id}`}
+                                placeholder="Ej: Estado mecánico" 
+                                value={s.title}
                                 onChange={(e) => actualizarSeccion(s.id, "title", e.target.value)} />
                         </div>
                         <div className="col-span-3">
-                            <Select label="Se marca:" id={`modo-${s.id}`} name={`modo-${s.id}`}
-                                value={s.mode} onChange={(e) => actualizarSeccion(s.id, "mode", e.target.value)}
+                            <Select 
+                                label="Se marca:" 
+                                id={`modo-${s.id}`} 
+                                name={`modo-${s.id}`}
+                                value={s.mode} 
+                                onChange={(e) => actualizarSeccion(s.id, "mode", e.target.value)}
                                 opciones={[
                                     { valor: "daily", etiqueta: "Todos los días" },
                                     { valor: "weekly", etiqueta: "Una vez por semana" },
                                 ]} />
                         </div>
                         <div className="col-span-3">
-                            <Select label="Opciones de respuesta:" id={`opciones-${s.id}`} name={`opciones-${s.id}`}
-                                value={s.opciones} onChange={(e) => actualizarSeccion(s.id, "opciones", e.target.value)}
+                            <Select 
+                                label="Opciones de respuesta:" 
+                                id={`opciones-${s.id}`} 
+                                name={`opciones-${s.id}`}
+                                value={s.opciones} 
+                                onChange={(e) => actualizarSeccion(s.id, "opciones", e.target.value)}
                                 opciones={[
                                     { valor: "B,M", etiqueta: "B / M (bueno, malo)" },
                                     { valor: "C,NC,N/A", etiqueta: "C / NC / N/A (cumple, no cumple, no aplica)" },
@@ -233,13 +276,19 @@ export default function ConstructorFormato() {
                                 ]} />
                         </div>
                         <div className="col-span-6">
-                            <Text label="Instrucciones (opcional):" id={`instrucciones-${s.id}`} name={`instrucciones-${s.id}`}
+                            <Text 
+                                label="Instrucciones (opcional):" 
+                                id={`instrucciones-${s.id}`} 
+                                name={`instrucciones-${s.id}`}
                                 placeholder="Ej: Marque C (cumple), NC (no cumple) o N/A (no aplica)"
                                 value={s.instructions}
                                 onChange={(e) => actualizarSeccion(s.id, "instructions", e.target.value)} />
                         </div>
                         <div className="col-span-6">
-                            <Checkbox label="Observación por pregunta" id={`obs-${s.id}`} name={`obs-${s.id}`}
+                            <Checkbox 
+                                label="Observación por pregunta" 
+                                id={`obs-${s.id}`} 
+                                name={`obs-${s.id}`}
                                 checked={s.has_observation}
                                 onChange={(e) => actualizarSeccion(s.id, "has_observation", e.target.checked)} />
                         </div>
@@ -248,12 +297,13 @@ export default function ConstructorFormato() {
                     {s.questions.map((q, j) => (
                         <div key={q.id} className="pregunta-fila">
                             <span className="pregunta-numero">{i + 1}.{j + 1}</span>
-                            <input type="text" placeholder="Escribe la pregunta" value={q.text}
+                            <Text type="text" placeholder="Escribe la pregunta" value={q.text}
                                 onChange={(e) => actualizarPregunta(s.id, q.id, e.target.value)} />
                             <Boton clase="btn-2" icono="fa-solid fa-trash" titulo="Eliminar pregunta"
                                 onClick={() => eliminarPregunta(s.id, q.id)} />
                         </div>
                     ))}
+                    <br />
 
                     <div className="btn-container">
                         <Boton clase="btn-azul" icono="fa-solid fa-plus" texto="Agregar pregunta"

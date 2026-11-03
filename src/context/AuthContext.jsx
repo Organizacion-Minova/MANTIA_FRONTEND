@@ -33,8 +33,13 @@ export function AuthProvider({ children }) {
     }
 
     async function logout() {
-        await logoutRequest();
-        setUsuario(null);
+        try {
+            await logoutRequest();
+        } catch {
+            // aunque el servidor ya haya cerrado la sesión, aquí también se cierra
+        } finally {
+            setUsuario(null);
+        }
     }
 
     async function cargarUsuarioActual() {
@@ -53,6 +58,36 @@ export function AuthProvider({ children }) {
     useEffect(() => {
         cargarUsuarioActual().finally(() => setCargando(false));
     }, []);
+
+    // El servidor dijo que la cuenta o el rol están desactivados: se cierra la sesión al instante
+    useEffect(() => {
+        const cerrar = () => setUsuario(null);
+        window.addEventListener("sesion:cerrada", cerrar);
+        return () => window.removeEventListener("sesion:cerrada", cerrar);
+    }, []);
+
+    // Revisa la sesión cada minuto y al volver a la pestaña: si la cuenta o el rol se
+    // desactivaron (o cambiaron los permisos), la pantalla se actualiza sola.
+    useEffect(() => {
+        if (!isAuthenticated) return undefined;
+
+        const revisar = async () => {
+            try {
+                const nuevo = await getUser();
+                setUsuario((previo) => (JSON.stringify(previo) === JSON.stringify(nuevo) ? previo : nuevo));
+            } catch (err) {
+                if (err.response?.status === 401) setUsuario(null);
+            }
+        };
+
+        const intervalo = setInterval(revisar, 60000);
+        window.addEventListener("focus", revisar);
+
+        return () => {
+            clearInterval(intervalo);
+            window.removeEventListener("focus", revisar);
+        };
+    }, [isAuthenticated]);
 
     // Permisos y roles que llegan desde el backend (GET /api/user)
     const permisos = usuario?.permission_names ?? [];
