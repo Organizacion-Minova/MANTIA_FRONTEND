@@ -45,43 +45,86 @@ export function CardMachine() {
                 mostrarHistorial={true}
             />
                 <section className="cards">
-                    <div className="card">
-                        <div className="equipment-image-container">
-                            <img
-                                src={obtenerUrlImagen(maquina.image)}
-                                alt="Imagen de la máquina"
-                                onError={(e) => {
-                                    e.currentTarget.onerror = null;
-                                    e.currentTarget.src = imagenPorDefecto;
-                                }}
-                            />
-                        </div>
-                    </div>
-                    <div className="card" style={{ listStyle: 'none', fontSize: '1.25rem' }}>
-
-                            <li><strong>NOMBRE:</strong> <span >{maquina.name}</span></li>
-                            <li><strong>CÓDIGO PROGRAMA:</strong> <span>{maquina.code}</span></li>
-                            <li><strong>MARCA:</strong> <span id="eb_marca">{maquina.brand}</span></li>
-                            <li><strong>MODELO:</strong> <span id="eb_modelo">{maquina.model}</span></li>
-                            <li><strong>GARANTÍA:</strong> <span id="eb_garantia">{maquina.warranty}</span></li>
-                            <li><strong>USO:</strong> <span id="eb_uso"> {maquina.machine_usage} </span></li>
-
-                    </div>
-                </section>
-                <section className="cards2">
-                    <div className="card" style={{ listStyle: 'none', fontSize: '1.25rem' }}>        
-                            <li><strong>EMPRESA:</strong> <span id="eb_empresaPrincipal">Sena Centro Minero</span></li>
-                            <li><strong>LUGAR DE TRABAJO:</strong> <span id="eb_lugarTrabajo">Mina didáctica</span></li>
-                            <li><strong>UBICACIÓN:</strong> <span id="eb_ubicacionGeneral">{maquina.location}</span></li>
-                            <li><strong>CIUDAD:</strong> <span id="eb_ciudad">Sogamoso</span></li>
-                            <li><strong>FECHA ADQUISICIÓN:</strong> <span id="eb_fecha">{maquina.acquisition_date}</span></li>
-                            <li><strong>EQUIPO EN OPERACIÓN:</strong> <span id="eb_equipoOperacion">{maquina.in_operation}</span></li>
-                            <li><strong>ESTADO:</strong> <span id="eb_estado">{maquina.status==="active"?"Activo":maquina.status==="inactive"?"Inactivo":maquina.status==="maintenance"?"En mantenimiento":"Desconocido"}</span></li>
-                        </div>
-                    <div className="card" style={{ listStyle: 'none', fontSize: '1.25rem' }}>
-                            <li><strong>RESPONSABLE:</strong> <span id="eb_responsable">{maquina.responsible}</span></li>
-                            <li><strong>SERIAL:</strong> <span id="eb_serial">{maquina.serial_number}</span></li>
-                            <li><strong>CARACTERÍSTICAS:</strong> <span id="eb_caracteristicas">{maquina.characteristics}</span></li>
+                    <div className="table-responsive">
+                        <table className="form">
+                            <tbody>
+                                <tr>
+                                    <td colSpan="2" rowSpan="4">
+                                        <img className="logoSena" src="/src/assets/img/sena-logo-naranja.png" alt="SENA" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colSpan="2">SISTEMA DE GESTIÓN DE SEGURIDAD Y SALUD EN EL TRABAJO</th>
+                                    <th>CÓDIGO:</th>
+                                    <td>FT-SST 002</td>
+                                </tr>
+                                <tr>
+                                    <th colSpan="2">PROGRAMA DE MANTENIMIENTO</th>
+                                    <th>VERSIÓN:</th>
+                                    <td>1.0</td>
+                                </tr>
+                                <tr>
+                                    <th colSpan="2">FICHA TÉCNICA {maquina.name}</th>
+                                    <th>FECHA:</th>
+                                    <td>8/09/2021</td>
+                                </tr>
+                                <tr>
+                                    <th colSpan="6">IMAGEN:</th>
+                                </tr>
+                                <tr>
+                                    <td colSpan="6">
+                                        <div className="equipment-image-container">
+                                            <img
+                                                src={obtenerUrlImagen(maquina.image)}
+                                                alt="Imagen de la maquina"
+                                                onError={(m) => {
+                                                    m.currentTarget.onerror = null;
+                                                    m.currentTarget.src = imagenPorDefecto;
+                                                }}
+                                            />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>CÓDIGO:</th>
+                                    <td>{maquina.code}</td>
+                                    <th>NOMBRE:</th>
+                                    <td>{maquina.name}</td>
+                                    <th>Placa:</th>
+                                    <td>{maquina.plate}</td>
+                                </tr>
+                                <tr>
+                                    <th>MODELO:</th>
+                                    <td>{maquina.model}</td>
+                                    <th>NÚMERO DE SERIE:</th>
+                                    <td>{maquina.serial_number}</td>
+                                    <th>FECHA DE INICIO:</th>
+                                    <td>{maquina.start_up_date}</td>
+                                </tr>
+                                <tr>
+                                    <th>UBICACIÓN:</th>
+                                    <td>{maquina.ubicacion.name}</td>
+                                    <th>RESPONSABLE:</th>
+                                    <td>{maquina.responsible}</td>
+                                    <th>ESTADO:</th>
+                                    <td>{maquina.status="active"?"Activo":"Inactivo"}</td>
+                                </tr>
+                                <tr>
+                                    <th>CONSUMIBLE:</th>
+                                    <td>{maquina.fuel}</td>
+                                    <th>POTENCIA:</th>
+                                    <td>{maquina.power}</td>
+                                    <th>VOLTAJE:</th>
+                                    <td>{maquina.voltage}</td>
+                                </tr>
+                                <tr>
+                                    <th colSpan="6"> DESCRIPCIÓN: </th>
+                                </tr>
+                                <tr>
+                                    <td colSpan="6">{maquina.characteristics}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </section>
                 

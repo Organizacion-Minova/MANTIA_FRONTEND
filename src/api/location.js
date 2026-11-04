@@ -24,3 +24,8 @@ export const eliminarUbicacion = async (id) => {
     const response = await api.delete(`/api/location/${id}`);
     return response.data;
 };
+
+export const obtenerOpcionesUbicaciones = async ()=>{
+    const response = await api.get(`/api/location-options`);
+    return response.data;
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { BotonLink } from "../../../components/common/Button";
-import { GetEquipmentInspectionFormat } from "../../../api/Equipmentsapi";
+import { HasInspectionFormat } from "../../../api/Equipmentsapi";
 import LoadingScreen from "../../../components/LoadingScreen";
 
 function InspeccionEquipo() {
@@ -13,10 +13,10 @@ function InspeccionEquipo() {
         setDestino(null);
         setError(false);
 
-        GetEquipmentInspectionFormat(id)
-            .then((datos) => {
+        HasInspectionFormat(id)
+            .then((existe) => {
                 setDestino(
-                    datos?.format
+                    existe
                         ? `/equipment/cardequipment/${id}/inspection/complete`
                         : `/equipment/cardequipment/${id}/inspection/questions`
                 );

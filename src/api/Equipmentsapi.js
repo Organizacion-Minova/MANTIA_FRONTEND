@@ -25,6 +25,10 @@ export async function GetEquipmentById(id) {
     return data;
 }
 
+export async function GetEquipmentOptions() {
+    const { data } = await api.get("/api/equipment-options");
+    return data;
+}
 // preguntas inspeccion
 
 export async function GetEquipmentQuestions(equipmentId, includeInactive = false) {
@@ -99,6 +103,11 @@ export async function SaveInspection(datos) {
 
     const { data } = await api.post("/api/inspections", formData);
     return data;
+}
+
+export async function HasInspectionFormat(equipmentId) {
+    const { data } = await api.get(`/api/equipment/${equipmentId}/has-inspection-format`);
+    return data.exists;
 }
 
 // Exportaciones

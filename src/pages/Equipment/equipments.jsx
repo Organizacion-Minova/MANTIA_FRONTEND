@@ -95,11 +95,9 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
         if (!validarCamposRequeridos({
             "Código": codigo,
             "Nombre": nombre,
-            "Descripción": descripcion,
             "Número de serie": serie,
             "Marca": marca,
             "Placa": placa,
-            "Fecha de ingreso": fechaIngreso,
             "Ubicación": locationid,
             "Responsable": responsable,
             "Modelo": modelo,
@@ -138,7 +136,7 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
                 placa === equiposEditar.plate &&
                 potencia === equiposEditar.power &&
                 voltaje === equiposEditar.voltage &&
-                locationid === (equiposEditar.location?.id || "") && 
+                locationid === (equiposEditar.ubicacion?.id || "") && 
                 descripcion === equiposEditar.description &&
                 !archivoImagen 
                 
@@ -412,7 +410,6 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
                     rows="4"
                     value={descripcion}
                     onChange={(e) => setDescripcion(capitalizarPrimeraLetra(e.target.value))}
-                    required
                 />
             </div>
         </Form>
@@ -430,7 +427,7 @@ function Equipos(){
 
     const { busqueda, setBusqueda, filtrosEspeciales, setFiltroEspecial, itemsFiltrados: equiposFiltrados } = useSearch(
         equipo,
-        ["code","name", "description","responsible","model","ubicacionBusqueda"]
+        ["name", "serial_number", "responsible","brand","status","model","ubicacionBusqueda"]
     );
     const ubicacionesUnicas = Array.from(
         new Map(
@@ -492,7 +489,7 @@ function Equipos(){
                 <Searcher
                     value={busqueda}
                     onChange={(e)=>setBusqueda(e.target.value)}
-                    placeholder="Buscar por nombre, código, descripción, responsable, modelo, ubicación o marca"
+                    placeholder="Buscar por nombre, número de serie, responsable, marca, ubicación o estado."
                     filtrosAdicionales={
                         <div className="btn-container">
                             <Select

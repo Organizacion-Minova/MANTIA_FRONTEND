@@ -62,9 +62,9 @@ export default function FormatoPapel({ format, equipment, weekStart, weekEnd, in
                         <td rowSpan="3" colSpan="2">
                             <img className="logoSena" src="/src/assets/img/sena-logo-naranja.png" alt="SENA" />
                         </td>
-                        <td rowSpan="3" colSpan="2">
+                        <th rowSpan="3" colSpan="2">
                             INSPECCIÓN PREOPERACIONAL<br />{equipment.name.toUpperCase()}
-                        </td>
+                        </th>
                         <th>Código</th>
                         <td>{format.code || ""}</td>
                     </tr>
