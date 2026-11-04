@@ -113,6 +113,16 @@ export const exportarFichaTecnicaEquipoPdfUnitario = async (id, name) => {
     descargarBlob(response.data, `Ficha_técnica_${name}.pdf`, 'application/pdf');
 };
 
+export const exportarInspeccionEquipoPdfUnitario = async (inspectionId, equipmentName, weekStart) => {
+    const response = await api.get(`/api/inspection-equipment/${inspectionId}/export/pdf`, { responseType: 'blob' });
+    descargarBlob(response.data, `Inspeccion_${equipmentName}_${weekStart}.pdf`, 'application/pdf');
+};
+
+export const exportarInspeccionEquipoExcelUnitario = async (inspectionId, equipmentName, weekStart) => {
+    const response = await api.get(`/api/inspection-equipment/${inspectionId}/export/excel`, { responseType: 'blob' });
+    descargarBlob(response.data, `Inspeccion_${equipmentName}_${weekStart}.xlsx`);
+};
+
 const descargarBlob = (data, filename, mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') => {
     const blob = new Blob([data], { type: mimeType });
     const link = document.createElement('a');
