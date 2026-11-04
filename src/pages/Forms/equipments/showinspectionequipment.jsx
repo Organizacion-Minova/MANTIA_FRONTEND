@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { BotonLink } from "../../../components/common/Button";
+import { Boton, BotonLink } from "../../../components/common/Button";
 import { PageWelcome } from "../../../components/common/welcome";
 import LoadingScreen from "../../../components/LoadingScreen";
 import FormatoPapel from "./formpaperequipment";
 import { GetInspection } from "../../../api/Equipmentsapi";
 import { formatearFechaCorta } from "../../../components/common/Validations";
+import { exportarInspeccionEquipoExcelUnitario, exportarInspeccionEquipoPdfUnitario } from "../../../api/Equipmentsapi";
 
 export default function VerInspeccion() {
     const { id, inspectionId } = useParams();
@@ -52,6 +53,20 @@ export default function VerInspeccion() {
                     icono="fa-solid fa-pen"
                     texto="Editar esta semana"
                     titulo="Editar la inspección preoperacional de esta semana"
+                />
+                <Boton
+                    clase="btn-azul"
+                    icono="fa-solid fa-file-excel"
+                    texto="Exportar Excel"
+                    onClick={() => exportarInspeccionEquipoExcelUnitario(inspectionId, equipo.name, inspeccion.week_start)}
+                    titulo="Exportar inspección preoperacional en un archivo de Excel"
+                />
+                <Boton
+                    clase="btn-azul"
+                    icono="fa-solid fa-file-pdf"
+                    texto="Exportar PDF"
+                    onClick={() => exportarInspeccionEquipoPdfUnitario(inspectionId, equipo.name, inspeccion.week_start)}
+                    titulo="Exportar inspección preoperacional en un archivo PDF"
                 />
                 <BotonLink
                     link={`/equipment/cardequipment/${id}/inspection/records`}
