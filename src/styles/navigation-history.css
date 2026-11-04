@@ -6,13 +6,14 @@
 .navigation-history {
     width: 100%;
     min-width: 0;
-    margin: 0 0 0.10rem;
+    margin: var(--space-xs) 0;
     padding: 0;
     background: transparent;
     border: none;
     box-shadow: none;
     font-family: var(--fuente-secundaria, sans-serif);
     box-sizing: border-box;
+    margin-bottom: var(--space-sm);
 }
 
 /* Encabezado */
