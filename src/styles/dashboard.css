@@ -139,14 +139,43 @@
 }
 @media (max-width:900px){
   .summary-card__title,
-  .summary-card__total,
   .dashboard-block__title,
-  .summary-card__breakdown,
   .summary-card__highlight {
     flex-direction:row;
     justify-content: center;
   }
 }
+
+@media (max-width:991px) {
+  .summary-card {
+    min-width: 0;
+  }
+
+  .summary-card__title {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .summary-card__total {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    line-height: 1.1;
+    text-align: center;
+  }
+
+  .summary-card__total-label {
+    margin-left: 0;
+    font-size: 0.7rem;
+  }
+
+  .summary-card__item span,
+  .summary-card__highlight span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
 @media (max-width:900px){
   .daily-usage-summary__item{
     justify-content:center;
@@ -182,6 +211,7 @@
 
 .attention-items,
 .daily-usage-summary {
+  min-width: 0;
   background-color: var(--contenedor);
   border-radius: 8px;
   padding: var(--space-md);
@@ -273,6 +303,10 @@
 
 @media (max-width: 767px) {
   .dashboard-lookup-section {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-insights-section {
     grid-template-columns: 1fr;
   }
 }
