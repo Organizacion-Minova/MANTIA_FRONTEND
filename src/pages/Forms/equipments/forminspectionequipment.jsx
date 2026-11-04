@@ -166,37 +166,36 @@ export default function FormatoInspeccion({
                 <table>
                     <tbody className="form">
                         <tr>
-                            <td colSpan="6">Datos del equipo</td>
+                            <th colSpan="6">Datos del equipo</th>
                         </tr>
                         <tr>
-                            <td>Equipo:</td>
+                            <th>Equipo:</th>
                             <td>{equipment.name}</td>
-                            <td>Código:</td>
+                            <th>Código:</th>
                             <td>{equipment.code || "—"}</td>
-                            <td>Marca:</td>
+                            <th>Marca:</th>
                             <td>{equipment.brand}</td>
                         </tr>
                         <tr>
-                            <td>Modelo:</td>
+                            <th>Modelo:</th>
                             <td>{equipment.model || "—"}</td>
-                            <td>Serie:</td>
+                            <th>Serie:</th>
                             <td>{equipment.serial_number || "—"}</td>
-                            <td>Ubicación:</td>
+                            <th>Ubicación:</th>
                             <td>{equipment.ubicacion?.name || "—"}</td>
                         </tr>
                         <tr>
-                            <td>Semana:</td>
+                            <th>Semana:</th>
                             <td>{formatearFechaCorta(weekStart)} al {formatearFechaCorta(weekEnd)}</td>
-                            <td>Código del formato:</td>
+                            <th>Código del formato:</th>
                             <td>{format.code}</td>
-                            <td>Versión:</td>
+                            <th>Versión:</th>
                             <td>{format.version}</td>
                         </tr>
                     </tbody>
                 </table>
                 <br />
                 
-
                 {(format.header_fields || []).length > 0 && (
                     <div className="form-grid">
                         {format.header_fields.map((c) => (
@@ -241,7 +240,7 @@ export default function FormatoInspeccion({
                                 <tbody>
                                     {preguntasVisibles(s).map((q) => (
                                         <tr key={q.id}>
-                                            <td>{s.position}.{q.position}</td>
+                                            <th>{s.position}.{q.position}</th>
                                             <td>{q.text}</td>
                                             {s.mode === "daily"
                                                 ? DIAS.map((_, i) => <td key={i}>{celda(q.id, i + 1, s)}</td>)

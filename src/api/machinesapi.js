@@ -19,6 +19,8 @@ export async function UpdateCategoryMachine(id, categoria) {
     return data;
 }
 
+
+
 // Machines
 
 export async function GetMachine() {
@@ -41,5 +43,10 @@ export async function UpdateMachine(id, maquina) {
 }
 export async function GetMachineById(id) {
     const { data } = await api.get(`/api/machines/${id}`);
+    return data;
+}
+
+export async function GetMachineOptions() {
+    const { data } = await api.get("/api/machine-options");
     return data;
 }

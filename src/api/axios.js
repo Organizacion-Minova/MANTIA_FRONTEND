@@ -15,6 +15,7 @@ const RECURSOS = {
     'machines': { nombre: 'Máquina', f: true },
     'equipment': { nombre: 'Equipo', f: false },
     'tools': { nombre: 'Herramienta', f: true },
+    'dailyuse': { nombre: 'Registro de uso diario', f: false },
     'inspections': { nombre: 'Inspección', f: true },
     'inspection-formats-equipment': { nombre: 'Formato de inspección', f: false },
 };
@@ -46,6 +47,21 @@ function esMutacion(metodo = 'get') {
     return ['post', 'put', 'patch', 'delete'].includes(metodo.toLowerCase());
 }
 
+function metodoEfectivo(config = {}) {
+    const metodo = (config.method || 'get').toLowerCase();
+    const datos = config.data;
+    const metodoSobrescrito = typeof FormData !== 'undefined' && datos instanceof FormData
+        ? datos.get('_method')
+        : datos && typeof datos === 'object'
+            ? datos._method
+            : null;
+
+    return typeof metodoSobrescrito === 'string' &&
+        ['put', 'patch', 'delete'].includes(metodoSobrescrito.toLowerCase())
+        ? metodoSobrescrito.toLowerCase()
+        : metodo;
+}
+
 function esIgnorada(url) {
     const partes = segmentos(url);
     return url?.includes('csrf-cookie') || partes[1] === 'notificaciones' || partes[1] === 'ai';
@@ -73,6 +89,7 @@ function mensajeExito(metodo, url) {
     if (recurso === 'gas-measurements' && m === 'post') return 'Medición de gas guardada correctamente';
     if (recurso === 'profile' && partes[2] === 'password') return 'Contraseña actualizada correctamente';
     if (recurso === 'profile') return 'Perfil actualizado correctamente';
+    if (recurso === 'admin' && partes[2] === 'roles' && m === 'put') return 'Rol editado correctamente';
     if (recurso === 'admin' && partes[2] === 'backups') {
         if (partes[4] === 'restore') return 'Copia restaurada correctamente';
         if (partes[4] === 'download') return 'Copia descargada correctamente';
@@ -85,6 +102,7 @@ function mensajeExito(metodo, url) {
     if (info && accion) {
         return `${info.nombre} ${info.f ? accion[1] : accion[0]} correctamente`;
     }
+    if (m === 'put' || m === 'patch') return 'Registro editado correctamente';
     return 'Operación realizada correctamente';
 }
 
@@ -107,7 +125,8 @@ function avisar(tipo, mensaje, titulo, duracion) {
 
 api.interceptors.response.use(
     (respuesta) => {
-        const { method, url } = respuesta.config;
+        const { url } = respuesta.config;
+        const method = metodoEfectivo(respuesta.config);
 
         if (esMutacion(method) && !esIgnorada(url)) {
             // El mensaje del registro es más largo, así que se deja más tiempo en pantalla

@@ -103,7 +103,7 @@ export default function LlenarInspeccion() {
             )}
 
             {cargandoSemana || !semanaInfo ? (
-                <p>Cargando semana...</p>
+                <LoadingScreen indeterminado />
             ) : (
                 <FormatoInspeccion
                     key={semanaInfo.week_start}

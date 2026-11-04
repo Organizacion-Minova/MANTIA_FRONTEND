@@ -55,22 +55,22 @@ export function CardEquipment() {
                                 </td>
                             </tr>
                             <tr>
-                                <td colSpan="2">SISTEMA DE GESTIÓN DE SEGURIDAD Y SALUD EN EL TRABAJO</td>
-                                <td>CÓDIGO:</td>
+                                <th colSpan="2">SISTEMA DE GESTIÓN DE SEGURIDAD Y SALUD EN EL TRABAJO</th>
+                                <th>CÓDIGO:</th>
                                 <td>FT-SST 002</td>
                             </tr>
                             <tr>
-                                <td colSpan="2">PROGRAMA DE MANTENIMIENTO</td>
-                                <td>VERSIÓN:</td>
+                                <th colSpan="2">PROGRAMA DE MANTENIMIENTO</th>
+                                <th>VERSIÓN:</th>
                                 <td>1.0</td>
                             </tr>
                             <tr>
-                                <td colSpan="2">FICHA TÉCNICA {equipo.name}</td>
-                                <td>FECHA:</td>
+                                <th colSpan="2">FICHA TÉCNICA {equipo.name}</th>
+                                <th>FECHA:</th>
                                 <td>8/09/2021</td>
                             </tr>
                             <tr>
-                                <td colSpan="6">IMAGEN:</td>
+                                <th colSpan="6">IMAGEN:</th>
                             </tr>
                             <tr>
                                 <td colSpan="6">
@@ -87,39 +87,39 @@ export function CardEquipment() {
                                 </td>
                             </tr>
                             <tr>
-                                <td>CÓDIGO:</td>
+                                <th>CÓDIGO:</th>
                                 <td>{equipo.code}</td>
-                                <td>NOMBRE:</td>
+                                <th>NOMBRE:</th>
                                 <td>{equipo.name}</td>
-                                <td>Placa:</td>
+                                <th>Placa:</th>
                                 <td>{equipo.plate}</td>
                             </tr>
                             <tr>
-                                <td>MODELO:</td>
+                                <th>MODELO:</th>
                                 <td>{equipo.model}</td>
-                                <td>NÚMERO DE SERIE:</td>
+                                <th>NÚMERO DE SERIE:</th>
                                 <td>{equipo.serial_number}</td>
-                                <td>FECHA DE INICIO:</td>
+                                <th>FECHA DE INICIO:</th>
                                 <td>{equipo.start_up_date}</td>
                             </tr>
                             <tr>
-                                <td>UBICACIÓN:</td>
+                                <th>UBICACIÓN:</th>
                                 <td>{equipo.ubicacion.name}</td>
-                                <td>RESPONSABLE:</td>
+                                <th>RESPONSABLE:</th>
                                 <td>{equipo.responsible}</td>
-                                <td>ESTADO:</td>
+                                <th>ESTADO:</th>
                                 <td>{equipo.status="active"?"Activo":"Inactivo"}</td>
                             </tr>
                             <tr>
-                                <td>CONSUMIBLE:</td>
+                                <th>CONSUMIBLE:</th>
                                 <td>{equipo.fuel}</td>
-                                <td>POTENCIA:</td>
+                                <th>POTENCIA:</th>
                                 <td>{equipo.power}</td>
-                                <td>VOLTAJE:</td>
+                                <th>VOLTAJE:</th>
                                 <td>{equipo.voltage}</td>
                             </tr>
                             <tr>
-                                <td colSpan="6"> DESCRIPCIÓN: </td>
+                                <th colSpan="6"> DESCRIPCIÓN: </th>
                             </tr>
                             <tr>
                                 <td colSpan="6">{equipo.description}</td>
