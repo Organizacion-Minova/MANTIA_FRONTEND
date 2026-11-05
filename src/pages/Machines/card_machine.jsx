@@ -6,6 +6,7 @@ import { GetMachineById } from "../../api/machinesapi";
 import api from "../../api/axios";
 import LoadingScreen from "../../components/LoadingScreen";
 import imagenPorDefecto from "../../assets/img/Mantia - logo.png";
+import { exportarFichaTecnicaMaquinaExcelUnitario, exportarFichaTecnicaMaquinaPdfUnitario } from "../../api/machinesapi";
 
 function obtenerUrlImagen(imagen) {
     if (!imagen) return imagenPorDefecto;
@@ -64,7 +65,7 @@ export function CardMachine() {
                                     <td>1.0</td>
                                 </tr>
                                 <tr>
-                                    <th colSpan="2">FICHA TÉCNICA {maquina.name}</th>
+                                    <th colSpan="2">FICHA TÉCNICA {maquina?.name?.toUpperCase()}</th>
                                     <th>FECHA:</th>
                                     <td>8/09/2021</td>
                                 </tr>
@@ -90,7 +91,7 @@ export function CardMachine() {
                                     <td>{maquina.code}</td>
                                     <th>NOMBRE:</th>
                                     <td>{maquina.name}</td>
-                                    <th>Placa:</th>
+                                    <th>PLACA:</th>
                                     <td>{maquina.plate}</td>
                                 </tr>
                                 <tr>
@@ -145,6 +146,20 @@ export function CardMachine() {
                             clase="btn-azul"
                             icono="fas fa-search"
                             texto="Inspeccion"
+                        />
+                        <Boton
+                            clase="btn-azul"
+                            icono="fa-solid fa-file-excel"
+                            texto="Exportar Excel"
+                            onClick={() => exportarFichaTecnicaMaquinaExcelUnitario(maquina.id, maquina.name)}
+                            titulo="Exportar ficha técnica en un archivo de Excel"
+                        />
+                        <Boton
+                            clase="btn-azul"
+                            icono="fa-solid fa-file-pdf"
+                            texto="Exportar PDF"
+                            onClick={() => exportarFichaTecnicaMaquinaPdfUnitario(maquina.id, maquina.name)}
+                            titulo="Exportar ficha técnica en un archivo PDF"
                         />
                         <BotonLink
                             link="/machines"
