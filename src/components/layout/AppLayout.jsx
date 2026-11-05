@@ -53,49 +53,134 @@ function AppLayout({ children }) {
 
     const { notificar } = useToast();
     const [notificaciones, setNotificaciones] = useState([]);
-    const conocidas = useRef(null); // null = todavía no se hizo la primera carga
+
+
+    const conocidas = useRef(null);
+
+    
+    const solicitudEnCurso = useRef(false);
+
+
+    const refrescoPendiente = useRef(false);
+    const cargarNotificacionesRef = useRef(null);
+
+    
+    const temporizadorActualizacion = useRef(null);
+
     useEffect(() => {
         if (window.matchMedia("(max-width: 767px)").matches) {
             setCerrado(false);
         }
     }, [pathname]);
 
-    const cargarNotificaciones = useCallback(async () => {
+    const cargarNotificaciones = useCallback(async (encolarSiEstaOcupada = false) => {
+        if (!isAuthenticated) return;
+
+        if (solicitudEnCurso.current) {
+            if (encolarSiEstaOcupada) refrescoPendiente.current = true;
+            return;
+        }
+
+        solicitudEnCurso.current = true;
+
         try {
             const datos = await obtenerNotificaciones();
             const lista = datos.map(mapearNotificacionBackend);
 
             if (conocidas.current === null) {
-                // Primera carga: solo se memorizan las que ya existían, sin avisar
+                
                 conocidas.current = new Set(lista.map((n) => n.id));
             } else {
                 lista.forEach((n) => {
                     if (conocidas.current.has(n.id)) return;
                     conocidas.current.add(n.id);
-                    // Las informativas ya las avisa cada acción (api/axios.js);
-                    // aquí solo se avisan las de peligro y las advertencias nuevas
-                    if (n.tipo === 'danger') notificar('danger', n.mensaje, 'Alerta de peligro', 8000);
-                    if (n.tipo === 'warning') notificar('warning', n.mensaje, 'Advertencia', 6000);
+
+
+                    if (n.tipo === 'danger') {
+                        notificar('danger', n.mensaje, 'Alerta de peligro', 8000);
+                    }
+
+                    if (n.tipo === 'warning') {
+                        notificar('warning', n.mensaje, 'Advertencia', 6000);
+                    }
                 });
             }
 
             setNotificaciones(lista);
         } catch (error) {
             console.error('No se pudieron cargar las notificaciones', error);
+        } finally {
+            solicitudEnCurso.current = false;
+
+
+            if (refrescoPendiente.current) {
+                refrescoPendiente.current = false;
+                Promise.resolve().then(() => cargarNotificacionesRef.current?.());
+            }
         }
-    }, [notificar]);
+    }, [isAuthenticated, notificar]);
+
+    
+    cargarNotificacionesRef.current = cargarNotificaciones;
+
+    
+    const solicitarActualizacionNotificaciones = useCallback(() => {
+        if (temporizadorActualizacion.current) {
+            window.clearTimeout(temporizadorActualizacion.current);
+        }
+
+        temporizadorActualizacion.current = window.setTimeout(() => {
+            temporizadorActualizacion.current = null;
+            cargarNotificaciones(true);
+        }, 300);
+    }, [cargarNotificaciones]);
 
     useEffect(() => {
+        if (!isAuthenticated) {
+            setNotificaciones([]);
+            conocidas.current = null;
+            return undefined;
+        }
+
+        
         cargarNotificaciones();
-        const intervalo = setInterval(cargarNotificaciones, 15000);
-        return () => clearInterval(intervalo);
-    }, [cargarNotificaciones]);
 
-    // Se refresca al instante cuando cualquier acción termina bien (lo avisa api/axios.js)
-    useEffect(() => {
-        window.addEventListener('notificaciones:actualizar', cargarNotificaciones);
-        return () => window.removeEventListener('notificaciones:actualizar', cargarNotificaciones);
-    }, [cargarNotificaciones]);
+        
+        const intervalo = window.setInterval(() => {
+            if (document.visibilityState === 'visible') {
+                cargarNotificaciones();
+            }
+        }, 30000);
+
+
+        const actualizarAlVolver = () => {
+            if (document.visibilityState === 'visible') {
+                solicitarActualizacionNotificaciones();
+            }
+        };
+
+        // Las operaciones exitosas siguen actualizando la campana mediante
+        // el evento que ya emite api/axios.js.
+        window.addEventListener(
+            'notificaciones:actualizar',
+            solicitarActualizacionNotificaciones
+        );
+        document.addEventListener('visibilitychange', actualizarAlVolver);
+
+        return () => {
+            window.clearInterval(intervalo);
+            window.removeEventListener(
+                'notificaciones:actualizar',
+                solicitarActualizacionNotificaciones
+            );
+            document.removeEventListener('visibilitychange', actualizarAlVolver);
+
+            if (temporizadorActualizacion.current) {
+                window.clearTimeout(temporizadorActualizacion.current);
+                temporizadorActualizacion.current = null;
+            }
+        };
+    }, [isAuthenticated, cargarNotificaciones, solicitarActualizacionNotificaciones]);
 
     const marcarTodas = async () => {
         try {
@@ -103,7 +188,9 @@ function AppLayout({ children }) {
         } catch (error) {
             console.error('No se pudieron marcar como leídas', error);
         }
-        cargarNotificaciones();
+
+        // Se conserva la actualización de la campana después de marcar todas.
+        cargarNotificaciones(true);
     };
 
     const marcarUna = async (id) => {
@@ -112,7 +199,7 @@ function AppLayout({ children }) {
             await marcarComoLeida(id);
         } catch (error) {
             console.error('No se pudo marcar como leída', error);
-            cargarNotificaciones();
+            cargarNotificaciones(true);
         }
     };
 

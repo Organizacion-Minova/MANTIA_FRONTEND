@@ -74,6 +74,90 @@ function cuerpoDeError(error) {
     try { return JSON.parse(datos); } catch { return null; }
 }
 
+// Comparte únicamente peticiones GET idénticas que todavía están en curso.
+// No guarda respuestas en caché: una consulta posterior vuelve a llegar al servidor.
+const solicitudesGetEnCurso = new Map();
+const getOriginal = api.get.bind(api);
+
+function claveSolicitudGet(url, config = {}) {
+    let params = "";
+    let headers = "";
+
+    try {
+        params = JSON.stringify(config.params ?? null);
+    } catch {
+        params = String(config.params);
+    }
+
+    try {
+        headers = JSON.stringify(config.headers ?? null);
+    } catch {
+        headers = "";
+    }
+
+    return JSON.stringify({
+        url: String(url),
+        params,
+        headers,
+        responseType: config.responseType ?? "json",
+    });
+}
+
+api.get = (url, config = {}) => {
+    // No compartir peticiones de autenticación: una sesión puede cambiar
+    // entre el inicio de sesión y una verificación que ya estaba en curso.
+    const ruta = String(url);
+    if (
+        config.signal ||
+        config.cancelToken ||
+        ruta.includes("/api/user") ||
+        ruta.includes("csrf-cookie")
+    ) {
+        return getOriginal(url, config);
+    }
+
+    const clave = claveSolicitudGet(url, config);
+    const existente = solicitudesGetEnCurso.get(clave);
+
+    if (existente) {
+        return existente;
+    }
+
+    const solicitud = getOriginal(url, config).finally(() => {
+        if (solicitudesGetEnCurso.get(clave) === solicitud) {
+            solicitudesGetEnCurso.delete(clave);
+        }
+    });
+
+    solicitudesGetEnCurso.set(clave, solicitud);
+    return solicitud;
+};
+
+// Estos recursos tienen observadores en Laravel que pueden crear notificaciones.
+// Las demás mutaciones no necesitan volver a consultar la campana.
+const RECURSOS_QUE_GENERAN_ALERTAS = new Set([
+    "machine-categories",
+    "location-category",
+    "location",
+    "category-tools",
+    "tools",
+    "equipment",
+    "machines",
+    "gas-measurements",
+    "dailyuse",
+    "inspections",
+]);
+
+function debeActualizarNotificaciones(url) {
+    const partes = segmentos(url);
+    const recurso = partes[1];
+
+    // El inicio de sesión genera una notificación desde el listener de Laravel.
+    if (recurso === "login" || recurso === "dev-login") return true;
+
+    return RECURSOS_QUE_GENERAN_ALERTAS.has(recurso);
+}
+
 function mensajeExito(metodo, url) {
     const m = metodo.toLowerCase();
     const partes = segmentos(url);
@@ -138,6 +222,9 @@ api.interceptors.response.use(
                 window.dispatchEvent(new Event('notificaciones:actualizar'));
             }
         }
+          if (debeActualizarNotificaciones(url)) {
+                window.dispatchEvent(new Event('notificaciones:actualizar'));
+            }
         return respuesta;
     },
     (error) => {
