@@ -566,7 +566,7 @@
 .administration-grid > p { grid-area: admin-content; }
 
 .administration-grid .roles-actions {
-  justify-content: flex-start;
+
   align-items: center;
   margin-top: 1rem;
 }

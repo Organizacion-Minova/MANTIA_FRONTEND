@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { PageWelcome } from "../../components/common/welcome";
 import { Boton } from "../../components/common/Button";
-import { Form, Text, Checkbox } from "../../components/common/forms";
+import { Form, Text, Checkbox, Select } from "../../components/common/forms";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
 import LoadingScreen from "../../components/LoadingScreen";
@@ -14,6 +14,7 @@ import {
     obtenerPermisosDisponibles
 } from "../../api/admin";
 import PanelBackups from "./PanelBackups";
+import { usePaginacion,Paginacion } from "../../components/common/Paginacion";
 
 const TABS = [
     { id: "solicitudes", texto: "Solicitudes", icono: "fa-solid fa-user-clock",titulo:"Gestionar solicitudes" },
@@ -28,6 +29,8 @@ function PanelSolicitudes({ onCambioConteo }) {
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
     const { exito, peligro } = useToast();
+
+    const {datosPagina, paginaActual, totalPaginas, setPaginaActual} = usePaginacion(solicitudes, 7);
 
     const cargar = useCallback(async () => {
         setCargando(true);
@@ -86,7 +89,7 @@ function PanelSolicitudes({ onCambioConteo }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {solicitudes.length > 0 ? solicitudes.map((s) => (
+                        {datosPagina.length > 0 ? datosPagina.map((s) => (
                             <tr key={s.id}>
                                 <td>{s.name} {s.last_name}</td>
                                 <td>{s.email}</td>
@@ -111,6 +114,13 @@ function PanelSolicitudes({ onCambioConteo }) {
                         )}
                     </tbody>
                 </table>
+                <div className="roles-actions">
+                    <Paginacion
+                        paginaActual={paginaActual}
+                        totalPaginas={totalPaginas}
+                        setPaginaActual={setPaginaActual}
+                    />
+                </div>
             </div>
         </>
     );
@@ -179,6 +189,8 @@ function PanelUsuarios() {
     const { usuario: usuarioActual } = useAuth();
     const { exito, peligro } = useToast();
 
+    const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(usuarios, 7);
+
     const cargar = useCallback(async () => {
         setCargando(true);
         setError(null);
@@ -234,21 +246,21 @@ function PanelUsuarios() {
                         </tr>
                     </thead>
                     <tbody>
-                        {usuarios.length > 0 ? usuarios.map((u) => (
+                        {datosPagina.length > 0 ? datosPagina.map((u) => (
                             <tr key={u.id}>
                                 <td>{u.name} {u.last_name}</td>
                                 <td>{u.email}</td>
                                 <td>
-                                    <select
-                                        className="form-select"
+                                    <Select
+                                        id={`rol-${u.id}`} 
+                                        name={`rol-${u.id}`}
                                         value={u.roles?.[0]?.name || ""}
                                         onChange={(e) => handleCambiarRol(u, e.target.value)}
-                                    >
-                                        <option value="">Sin rol</option>
-                                        {roles.map((r) => (
-                                            <option key={r.id} value={r.name}>{r.name}</option>
-                                        ))}
-                                    </select>
+                                        opciones={[
+                                            { value: "", label: "Sin rol" }, 
+                                            ...roles.map(r => ({ valor: r.name, etiqueta: r.name }))
+                                        ]}
+                                    />
                                 </td>
                                 <td>
                                     <span className={`badge ${u.is_active ? "badge-activo" : "badge-inactivo"}`}>
@@ -279,7 +291,14 @@ function PanelUsuarios() {
                             </tr>
                         )}
                     </tbody>
-                </table>
+                </table>  
+            </div>
+            <div className="roles-actions">
+                <Paginacion
+                    paginaActual={paginaActual}
+                    totalPaginas={totalPaginas}
+                    setPaginaActual={setPaginaActual}
+                />
             </div>
             {usuarioPassword && (
                 <FormularioPassword
@@ -387,6 +406,8 @@ function PanelRoles() {
     const [rolAEditar, setRolAEditar] = useState(null);
     const { exito, peligro } = useToast();
 
+    const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(roles, 7);
+
     const cargar = useCallback(async () => {
         setCargando(true);
         setError(null);
@@ -440,7 +461,7 @@ function PanelRoles() {
                         </tr>
                     </thead>
                     <tbody>
-                        {roles.length > 0 ? roles.map((r) => (
+                        {datosPagina.length > 0 ? datosPagina.map((r) => (
                             <tr key={r.id}>
                                 <td>{r.name}</td>
                                 <td>{r.users_count}</td>
@@ -476,12 +497,19 @@ function PanelRoles() {
                     </tbody>
                 </table>
             </div>
-            <div className="btn-container-page roles-actions">
-                    <Boton
-                        clase="btn-azul" texto="Nuevo rol" icono="fa-solid fa-plus"
-                        onClick={() => { setRolAEditar(null); setMostrarFormulario(true); }}
-                        titulo="Añadir nuevo rol"
-                    />
+            <div className="roles-actions btn-container-page">
+                <Boton
+                    clase="btn-azul" 
+                    texto="Nuevo rol" 
+                    icono="fa-solid fa-plus"
+                    onClick={() => { setRolAEditar(null); setMostrarFormulario(true); }}
+                    titulo="Añadir nuevo rol"
+                />
+                <Paginacion
+                    paginaActual={paginaActual}
+                    totalPaginas={totalPaginas}
+                    setPaginaActual={setPaginaActual}
+                />
             </div>
             {mostrarFormulario && (
                 <FormularioRol

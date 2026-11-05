@@ -9,6 +9,8 @@ import {
     obtenerOpcionesBackup, obtenerBackups, crearBackup,
     descargarBackup, eliminarBackup, restaurarBackup,
 } from "../../api/admin";
+import { usePaginacion,Paginacion } from "../../components/common/Paginacion";
+
 
 const ACCIONES = {
     descargar: {
@@ -43,6 +45,8 @@ function PanelBackups() {
     const [confirmaRestaurar, setConfirmaRestaurar] = useState(false);
     const { peligro, advertencia } = useToast();
     const { cargarUsuarioActual } = useAuth();
+
+    const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(backups, 7);
 
     const cargar = useCallback(async () => {
         setCargando(true);
@@ -175,7 +179,7 @@ function PanelBackups() {
                         </tr>
                     </thead>
                     <tbody>
-                        {backups.length > 0 ? backups.map((b) => (
+                        {datosPagina.length > 0 ? datosPagina.map((b) => (
                             <tr key={b.archivo}>
                                 <td>{b.archivo}</td>
                                 <td>{(b.incluye ?? b.tablas)?.join(", ")}</td>
@@ -209,6 +213,13 @@ function PanelBackups() {
                         )}
                     </tbody>
                 </table>
+                <div className="roles-actions">
+                    <Paginacion
+                        paginaActual={paginaActual}
+                        totalPaginas={totalPaginas}
+                        setPaginaActual={setPaginaActual}
+                    />
+                </div>
             </div>
 
             {accion && (
