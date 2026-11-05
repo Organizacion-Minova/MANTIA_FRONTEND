@@ -65,7 +65,7 @@ export function CardEquipment() {
                                 <td>1.0</td>
                             </tr>
                             <tr>
-                                <th colSpan="2">FICHA TÉCNICA {equipo.name}</th>
+                                <th colSpan="2">FICHA TÉCNICA {equipo?.name?.toUpperCase()}</th>
                                 <th>FECHA:</th>
                                 <td>8/09/2021</td>
                             </tr>
@@ -91,7 +91,7 @@ export function CardEquipment() {
                                 <td>{equipo.code}</td>
                                 <th>NOMBRE:</th>
                                 <td>{equipo.name}</td>
-                                <th>Placa:</th>
+                                <th>PLACA:</th>
                                 <td>{equipo.plate}</td>
                             </tr>
                             <tr>
