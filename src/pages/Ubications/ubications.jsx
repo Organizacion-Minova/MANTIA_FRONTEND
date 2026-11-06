@@ -25,12 +25,9 @@ const obtenerMensajeError = (err, porDefecto) => {
     return (errores && Object.values(errores)[0]?.[0]) || err.response?.data?.message || porDefecto;
 };
 
-const regex_nombre = /^[\p{L}\p{N}\s\-_.,#/()°:]+$/u;
-
 const validar = ({ nombre, descripcion, categoria }) => {
     if (!nombre) return "El nombre es obligatorio.";
     if (nombre.length > 100) return "El nombre no puede superar los 100 caracteres.";
-    if (!regex_nombre.test(nombre)) return "El nombre solo puede contener letras, números, espacios y los caracteres - _ . , # / ( ) ° :";
     if (!categoria) return "La categoría es obligatoria.";
     if (!descripcion) return "La descripción es obligatoria.";
     if (descripcion.length > 5000) return "La descripción no puede superar los 5000 caracteres.";
