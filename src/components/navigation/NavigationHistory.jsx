@@ -1,6 +1,7 @@
 import { useNavigationHistory } from "../../context/NavigationHistoryContext.jsx";
 import "../../styles/navigation-history.css";
-
+import ubicadoIcon from "../../assets/icons/ubicado.svg";
+import secuenciaIcon from "../../assets/icons/secuencia.svg";
 function NavigationHistory() {
     const {
         entradas,
@@ -43,11 +44,8 @@ function NavigationHistory() {
                             className="navigation-history__item"
                         >
                             {indice > 0 && (
-                                <span
-                                    className="navigation-history__separator"
-                                    aria-hidden="true"
-                                >
-                                    <i className="fa-solid fa-chevron-right"></i>
+                                <span className="navigation-history__separator">
+                                    <img className="navigation-history__separator-icon" src={secuenciaIcon} alt="" aria-hidden="true" />
                                 </span>
                             )}
 
@@ -56,10 +54,12 @@ function NavigationHistory() {
                                     className="navigation-history__current"
                                     aria-current="page"
                                 >
-                                    <i
-                                        className="fa-solid fa-location-dot"
+                                    <img
+                                    className="navigation-history__current-icon"
+                                        src={ubicadoIcon}
+                                      
                                         aria-hidden="true"
-                                    ></i>
+                                    />
 
                                     <span>{entrada.titulo}</span>
                                 </span>
@@ -85,4 +85,3 @@ function NavigationHistory() {
 }
 
 export default NavigationHistory;
-

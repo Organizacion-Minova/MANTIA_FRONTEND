@@ -25,6 +25,22 @@ import { obtenerNotificaciones, marcarComoLeida, marcarTodasComoLeidas } from '.
 import { useToast } from '../../context/ToastContext.jsx';
 import { mapearNotificacionBackend } from '../../utils/notificaciones';
 import { NavigationHistoryProvider } from "../../context/NavigationHistoryContext.jsx";
+import panelIcon from "../../assets/icons/panel.svg";
+import adminIcon from "../../assets/icons/admin.svg";
+import herramientasIcon from "../../assets/icons/herramientas.svg";
+import equiposIcon from "../../assets/icons/equipos.svg";
+import maquinasIcon from "../../assets/icons/maquinas.svg";
+import ubicacionesIcon from "../../assets/icons/ubicaciones.svg";
+import formatosIcon from "../../assets/icons/formatos.svg";
+import diarioIcon from "../../assets/icons/diario.svg";
+import gasesIcon from "../../assets/icons/gases.svg";
+import inspeccionIcon from "../../assets/icons/inspeccion.svg";
+import preoperacionalIcon from "../../assets/icons/preoperacional.svg";
+import acercaIcon from "../../assets/icons/acerca.svg";
+import ayudaIcon from "../../assets/icons/ayuda.svg";
+import cerrarSesionIcon from "../../assets/icons/cerrar-sesion.svg";
+import consumibleIcon from "../../assets/icons/consumibles.svg";
+import noconsumibleIcon from "../../assets/icons/no-consumibles.svg";
 
 
 function AppLayout({ children }) {
@@ -208,7 +224,7 @@ function AppLayout({ children }) {
                             to="/dashboard"
                             title="Ir al panel de control"
                         >
-                            <i className="fa-solid fa-solar-panel"></i>
+                            <img className="sidebar__icon" src={panelIcon} alt="" aria-hidden="true" />
                             <span>Panel de control</span>
                         </NavLink>
                     </li>
@@ -218,7 +234,7 @@ function AppLayout({ children }) {
                                 to="/admin"
                                 title="Ir al panel de administración"
                             >
-                                <i className="fa-solid fa-shield-halved"></i>
+                                <img className="sidebar__icon" src={adminIcon} alt="" aria-hidden="true" />
                                 <span>Panel administración</span>
                             </NavLink>
                         </li>
@@ -231,7 +247,7 @@ function AppLayout({ children }) {
                                 <a className={`menu-titulo ${herramientasRutaActiva ? "active" : ""}`}
                                     onClick={() => setHerramientasAbierto(!herramientasAbierto)}
                                 >
-                                    <i className="fa-solid fa-screwdriver-wrench"></i>
+                                    <img className="sidebar__icon" src={herramientasIcon} alt="" aria-hidden="true" />
                                     <span>Herramientas</span>
                                 </a>
 
@@ -241,7 +257,7 @@ function AppLayout({ children }) {
                                              to="/consumables/tools"
                                             title="Ir a consumibles"
                                         >
-                                            <i className="fa-solid fa-wrench"></i>
+                                            <img className="sidebar__icon" src={consumibleIcon} alt="" aria-hidden="true" />
                                             <span>Consumibles</span>
                                         </NavLink>
                                     </li>
@@ -250,7 +266,7 @@ function AppLayout({ children }) {
                                             to="/noconsumables/tools"
                                             title="Ir a no consumibles"
                                         >
-                                            <i className="fa-solid fa-tools"></i>
+                                            <img className="sidebar__icon" src={noconsumibleIcon} alt="" aria-hidden="true" />
                                             <span>No consumibles</span>
                                         </NavLink>
                                     </li>
@@ -264,7 +280,7 @@ function AppLayout({ children }) {
                                     to="/equipment"
                                     title="Ir a equipos"
                                 >
-                                    <i className="fa-solid fa-gears"></i>
+                                    <img className="sidebar__icon" src={equiposIcon} alt="" aria-hidden="true" />
                                     <span>Equipos</span>
                                 </NavLink>
                             </li>
@@ -275,7 +291,7 @@ function AppLayout({ children }) {
                                     to="/machines"
                                     title="Ir a máquinas"
                                 >
-                                    <i className="fa-solid fa-industry"></i>
+                                    <img className="sidebar__icon" src={maquinasIcon} alt="" aria-hidden="true" />
                                     <span>Máquinas</span>
                                 </NavLink>
                                 
@@ -287,7 +303,7 @@ function AppLayout({ children }) {
                                     to="/ubications"
                                     title="Ir a ubicaciones"
                                 >
-                                    <i className="fa-solid fa-map-marker-alt"></i>
+                                    <img className="sidebar__icon" src={ubicacionesIcon} alt="" aria-hidden="true" />
                                     <span>Ubicaciones</span>
                                 </NavLink>
                             </li>
@@ -298,7 +314,7 @@ function AppLayout({ children }) {
                     {veFormatos && (
                     <li className={`menu-desplegable ${formatosAbierto || formatosRutaActiva ? "activo" : ""}`}> 
                         <a className={`menu-titulo ${formatosRutaActiva ? "active" : ""}`} onClick={() => setFormatosAbierto(!formatosAbierto)} > 
-                            <i className="fa-solid fa-file-alt"></i> 
+                            <img className="sidebar__icon" src={formatosIcon} alt="" aria-hidden="true" />
                             <span>Formatos</span> 
                         </a> 
                         <ul className="submenu"> 
@@ -308,7 +324,7 @@ function AppLayout({ children }) {
                                     to="/dailyuse" 
                                     title="Ir al formato de uso diario" 
                                 > 
-                                    <i className="fa-solid fa-calendar-alt"></i> 
+                                    <img className="sidebar__icon" src={diarioIcon} alt="" aria-hidden="true" />
                                     <span>Uso diario</span> 
                                 </NavLink> 
                         </li>
@@ -319,7 +335,7 @@ function AppLayout({ children }) {
                                     to="/gases" 
                                     title="Ir al formato de medicion de gases" 
                                 > 
-                                    <i className="fa-solid fa-gas-pump"></i> 
+                                    <img className="sidebar__icon" src={gasesIcon} alt="" aria-hidden="true" />
                                     <span>Medición de gases</span> 
                                 </NavLink> 
                          </li>
@@ -330,7 +346,7 @@ function AppLayout({ children }) {
                                     to="/inspection" 
                                     title="Ir al formato de inspección" 
                                 > 
-                                    <i className="fa-solid fa-search"></i> 
+                                    <img className="sidebar__icon" src={inspeccionIcon} alt="" aria-hidden="true" />
                                     <span>Inspección</span> 
                                 </NavLink> 
                             </li>
@@ -341,7 +357,7 @@ function AppLayout({ children }) {
                                     to="" 
                                     title="Ir al formato preoperacional" 
                                 > 
-                                    <i className="fa-solid fa-cogs"></i> 
+                                    <img className="sidebar__icon" src={preoperacionalIcon} alt="" aria-hidden="true" />
                                     <span>Preoperacional</span> 
                                 </Link> 
                             </li>
@@ -352,13 +368,13 @@ function AppLayout({ children }) {
 
                     <li>
                         <NavLink to="/about" title="Ir a acerca de">
-                            <i className="fa-solid fa-info-circle"></i>
+                            <img className="sidebar__icon" src={acercaIcon} alt="" aria-hidden="true" />
                             <span>Acerca de</span>
                         </NavLink>
                     </li>
                     <li>
                         <NavLink to="/help" title="Ir a ayuda">
-                            <i className="fa-solid fa-circle-question"></i>
+                            <img className="sidebar__icon" src={ayudaIcon} alt="" aria-hidden="true" />
                             <span>Ayuda</span>
                         </NavLink>
                     </li>
@@ -366,12 +382,12 @@ function AppLayout({ children }) {
                         {isAuthenticated ? (
                             <a onClick={async () => { await logout(); navigate("/login"); }} style={{ cursor: "pointer" }}
                             title="Cerrar sesión">
-                                <i className="fa-solid fa-right-from-bracket"></i>
+                                <img className="sidebar__icon" src={cerrarSesionIcon} alt="" aria-hidden="true" />
                                 <span>Cerrar sesión</span>
                             </a>
                         ) : (
                             <Link to="/login" title="Ir a iniciar sesión">
-                                <i className="fa-solid fa-right-from-bracket"></i>
+                                <img className="sidebar__icon" src={cerrarSesionIcon} alt="" aria-hidden="true" />
                                 <span>Iniciar sesión</span>
                             </Link>
                         )}
