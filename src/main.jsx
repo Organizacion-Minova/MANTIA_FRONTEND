@@ -1,48 +1,47 @@
-import { StrictMode } from 'react'
+import { StrictMode, Suspense, lazy } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import App from './App.jsx'
-import Ubicaciones from "./pages/Ubications/ubications";
-import CategoriasUbicacion from "./pages/Ubications/categories_ubications";
-import Maquinas from "./pages/Machines/machines";
-import { CardMachine } from './pages/Machines/card_machine';
-// import AgregarInspeccion from './pages/Forms/inspection';
-// import LlenarInspeccion from './pages/Forms/completeinspection';
-// import MostrarInspeccion from './pages/Forms/showinspection';
-import CategoriasMaquinas from './pages/Machines/categories_machines';
 import { createRoot } from 'react-dom/client'
-import Equipos from './pages/Equipment/equipments';
-import { CardEquipment } from './pages/Equipment/card_Equipment';
-import { Consumibles, No_Consumibles } from './pages/Tools/types';
-import ToolsConsumables from './pages/Tools/toolsconsumables'
-import ToolsNoConsumables from './pages/Tools/toolsnoconsumables';
-import { UsoDiario } from './pages/Forms/daily_use';
-import Gases from './pages/Gases/gases';
-import CompararGases from './pages/Gases/comparegases';
-import { FormatoGases } from './pages/Gases/gasformat';
-import Login from './pages/login/login.jsx'
-import ResetPassword from './pages/login/ResetPassword'
-import Register from './pages/login/Register'
-import AcercaDe from "./pages/Others/acerca_de";
-import Ayuda from "./pages/Others/ayuda";
+import App from './App.jsx'
 import MantiaInicio from "./pages/Index/index";
+import Login from './pages/login/login.jsx'
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 import EscuchaToasts from "./components/Alertas/EscuchaToasts.jsx";
 import RutaPrivada from "./components/RutaPrivada.jsx";
 import RutaConPermiso from "./components/RutaConPermiso.jsx";
 import LoadingScreen from "./components/LoadingScreen.jsx";
-import Dashboard from "./pages/Dashboard/dashboard.jsx";
 import { ToastProvider } from './context/ToastContext.jsx';
-import NotFound from './pages/Others/not_found.jsx';
-import TermnsAndConditions from "./pages/Others/TermnsAndConditions.jsx";
-import AdministrationPanel from "./pages/Role/administration panel.jsx";
-import InspeccionEquipo from './pages/Forms/equipments/inspectionequipment.jsx';
-import ConstructorFormato from './pages/Forms/equipments/questioninspectionequipment.jsx';
-import LlenarInspeccion from './pages/Forms/equipments/completeinspectionequipment.jsx';
-import RegistrosInspeccion from './pages/Forms/equipments/registersinspectionequipment.jsx';
-import VerInspeccion from './pages/Forms/equipments/showinspectionequipment.jsx';
-// import PoliticaPrivacidad from "./pages/PoliticaPrivacidad";
 
+// Pantallas que se descargan solo cuando se visitan
+const nombrada = (cargar, nombre) => lazy(() => cargar().then((m) => ({ default: m[nombre] })));
 
+const Dashboard = lazy(() => import("./pages/Dashboard/dashboard.jsx"));
+const Ubicaciones = lazy(() => import("./pages/Ubications/ubications"));
+const CategoriasUbicacion = lazy(() => import("./pages/Ubications/categories_ubications"));
+const Maquinas = lazy(() => import("./pages/Machines/machines"));
+const CategoriasMaquinas = lazy(() => import('./pages/Machines/categories_machines'));
+const CardMachine = nombrada(() => import('./pages/Machines/card_machine'), 'CardMachine');
+const Equipos = lazy(() => import('./pages/Equipment/equipments'));
+const CardEquipment = nombrada(() => import('./pages/Equipment/card_Equipment'), 'CardEquipment');
+const Consumibles = nombrada(() => import('./pages/Tools/types'), 'Consumibles');
+const No_Consumibles = nombrada(() => import('./pages/Tools/types'), 'No_Consumibles');
+const ToolsConsumables = lazy(() => import('./pages/Tools/toolsconsumables'));
+const ToolsNoConsumables = lazy(() => import('./pages/Tools/toolsnoconsumables'));
+const UsoDiario = nombrada(() => import('./pages/Forms/daily_use'), 'UsoDiario');
+const Gases = lazy(() => import('./pages/Gases/gases'));
+const CompararGases = lazy(() => import('./pages/Gases/comparegases'));
+const FormatoGases = nombrada(() => import('./pages/Gases/gasformat'), 'FormatoGases');
+const ResetPassword = lazy(() => import('./pages/login/ResetPassword'));
+const Register = lazy(() => import('./pages/login/Register'));
+const AcercaDe = lazy(() => import("./pages/Others/acerca_de"));
+const Ayuda = lazy(() => import("./pages/Others/ayuda"));
+const NotFound = lazy(() => import('./pages/Others/not_found.jsx'));
+const TermnsAndConditions = lazy(() => import("./pages/Others/TermnsAndConditions.jsx"));
+const AdministrationPanel = lazy(() => import("./pages/Role/administration panel.jsx"));
+const InspeccionEquipo = lazy(() => import('./pages/Forms/equipments/inspectionequipment.jsx'));
+const ConstructorFormato = lazy(() => import('./pages/Forms/equipments/questioninspectionequipment.jsx'));
+const LlenarInspeccion = lazy(() => import('./pages/Forms/equipments/completeinspectionequipment.jsx'));
+const RegistrosInspeccion = lazy(() => import('./pages/Forms/equipments/registersinspectionequipment.jsx'));
+const VerInspeccion = lazy(() => import('./pages/Forms/equipments/showinspectionequipment.jsx'));
 
 function LoadingGate({ children }) {
   const { cargando } = useAuth();
@@ -57,6 +56,7 @@ createRoot(document.getElementById('root')).render(
     <AuthProvider>
       <LoadingGate>
         <BrowserRouter>
+          <Suspense fallback={<LoadingScreen indeterminado />}>
           <Routes>
             <Route path="/" element={<MantiaInicio />} />
             <Route path="/" element={<RutaPrivada><App /></RutaPrivada>}>
@@ -66,9 +66,6 @@ createRoot(document.getElementById('root')).render(
               <Route path='machines' element={<RutaConPermiso permiso="machine.view"><Maquinas /></RutaConPermiso>} />
               <Route path='machines/categoriesmachines' element={<RutaConPermiso permiso="machine-category.update"><CategoriasMaquinas /></RutaConPermiso>} />
               <Route path='machines/cardMachine/:id' element={<RutaConPermiso permiso="machine.view"><CardMachine /></RutaConPermiso>} />
-              {/* <Route path='inspection' element={<RutaConPermiso permiso="inspection.view"><AgregarInspeccion /></RutaConPermiso>} />
-              <Route path='inspection/completeinspection' element={<RutaConPermiso permiso="inspection.view"><LlenarInspeccion /></RutaConPermiso>} />
-              <Route path='inspection/completeinspection/showinspection' element={<RutaConPermiso permiso="inspection.view"><MostrarInspeccion /></RutaConPermiso>} /> */}
               <Route path='equipment' element={<RutaConPermiso permiso="equipment.view"><Equipos /></RutaConPermiso>} />
               <Route path='equipment/cardequipment/:id' element={<RutaConPermiso permiso="equipment.view"><CardEquipment /></RutaConPermiso>} />
               <Route path="equipment/cardequipment/:id/inspection" element={<InspeccionEquipo />} />
@@ -76,7 +73,8 @@ createRoot(document.getElementById('root')).render(
               <Route path="equipment/cardequipment/:id/inspection/edit" element={<ConstructorFormato editar />} />
               <Route path="equipment/cardequipment/:id/inspection/complete" element={<LlenarInspeccion />} />
               <Route path="equipment/cardequipment/:id/inspection/records" element={<RegistrosInspeccion />} />
-              <Route path="equipment/cardequipment/:id/inspection/records/:inspectionId" element={<VerInspeccion />} />              <Route path='consumables/tools/types' element={<RutaConPermiso permiso="category-tools.view"><Consumibles /></RutaConPermiso>} />
+              <Route path="equipment/cardequipment/:id/inspection/records/:inspectionId" element={<VerInspeccion />} />
+              <Route path='consumables/tools/types' element={<RutaConPermiso permiso="category-tools.view"><Consumibles /></RutaConPermiso>} />
               <Route path='noconsumables/tools/types' element={<RutaConPermiso permiso="category-tools.view"><No_Consumibles /></RutaConPermiso>} />
               <Route path='consumables/tools' element={<RutaConPermiso permiso="tool.view"><ToolsConsumables /></RutaConPermiso>} />
               <Route path='noconsumables/tools' element={<RutaConPermiso permiso="tool.view"><ToolsNoConsumables /></RutaConPermiso>} />
@@ -84,20 +82,17 @@ createRoot(document.getElementById('root')).render(
               <Route path='gases' element={<RutaConPermiso permiso="gas-measurements.view"><Gases /></RutaConPermiso>} />
               <Route path='gases/compare_gases' element={<RutaConPermiso permiso="gas-measurements.view"><CompararGases /></RutaConPermiso>} />
               <Route path='gases/gas_format/:id' element={<RutaConPermiso permiso="gas-measurements.view"><FormatoGases /></RutaConPermiso>} />
-         
               <Route path='admin' element={<RutaConPermiso roles={["Jefe de mina"]}><AdministrationPanel /></RutaConPermiso>} />
-              <Route path="*" element={<NotFound />} /> 
+              <Route path="*" element={<NotFound />} />
             </Route>
             <Route path="login" element={<Login />} />
             <Route path="ResetPassword" element={<ResetPassword />} />
             <Route path="register" element={<Register />} />
             <Route path='about' element={<AcercaDe />} />
             <Route path='help' element={<Ayuda />} />
-            <Route
-              path="/terms"
-              element={<TermnsAndConditions />}
-            />
+            <Route path="/terms" element={<TermnsAndConditions />} />
           </Routes>
+          </Suspense>
         </BrowserRouter>
       </LoadingGate>
     </AuthProvider>
