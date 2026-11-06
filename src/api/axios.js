@@ -199,7 +199,8 @@ function mensajeError(error) {
         return Object.values(data.errors).flat()[0] ?? 'Revisa los datos del formulario.';
     }
     if (status === 403) return 'No tienes permiso para realizar esta acción.';
-    if (status >= 500) return 'Error del servidor. Intenta de nuevo.';
+    if (status === 419) return 'Tu sesión expiró. Recarga la página e inténtalo de nuevo.';
+    if (status === 429) return 'Demasiados intentos. Espera un momento e inténtalo de nuevo.';
     return data?.message ?? 'No se pudo completar la acción.';
 }
 

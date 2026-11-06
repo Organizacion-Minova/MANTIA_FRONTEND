@@ -3,12 +3,13 @@ import { Boton } from "../../components/common/Button";
 import { PageWelcome,Searcher } from "../../components/common/welcome";
 import { Form, Text, Textarea, Time, Select } from '../../components/common/forms';
 import { GetDailyUse, CreateDailyUse, DeleteDailyUse, UpdateDailyUse  } from "../../api/dailyuseapi";
-import { GetMachineOptions } from "../../api/machinesapi";
+import { GetMachine } from "../../api/machinesapi";
 import LoadingScreen from "../../components/LoadingScreen";
 import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
 import { useSearch } from "../../hooks/useSearch";
 import { useRolesResponsables } from "../../hooks/useRolesResponsables";
 import { exportarUsoDiarioExcelUnitario, exportarUsoDiarioPdfUnitario } from "../../api/dailyuseapi";
+import { useConfirm } from "../../context/ConfirmContext.jsx";
 
 export function fechaHoy() {
     const hoy = new Date();
@@ -35,7 +36,7 @@ function Formulario({onCancel, onGuardado, registroEditar}){
     const opcionesResponsable = useRolesResponsables(registroEditar?.responsible);
 
     useEffect(() => {
-        GetMachineOptions()
+        GetMachine()
             .then((data) => {
                 setMachines(data);
             });
@@ -147,6 +148,7 @@ function Formulario({onCancel, onGuardado, registroEditar}){
                     }}
                     required 
                 />
+                {timeError && <p className="form-dropzone-error" role="alert">{timeError}</p>}
             </div>
             <div className="col-span-6">
                 <Select
@@ -205,7 +207,7 @@ export function UsoDiario(){
     }, []);
     const cargarMaquinas = async () => {
         setCargando(true);
-        GetMachineOptions()
+        GetMachine()
             .then((data) => {
                 setMaquinas(data);
                 if (data.length > 0) {
@@ -222,8 +224,12 @@ export function UsoDiario(){
     useEffect(() => {
         cargarMaquinas();
     }, []);
+    const pedirConfirmacion = useConfirm();
     const handleEliminarRegistro = async (id) => {
-        let confirmacion = window.confirm("¿Estás seguro de que deseas eliminar este registro?");
+        let confirmacion = await pedirConfirmacion({
+            titulo: "Eliminar registro",
+            mensaje: "¿Seguro que quieres eliminar este registro de uso diario? Esta acción no se puede deshacer.",
+        });
         if (!confirmacion) return
         try {
             await DeleteDailyUse(id);

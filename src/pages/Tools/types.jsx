@@ -8,6 +8,7 @@ import { usePaginacion, Paginacion   } from "../../components/common/Paginacion"
 import { capitalizarPrimeraLetra, sinCaracteresEspeciales, validarCaracteresEspeciales, validarGroserias } from "../../components/common/Validations";
 import { validarCamposRequeridos } from "../../components/common/requiredFields";
 import { useSearch } from "../../hooks/useSearch";
+import { useConfirm } from "../../context/ConfirmContext.jsx";
 
 function FormConsumibles({onCancel,onGuardado,categoriaEditar }){
     const esEdicion = categoriaEditar != null;
@@ -268,8 +269,12 @@ export function Consumibles(){
     useEffect(()=>{cargarCategorias();},[])
     if (cargando) return <LoadingScreen indeterminado/>;
     
+    const pedirConfirmacion = useConfirm();
     const handleEliminar = async (id) => {
-        let confirmar= window.confirm("¿Seguro que quieres eliminar esta categoría?")
+        let confirmar = await pedirConfirmacion({
+            titulo: "Eliminar categoría",
+            mensaje: "¿Seguro que quieres eliminar esta categoría? Esta acción no se puede deshacer.",
+        });
         if (!confirmar)
             return
         try {
@@ -411,8 +416,12 @@ export function No_Consumibles(){
     useEffect(()=>{cargarCategorias();},[])
     if (cargando) return <LoadingScreen indeterminado/>;
     
+    const pedirConfirmacion = useConfirm();
     const handleEliminar = async (id) => {
-        let confirmar= window.confirm("¿Seguro que quieres eliminar esta categoría?")
+        let confirmar = await pedirConfirmacion({
+            titulo: "Eliminar categoría",
+            mensaje: "¿Seguro que quieres eliminar esta categoría? Esta acción no se puede deshacer.",
+        });
         if (!confirmar)
             return
         try {

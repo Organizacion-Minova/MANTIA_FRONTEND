@@ -11,6 +11,7 @@ import api from "../../api/axios";
 import { capitalizarPrimeraLetra, sinCaracteresEspeciales, validarCaracteresEspeciales, validarGroserias } from "../../components/common/Validations";
 import { validarCamposRequeridos } from "../../components/common/requiredFields";
 import { useToast } from "../../context/ToastContext";
+import { useConfirm } from "../../context/ConfirmContext.jsx";
 
 function obtenerUrlImagen(imagen) {
     if (!imagen) return null;
@@ -136,7 +137,7 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
                 placa === equiposEditar.plate &&
                 potencia === equiposEditar.power &&
                 voltaje === equiposEditar.voltage &&
-                locationid === (equiposEditar.ubicacion?.id || "") && 
+                locationid === (equiposEditar.location?.id || "") && 
                 descripcion === equiposEditar.description &&
                 !archivoImagen 
                 
@@ -409,8 +410,8 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
                     placeholder="Descripción del equipo"
                     rows="4"
                     value={descripcion}
-                    onChange={(e) => setDescripcion(capitalizarPrimeraLetra(e.target.value))}
-                />
+                    onChange={(e) => setDescripcion(capitalizarPrimeraLetra(e.target.value))}                
+                    />
             </div>
         </Form>
     )
@@ -427,7 +428,7 @@ function Equipos(){
 
     const { busqueda, setBusqueda, filtrosEspeciales, setFiltroEspecial, itemsFiltrados: equiposFiltrados } = useSearch(
         equipo,
-        ["name", "serial_number", "responsible","brand","status","model","ubicacionBusqueda"]
+        ["code","name", "description","responsible","model","ubicacionBusqueda"]
     );
     const ubicacionesUnicas = Array.from(
         new Map(
@@ -456,8 +457,12 @@ function Equipos(){
     useEffect(() => {
         cargarEquipos();
     }, []);
+    const pedirConfirmacion = useConfirm();
     const handleEliminar = async (id) =>{
-        let confirmar= window.confirm("¿Seguro que quieres eliminar este equipo?")
+        let confirmar = await pedirConfirmacion({
+            titulo: "Eliminar equipo",
+            mensaje: "¿Seguro que quieres eliminar este equipo? Esta acción no se puede deshacer.",
+        });
         if (!confirmar)
             return
         try {
@@ -489,7 +494,7 @@ function Equipos(){
                 <Searcher
                     value={busqueda}
                     onChange={(e)=>setBusqueda(e.target.value)}
-                    placeholder="Buscar por nombre, número de serie, responsable, marca, ubicación o estado."
+                    placeholder="Buscar por nombre, código, descripción, responsable, modelo, ubicación o marca"
                     filtrosAdicionales={
                         <div className="btn-container">
                             <Select

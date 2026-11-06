@@ -9,6 +9,7 @@ import { obtenerUbicaciones } from "../../api/location";
 import { capitalizarPrimeraLetra, soloNumeros, sinCaracteresEspeciales, tieneGroserias, validarCaracteresEspeciales } from "../../components/common/Validations";
 import { validarCamposRequeridos } from "../../components/common/requiredFields";
 import { useSearch } from "../../hooks/useSearch";
+import { useConfirm } from "../../context/ConfirmContext.jsx";
 
 function Formulario({onCancel,onGuardado, herramientaEditar}){
     const esEdicion = herramientaEditar != null;
@@ -270,8 +271,12 @@ function ToolsNoConsumables(){
     useEffect(() => {
         cargarHerramientas();
     }, []);
+    const pedirConfirmacion = useConfirm();
     const handleEliminar = async (id) =>{
-        let confirmar= window.confirm("¿Seguro que quieres eliminar esta herramienta?")
+        let confirmar = await pedirConfirmacion({
+            titulo: "Eliminar herramienta",
+            mensaje: "¿Seguro que quieres eliminar esta herramienta? Esta acción no se puede deshacer.",
+        });
         if (!confirmar)
             return
         try {

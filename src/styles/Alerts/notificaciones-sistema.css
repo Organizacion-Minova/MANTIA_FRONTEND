@@ -426,3 +426,53 @@
         padding: 0.55rem 0.75rem;
     }
 }
+
+/* ============ Confirmación de acciones (reemplaza window.confirm) ============ */
+.confirmar-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: color-mix(in srgb, var(--sidebar) 60%, transparent);
+}
+
+.confirmar-dialogo {
+    --confirmar-color: var(--rojo);
+    --confirmar-fondo: var(--color-critical-bg);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    max-width: 460px;
+    padding: 1.2rem 1.5rem;
+    /* Fondo sólido + tinte del nivel: así no se transparenta en modo oscuro */
+    background-color: var(--contenedor);
+    background-image: linear-gradient(var(--confirmar-fondo), var(--confirmar-fondo));
+    border: 1px solid var(--confirmar-color);
+    border-radius: 1rem;
+    box-shadow: var(--sombra-contenedor-hover);
+}
+
+.confirmar-dialogo.advertencia {
+    --confirmar-color: var(--color-warning);
+    --confirmar-fondo: var(--color-warning-bg);
+}
+
+.confirmar-icono { width: 36px; height: 36px; color: var(--confirmar-color); flex-shrink: 0; }
+
+.confirmar-texto { flex: 1; min-width: 0; }
+.confirmar-texto strong { display: block; margin-bottom: .15rem; color: var(--texto); }
+.confirmar-texto span { font-size: .9rem; color: var(--texto); }
+
+.confirmar-acciones { display: flex; justify-content: flex-end; gap: .75rem; flex-basis: 100%; }
+.confirmar-acciones .btn-azul.confirmar-peligro { background: var(--rojo); }
+.confirmar-acciones button:focus-visible { outline: 2px solid var(--secundario); outline-offset: 2px; }
+
+@media (max-width: 480px) {
+    .confirmar-acciones { flex-direction: column-reverse; }
+    .confirmar-acciones button { width: 100%; }
+}

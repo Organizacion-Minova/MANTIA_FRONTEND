@@ -8,6 +8,7 @@ import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
 import { exportarGasExcelRango, exportarGasPdfRango } from "../../api/gasMeasurement";
 import { useToast } from "../../context/ToastContext.jsx";
 import { Form, Date as InputDate } from "../../components/common/forms";
+import { useConfirm } from "../../context/ConfirmContext.jsx";
 
 function RangoFormModal({ tipo, onCancel, onSuccess, mediciones }) {
     const [formData, setFormData] = useState({ fecha_inicio: '', fecha_fin: '' });
@@ -134,8 +135,12 @@ function Gases() {
         }
     };
 
+    const pedirConfirmacion = useConfirm();
     const handleEliminar = async (id) => {
-        if (window.confirm("¿Está seguro de eliminar este formato de medición?")) {
+        if (await pedirConfirmacion({
+            titulo: "Eliminar formato",
+            mensaje: "¿Seguro que quieres eliminar este formato de medición? Esta acción no se puede deshacer.",
+        })) {
             try {
                 await eliminarMedicionGases(id);
                 cargarDatos();

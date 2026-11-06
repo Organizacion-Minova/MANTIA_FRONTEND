@@ -14,6 +14,8 @@ import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { esRutaPermitida, sugerenciasPorPantalla } from '../../utils/sugerenciasIA';
 import TarjetaAccion from './TarjetaAccion.jsx';
+import { useAuth } from '../../context/AuthContext.jsx';
+import { avatarPorDefecto } from '../../utils/avatar';
 
 
 let contador = 0;
@@ -73,6 +75,9 @@ export default function IAMantia({
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const { usuario } = useAuth();
+  // Misma foto (o avatar con iniciales) que se ve en el header y en el perfil de la página
+  const fotoPerfil = usuario?.photo_url || avatarPorDefecto(`${usuario?.name ?? ''} ${usuario?.last_name ?? ''}`);
   const sugerencias = chips ?? sugerenciasPorPantalla(pathname);
 
   const [abierto, setAbierto] = useState(abiertoInicial);
@@ -225,7 +230,7 @@ export default function IAMantia({
             <button type="button" title="Limpiar conversación" onClick={limpiar}>
               <i className="fa-solid fa-trash-can" />
             </button>
-            <button type="button" title="Cerrar" onClick={() => setAbierto(false)}>
+            <button type="button" className="mc-cerrar" title="Cerrar" aria-label="Cerrar chat" onClick={() => setAbierto(false)}>
               <i className="fa-solid fa-xmark" />
             </button>
           </div>
@@ -235,7 +240,11 @@ export default function IAMantia({
           {mensajes.map((m) => (
             <div key={m.id} className={`mc-row ${m.rol}`}>
               <div className={`mc-icon ${m.rol}`}>
-                <i className={`fa-solid ${m.rol === 'user' ? 'fa-user' : 'fa-robot'}`} />
+                {m.rol === 'user' ? (
+                  <img src={fotoPerfil} alt={usuario?.name || 'Tú'} />
+                ) : (
+                  <i className="fa-solid fa-robot" />
+                )}
               </div>
               <div>
                 <div className="mc-bubble">

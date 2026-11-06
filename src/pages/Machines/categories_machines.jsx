@@ -8,6 +8,7 @@ import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
 import { capitalizarPrimeraLetra, soloLetras, sinCaracteresEspeciales, validarCaracteresEspeciales, validarGroserias } from "../../components/common/Validations";
 import { validarCamposRequeridos } from "../../components/common/requiredFields";
 import { useSearch } from "../../hooks/useSearch";
+import { useConfirm } from "../../context/ConfirmContext.jsx";
 
 function Formulario({ onCancel, onGuardado, categoriaEditar }) {
     const esEdicion = categoriaEditar != null;
@@ -158,8 +159,12 @@ function CategoriasMaquinas(){
 
     if (cargando) return <LoadingScreen indeterminado/>;
 
+    const pedirConfirmacion = useConfirm();
     const handleEliminar = async (id) => {
-        const confirmar = window.confirm("¿Seguro que quieres eliminar esta categoría?");
+        const confirmar = await pedirConfirmacion({
+            titulo: "Eliminar categoría",
+            mensaje: "¿Seguro que quieres eliminar esta categoría? Esta acción no se puede deshacer.",
+        });
         if (!confirmar) return;
 
         try {

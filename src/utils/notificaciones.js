@@ -18,6 +18,24 @@ export const ETIQUETAS_CATEGORIA = {
     uso_diario: "Uso diario",
 };
 
+// Estados de la base de datos => texto para el usuario
+const ESTADOS = {
+    active: "Activo",
+    inactive: "Inactivo",
+    maintenance: "En mantenimiento",
+    approved: "Aprobado",
+    pending: "Pendiente",
+    rejected: "Rechazado",
+};
+
+// Traduce el estado en alertas guardadas antes de la corrección
+function traducirMensaje(mensaje = "") {
+    return mensaje.replace(
+        /(cambió a estado: )(\w+)/,
+        (_, prefijo, estado) => `${prefijo}${ESTADOS[estado] ?? estado}`
+    );
+}
+
 // Pantalla por categoría, para alertas que no traen "enlace" (las guardadas antes del cambio)
 const RUTA_POR_CATEGORIA = {
     gas: "/gases",
@@ -58,7 +76,7 @@ export function mapearNotificacionBackend(registro) {
         id: registro.id,
         tipo: nivel, // 'info' | 'warning' | 'danger'
         titulo: ETIQUETAS_CATEGORIA[categoria] ?? categoria,
-        mensaje,
+        mensaje: traducirMensaje(mensaje),
         categoria,
         enlace: enlace ?? null, // pantalla exacta (ej: /machines/cardMachine/5)
         fecha: registro.created_at,
