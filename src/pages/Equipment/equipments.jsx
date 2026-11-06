@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Boton,BotonLink } from "../../components/common/Button";
+import { Boton, BotonAccion, BotonLink } from "../../components/common/Button";
 import { PageWelcome,Searcher } from "../../components/common/welcome";
 import { Form, Text, Textarea, Dropzone, Select, Date } from "../../components/common/forms";
 import { GetEquipments, DeleteEquipment, CreateEquipment, UpdateEquipment } from "../../api/Equipmentsapi";
@@ -11,6 +11,10 @@ import api from "../../api/axios";
 import { capitalizarPrimeraLetra, sinCaracteresEspeciales, validarCaracteresEspeciales, validarGroserias } from "../../components/common/Validations";
 import { validarCamposRequeridos } from "../../components/common/requiredFields";
 import { useToast } from "../../context/ToastContext";
+import editarIcono from "../../assets/icons/editar.svg";
+import editarIconoDark from "../../assets/icons/editar-2.svg";
+import borrarIcono from "../../assets/icons/borrar.svg";
+import verIcono from "../../assets/icons/ver.svg";
 
 function obtenerUrlImagen(imagen) {
     if (!imagen) return null;
@@ -531,22 +535,23 @@ function Equipos(){
                         <td>{e.ubicacion.name}</td>
                         <td>{e.status==='active'?'Activo':'Inactivo'}</td>
                         <td>
-                            <div className="btn-container">
+                            <div className="btn-container__acciones">
                                 <BotonLink
                                     link={`/equipment/cardequipment/${e.id}`}
                                     clase="btn-azul"
-                                    icono="fa-solid fa-eye"
+                                    img={verIcono}
                                     titulo="Ver detalles del equipo"
                                 />
-                                <Boton
-                                    clase="btn-2"
-                                    icono="fa-solid fa-edit"
+                                <BotonAccion
+                                    clase="btn-editar"
+                                    icono={editarIcono}
+                                    iconoDark={editarIconoDark}
                                     onClick={()=>handleAbrirEditar(e)}
                                     titulo="Editar equipo"
                                 />
-                                <Boton
-                                    clase="btn-2"
-                                    icono="fa-solid fa-trash"
+                                <BotonAccion
+                                    clase="btn-borrar"
+                                    icono={borrarIcono}
                                     onClick={() => handleEliminar(e.id)}
                                     titulo="Eliminar equipo"
                                 />

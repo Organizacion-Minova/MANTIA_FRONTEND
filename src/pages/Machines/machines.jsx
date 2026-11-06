@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Boton,BotonLink } from "../../components/common/Button";
+import { Boton, BotonAccion, BotonLink } from "../../components/common/Button";
 import {PageWelcome,Searcher} from "../../components/common/welcome";
 import { Form, Text, Textarea, Dropzone, Select, Date } from '../../components/common/forms';
 import LoadingScreen from "../../components/LoadingScreen";
@@ -11,6 +11,10 @@ import { useRolesResponsables } from "../../hooks/useRolesResponsables";
 import { capitalizarPrimeraLetra, sinCaracteresEspeciales, validarCaracteresEspeciales, validarGroserias } from "../../components/common/Validations";
 import { validarCamposRequeridos } from "../../components/common/requiredFields";
 import { useToast } from "../../context/ToastContext";
+import editarIcono from "../../assets/icons/editar.svg";
+import editarIconoDark from "../../assets/icons/editar-2.svg";
+import borrarIcono from "../../assets/icons/borrar.svg";
+import verIcono from "../../assets/icons/ver.svg";
 
 const valorSelect = (valor) => (valor == null ? "" : String(valor));
 const valorOperacion = (valor) => {
@@ -591,22 +595,23 @@ function Maquinas(){
                                 <td>{m.ubicacion?.name||""}</td>
                                 <td>{m.status}</td>
                                 <td>
-                                <div className="btn-container">
+                                <div className="btn-container__acciones">
                                 <BotonLink
                                     link={`/machines/cardmachine/${m.id}`}
                                     clase="btn-azul"
-                                    icono="fa-solid fa-eye"
+                                    img={verIcono}
                                     titulo="Ver detalles de la máquina"
                                 />
-                                <Boton
-                                    clase="btn-2"
-                                    icono="fa-solid fa-edit"
+                                <BotonAccion
+                                    clase="btn-editar"
+                                    icono={editarIcono}
+                                    iconoDark={editarIconoDark}
                                     onClick={()=>handleAbrirEditar(m)}
                                     titulo="Editar máquina"
                                 />
-                                <Boton
-                                    clase="btn-2"
-                                    icono="fa-solid fa-trash"
+                                <BotonAccion
+                                    clase="btn-borrar"
+                                    icono={borrarIcono}
                                     onClick={() => handleEliminar(m.id)}
                                     titulo="Eliminar equipo"
                                 />

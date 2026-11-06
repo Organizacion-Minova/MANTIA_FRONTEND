@@ -6,6 +6,7 @@ import LoadingScreen from "../../../components/LoadingScreen";
 import { usePaginacion, Paginacion } from "../../../components/common/Paginacion";
 import { GetEquipmentInspections } from "../../../api/Equipmentsapi";
 import { formatearFechaCorta } from "../../../components/common/Validations";
+import verIcono from "../../../assets/icons/ver.svg";
 
 export default function RegistrosInspeccion() {
     const { id } = useParams();
@@ -63,7 +64,7 @@ export default function RegistrosInspeccion() {
                                         <BotonLink
                                             link={`/equipment/cardequipment/${id}/inspection/records/${r.id}`}
                                             clase="btn-azul"
-                                            icono="fa-solid fa-eye"
+                                            img={verIcono}
                                             titulo="Ver inspección"
                                         />
                                     </td>

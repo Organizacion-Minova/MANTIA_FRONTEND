@@ -9,13 +9,18 @@
     color: var(--blanco);
    
     padding: 0.5rem;
-    border-radius: 40%;
+    border-radius: 50%;
     border: 2px solid var(--acento-mantia);
     font-size: 2rem;
     cursor: pointer;
     z-index: 50;
 }
+.btn-accesibilidad img {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
 
+}
 
 /* ==============================
    HEADER DEL PANEL
@@ -90,6 +95,15 @@
     padding: 0.9rem;
     border-radius: 0.375rem;
     cursor: pointer;
+}
+
+.accessibility-option-icon {
+    display: block;
+    flex: 0 0 1.35rem;
+    width: 1.35rem;
+    height: 1.35rem;
+    margin-bottom: 0.25rem;
+    object-fit: contain;
 }
 
 
@@ -192,12 +206,6 @@
 }
 
 
-.panel-accesibilidad button.activo i{
-
-    color: var(--blanco);
-
-}
-
 @media (max-width: 991px) {
     .panel-accesibilidad {
         width: min(22rem, calc(100vw - 4rem));
@@ -298,10 +306,10 @@
         font-size: 0.8rem;
     }
 
-    .contenedor-texto > i,
-    .contenedor-btns > button > i,
-    .panel-accesibilidad > button > i {
-        font-size: 1rem;
+    .accessibility-option-icon {
+        width: 1.2rem;
+        height: 1.2rem;
+        flex-basis: 1.2rem;
     }
 
     .grupo-botones .btn-texto {

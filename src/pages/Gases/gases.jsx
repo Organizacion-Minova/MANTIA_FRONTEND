@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Boton, BotonLink } from "../../components/common/Button";
+import { Boton, BotonAccion, BotonLink } from "../../components/common/Button";
 import { PageWelcome, Searcher } from "../../components/common/welcome";
 import { obtenerMedicionesGases, crearMedicionGases, eliminarMedicionGases } from "../../api/gasMeasurement";
 import { useSearch } from "../../hooks/useSearch";
@@ -8,6 +8,8 @@ import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
 import { exportarGasExcelRango, exportarGasPdfRango } from "../../api/gasMeasurement";
 import { useToast } from "../../context/ToastContext.jsx";
 import { Form, Date as InputDate } from "../../components/common/forms";
+import borrarIcono from "../../assets/icons/borrar.svg";
+import verIcono from "../../assets/icons/ver.svg";
 
 function RangoFormModal({ tipo, onCancel, onSuccess, mediciones }) {
     const [formData, setFormData] = useState({ fecha_inicio: '', fecha_fin: '' });
@@ -184,16 +186,16 @@ function Gases() {
                                     <td>{m.measurement_date.split('-').reverse().join('/')}</td>
                                     <td>{m.measurement_time?.slice(0, 5)}</td>
                                     <td>
-                                        <div className="btn-container">
+                                        <div className="btn-container__acciones">
                                             <BotonLink
                                                 link={`/gases/gas_format/${m.id}`}
                                                 clase="btn-azul"
-                                                icono="fa-solid fa-eye"
+                                                img={verIcono}
                                                 titulo="Ver registro"
                                             />
-                                            <Boton
-                                                clase="btn-2"
-                                                icono="fa-solid fa-trash"
+                                            <BotonAccion
+                                                clase="btn-borrar"
+                                                icono={borrarIcono}
                                                 onClick={() => handleEliminar(m.id)}
                                                 titulo="Eliminar registro"
                                             />

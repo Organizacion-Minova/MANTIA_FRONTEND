@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Boton } from "../../components/common/Button";
+import { Boton, BotonAccion } from "../../components/common/Button";
 import { PageWelcome,Searcher } from "../../components/common/welcome";
 import { Form, Text, Textarea, Time, Select } from '../../components/common/forms';
 import { GetDailyUse, CreateDailyUse, DeleteDailyUse, UpdateDailyUse  } from "../../api/dailyuseapi";
@@ -9,6 +9,9 @@ import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
 import { useSearch } from "../../hooks/useSearch";
 import { useRolesResponsables } from "../../hooks/useRolesResponsables";
 import { exportarUsoDiarioExcelUnitario, exportarUsoDiarioPdfUnitario } from "../../api/dailyuseapi";
+import editarIcono from "../../assets/icons/editar.svg";
+import editarIconoDark from "../../assets/icons/editar-2.svg";
+import borrarIcono from "../../assets/icons/borrar.svg";
 
 export function fechaHoy() {
     const hoy = new Date();
@@ -318,16 +321,17 @@ export function UsoDiario(){
                                     <td>{r.responsible}</td>
                                     <td>{r.observations}</td>
                                     <td>
-                                        <div className="btn-container">
-                                            <Boton
-                                                clase="btn-azul"
-                                                icono="fa-solid fa-edit"
+                                        <div className="btn-container__acciones">
+                                            <BotonAccion
+                                                clase="btn-editar"
+                                                icono={editarIcono}
+                                                iconoDark={editarIconoDark}
                                                 onClick={()=>handleAbrirEditar(r)}
                                                 titulo="Editar registro"
                                             />
-                                            <Boton
-                                                clase="btn-2"
-                                                icono="fa-solid fa-trash"
+                                            <BotonAccion
+                                                clase="btn-borrar"
+                                                icono={borrarIcono}
                                                 onClick={() => handleEliminarRegistro(r.id)}
                                                 titulo="Eliminar registro"
                                             />

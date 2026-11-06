@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Boton, BotonLink } from "../../components/common/Button";
+import { Boton, BotonAccion, BotonLink } from "../../components/common/Button";
 import { PageWelcome, Searcher } from "../../components/common/welcome"; 
 import { Form, Text, Textarea, Select } from "../../components/common/forms";
 import { GetCategoryTools, CreateCategoryTools, DeleteCategoryTools, UpdateCategoryTools } from "../../api/Toolsapi";
@@ -8,6 +8,9 @@ import { usePaginacion, Paginacion   } from "../../components/common/Paginacion"
 import { capitalizarPrimeraLetra, sinCaracteresEspeciales, validarCaracteresEspeciales, validarGroserias } from "../../components/common/Validations";
 import { validarCamposRequeridos } from "../../components/common/requiredFields";
 import { useSearch } from "../../hooks/useSearch";
+import editarIcono from "../../assets/icons/editar.svg";
+import editarIconoDark from "../../assets/icons/editar-2.svg";
+import borrarIcono from "../../assets/icons/borrar.svg";
 
 function FormConsumibles({onCancel,onGuardado,categoriaEditar }){
     const esEdicion = categoriaEditar != null;
@@ -332,16 +335,17 @@ export function Consumibles(){
                             <td>{cat.description}</td>
                             <td>{cat.status}</td>                           
                             <td>
-                                <div className="btn-container">
-                                <Boton
-                                    clase="btn-azul"
-                                    icono="fa-solid fa-edit"
+                                <div className="btn-container__acciones">
+                                <BotonAccion
+                                    clase="btn-editar"
+                                    icono={editarIcono}
+                                    iconoDark={editarIconoDark}
                                     onClick={() => handleAbrirEditar(cat)}
                                     titulo="Editar categoría consumible"
                                 />
-                                <Boton
-                                    clase="btn-2"
-                                    icono="fa-solid fa-trash"
+                                <BotonAccion
+                                    clase="btn-borrar"
+                                    icono={borrarIcono}
                                     onClick={() => handleEliminar(cat.id)}
                                     titulo="Eliminar categoría consumible"
                                 />
@@ -475,16 +479,17 @@ export function No_Consumibles(){
                             <td>{cat.description}</td>
                             <td>{cat.status}</td>
                             <td>
-                                <div className="btn-container">
-                                    <Boton
-                                        clase="btn-azul"
-                                        icono="fa-solid fa-edit"
+                                <div className="btn-container__acciones">
+                                    <BotonAccion
+                                        clase="btn-editar"
+                                        icono={editarIcono}
+                                        iconoDark={editarIconoDark}
                                         onClick={() => handleAbrirEditar(cat)}
                                         titulo="Editar categoría consumible"
                                     />
-                                    <Boton
-                                        clase="btn-2"
-                                        icono="fa-solid fa-trash"
+                                    <BotonAccion
+                                        clase="btn-borrar"
+                                        icono={borrarIcono}
                                         onClick={() => handleEliminar(cat.id)}
                                         titulo="Eliminar categoría consumible"
                                     />

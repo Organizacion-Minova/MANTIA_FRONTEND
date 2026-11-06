@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Boton, BotonLink } from "../../components/common/Button";
+import { Boton, BotonAccion, BotonLink } from "../../components/common/Button";
 import { PageWelcome, Searcher } from "../../components/common/welcome";
 import { Form, Text, Textarea, Select } from "../../components/common/forms";
 import { obtenerCategoriasUbicacion, guardarCategoriaUbicacion, actualizarCategoriaUbicacion, eliminarCategoriaUbicacion } from "../../api/locationCategory";
@@ -8,6 +8,9 @@ import LoadingScreen from "../../components/LoadingScreen";
 import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
 import { validarGroserias } from "../../components/common/Validations";
 import { useToast } from "../../context/ToastContext";
+import editarIcono from "../../assets/icons/editar.svg";
+import editarIconoDark from "../../assets/icons/editar-2.svg";
+import borrarIcono from "../../assets/icons/borrar.svg";
 
 const opciones_estado = [
     { valor: "active", etiqueta: "Activo" },
@@ -239,18 +242,19 @@ function CategoriasUbicacion() {
                                     <td>{cat.description}</td>
                                     <td>{etiqueta_estado[cat.status]}</td>
                                     <td>
-                                        <div className="btn-container">
-                                            <Boton
-                                                clase="btn-azul"
+                                        <div className="btn-container__acciones">
+                                            <BotonAccion
+                                                clase="btn-editar"
                                                 onClick={() => handleEditar(cat)}
                                                 titulo="Editar registro"
-                                                icono="fa-solid fa-edit"
+                                                icono={editarIcono}
+                                                iconoDark={editarIconoDark}
                                             />
-                                            <Boton
-                                                clase="btn-2"
+                                            <BotonAccion
+                                                clase="btn-borrar"
                                                 onClick={() => handleEliminar(cat.id)}
                                                 titulo="Eliminar registro"
-                                                icono="fa-solid fa-trash"
+                                                icono={borrarIcono}
                                             />
                                         </div>
                                     </td>

@@ -1,4 +1,14 @@
 import { useState, useEffect } from "react";
+import accesibilidadBtnIcon from "../../assets/icons/accesibilidad-btn.svg";
+import accesibilidadIcon from "../../assets/icons/accesibilidad.svg";
+import cerrarIcon from "../../assets/icons/cerrar.svg";
+import fuenteIcon from "../../assets/icons/fuente.svg";
+import oscuroIcon from "../../assets/icons/oscuro.svg";
+import claroIcon from "../../assets/icons/claro.svg";
+import contrasteIcon from "../../assets/icons/contraste.svg";
+import leerIcon from "../../assets/icons/leer.svg";
+import dejaLeerIcon from "../../assets/icons/deja-leer.svg";
+import reestablecerIcon from "../../assets/icons/reestablecer.svg";
 
 const NIVELES = [13, 14, 15, 16, 17, 18, 19, 20];
 const NIVEL_INICIAL = 3;
@@ -92,18 +102,18 @@ function AccessibilityPanel({ onModoOscuroChange }) {
                 onClick={() => setAbierto(!abierto)}
                 title={abierto ? "Cerrar panel de accesibilidad" : "Abrir accesibilidad"}
             >
-                <i className="fa-solid fa-universal-access"></i>
+                <img src={accesibilidadBtnIcon} alt="Accesibilidad" />
             </button>
 
             <div className={`panel-accesibilidad ${abierto ? "activo" : ""}`}>
                 <div className="header-accesibilidad">
-                    <img src="/src/assets/icons/accesibilidad.svg" alt="Accesibilidad" />
+                    <img src={accesibilidadIcon} alt="Accesibilidad" />
                     <div className="texto-header">
                         <h3><strong>Accesibilidad</strong></h3>
                         <small>Personaliza MANTIA</small>
                     </div>
                     <img
-                        src="/src/assets/icons/cerrar.svg"
+                        src={cerrarIcon}
                         alt="Cerrar"
                         onClick={() => setAbierto(false)}
                         style={{ cursor: "pointer" }}
@@ -119,7 +129,7 @@ function AccessibilityPanel({ onModoOscuroChange }) {
                         onClick={alternarGrupoTexto}
                         title={tamanoModificado ? "Restablecer tamaño de texto para cerrar" : "Abrir opciones de tamaño de texto"}
                     >
-                        <i className="fa-solid fa-font"></i>
+                        <img className="accessibility-option-icon" src={fuenteIcon} alt="" aria-hidden="true" />
                        <span>Tamaño</span>
                        <div className="grupo-botones">
                             <button
@@ -148,8 +158,13 @@ function AccessibilityPanel({ onModoOscuroChange }) {
                         onClick={alternarModoOscuro}
                         title={preferencias.modoOscuro ? "Desactivar modo oscuro" : "Activar modo oscuro"}
                     >
-                        <i className="fa-solid fa-moon"></i>
-                        <span>Modo oscuro</span>
+                        <img
+                            className="accessibility-option-icon"
+                            src={preferencias.modoOscuro ? claroIcon : oscuroIcon}
+                            alt=""
+                            aria-hidden="true"
+                        />
+                        <span>{preferencias.modoOscuro ? "Modo claro" : "Modo oscuro"}</span>
                     </button>
                     <button
                         type="button"
@@ -157,7 +172,7 @@ function AccessibilityPanel({ onModoOscuroChange }) {
                         onClick={alternarAltoContraste}
                         title={preferencias.altoContraste ? "Desactivar alto contraste" : "Activar alto contraste"}
                     >
-                        <i className="fa-solid fa-circle-half-stroke"></i>
+                        <img className="accessibility-option-icon" src={contrasteIcon} alt="" aria-hidden="true" />
                         <span>Alto contraste</span>
                     </button>
                     <button
@@ -166,7 +181,12 @@ function AccessibilityPanel({ onModoOscuroChange }) {
                         onClick={alternarLectura}
                         title={leyendo ? "Detener lectura de la página" : "Leer página en voz alta"}
                     >
-                        <i className="fa-solid fa-volume-high"></i>
+                        <img
+                            className="accessibility-option-icon"
+                            src={leyendo ? dejaLeerIcon : leerIcon}
+                            alt=""
+                            aria-hidden="true"
+                        />
                         <span>{leyendo ? "Detener lectura" : "Leer página"}</span>
                     </button>
                 </div>
@@ -175,7 +195,7 @@ function AccessibilityPanel({ onModoOscuroChange }) {
                         onClick={restablecerPreferencias} 
                         title="Restablecer preferencias"
                 >
-                    <i className="fa-solid fa-rotate-left"></i>
+                    <img className="accessibility-option-icon" src={reestablecerIcon} alt="" aria-hidden="true" />
                     <span>Restablecer</span>
                 </button>
             </div>

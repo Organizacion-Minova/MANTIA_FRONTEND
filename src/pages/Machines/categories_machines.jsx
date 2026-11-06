@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Boton,BotonLink } from "../../components/common/Button";
+import { Boton, BotonAccion, BotonLink } from "../../components/common/Button";
 import { PageWelcome, Searcher } from "../../components/common/welcome";
 import { Form, Text, Textarea, Select } from '../../components/common/forms';
 import { GetCategoryMachine, CreateCategoryMachine, DeleteCategoryMachine, UpdateCategoryMachine } from "../../api/machinesapi";
@@ -8,6 +8,9 @@ import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
 import { capitalizarPrimeraLetra, soloLetras, sinCaracteresEspeciales, validarCaracteresEspeciales, validarGroserias } from "../../components/common/Validations";
 import { validarCamposRequeridos } from "../../components/common/requiredFields";
 import { useSearch } from "../../hooks/useSearch";
+import editarIcono from "../../assets/icons/editar.svg";
+import editarIconoDark from "../../assets/icons/editar-2.svg";
+import borrarIcono from "../../assets/icons/borrar.svg";
 
 function Formulario({ onCancel, onGuardado, categoriaEditar }) {
     const esEdicion = categoriaEditar != null;
@@ -221,18 +224,21 @@ function CategoriasMaquinas(){
                             <td>{cat.description}</td>
                             <td>{cat.status === "active" ? "Activo" : "Inactivo"}</td>
                             <td>
-                                <Boton
-                                    clase="btn-azul"
-                                    icono="fa-solid fa-edit"
-                                    onClick={() => handleAbrirEditar(cat)}
-                                    titulo="Editar categoría"
-                                />
-                                <Boton
-                                    clase="btn-2"
-                                    icono="fa-solid fa-trash"
-                                    onClick={() => handleEliminar(cat.id)}
-                                    titulo="Eliminar categoría"
-                                />
+                                <div className="btn-container__acciones">
+                                    <BotonAccion
+                                        clase="btn-editar"
+                                        icono={editarIcono}
+                                        iconoDark={editarIconoDark}
+                                        onClick={() => handleAbrirEditar(cat)}
+                                        titulo="Editar categoría"
+                                    />
+                                    <BotonAccion
+                                        clase="btn-borrar"
+                                        icono={borrarIcono}
+                                        onClick={() => handleEliminar(cat.id)}
+                                        titulo="Eliminar categoría"
+                                    />
+                                </div>
                             </td>
                         </tr>
                         ))}
