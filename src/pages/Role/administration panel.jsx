@@ -14,6 +14,7 @@ import {
     obtenerPermisosDisponibles
 } from "../../api/admin";
 import PanelBackups from "./PanelBackups";
+import { useConfirm } from "../../context/ConfirmContext.jsx";
 import { usePaginacion,Paginacion } from "../../components/common/Paginacion";
 
 const TABS = [
@@ -60,8 +61,14 @@ function PanelSolicitudes({ onCambioConteo }) {
         }
     };
 
+    const pedirConfirmacion = useConfirm();
     const handleRechazar = async (id) => {
-        if (!window.confirm("¿Está seguro de rechazar esta solicitud?")) return;
+        if (!(await pedirConfirmacion({
+            titulo: "Rechazar solicitud",
+            mensaje: "¿Está seguro de rechazar esta solicitud?",
+            textoConfirmar: "Rechazar",
+            tipo: "warning",
+        }))) return;
         try {
             await rejectRequest(id);
             exito("Solicitud rechazada.");
@@ -434,8 +441,12 @@ function PanelRoles() {
         }
     };
 
+    const pedirConfirmacion = useConfirm();
     const handleEliminar = async (r) => {
-        if (!window.confirm(`¿Eliminar el rol "${r.name}"? Esta acción no se puede deshacer.`)) return;
+        if (!(await pedirConfirmacion({
+            titulo: "Eliminar rol",
+            mensaje: `¿Eliminar el rol "${r.name}"? Esta acción no se puede deshacer.`,
+        }))) return;
         try {
             await eliminarRol(r.id);
             exito("Rol eliminado.");

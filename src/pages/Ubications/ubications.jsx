@@ -8,6 +8,7 @@ import LoadingScreen from "../../components/LoadingScreen";
 import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
 import { validarGroserias } from "../../components/common/Validations";
 import { useToast } from "../../context/ToastContext";
+import { useConfirm } from "../../context/ConfirmContext.jsx";
 import editarIcono from "../../assets/icons/editar.svg";
 import editarIconoDark from "../../assets/icons/editar-2.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
@@ -199,8 +200,12 @@ function Ubicaciones() {
         setMostrarFormulario(true);
     };
 
+    const pedirConfirmacion = useConfirm();
     const handleEliminar = async (id) => {
-        if (window.confirm("¿Está seguro de eliminar esta ubicación?")) {
+        if (await pedirConfirmacion({
+            titulo: "Eliminar ubicación",
+            mensaje: "¿Seguro que quieres eliminar esta ubicación? Esta acción no se puede deshacer.",
+        })) {
             try {
                 await eliminarUbicacion(id);
                 cargarDatos();

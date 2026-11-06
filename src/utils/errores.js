@@ -8,6 +8,10 @@ export function mensajeDeError(error, porDefecto = "No se pudo completar la acci
     // Un 500 trae el texto crudo de la excepción (SMTP, SQL...): nunca se le muestra al usuario
     if (status === 500) return "Error del servidor. Intenta de nuevo.";
 
+    // Respaldo por si algún error llegara en inglés desde el servidor
+    if (status === 419) return "Tu sesión expiró. Recarga la página e inténtalo de nuevo.";
+    if (status === 429) return "Demasiados intentos. Espera un momento e inténtalo de nuevo.";
+
     if (status === 422 && data?.errors) {
         return Object.values(data.errors).flat()[0] ?? data.message ?? porDefecto;
     }

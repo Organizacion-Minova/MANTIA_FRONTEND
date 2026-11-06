@@ -8,6 +8,7 @@ import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
 import { capitalizarPrimeraLetra, soloLetras, sinCaracteresEspeciales, validarCaracteresEspeciales, validarGroserias } from "../../components/common/Validations";
 import { validarCamposRequeridos } from "../../components/common/requiredFields";
 import { useSearch } from "../../hooks/useSearch";
+import { useConfirm } from "../../context/ConfirmContext.jsx";
 import editarIcono from "../../assets/icons/editar.svg";
 import editarIconoDark from "../../assets/icons/editar-2.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
@@ -161,8 +162,12 @@ function CategoriasMaquinas(){
 
     if (cargando) return <LoadingScreen indeterminado/>;
 
+    const pedirConfirmacion = useConfirm();
     const handleEliminar = async (id) => {
-        const confirmar = window.confirm("¿Seguro que quieres eliminar esta categoría?");
+        const confirmar = await pedirConfirmacion({
+            titulo: "Eliminar categoría",
+            mensaje: "¿Seguro que quieres eliminar esta categoría? Esta acción no se puede deshacer.",
+        });
         if (!confirmar) return;
 
         try {

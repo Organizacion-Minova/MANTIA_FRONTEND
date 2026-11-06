@@ -14,6 +14,8 @@ import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { esRutaPermitida, sugerenciasPorPantalla } from '../../utils/sugerenciasIA';
 import TarjetaAccion from './TarjetaAccion.jsx';
+import { useAuth } from '../../context/AuthContext.jsx';
+import { avatarPorDefecto } from '../../utils/avatar';
 import adminIcon from '../../assets/icons/admin.svg';
 import avionPapelIcon from '../../assets/icons/avion-papel.svg';
 import borrarIcon from '../../assets/icons/borrar.svg';
@@ -79,6 +81,9 @@ export default function IAMantia({
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const { usuario } = useAuth();
+  // Misma foto (o avatar con iniciales) que se ve en el header y en el perfil de la página
+  const fotoPerfil = usuario?.photo_url || avatarPorDefecto(`${usuario?.name ?? ''} ${usuario?.last_name ?? ''}`);
   const sugerencias = chips ?? sugerenciasPorPantalla(pathname);
 
   const [abierto, setAbierto] = useState(abiertoInicial);

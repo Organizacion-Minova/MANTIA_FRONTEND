@@ -10,6 +10,7 @@ import RutaPrivada from "./components/RutaPrivada.jsx";
 import RutaConPermiso from "./components/RutaConPermiso.jsx";
 import LoadingScreen from "./components/LoadingScreen.jsx";
 import { ToastProvider } from './context/ToastContext.jsx';
+import { ConfirmProvider } from './context/ConfirmContext.jsx';
 
 // Pantallas que se descargan solo cuando se visitan
 const nombrada = (cargar, nombre) => lazy(() => cargar().then((m) => ({ default: m[nombre] })));
@@ -53,6 +54,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
   <ToastProvider>
     <EscuchaToasts />
+    <ConfirmProvider>
     <AuthProvider>
       <LoadingGate>
         <BrowserRouter>
@@ -96,6 +98,7 @@ createRoot(document.getElementById('root')).render(
         </BrowserRouter>
       </LoadingGate>
     </AuthProvider>
+    </ConfirmProvider>
   </ToastProvider>
   </StrictMode>,
 )
