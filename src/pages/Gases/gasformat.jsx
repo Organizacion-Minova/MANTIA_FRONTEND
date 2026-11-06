@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import { Boton, BotonLink } from "../../components/common/Button";
+import { Boton, BotonAccion, BotonLink } from "../../components/common/Button";
 import { PageWelcome, Searcher } from "../../components/common/welcome";
 import { Form, Text, Textarea, Select, Dropzone } from '../../components/common/forms';
 import { obtenerMedicionPorId, actualizarDetalleGases, actualizarCabeceraGases } from "../../api/gasMeasurement";
@@ -9,6 +9,8 @@ import LoadingScreen from "../../components/LoadingScreen";
 import { useToast } from "../../context/ToastContext.jsx";
 import { validarGroserias } from "../../components/common/Validations";
 import { exportarGasExcelUnitario, exportarGasPdfUnitario } from "../../api/gasMeasurement";
+import editarIcono from "../../assets/icons/editar.svg";
+import editarIconoDark from "../../assets/icons/editar-2.svg";
 
 const gases = [
     { key: 'oxygen', label: 'O2', nombre: 'Oxígeno', simbolo: '%', max: 100 },
@@ -355,13 +357,23 @@ export function FormatoGases() {
                                     <td data-label="Responsable de la medición">{d.responsible_name}</td>
                                     <td data-label="Observaciones">{d.observation}</td>
                                     <td>
-                                        <div className="btn-container">
-                                            <Boton
-                                                clase="btn-azul"
-                                                icono={diligenciada(d) ? "fa-solid fa-edit" : "fa-solid fa-plus"}
-                                                titulo={diligenciada(d) ? "Editar registro" : "Agregar registro"}
-                                                onClick={() => setDetalleEditar(d)}
-                                            />
+                                        <div className="btn-container__acciones">
+                                            {diligenciada(d) ? (
+                                                <BotonAccion
+                                                    clase="btn-editar"
+                                                    icono={editarIcono}
+                                                    iconoDark={editarIconoDark}
+                                                    titulo="Editar registro"
+                                                    onClick={() => setDetalleEditar(d)}
+                                                />
+                                            ) : (
+                                                <Boton
+                                                    clase="btn-azul"
+                                                    icono="fa-solid fa-plus"
+                                                    titulo="Agregar registro"
+                                                    onClick={() => setDetalleEditar(d)}
+                                                />
+                                            )}
                                         </div>
                                     </td>
                                 </tr>

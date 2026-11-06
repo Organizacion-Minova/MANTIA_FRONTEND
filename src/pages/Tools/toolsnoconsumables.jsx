@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Boton, BotonLink } from "../../components/common/Button";
+import { Boton, BotonAccion, BotonLink } from "../../components/common/Button";
 import { PageWelcome,Searcher } from "../../components/common/welcome";
 import { Form, Text, Select } from "../../components/common/forms";
 import { GetCategoryTools, GetTools, DeleteTool, CreateTool, UpdateTool } from "../../api/Toolsapi";
@@ -10,6 +10,9 @@ import { capitalizarPrimeraLetra, soloNumeros, sinCaracteresEspeciales, tieneGro
 import { validarCamposRequeridos } from "../../components/common/requiredFields";
 import { useSearch } from "../../hooks/useSearch";
 import { useConfirm } from "../../context/ConfirmContext.jsx";
+import editarIcono from "../../assets/icons/editar.svg";
+import editarIconoDark from "../../assets/icons/editar-2.svg";
+import borrarIcono from "../../assets/icons/borrar.svg";
 
 function Formulario({onCancel,onGuardado, herramientaEditar}){
     const esEdicion = herramientaEditar != null;
@@ -384,16 +387,17 @@ function ToolsNoConsumables(){
                             <td>{h.ubicacion.name}</td>
                             <td>{h.categoria?.name || "Sin categoría"}</td>
                             <td>
-                                <div className="btn-container">
-                                     <Boton
-                                         clase="btn-azul"
-                                         icono="fa-solid fa-edit"
+                                <div className="btn-container__acciones">
+                                     <BotonAccion
+                                         clase="btn-editar"
+                                         icono={editarIcono}
+                                         iconoDark={editarIconoDark}
                                          onClick={() => handleAbrirEditar(h)}
                                          titulo="Editar herramienta"
                                      />
-                                     <Boton
-                                         clase="btn-2"
-                                         icono="fa-solid fa-trash"
+                                     <BotonAccion
+                                         clase="btn-borrar"
+                                         icono={borrarIcono}
                                          onClick={() => handleEliminar(h.id)}
                                          titulo="Eliminar herramienta"
                                      />

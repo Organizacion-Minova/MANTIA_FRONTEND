@@ -8,7 +8,7 @@
    [{ role: 'user' | 'assistant', content: '...' }] y debe devolver
    (o resolver con) el texto de la respuesta, o { respuesta, acciones }
    cuando hay acciones de administrador por confirmar. Ahí conectas tu backend.
-   Requiere IA_Mantia.css, Font Awesome 6 y las fuentes Archivo + Barlow.
+   Requiere IA.css y las fuentes Archivo + Barlow.
    ===================================================================== */
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -16,6 +16,12 @@ import { esRutaPermitida, sugerenciasPorPantalla } from '../../utils/sugerencias
 import TarjetaAccion from './TarjetaAccion.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { avatarPorDefecto } from '../../utils/avatar';
+import adminIcon from '../../assets/icons/admin.svg';
+import avionPapelIcon from '../../assets/icons/avion-papel.svg';
+import borrarIcon from '../../assets/icons/borrar.svg';
+import cerrarIcon from '../../assets/icons/cerrar.svg';
+import flechaDerechaIcon from '../../assets/icons/flecha-derecha.svg';
+import robotIcon from '../../assets/icons/robot.svg';
 
 
 let contador = 0;
@@ -52,7 +58,7 @@ function Texto({ children, onIr }) {
 
           return (
             <button key={j} type="button" className="mc-link" onClick={() => onIr(ruta)} title={etiqueta}>
-              {etiqueta} <i className="fa-solid fa-arrow-right" aria-hidden="true" />
+              {etiqueta} <img src={flechaDerechaIcon} alt="" aria-hidden="true" />
             </button>
           );
         })}
@@ -221,17 +227,17 @@ export default function IAMantia({
       {/* Ventana */}
       <div className={'mc-win' + (abierto ? ' open' : '')} role="dialog" aria-label="Chat MANTIA IA">
         <div className="mc-header">
-          <div className="mc-avatar"><i className="fa-solid fa-robot" /></div>
+          <div className="mc-avatar"><img src={robotIcon} alt="" aria-hidden="true" /></div>
           <div className="mc-info">
             <h4>{titulo}</h4>
             <p><span className="mc-dot" /> <span>{estado}</span></p>
           </div>
           <div className="mc-actions">
             <button type="button" title="Limpiar conversación" onClick={limpiar}>
-              <i className="fa-solid fa-trash-can" />
+              <img src={borrarIcon} alt="" aria-hidden="true" />
             </button>
-            <button type="button" className="mc-cerrar" title="Cerrar" aria-label="Cerrar chat" onClick={() => setAbierto(false)}>
-              <i className="fa-solid fa-xmark" />
+            <button type="button" title="Cerrar" onClick={() => setAbierto(false)}>
+              <img src={cerrarIcon} alt="" aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -240,11 +246,7 @@ export default function IAMantia({
           {mensajes.map((m) => (
             <div key={m.id} className={`mc-row ${m.rol}`}>
               <div className={`mc-icon ${m.rol}`}>
-                {m.rol === 'user' ? (
-                  <img src={fotoPerfil} alt={usuario?.name || 'Tú'} />
-                ) : (
-                  <i className="fa-solid fa-robot" />
-                )}
+                <img src={m.rol === 'user' ? adminIcon : robotIcon} alt="" aria-hidden="true" />
               </div>
               <div>
                 <div className="mc-bubble">
@@ -289,7 +291,7 @@ export default function IAMantia({
             disabled={enviando}
             onClick={() => enviar(valor)}
           >
-            <i className="fa-solid fa-paper-plane" />
+            <img src={avionPapelIcon} alt="" aria-hidden="true" />
           </button>
         </div>
       </div>

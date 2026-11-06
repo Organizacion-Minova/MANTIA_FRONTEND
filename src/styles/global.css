@@ -46,9 +46,7 @@
               align-items:center;
           }
       
-         .descripcion-logos{
-          display: none;
-         }
+        
          .sidebar .submenu{
             padding-left: 0;
          }      
@@ -167,14 +165,14 @@
      }
 
     footer{
-         display: grid;
-         grid-template-columns: auto;
-         align-items:center;
+         display: flex;
+         flex-direction:column;
      }
-
-    .descripcion-logos{
-     display: none;
-         }
+     
+     .descripcion-logos{
+   font-size:0.5rem;
+}
+    
     }
 }
 
@@ -233,7 +231,12 @@
      /* border: #a88600 solid 2px; */
 }
 
-
+.topbar__icon{
+    display: block;
+    flex: 0 0 1.25rem;
+    height: 1.7rem;
+    object-fit: contain;
+}
 /* ========================================================================================
    Estilos y componentes Sidebar
 ===================================== */
@@ -292,8 +295,16 @@
     pointer-events: none;
 }
 
-.sidebar a.active i {
-    color: var(--acento-mantia);
+.sidebar__icon {
+    display: block;
+    flex: 0 0 1.25rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    object-fit: contain;
+}
+
+.sidebar a.active .sidebar__icon {
+    filter: brightness(0) saturate(100%) invert(70%) sepia(48%) saturate(570%) hue-rotate(116deg) brightness(91%) contrast(89%);
 }
 
 .sidebar .submenu{ list-style: none; padding-left: 0; margin: 10px 0 0; display: none; }
@@ -699,6 +710,8 @@
     .perfil-actions {
         padding: 0.65rem 0.85rem;
     }
+
+   
 }
 
 .perfil-footer {
@@ -743,6 +756,9 @@ footer{
     gap:25px;
     padding-bottom:15px;
   }
+.descripcion-logos{
+   font-size:0.8rem;
+}
 
 .logoSenaFooter{
     height:60px;

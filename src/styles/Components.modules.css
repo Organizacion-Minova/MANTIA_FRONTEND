@@ -107,8 +107,15 @@ main.cerrado{
       display: flex;
     gap: 15px;
     flex-wrap: wrap
+}
 
-
+.btn-container__acciones{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    width: 100%;
 }
 
 @media (max-width: 990px){
@@ -153,7 +160,7 @@ main.cerrado{
     background:    var(--secundario);
     color:         var(--blanco);
     border:        none;
-    border-radius: 3.125rem;
+    border-radius: 1rem;
     padding:       0.875rem 1.75rem;
     font-size:     0.9375rem;
     font-weight:   700;
@@ -195,6 +202,65 @@ main.cerrado{
     box-sizing: border-box;
 }
 
+.btn-editar{
+    background:none;
+    border:none;
+    border-radius: 1rem;
+    padding:       0.875rem 1.75rem;
+    cursor:        pointer;
+    display:       inline-flex;
+    align-items:   center;
+    justify-content: center;
+    gap:           0.5rem;
+    transition:    background 0.2s, transform 0.15s, box-shadow 0.2s;
+    letter-spacing: 0.0125rem;
+    text-decoration: none;
+}
+
+
+.btn-borrar{
+    background:none;
+    border:none;
+    border-radius: 1rem;
+    padding:       0.875rem 1.75rem;
+    cursor:        pointer;
+    display:       inline-flex;
+    align-items:   center;
+    justify-content: center;
+    gap:           0.5rem;
+    transition:    background 0.2s, transform 0.15s, box-shadow 0.2s;
+    letter-spacing: 0.0125rem;
+    text-decoration: none;
+}
+
+.boton-accion__icono {
+    display: block;
+    flex: 0 0 1rem;
+    width: 1.3rem;
+    height: 1.5rem;
+    object-fit: contain;
+}
+
+.boton-link__icono {
+    display: block;
+       object-fit: contain;
+    width: 1.1rem;
+  
+}
+
+.boton-accion__icono--dark {
+    display: none;
+}
+
+html.dark-theme .boton-accion__icono--light {
+    display: none;
+}
+
+html.dark-theme .boton-accion__icono--dark {
+    display: block;
+}
+
+
 .btn-azul:hover{
     transform: translateY(-10%);
 }
@@ -202,6 +268,13 @@ main.cerrado{
      transform: translateY(-10%);
 }
 
+.btn-editar:hover{
+     background-color: var(--hover-editar);
+}
+
+.btn-borrar:hover{
+     background-color: var(--hover-borrar);
+}
 .btn-buscar {
     height: 2.75rem; padding: 0 1rem;
     background: var(--principal); color: var(--blanco);

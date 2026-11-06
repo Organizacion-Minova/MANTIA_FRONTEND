@@ -35,7 +35,8 @@
     --borde-contenedor: #CFDEDA;
 
     --hover-principal: rgba(25, 195, 166, .16);
-
+    --hover-editar: rgba(25, 195, 166, .16);
+    --hover-borrar: rgba(226, 75, 74, .16);
     --sombra-contenedor:
         0 3px 12px rgba(6, 59, 56, .08);
 
@@ -46,14 +47,14 @@
    
     --amarillo:         #FFD800;
     --verde:            #00B333;
-    --rojo:             #E24B4A;
+    --rojo:             #cd4242;
 
-
+    
      --color-success: #2E7D32;
     --color-success-bg: #E6F4EA;
     --color-warning: #B7791F;
     --color-warning-bg: #FEF3D9;
-    --color-critical: #C62828;
+    --color-critical: #d02e2e;
     --color-critical-bg: #FBE7E7;
 
     --space-xs: 0.25rem;  /* 4px  → espaciado interno mínimo, entre ícono y texto */
@@ -135,7 +136,7 @@ html.dark-theme {
             #0a453c 100%
         );
 
-    --secundario: #183d39;
+    --secundario: #20514c;
 
     --sidebar: #11151E;
 
