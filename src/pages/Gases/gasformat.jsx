@@ -53,8 +53,6 @@ const camposFaltantes = (medicion) => {
     return faltan;
 };
 
-const regex_responsable = /^[\p{L}\s.'\-]+$/u;
-const regex_observacion = /^[\p{L}\p{N}\s.,;:()\-/%°#¿?¡!]+$/u;
 const tipos_firma = ['image/png', 'image/jpeg', 'image/webp'];
 const peso_maximo_firma = 2 * 1024 * 1024;
 
@@ -71,11 +69,9 @@ const validar = (datos) => {
     if (!datos.observation) return "Las observaciones son obligatorias.";
     if (datos.responsible_name) {
         if (datos.responsible_name.length > 100) return "El nombre del responsable no puede superar los 100 caracteres.";
-        if (!regex_responsable.test(datos.responsible_name)) return "El nombre del responsable solo puede contener letras, espacios, puntos, apóstrofes y guiones.";
     }
     if (datos.observation) {
         if (datos.observation.length > 100) return "La observación no puede superar los 100 caracteres.";
-        if (!regex_observacion.test(datos.observation)) return "La observación contiene caracteres no permitidos.";
     }
     const erroresGroserias = validarGroserias({ 
         responsible_name: datos.responsible_name, 
