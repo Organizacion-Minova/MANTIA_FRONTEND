@@ -10,21 +10,63 @@ import { capitalizarPrimeraLetra, soloNumeros, sinCaracteresEspeciales, tieneGro
 import { validarCamposRequeridos } from "../../components/common/requiredFields";
 import { useSearch } from "../../hooks/useSearch";
 import { useConfirm } from "../../context/ConfirmContext.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 import editarIcono from "../../assets/icons/editar.svg";
 import editarIconoDark from "../../assets/icons/editar-2.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
 
-function Formulario({onCancel,onGuardado, herramientaEditar}){
+const obtenerClaveBorrador = (usuarioId) => `mantia_borrador_herramientas_${usuarioId}`;
+
+const obtenerBorrador = (usuarioId) => {
+    if (!usuarioId) return null;
+
+    try {
+        const borrador = sessionStorage.getItem(obtenerClaveBorrador(usuarioId));
+        return borrador ? JSON.parse(borrador) : null;
+    } catch (error) {
+        console.error("Error al recuperar el borrador de herramientas:", error);
+        return null;
+    }
+};
+
+const eliminarBorrador = (usuarioId) => {
+    if (!usuarioId) return;
+    sessionStorage.removeItem(obtenerClaveBorrador(usuarioId));
+};
+
+function Formulario({onCancel,onGuardado, herramientaEditar, usuarioId}){
     const esEdicion = herramientaEditar != null;
-    const [nombre, setNombre] = useState(herramientaEditar?.name ||"");
-    const [stockBueno, setStockBueno] = useState(herramientaEditar?.condiciones?.find(c => c.condition === "bueno")?.stock ?? "");
-    const [stockRegular, setStockRegular] = useState(herramientaEditar?.condiciones?.find(c => c.condition === "regular")?.stock ?? "");
-    const [stockMalo, setStockMalo] = useState(herramientaEditar?.condiciones?.find(c => c.condition === "malo")?.stock ?? "");
-    const [locationId, setLocationId] = useState(herramientaEditar?.ubicacion?.id || "");
-    const [categoryId, setCategoryId] = useState(herramientaEditar?.catogoria?.id || "");
+    const [borradorInicial] = useState(() => esEdicion ? null : obtenerBorrador(usuarioId));
+    const [nombre, setNombre] = useState(borradorInicial?.nombre ?? herramientaEditar?.name ?? "");
+    const [stockBueno, setStockBueno] = useState(borradorInicial?.stockBueno ?? herramientaEditar?.condiciones?.find(c => c.condition === "bueno")?.stock ?? "");
+    const [stockRegular, setStockRegular] = useState(borradorInicial?.stockRegular ?? herramientaEditar?.condiciones?.find(c => c.condition === "regular")?.stock ?? "");
+    const [stockMalo, setStockMalo] = useState(borradorInicial?.stockMalo ?? herramientaEditar?.condiciones?.find(c => c.condition === "malo")?.stock ?? "");
+    const [locationId, setLocationId] = useState(borradorInicial?.locationId ?? herramientaEditar?.ubicacion?.id ?? "");
+    const [categoryId, setCategoryId] = useState(borradorInicial?.categoryId ?? herramientaEditar?.catogoria?.id ?? "");
     const [categoria, setCategoria]= useState([])
     const [ubicaciones, setUbicaciones] = useState([]);
     const [errores, setErrores] = useState({});
+
+    const hayDatosIngresados = [
+        nombre,
+        stockBueno,
+        stockRegular,
+        stockMalo,
+        locationId,
+        categoryId,
+    ].some(valor => String(valor ?? "").trim() !== "");
+
+    useEffect(() => {
+        if (esEdicion || !usuarioId) return;
+
+        const borrador = { nombre, stockBueno, stockRegular, stockMalo, locationId, categoryId };
+
+        try {
+            sessionStorage.setItem(obtenerClaveBorrador(usuarioId), JSON.stringify(borrador));
+        } catch (error) {
+            console.error("Error al guardar el borrador de herramientas:", error);
+        }
+    }, [esEdicion, usuarioId, nombre, stockBueno, stockRegular, stockMalo, locationId, categoryId]);
 
     useEffect(() => {
         obtenerUbicaciones()
@@ -90,6 +132,7 @@ function Formulario({onCancel,onGuardado, herramientaEditar}){
                 await UpdateTool(herramientaEditar.id, datos);
             } else {
                 await CreateTool(datos);
+                eliminarBorrador(usuarioId);
             }
             onGuardado();
             onCancel();
@@ -109,11 +152,25 @@ function Formulario({onCancel,onGuardado, herramientaEditar}){
             .map(ubi => ({ valor: ubi.id, etiqueta: ubi.status === 'active' ? ubi.name : `${ubi.name} (Inactiva)` }))
     ];
 
+    const pedirConfirmacion = useConfirm();
+    const handleDescartar = async () => {
+        const confirmar = await pedirConfirmacion({
+            titulo: "Descartar borrador",
+            mensaje: "¿Estás seguro de que deseas descartar este borrador? Se perderán todos los datos ingresados.",
+        });
+
+        if (!confirmar) return;
+
+        eliminarBorrador(usuarioId);
+        onCancel();
+    };
+
     return(
         <Form
             titulo={esEdicion?"Editar herramienta":"Agregar nueva herramienta"}
             descripcion={esEdicion?"Modifique los datos de la herramienta":"Ingrese los datos para una nueva herramienta"}
             onCancel={onCancel}
+            onDiscard={!esEdicion && hayDatosIngresados ? handleDescartar : undefined}
             textoBoton="Guardar"
             iconoBoton="fa-solid fa-floppy-disk"
             onSubmit={handleSubmit}
@@ -219,6 +276,8 @@ function obtenerCantidadSegunEstado(herramienta, estado) {
     return encontrado ? encontrado.stock : 0;
 }
 function ToolsNoConsumables(){
+    const { usuario } = useAuth();
+    const usuarioId = usuario?.id;
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     let[herramienta, setHerramienta] = useState([]);
     const [herramientaEditar, setHerramientaEditar]=useState(null);
@@ -433,10 +492,11 @@ function ToolsNoConsumables(){
             </div>
             {mostrarFormulario && (
                 <Formulario 
-                    key={herramientaEditar?.id || "nuevo"}
+                    key={`${usuarioId ?? "sin-usuario"}-${herramientaEditar?.id ?? "nuevo"}`}
                     onCancel={() => setMostrarFormulario(false)}
                     onGuardado={cargarHerramientas} 
                     herramientaEditar={herramientaEditar}
+                    usuarioId={usuarioId}
                 />            
             )}
         </div>

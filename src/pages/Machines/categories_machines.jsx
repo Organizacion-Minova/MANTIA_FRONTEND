@@ -9,16 +9,52 @@ import { capitalizarPrimeraLetra, soloLetras, sinCaracteresEspeciales, validarCa
 import { validarCamposRequeridos } from "../../components/common/requiredFields";
 import { useSearch } from "../../hooks/useSearch";
 import { useConfirm } from "../../context/ConfirmContext.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 import editarIcono from "../../assets/icons/editar.svg";
 import editarIconoDark from "../../assets/icons/editar-2.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
 
-function Formulario({ onCancel, onGuardado, categoriaEditar }) {
+const obtenerClaveBorrador = (usuarioId) => `mantia_borrador_categorias_maquinas_${usuarioId}`;
+
+const obtenerBorrador = (usuarioId) => {
+    if (!usuarioId) return null;
+
+    try {
+        const borrador = sessionStorage.getItem(obtenerClaveBorrador(usuarioId));
+        return borrador ? JSON.parse(borrador) : null;
+    } catch (error) {
+        console.error("Error al recuperar el borrador de categorías de máquinas:", error);
+        return null;
+    }
+};
+
+const eliminarBorrador = (usuarioId) => {
+    if (!usuarioId) return;
+    sessionStorage.removeItem(obtenerClaveBorrador(usuarioId));
+};
+
+function Formulario({ onCancel, onGuardado, categoriaEditar, usuarioId }) {
     const esEdicion = categoriaEditar != null;
-    const [nombre, setNombre] = useState(categoriaEditar?.name || "");
-    const [descripcion, setDescripcion] = useState(categoriaEditar?.description || "");
+    const [borradorInicial] = useState(() => esEdicion ? null : obtenerBorrador(usuarioId));
+    const [nombre, setNombre] = useState(borradorInicial?.nombre ?? categoriaEditar?.name ?? "");
+    const [descripcion, setDescripcion] = useState(borradorInicial?.descripcion ?? categoriaEditar?.description ?? "");
     const [estado, setEstado] = useState(categoriaEditar?.status || "active");
     const [errores, setErrores] = useState({});
+    const hayDatosIngresados = [nombre, descripcion]
+        .some(valor => String(valor ?? "").trim() !== "");
+
+    useEffect(() => {
+        if (esEdicion || !usuarioId) return;
+
+        try {
+            sessionStorage.setItem(
+                obtenerClaveBorrador(usuarioId),
+                JSON.stringify({ nombre, descripcion })
+            );
+        } catch (error) {
+            console.error("Error al guardar el borrador de categorías de máquinas:", error);
+        }
+    }, [esEdicion, usuarioId, nombre, descripcion]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -62,6 +98,7 @@ function Formulario({ onCancel, onGuardado, categoriaEditar }) {
                 await UpdateCategoryMachine(categoriaEditar.id, datos);
             } else {
                 await CreateCategoryMachine(datos);
+                eliminarBorrador(usuarioId);
             }
             onGuardado();
             onCancel();
@@ -74,11 +111,25 @@ function Formulario({ onCancel, onGuardado, categoriaEditar }) {
         }
     };
 
+    const pedirConfirmacion = useConfirm();
+    const handleDescartar = async () => {
+        const confirmar = await pedirConfirmacion({
+            titulo: "Descartar borrador",
+            mensaje: "¿Estás seguro de que deseas descartar este borrador? Se perderán todos los datos ingresados.",
+        });
+
+        if (!confirmar) return;
+
+        eliminarBorrador(usuarioId);
+        onCancel();
+    };
+
     return (
         <Form
             titulo={esEdicion ? "Editar categoría" : "Agregar nueva categoría"}
             descripcion={esEdicion ? "Modifique los datos de la categoría" : "Ingrese los datos de la nueva categoría"}
             onCancel={onCancel}
+            onDiscard={!esEdicion && hayDatosIngresados ? handleDescartar : undefined}
             textoBoton="Guardar"
             iconoBoton="fa-solid fa-floppy-disk"
             onSubmit={handleSubmit}
@@ -133,6 +184,9 @@ function Formulario({ onCancel, onGuardado, categoriaEditar }) {
     );
 }
 function CategoriasMaquinas(){
+    const { usuario } = useAuth();
+    const usuarioId = usuario?.id;
+    const pedirConfirmacion = useConfirm();
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [categoriaEditar, setCategoriaEditar] = useState(null);
     const [categorias, setCategorias] = useState([]);
@@ -162,7 +216,6 @@ function CategoriasMaquinas(){
 
     if (cargando) return <LoadingScreen indeterminado/>;
 
-    const pedirConfirmacion = useConfirm();
     const handleEliminar = async (id) => {
         const confirmar = await pedirConfirmacion({
             titulo: "Eliminar categoría",
@@ -275,10 +328,11 @@ function CategoriasMaquinas(){
             </div>
             {mostrarFormulario && (
                 <Formulario 
-                    key={categoriaEditar?.id || "nuevo"}
+                    key={`${usuarioId ?? "sin-usuario"}-${categoriaEditar?.id ?? "nuevo"}`}
                     onCancel={() => setMostrarFormulario(false)}
                     onGuardado={cargarCategorias}
                     categoriaEditar={categoriaEditar}
+                    usuarioId={usuarioId}
                 />
             )}
         </div>
