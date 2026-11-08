@@ -9,6 +9,7 @@ import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
 import { validarGroserias } from "../../components/common/Validations";
 import { useToast } from "../../context/ToastContext";
 import { useConfirm } from "../../context/ConfirmContext.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 import editarIcono from "../../assets/icons/editar.svg";
 import editarIconoDark from "../../assets/icons/editar-2.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
@@ -44,15 +45,51 @@ const validar = ({ nombre, descripcion }) => {
     return null;
 };
 
-function Formulario({ onCancel, onSuccess, categoriaEditar = null }) {
-    const [formData, setFormData] = useState({
-        nombre: categoriaEditar ? categoriaEditar.name : '',
-        descripcion: categoriaEditar ? categoriaEditar.description : '',
+const obtenerClaveBorrador = (usuarioId) => `mantia_borrador_categorias_ubicaciones_${usuarioId}`;
+
+const obtenerBorrador = (usuarioId) => {
+    if (!usuarioId) return null;
+
+    try {
+        const borrador = sessionStorage.getItem(obtenerClaveBorrador(usuarioId));
+        return borrador ? JSON.parse(borrador) : null;
+    } catch (error) {
+        console.error("Error al recuperar el borrador de categorías de ubicaciones:", error);
+        return null;
+    }
+};
+
+const eliminarBorrador = (usuarioId) => {
+    if (!usuarioId) return;
+    sessionStorage.removeItem(obtenerClaveBorrador(usuarioId));
+};
+
+function Formulario({ onCancel, onSuccess, categoriaEditar = null, usuarioId }) {
+    const isEditing = Boolean(categoriaEditar);
+    const [borradorInicial] = useState(() => isEditing ? null : obtenerBorrador(usuarioId));
+    const [formData, setFormData] = useState(() => ({
+        nombre: borradorInicial?.nombre ?? (categoriaEditar ? categoriaEditar.name : ''),
+        descripcion: borradorInicial?.descripcion ?? (categoriaEditar ? categoriaEditar.description : ''),
         estado: categoriaEditar ? categoriaEditar.status : 'active'
-    });
+    }));
     const [cargando, setCargando] = useState(false);
     const { advertencia } = useToast(); 
-    const isEditing = Boolean(categoriaEditar);
+    const pedirConfirmacion = useConfirm();
+    const hayDatosIngresados = [formData.nombre, formData.descripcion]
+        .some(valor => String(valor ?? "").trim() !== "");
+
+    useEffect(() => {
+        if (isEditing || !usuarioId) return;
+
+        try {
+            sessionStorage.setItem(obtenerClaveBorrador(usuarioId), JSON.stringify({
+                nombre: formData.nombre,
+                descripcion: formData.descripcion,
+            }));
+        } catch (error) {
+            console.error("Error al guardar el borrador de categorías de ubicaciones:", error);
+        }
+    }, [isEditing, usuarioId, formData.nombre, formData.descripcion]);
 
     const handleChange = (e) => {
         setFormData({
@@ -77,6 +114,7 @@ function Formulario({ onCancel, onSuccess, categoriaEditar = null }) {
                 await actualizarCategoriaUbicacion(categoriaEditar.id, datos);
             } else {
                 await guardarCategoriaUbicacion(datos);
+                eliminarBorrador(usuarioId);
             }
             onSuccess();
             onCancel();
@@ -87,11 +125,24 @@ function Formulario({ onCancel, onSuccess, categoriaEditar = null }) {
         }
     };
 
+    const handleDescartar = async () => {
+        const confirmar = await pedirConfirmacion({
+            titulo: "Descartar borrador",
+            mensaje: "¿Estás seguro de que deseas descartar este borrador? Se perderán todos los datos ingresados.",
+        });
+
+        if (!confirmar) return;
+
+        eliminarBorrador(usuarioId);
+        onCancel();
+    };
+
     return (
         <Form
             titulo={isEditing ? "Editar categoría" : "Agregar nueva categoría"}
             descripcion={isEditing ? "Modifique los datos de la categoría" : "Ingrese los datos de la nueva categoría"}
             onCancel={onCancel}
+            onDiscard={!isEditing && hayDatosIngresados ? handleDescartar : undefined}
             onSubmit={handleSubmit}
             textoBoton={cargando ? "Guardando..." : isEditing ? "Actualizar" : "Guardar"}
             iconoBoton="fa-solid fa-floppy-disk"
@@ -139,6 +190,8 @@ function Formulario({ onCancel, onSuccess, categoriaEditar = null }) {
 }
 
 function CategoriasUbicacion() {
+    const { usuario } = useAuth();
+    const usuarioId = usuario?.id;
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [categoriaAEditar, setCategoriaAEditar] = useState(null);
     const [categorias, setCategorias] = useState([]);
@@ -300,9 +353,11 @@ function CategoriasUbicacion() {
             </div>
             {mostrarFormulario && (
                 <Formulario
+                    key={`${usuarioId ?? "sin-usuario"}-${categoriaAEditar?.id ?? "nuevo"}`}
                     categoriaEditar={categoriaAEditar}
                     onCancel={() => setMostrarFormulario(false)}
                     onSuccess={cargarLista}
+                    usuarioId={usuarioId}
                 />
             )}
         </div>

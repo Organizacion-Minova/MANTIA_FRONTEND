@@ -222,6 +222,7 @@ main.cerrado{
     background:none;
     border:none;
     border-radius: 1rem;
+    color: var(--rojo);
     padding:       0.875rem 1.75rem;
     cursor:        pointer;
     display:       inline-flex;

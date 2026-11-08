@@ -9,16 +9,53 @@ import { capitalizarPrimeraLetra, sinCaracteresEspeciales, validarCaracteresEspe
 import { validarCamposRequeridos } from "../../components/common/requiredFields";
 import { useSearch } from "../../hooks/useSearch";
 import { useConfirm } from "../../context/ConfirmContext.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 import editarIcono from "../../assets/icons/editar.svg";
 import editarIconoDark from "../../assets/icons/editar-2.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
 
-function FormConsumibles({onCancel,onGuardado,categoriaEditar }){
+const obtenerClaveBorrador = (usuarioId, tipo) =>
+    `mantia_borrador_categorias_herramientas_${tipo}_${usuarioId}`;
+
+const obtenerBorrador = (usuarioId, tipo) => {
+    if (!usuarioId) return null;
+
+    try {
+        const borrador = sessionStorage.getItem(obtenerClaveBorrador(usuarioId, tipo));
+        return borrador ? JSON.parse(borrador) : null;
+    } catch (error) {
+        console.error(`Error al recuperar el borrador de categorías ${tipo}:`, error);
+        return null;
+    }
+};
+
+const eliminarBorrador = (usuarioId, tipo) => {
+    if (!usuarioId) return;
+    sessionStorage.removeItem(obtenerClaveBorrador(usuarioId, tipo));
+};
+
+function FormConsumibles({onCancel,onGuardado,categoriaEditar, usuarioId }){
     const esEdicion = categoriaEditar != null;
-    const [nombre, setNombre] = useState(categoriaEditar?.name || "");
-    const [descripcion, setDescripcion] = useState(categoriaEditar?.description || "");
+    const [borradorInicial] = useState(() => esEdicion ? null : obtenerBorrador(usuarioId, "consumibles"));
+    const [nombre, setNombre] = useState(borradorInicial?.nombre ?? categoriaEditar?.name ?? "");
+    const [descripcion, setDescripcion] = useState(borradorInicial?.descripcion ?? categoriaEditar?.description ?? "");
     const [estado, setEstado] = useState(categoriaEditar?.status || "activo");
     const [errores, setErrores] = useState({});
+    const hayDatosIngresados = [nombre, descripcion]
+        .some(valor => String(valor ?? "").trim() !== "");
+
+    useEffect(() => {
+        if (esEdicion || !usuarioId) return;
+
+        try {
+            sessionStorage.setItem(
+                obtenerClaveBorrador(usuarioId, "consumibles"),
+                JSON.stringify({ nombre, descripcion })
+            );
+        } catch (error) {
+            console.error("Error al guardar el borrador de categorías consumibles:", error);
+        }
+    }, [esEdicion, usuarioId, nombre, descripcion]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -61,6 +98,7 @@ function FormConsumibles({onCancel,onGuardado,categoriaEditar }){
                 await UpdateCategoryTools(categoriaEditar.id, datos);
             } else {
                 await CreateCategoryTools(datos);
+                eliminarBorrador(usuarioId, "consumibles");
             }
 
             await onGuardado();
@@ -72,12 +110,26 @@ function FormConsumibles({onCancel,onGuardado,categoriaEditar }){
             setErrores(error.response?.data?.errors || {});
         }
     };
+
+    const pedirConfirmacion = useConfirm();
+    const handleDescartar = async () => {
+        const confirmar = await pedirConfirmacion({
+            titulo: "Descartar borrador",
+            mensaje: "¿Estás seguro de que deseas descartar este borrador? Se perderán todos los datos ingresados.",
+        });
+
+        if (!confirmar) return;
+
+        eliminarBorrador(usuarioId, "consumibles");
+        onCancel();
+    };
     
     return(
         <Form
             titulo={esEdicion? "Editar categoría consumible":"Agregar nueva categoría consumible"}
             descripcion={esEdicion ? "Modifique los datos de la categoría" : "Ingrese los datos de la nueva categoría"}
             onCancel={onCancel}
+            onDiscard={!esEdicion && hayDatosIngresados ? handleDescartar : undefined}
             textoBoton="Guardar"
             iconoBoton="fa-solid fa-floppy-disk"
             onSubmit={handleSubmit}
@@ -130,12 +182,28 @@ function FormConsumibles({onCancel,onGuardado,categoriaEditar }){
         </Form>
     )
 }
-function FormNoConsumibles({onCancel, onGuardado, categoriaEditar}){
+function FormNoConsumibles({onCancel, onGuardado, categoriaEditar, usuarioId}){
     const esEdicion = categoriaEditar != null;
-    const [nombre, setNombre] = useState(categoriaEditar?.name || "");
-    const [descripcion, setDescripcion] = useState(categoriaEditar?.description || "");
+    const [borradorInicial] = useState(() => esEdicion ? null : obtenerBorrador(usuarioId, "no_consumibles"));
+    const [nombre, setNombre] = useState(borradorInicial?.nombre ?? categoriaEditar?.name ?? "");
+    const [descripcion, setDescripcion] = useState(borradorInicial?.descripcion ?? categoriaEditar?.description ?? "");
     const [estado, setEstado] = useState(categoriaEditar?.status || "Activo");
     const [errores, setErrores] = useState({});
+    const hayDatosIngresados = [nombre, descripcion]
+        .some(valor => String(valor ?? "").trim() !== "");
+
+    useEffect(() => {
+        if (esEdicion || !usuarioId) return;
+
+        try {
+            sessionStorage.setItem(
+                obtenerClaveBorrador(usuarioId, "no_consumibles"),
+                JSON.stringify({ nombre, descripcion })
+            );
+        } catch (error) {
+            console.error("Error al guardar el borrador de categorías no consumibles:", error);
+        }
+    }, [esEdicion, usuarioId, nombre, descripcion]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -178,6 +246,7 @@ function FormNoConsumibles({onCancel, onGuardado, categoriaEditar}){
                 await UpdateCategoryTools(categoriaEditar.id, datos);
             } else {
                 await CreateCategoryTools(datos);
+                eliminarBorrador(usuarioId, "no_consumibles");
             }
 
             onGuardado();
@@ -188,12 +257,27 @@ function FormNoConsumibles({onCancel, onGuardado, categoriaEditar}){
 
             setErrores(error.response?.data?.errors || {});
         }
-    };  
+    };
+
+    const pedirConfirmacion = useConfirm();
+    const handleDescartar = async () => {
+        const confirmar = await pedirConfirmacion({
+            titulo: "Descartar borrador",
+            mensaje: "¿Estás seguro de que deseas descartar este borrador? Se perderán todos los datos ingresados.",
+        });
+
+        if (!confirmar) return;
+
+        eliminarBorrador(usuarioId, "no_consumibles");
+        onCancel();
+    };
+
     return(
         <Form
             titulo={esEdicion? "Editar categoría No consumible":"Agregar nueva categoría no consumible"}
             descripcion={esEdicion ? "Modifique los datos de la categoría" : "Ingrese los datos de la nueva categoría"}
             onCancel={onCancel}
+            onDiscard={!esEdicion && hayDatosIngresados ? handleDescartar : undefined}
             textoBoton="Guardar"
             iconoBoton="fa-solid fa-floppy-disk"
             onSubmit={handleSubmit}
@@ -247,6 +331,9 @@ function FormNoConsumibles({onCancel, onGuardado, categoriaEditar}){
     )
 }
 export function Consumibles(){
+    const { usuario } = useAuth();
+    const usuarioId = usuario?.id;
+    const pedirConfirmacion = useConfirm();
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     let [categorias, setCategorias] = useState([]);
     const [cargando, setCargando] = useState(true);
@@ -272,7 +359,6 @@ export function Consumibles(){
     useEffect(()=>{cargarCategorias();},[])
     if (cargando) return <LoadingScreen indeterminado/>;
     
-    const pedirConfirmacion = useConfirm();
     const handleEliminar = async (id) => {
         let confirmar = await pedirConfirmacion({
             titulo: "Eliminar categoría",
@@ -386,15 +472,20 @@ export function Consumibles(){
             </div>
             {mostrarFormulario && (
                 <FormConsumibles 
-                    key={categoriaEditar?.id || "nuevo"}
+                    key={`${usuarioId ?? "sin-usuario"}-${categoriaEditar?.id ?? "nuevo"}`}
                     onCancel={() => setMostrarFormulario(false)}
                     onGuardado={cargarCategorias}
-                    categoriaEditar={categoriaEditar} />
+                    categoriaEditar={categoriaEditar}
+                    usuarioId={usuarioId}
+                />
             )}
         </div>
     );
 }
 export function No_Consumibles(){
+    const { usuario } = useAuth();
+    const usuarioId = usuario?.id;
+    const pedirConfirmacion = useConfirm();
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     let [categorias, setCategorias] = useState([]);
     const [cargando, setCargando] = useState(true);
@@ -420,7 +511,6 @@ export function No_Consumibles(){
     useEffect(()=>{cargarCategorias();},[])
     if (cargando) return <LoadingScreen indeterminado/>;
     
-    const pedirConfirmacion = useConfirm();
     const handleEliminar = async (id) => {
         let confirmar = await pedirConfirmacion({
             titulo: "Eliminar categoría",
@@ -534,10 +624,11 @@ export function No_Consumibles(){
             </div>
             {mostrarFormulario && (
                 <FormNoConsumibles 
-                    key={categoriaEditar?.id || "nuevo"}
+                    key={`${usuarioId ?? "sin-usuario"}-${categoriaEditar?.id ?? "nuevo"}`}
                     onCancel={() => setMostrarFormulario(false)}
                     onGuardado={cargarCategorias}
-                    categoriaEditar={categoriaEditar} 
+                    categoriaEditar={categoriaEditar}
+                    usuarioId={usuarioId}
                 />
             )}
         </div>
