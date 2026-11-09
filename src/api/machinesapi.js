@@ -114,3 +114,33 @@ export async function SaveMachineRecord(kind, { signature_image, ...contenido })
     const { data } = await api.post(`/api/machine-records/${kind}`, formData);
     return data;
 }
+
+// Consumibles maquinas
+
+export async function GetMachineTools(machineId) {
+    const { data } = await api.get("/api/machine-tools", {
+        params: { machine_id: machineId },
+    });
+    return data;
+}
+
+export async function GetConsumableTools(machineId) {
+    const { data } = await api.get("/api/consumable-tools", {
+        params: { machine_id: machineId },
+    });
+    return data;
+}
+
+export async function CreateMachineTool(payload) {
+    const { data } = await api.post("/api/machine-tools", payload);
+    return data;
+}
+
+export async function UpdateMachineTool(id, payload) {
+    const { data } = await api.put(`/api/machine-tools/${id}`, payload);
+    return data;
+}
+
+export async function DeleteMachineTool(id) {
+    await api.delete(`/api/machine-tools/${id}`);
+}
