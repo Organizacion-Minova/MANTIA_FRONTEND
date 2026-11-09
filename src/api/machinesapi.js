@@ -72,3 +72,45 @@ const descargarBlob = (data, filename, mimeType = 'application/vnd.openxmlformat
     link.click();
     document.body.removeChild(link);
 };
+
+// Formato inspeccion y preoperacional
+
+export async function GetMachineFormat(machineId) {
+    const { data } = await api.get(`/api/machines/${machineId}/inspection-format`);
+    return data;
+}
+
+export async function CreateMachineFormat(datos) {
+    const { data } = await api.post("/api/inspection-formats-machine", datos);
+    return data;
+}
+
+export async function UpdateMachineFormat(id, datos) {
+    const { data } = await api.put(`/api/inspection-formats-machine/${id}`, datos);
+    return data;
+}
+
+export async function GetMachineRecords(machineId, kind) {
+    const { data } = await api.get(`/api/machines/${machineId}/records/${kind}`);
+    return data;
+}
+
+export async function GetMachineRecordPeriod(machineId, kind, date) {
+    const { data } = await api.get(`/api/machines/${machineId}/records/${kind}/period`, {
+        params: { date },
+    });
+    return data;
+}
+
+export async function GetMachineRecord(kind, id) {
+    const { data } = await api.get(`/api/machine-records/${kind}/${id}`);
+    return data;
+}
+
+export async function SaveMachineRecord(kind, { signature_image, ...contenido }) {
+    const formData = new FormData();
+    formData.append("data", JSON.stringify(contenido));
+    if (signature_image) formData.append("signature_image", signature_image);
+    const { data } = await api.post(`/api/machine-records/${kind}`, formData);
+    return data;
+}

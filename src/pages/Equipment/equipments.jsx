@@ -536,8 +536,8 @@ useEffect(() => {
                         value={estado}
                         onChange={(e) => setEstado(e.target.value)}
                         opciones={[
-                            { valor: "active", etiqueta: "Activo" },
-                            { valor: "inactive", etiqueta: "Inactivo" },
+                            { valor: "Activo", etiqueta: "Activo" },
+                            { valor: "Inactivo", etiqueta: "Inactivo" },
                         ]}
                         required
                     />
@@ -694,7 +694,7 @@ function Equipos(){
                         <td>{e.responsible}</td>
                         <td>{e.brand}</td>
                         <td>{e.ubicacion.name}</td>
-                        <td>{e.status==='active'?'Activo':'Inactivo'}</td>
+                        <td>{e.status}</td>
                         <td>
                             <div className="btn-container__acciones">
                                 <BotonLink

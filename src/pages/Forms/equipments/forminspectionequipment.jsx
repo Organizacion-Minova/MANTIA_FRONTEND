@@ -1,7 +1,13 @@
 import { Fragment, useState } from "react";
 import { Boton } from "../../../components/common/Button";
 import { Text, Textarea, Select, Dropzone } from "../../../components/common/forms";
-import { formatearFechaCorta } from "../../../components/common/Validations";
+import {
+    capitalizarPrimeraLetra,
+    formatearFechaCorta,
+    sinCaracteresEspeciales,
+    validarCaracteresEspeciales,
+    validarGroserias,
+} from "../../../components/common/Validations";
 import { useToast } from "../../../context/ToastContext";
 import api from "../../../api/axios";
 
@@ -65,7 +71,10 @@ export default function FormatoInspeccion({
     const cambiarValor = (qid, dia, valor) =>
         setValores((prev) => ({ ...prev, [`${qid}-${dia}`]: valor }));
     const cambiarObs = (qid, texto) =>
-        setObservaciones((prev) => ({ ...prev, [qid]: texto }));
+        setObservaciones((prev) => ({
+            ...prev,
+            [qid]: capitalizarPrimeraLetra(texto),
+        }));
     const cambiarFirma = (rol, campo, valor) =>
         setFirmas((prev) => ({ ...prev, [rol]: { ...prev[rol], [campo]: valor } }));
     const cambiarImagenFirma = (rol) => (e) => {
@@ -92,6 +101,54 @@ export default function FormatoInspeccion({
 
     const guardar = () => {
         const problemas = [];
+        const camposTexto = [
+            ...(format.header_fields || []).map((campo) => ({
+                key: `header-${campo.key}`,
+                nombre: `El campo «${campo.label}»`,
+                valor: headerData[campo.key] || "",
+            })),
+            ...firmantes.map((firmante) => ({
+                key: `firma-${firmante.key}`,
+                nombre: `El nombre del firmante «${firmante.label}»`,
+                valor: firmas[firmante.key]?.name || "",
+            })),
+            ...Object.entries(observaciones).map(([qid, valor]) => ({
+                key: `observacion-${qid}`,
+                nombre: "La observación",
+                valor,
+            })),
+            {
+                key: "observaciones-generales",
+                nombre: "Las observaciones generales",
+                valor: generalObs,
+            },
+        ];
+        const camposSinCaracteresEspeciales = Object.fromEntries(
+            firmantes.map((firmante) => [
+                `firma-${firmante.key}`,
+                firmas[firmante.key]?.name || "",
+            ])
+        );
+        const erroresCaracteresEspeciales = validarCaracteresEspeciales(
+            camposSinCaracteresEspeciales
+        );
+        firmantes.forEach((firmante) => {
+            if (erroresCaracteresEspeciales[`firma-${firmante.key}`]) {
+                problemas.push(
+                    `El nombre del firmante «${firmante.label}» solo puede contener letras, números y espacios.`
+                );
+            }
+        });
+
+        const erroresGroserias = validarGroserias(
+            Object.fromEntries(camposTexto.map(({ key, valor }) => [key, valor]))
+        );
+        camposTexto.forEach(({ key, nombre }) => {
+            if (erroresGroserias[key]) {
+                problemas.push(`${nombre} contiene palabras inapropiadas.`);
+            }
+        });
+
         (format.header_fields || []).forEach((campo) => {
             if (!headerData[campo.key]?.trim()) {
                 problemas.push(`Completa el campo «${campo.label}».`);
@@ -124,19 +181,25 @@ export default function FormatoInspeccion({
             if (!texto.trim()) return;
             const clave = `${qid}-0`;
             const fila = filas.get(clave) || { question_id: Number(qid), day: 0, value: null };
-            filas.set(clave, { ...fila, observation: texto.trim() });
+            filas.set(clave, {
+                ...fila,
+                observation: capitalizarPrimeraLetra(texto.trim()),
+            });
         });
 
         onSave({
             header_data: Object.fromEntries(
-                (format.header_fields || []).map((campo) => [campo.key, headerData[campo.key].trim()])
+                (format.header_fields || []).map((campo) => [
+                    campo.key,
+                    capitalizarPrimeraLetra(headerData[campo.key].trim()),
+                ])
             ),
-            general_observations: generalObs.trim() || null,
+            general_observations: capitalizarPrimeraLetra(generalObs.trim()) || null,
             answers: [...filas.values()],
             signatures: firmantes
                 .map((f) => ({
                     role: f.key,
-                    name: firmas[f.key].name.trim(),
+                    name: capitalizarPrimeraLetra(firmas[f.key].name.trim()),
                     id_number: firmas[f.key].id_number.trim(),
                 })),
             signature_images: imagenesFirma,
@@ -209,9 +272,11 @@ export default function FormatoInspeccion({
                                         name={`header-${c.key}`}
                                         value={headerData[c.key] || ""}
                                         required
-                                        onChange={(e) =>
-                                            setHeaderData((prev) => ({ ...prev, [c.key]: e.target.value }))
-                                        }
+                                        maxLength={255}
+                                        onChange={(e) => setHeaderData((prev) => ({
+                                            ...prev,
+                                            [c.key]: capitalizarPrimeraLetra(e.target.value),
+                                        }))}
                                     />
                                 )}
                             </div>
@@ -253,6 +318,7 @@ export default function FormatoInspeccion({
                                                         <Text
                                                           value={observaciones[q.id] || ""}
                                                           onChange={(e) => cambiarObs(q.id, e.target.value)}
+                                                          maxLength={255}
                                                         />
                                                     )}
                                                 </td>
@@ -279,7 +345,7 @@ export default function FormatoInspeccion({
                         rows={4}
                         placeholder="Observaciones generales de la inspección"
                         value={generalObs}
-                        onChange={(e) => setGeneralObs(e.target.value)}
+                        onChange={(e) => setGeneralObs(capitalizarPrimeraLetra(e.target.value))}
                     />
                 )}
             </div>
@@ -313,7 +379,17 @@ export default function FormatoInspeccion({
                                         name={`firma-nombre-${f.key}`}
                                         value={firmas[f.key]?.name || ""}
                                         required
-                                        onChange={(e) => cambiarFirma(f.key, "name", e.target.value)}
+                                        maxLength={255}
+                                        onChange={(e) => {
+                                            const valor = e.target.value;
+                                            if (valor === "" || sinCaracteresEspeciales(valor)) {
+                                                cambiarFirma(
+                                                    f.key,
+                                                    "name",
+                                                    capitalizarPrimeraLetra(valor)
+                                                );
+                                            }
+                                        }}
                                     />
                                     <Text
                                         label="C.C.:"
@@ -322,6 +398,7 @@ export default function FormatoInspeccion({
                                         value={firmas[f.key]?.id_number || ""}
                                         placeholder="Solo números"
                                         required
+                                        maxLength={30}
                                         onChange={(e) => cambiarFirma(f.key, "id_number", e.target.value)}
                                     />
                                     <Dropzone

@@ -17,15 +17,15 @@ import editarIconoDark from "../../assets/icons/editar-2.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
 import verIcono from "../../assets/icons/ver.svg";
 import { useAuth } from "../../context/AuthContext.jsx";
+import { mensajeDeError } from "../../utils/errores";
 
 const valorSelect = (valor) => (valor == null ? "" : String(valor));
 const normalizarEstado = (estado) => {
-    const valor = String(estado || "").toLocaleLowerCase("es");
-    if (valor === "inactive" || valor === "inactivo") return "inactive";
-    if (valor === "maintenance" || valor === "mantenimiento") return "maintenance";
-    return "active";
+    const valor = String(estado || "").trim().toLocaleLowerCase("es");
+    if (valor === "inactive" || valor === "inactivo") return "Inactivo";
+    if (valor === "maintenance" || valor === "mantenimiento") return "Mantenimiento";
+    return "Activo";
 };
-
 const obtenerClaveBorrador = (usuarioId) => `mantia_borrador_maquinas_${usuarioId}`;
 
 const obtenerBorrador = (usuarioId) => {
@@ -286,6 +286,10 @@ function Formulario({onCancel, onGuardado, maquinaEditar, usuarioId}){
             );
             return;
         }
+        if (Array.from(placa.trim()).length > 80) {
+            advertencia("La placa no puede superar los 80 caracteres.", "Revisa los datos");
+            return;
+        }
         if (!esEdicion && !archivoImagen) {
             setErrorImagen("Debe seleccionar una imagen.");
             return;
@@ -459,7 +463,7 @@ function Formulario({onCancel, onGuardado, maquinaEditar, usuarioId}){
                     placeholder="Ingrese la placa del equipo"
                     value={placa}
                     onChange={(e) => setPlaca(e.target.value)}
-                    maxLength={50}
+                    maxLength={80}
                     required
                 />
             </div>
@@ -531,9 +535,9 @@ function Formulario({onCancel, onGuardado, maquinaEditar, usuarioId}){
                         value={estado}
                         onChange={(e) => setEstado(e.target.value)}
                         opciones={[
-                            {valor:"active", etiqueta:"Activo"},
-                            {valor:"inactive", etiqueta:"Inactivo"},
-                            {valor:"maintenance", etiqueta:"Mantenimiento"}
+                            {valor:"Activo", etiqueta:"Activo"},
+                            {valor:"Inactivo", etiqueta:"Inactivo"},
+                            {valor:"Mantenimiento", etiqueta:"Mantenimiento"}
                         ]}
                         required
                     />

@@ -43,6 +43,10 @@ const ConstructorFormato = lazy(() => import('./pages/Forms/equipments/questioni
 const LlenarInspeccion = lazy(() => import('./pages/Forms/equipments/completeinspectionequipment.jsx'));
 const RegistrosInspeccion = lazy(() => import('./pages/Forms/equipments/registersinspectionequipment.jsx'));
 const VerInspeccion = lazy(() => import('./pages/Forms/equipments/showinspectionequipment.jsx'));
+const LlenarRegistroMaquina = lazy(() => import('./pages/Forms/machines/completeformmachine.jsx'));
+const ConstructorFormatoMaquina = lazy(() => import('./pages/Forms/machines/questionsformmachine.jsx'));
+const RegistrosMaquina = lazy(() => import('./pages/Forms/machines/registersformsmachine.jsx'));
+const VerRegistroMaquina = lazy(() => import('./pages/Forms/machines/showformmachine.jsx'));
 
 function LoadingGate({ children }) {
   const { cargando } = useAuth();
@@ -61,13 +65,25 @@ createRoot(document.getElementById('root')).render(
           <Suspense fallback={<LoadingScreen indeterminado />}>
           <Routes>
             <Route path="/" element={<MantiaInicio />} />
-            <Route path="/" element={<RutaPrivada><App /></RutaPrivada>}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/ResetPassword" element={<ResetPassword />} />
+            <Route path="/register" element={<Register />} />
+            <Route path='/about' element={<AcercaDe />} />
+            <Route path='/help' element={<Ayuda />} />
+            <Route path="/terms" element={<TermnsAndConditions />} />
+
+            <Route path="/*" element={<RutaPrivada><App /></RutaPrivada>}>
               <Route path='dashboard' element={<Dashboard />} />
               <Route path='ubications' element={<RutaConPermiso permiso="location.update"><Ubicaciones /></RutaConPermiso>} />
               <Route path='ubications/categoriesubications' element={<RutaConPermiso permiso="location-category.update"><CategoriasUbicacion /></RutaConPermiso>} />
               <Route path='machines' element={<RutaConPermiso permiso="machine.view"><Maquinas /></RutaConPermiso>} />
               <Route path='machines/categoriesmachines' element={<RutaConPermiso permiso="machine-category.update"><CategoriasMaquinas /></RutaConPermiso>} />
               <Route path='machines/cardMachine/:id' element={<RutaConPermiso permiso="machine.view"><CardMachine /></RutaConPermiso>} />
+              <Route path="machines/cardMachine/:id/:kind/complete" element={<LlenarRegistroMaquina />} />
+              <Route path="machines/cardMachine/:id/:kind/questions" element={<ConstructorFormatoMaquina />} />
+              <Route path="machines/cardMachine/:id/:kind/edit" element={<ConstructorFormatoMaquina editar />} />
+              <Route path="machines/cardMachine/:id/:kind/records" element={<RegistrosMaquina />} />
+              <Route path="machines/cardMachine/:id/:kind/records/:recordId" element={<VerRegistroMaquina />} />
               <Route path='equipment' element={<RutaConPermiso permiso="equipment.view"><Equipos /></RutaConPermiso>} />
               <Route path='equipment/cardequipment/:id' element={<RutaConPermiso permiso="equipment.view"><CardEquipment /></RutaConPermiso>} />
               <Route path="equipment/cardequipment/:id/inspection" element={<InspeccionEquipo />} />
@@ -87,12 +103,6 @@ createRoot(document.getElementById('root')).render(
               <Route path='admin' element={<RutaConPermiso roles={["Jefe de mina"]}><AdministrationPanel /></RutaConPermiso>} />
               <Route path="*" element={<NotFound />} />
             </Route>
-            <Route path="login" element={<Login />} />
-            <Route path="ResetPassword" element={<ResetPassword />} />
-            <Route path="register" element={<Register />} />
-            <Route path='about' element={<AcercaDe />} />
-            <Route path='help' element={<Ayuda />} />
-            <Route path="/terms" element={<TermnsAndConditions />} />
           </Routes>
           </Suspense>
         </BrowserRouter>
