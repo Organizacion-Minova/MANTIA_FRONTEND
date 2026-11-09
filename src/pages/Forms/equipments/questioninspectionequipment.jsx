@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Boton, BotonLink } from "../../../components/common/Button";
+import { Boton, BotonAccion, BotonLink } from "../../../components/common/Button";
 import { PageWelcome } from "../../../components/common/welcome";
 import { Text, Select, Checkbox, Date  } from "../../../components/common/forms";
 import LoadingScreen from "../../../components/LoadingScreen";
@@ -8,6 +8,7 @@ import { GetEquipmentInspectionFormat, CreateInspectionFormat, UpdateInspectionF
 import { capitalizarPrimeraLetra, sinCaracteresEspeciales, validarGroserias } from "../../../components/common/Validations";
 import { useToast } from "../../../context/ToastContext";
 import { mensajeDeError } from "../../../utils/errores";
+import borrarIcono from "../../../assets/icons/borrar.svg"
 
 const PRESETS_OPCIONES = {
     "B,M": ["B", "M"],
@@ -480,34 +481,38 @@ export default function ConstructorFormato({ editar = false }) {
                         </div>
                         {s.questions.map((q, j) => (
                             <div key={q.id} className="col-span-3">
-                                <Text
-                                    label={`Pregunta: ${i + 1}.${j + 1}`}
-                                    id={`pregunta-${s.id}-${q.id}`}
-                                    name={`pregunta-${s.id}-${q.id}`}
-                                    type="text"
-                                    placeholder="Escribe la pregunta"
-                                    value={q.text}
-                                    onChange={(e) => {
-                                        const valor = capitalizarPrimeraLetra(e.target.value);
-                                        actualizarPregunta(s.id, q.id, valor);
-                                        cambiarCampo(
-                                            `question-${q.id}`,
-                                            valor,
-                                            (texto) => validarTexto(texto, `La pregunta ${i + 1}.${j + 1}`, {
-                                                requerido: true,
-                                            })
-                                            
-                                        );
-                                    }} 
-                                    maxLength={255}
-                                    required
-                                />
-                                <br />
-                                <Boton 
-                                    clase="btn-2" 
-                                    icono="fa-solid fa-trash" 
-                                    titulo="Eliminar pregunta"
-                                    onClick={() => eliminarPregunta(s.id, q.id)} />
+                                <div className="machine-question-row">
+                                    <Text
+                                        label={`Pregunta: ${i + 1}.${j + 1}`}
+                                        id={`pregunta-${s.id}-${q.id}`}
+                                        name={`pregunta-${s.id}-${q.id}`}
+                                        type="text"
+                                        placeholder="Escribe la pregunta"
+                                        value={q.text}
+                                        onChange={(e) => {
+                                            const valor = capitalizarPrimeraLetra(e.target.value);
+                                            actualizarPregunta(s.id, q.id, valor);
+                                            cambiarCampo(
+                                                `question-${q.id}`,
+                                                valor,
+                                                (texto) => validarTexto(texto, `La pregunta ${i + 1}.${j + 1}`, {
+                                                    requerido: true,
+                                                })
+                                                
+                                            );
+                                        }} 
+                                        maxLength={255}
+                                        required
+                                    />
+                                    <div className="machine-question-actions">
+                                        <BotonAccion
+                                            clase="btn-borrar" 
+                                            icono={borrarIcono}
+                                            titulo="Eliminar pregunta"
+                                            onClick={() => eliminarPregunta(s.id, q.id)} 
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         ))}
 

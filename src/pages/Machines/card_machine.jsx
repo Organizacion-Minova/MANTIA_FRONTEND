@@ -7,6 +7,7 @@ import api from "../../api/axios";
 import LoadingScreen from "../../components/LoadingScreen";
 import imagenPorDefecto from "../../assets/img/Mantia - logo.png";
 import { exportarFichaTecnicaMaquinaExcelUnitario, exportarFichaTecnicaMaquinaPdfUnitario } from "../../api/machinesapi";
+import { rutaForm} from '../../components/common/Formarchine';
 
 function obtenerUrlImagen(imagen) {
     if (!imagen) return imagenPorDefecto;
@@ -15,6 +16,14 @@ function obtenerUrlImagen(imagen) {
     const ruta = imagen.replace(/^\/+/, "").replace(/^storage\//, "");
     const baseUrl = api.defaults.baseURL.replace(/\/+$/, "");
     return `${baseUrl}/storage/${ruta}`;
+}
+
+function etiquetaEstado(estado) {
+    const valor = String(estado || "").trim().toLocaleLowerCase("es");
+    if (valor === "inactive" || valor === "inactivo") return "Inactivo";
+    if (valor === "maintenance" || valor === "mantenimiento") return "Mantenimiento";
+    if (valor === "active" || valor === "activo") return "Activo";
+    return "—";
 }
 
 export function CardMachine() {
@@ -108,7 +117,7 @@ export function CardMachine() {
                                     <th>RESPONSABLE:</th>
                                     <td>{maquina.responsible}</td>
                                     <th>ESTADO:</th>
-                                    <td>{maquina.status="active"?"Activo":"Inactivo"}</td>
+                                    <td>{etiquetaEstado(maquina.status)}</td>
                                 </tr>
                                 <tr>
                                     <th>CONSUMIBLE:</th>
@@ -124,6 +133,14 @@ export function CardMachine() {
                                 <tr>
                                     <td colSpan="6">{maquina.characteristics}</td>
                                 </tr>
+                                <tr>
+                                    <th colSpan="6">CONSUMIBLES</th>
+                                </tr>
+                                <tr>
+                                    <th colSpan='2'>Nombre</th>
+                                    <th colSpan='2'>Marca</th>
+                                    <th colSpan='2'>Cantidad</th>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -136,16 +153,17 @@ export function CardMachine() {
                             icono="fas fa-home"
                             texto="Uso diario"
                         />
-                        <Boton
+                        <BotonLink 
+                            link={rutaForm(id, "preoperational", "/complete")} 
                             clase="btn-azul"
-                            icono="fas fa-cog"
-                            texto="Pre operacional"
+                            icono="fa-solid fa-clipboard-check" 
+                            texto="Preoperacional" 
                         />
-                        <BotonLink
-                            link="/machines/cardMachine/inspection"
+                        <BotonLink 
+                            link={rutaForm(id, "inspection", "/complete")} 
                             clase="btn-azul"
-                            icono="fas fa-search"
-                            texto="Inspeccion"
+                            icono="fa-solid fa-clipboard-list" 
+                            texto="Inspección" 
                         />
                         <Boton
                             clase="btn-azul"

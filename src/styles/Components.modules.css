@@ -341,6 +341,7 @@ html.dark-theme .boton-accion__icono--dark {
     height: 2.75rem;
 }
 
+
 @media (max-width: 900px) {
     .search-main {
         flex-direction: column;
@@ -379,6 +380,30 @@ html.dark-theme .boton-accion__icono--dark {
     }
 }
 
+.machine-question-row {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--borde-contenedor);
+    border-radius: 0.5rem;
+    background: var(--contenedor);
+}
+
+.machine-question-actions {
+    display: flex;
+    align-items: center;
+    padding-bottom: 0.125rem;
+}
+
+@media (max-width: 420px) {
+    .machine-question-row {
+        gap: 0.625rem;
+        padding: 0.75rem;
+    }
+}
 /* TARJETAAAAAAAAAAAAASS REUTILIZABLES */
 .cards{
     display:grid;
