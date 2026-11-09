@@ -7,7 +7,8 @@
 #mantia-chat{position:fixed;right:6.25rem;bottom:1.25rem;z-index:9997}
 
 /* =====================================================================
-   BOTÓN FLOTANTE · asistente con identidad minera sut/* Cerrado es un círculo con el robot; con el cursor encima (o al enfocarlo
+   BOTÓN FLOTANTE · asistente con identidad minera sutil.
+   Cerrado es un círculo con el robot; con el cursor encima (o al enfocarlo
    con el teclado) se despliega hacia la izquierda mostrando "MANTIA IA". */
 .mc-toggle{--mc-ease:cubic-bezier(.22,1,.36,1);
 position:relative;z-index:9998;height:62px;padding:.45rem .5rem;
@@ -25,8 +26,6 @@ box-shadow:0 12px 28px rgba(6,59,56,.32),0 0 0 4px rgba(25,195,166,.14);transfor
 .mc-toggle::before{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;
 box-shadow:0 0 0 0 rgba(25,195,166,.45);animation:mc-respira 3.2s ease-out 1.2s infinite}
 .mc-toggle:hover::before,.mc-toggle:focus-visible::before,.mc-toggle[aria-expanded="true"]::before{animation:none}
-
-lando{box-shadow:0 0 0 4px rgba(25,195,166,.16),0 10px 25px rgba(6,59,56,.3)}
 
 /* Robot del botón (casco minero) */
 .mc-bot{position:relative;flex:0 0 46px;width:46px;height:46px;border-radius:50%;
@@ -94,7 +93,6 @@ opacity:0;pointer-events:none;transform:translateY(12px) scale(.98);transform-or
 .mc-header{display:flex;align-items:center;gap:.75rem;padding:1rem 1.1rem;flex-shrink:0;background:var(--principal);color:#fff}
 .mc-avatar{width:2.55rem;height:2.55rem;border-radius:.9rem;display:flex;align-items:center;justify-content:center;
 flex-shrink:0;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);box-shadow:inset 0 1px rgba(255,255,255,.15)}
-.mc-avatar img{width:1.35rem;height:1.35rem;object-fit:contain}
 .mc-info{flex:1}
 .mc-info h4{font:700 1rem var(--fuente-secundaria);letter-spacing:.01em}
 .mc-info p{font-size:.74rem;display:flex;align-items:center;gap:6px;opacity:.88;margin-top:.15rem}
@@ -102,13 +100,9 @@ flex-shrink:0;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255
 .mc-actions{display:flex;gap:2px}
 .mc-actions button{width:2rem;height:2rem;display:grid;place-items:center;background:none;border:0;color:inherit;opacity:.78;cursor:pointer;padding:.4rem;border-radius:.65rem;transition:background .18s,opacity .18s}
 .mc-actions button:hover{opacity:1;background:rgba(255,255,255,.16)}
-<<<<<<< HEAD
 /* Cerrar: igual que el del panel de accesibilidad (X blanca, esquinas 20%, rojo --rojo al pasar el cursor) */
 .mc-actions .mc-cerrar{color:#fff;opacity:1;border-radius:20%}
 .mc-actions .mc-cerrar:hover{background:var(--rojo)}
-=======
-.mc-actions img{width:1.3rem;height:1.3rem;object-fit:contain}
->>>>>>> 08b217d7f5ba51d5482ac7e0696616e755721ace
 
 /* Mensajes */
 .mc-messages{flex:1;min-height:0;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.8rem;background:var(--fondo);scrollbar-width:thin;scrollbar-color:var(--borde-contenedor) transparent}
@@ -116,15 +110,9 @@ flex-shrink:0;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255
 .mc-row.user{flex-direction:row-reverse;align-self:flex-end}
 .mc-icon{width:1.8rem;height:1.8rem;border-radius:.65rem;display:flex;align-items:center;justify-content:center;font-size:.72rem;flex-shrink:0}
 .mc-icon.ia{background:var(--principal);color:#fff}
-<<<<<<< HEAD
 /* Usuario: misma foto redonda con borde que el perfil de la página */
 .mc-icon.user{box-sizing:border-box;border-radius:50%;overflow:hidden;border:2px solid var(--secundario);background:var(--hover-principal);color:var(--secundario)}
 .mc-icon.user img{width:100%;height:100%;object-fit:cover;display:block}
-=======
-.mc-icon.user{background:var(--hover-principal);color:var(--secundario)}
-.mc-icon img{width:1rem;height:1rem;object-fit:contain}
-.mc-icon.user img{filter:brightness(0) saturate(100%) invert(22%) sepia(24%) saturate(1375%) hue-rotate(127deg) brightness(93%) contrast(95%)}
->>>>>>> 08b217d7f5ba51d5482ac7e0696616e755721ace
 .mc-bubble{padding:.7rem .85rem;font-size:.86rem;line-height:1.6;border-radius:1rem;word-wrap:break-word;overflow-wrap:anywhere}
 .mc-row.ia .mc-bubble{background:var(--contenedor);border:1px solid var(--borde-contenedor);border-bottom-left-radius:.3rem;box-shadow:0 2px 5px rgba(6,59,56,.035)}
 .mc-row.user .mc-bubble{background:var(--secundario);color:#fff;border-bottom-right-radius:.3rem;box-shadow:0 3px 8px rgba(6,59,56,.12)}
@@ -158,7 +146,6 @@ border:1px solid var(--borde-contenedor);border-radius:.85rem;transition:border-
 .mc-input-area textarea::placeholder{color:var(--texto2);opacity:.8}
 .mc-send{width:2.65rem;height:2.65rem;border-radius:.85rem;border:0;cursor:pointer;background:var(--secundario);color:#fff;
 display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 3px 8px rgba(6,59,56,.16);transition:transform .18s,background .18s,box-shadow .18s}
-.mc-send img{width:1.2rem;height:1.2rem;object-fit:contain}
 .mc-send:hover:not(:disabled){background:var(--sidebar);transform:translateY(-1px);box-shadow:0 5px 12px rgba(6,59,56,.2)}
 .mc-send:disabled{opacity:.5;cursor:not-allowed}
 
@@ -193,6 +180,6 @@ display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:
 .mc-link{display:inline-flex;align-items:center;gap:.35rem;margin:.3rem .3rem 0 0;padding:.3rem .7rem;cursor:pointer;
 font:600 .74rem var(--fuente-principal);color:var(--texto);background:var(--contenedor);
 border:1px solid var(--secundario);border-radius:2rem;transition:background .18s,transform .18s}
-.mc-link img{width:.65rem;height:.65rem;object-fit:contain;filter:brightness(0) saturate(100%) invert(22%) sepia(24%) saturate(1375%) hue-rotate(127deg) brightness(93%) contrast(95%)}
+.mc-link i{font-size:.65rem;color:var(--secundario)}
 .mc-link:hover{background:var(--hover-principal);transform:translateY(-1px)}
 .mc-link:focus-visible{outline:2px solid var(--secundario);outline-offset:2px}

@@ -5,6 +5,17 @@ import FooterPublic from "../../components/layout/FooterPublic.jsx";
 import { useState, useEffect, useRef } from "react";
 import AccessibilityPanel from "../../components/accessibility/AccessibilityPanel";
 
+// Fotos del carrusel: se cargan solas desde src/assets/img/<CARPETA>/ (en orden alfabético/numérico).
+// CARPETA es el nombre de la carpeta (no importa si va en mayúscula o minúscula).
+// "mina 1" va en el slide 1, "mina 2" en el 2, etc.
+// Si hay menos fotos que slides, se repiten; si la carpeta no existe, se ve el fondo de siempre.
+const CARPETA = "Mina";
+const modulos = import.meta.glob("../../assets/img/**/*.{jpg,jpeg,png,webp,avif,JPG,JPEG,PNG}", { eager: true, import: "default" });
+const fotos = Object.entries(modulos)
+  .filter(([ruta]) => ruta.toLowerCase().includes(`/img/${CARPETA.toLowerCase()}/`))
+  .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
+  .map(([, url]) => url);
+
 const slides = [
   {
     tag: "Mantenimiento",
@@ -83,9 +94,19 @@ export default function MantiaInicio() {
       <main className="mt-main">
         <section className="mt-carousel">
           <div className="mt-slides-track">
-            {slides.map((s, i) => (
+            {slides.map((s, i) => {
+              const foto = fotos.length ? fotos[i % fotos.length] : null;
+              return (
               <div className="mt-slide" key={s.heading}>
-                <div className="mt-slide-bg" />
+                <div
+                  className={`mt-slide-bg${foto ? " con-foto" : ""}`}
+                  style={foto ? {
+                    backgroundImage: `url("${foto}")`,
+                    backgroundSize: "cover",       // la foto llena todo el slide sin repetirse
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                  } : undefined}
+                />
                 <div className="mt-slide-overlay">
                   {i === current && (
                     <div className="mt-slide-content" key={current}>
@@ -100,7 +121,8 @@ export default function MantiaInicio() {
                   )}
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
 
           <button className="mt-carousel-btn prev" onClick={() => changeSlide(-1)} aria-label="Anterior">

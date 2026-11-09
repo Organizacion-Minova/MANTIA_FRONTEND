@@ -8,24 +8,16 @@
    [{ role: 'user' | 'assistant', content: '...' }] y debe devolver
    (o resolver con) el texto de la respuesta, o { respuesta, acciones }
    cuando hay acciones de administrador por confirmar. Ahí conectas tu backend.
-   Requiere IA.css y las fuentes Archivo + Barlow.
+   Requiere IA_Mantia.css, Font Awesome 6 y las fuentes Archivo + Barlow.
    ===================================================================== */
-import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useRef, useSyncExternalStore } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { esRutaPermitida, sugerenciasPorPantalla } from '../../utils/sugerenciasIA';
 import TarjetaAccion from './TarjetaAccion.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { avatarPorDefecto } from '../../utils/avatar';
-import adminIcon from '../../assets/icons/admin.svg';
-import avionPapelIcon from '../../assets/icons/avion-papel.svg';
-import borrarIcon from '../../assets/icons/borrar.svg';
-import cerrarIcon from '../../assets/icons/cerrar.svg';
-import flechaDerechaIcon from '../../assets/icons/flecha-derecha.svg';
-import robotIcon from '../../assets/icons/robot.svg';
+import { actualizar, asegurarUsuario, nuevoId, obtenerEstado, suscribir } from './chatStore.js';
 
-
-let contador = 0;
-const nuevoId = () => ++contador;
 
 const hora = () =>
   new Date().toLocaleTimeString('es-CO', { hour: 'numeric', minute: '2-digit' });
@@ -58,7 +50,7 @@ function Texto({ children, onIr }) {
 
           return (
             <button key={j} type="button" className="mc-link" onClick={() => onIr(ruta)} title={etiqueta}>
-              {etiqueta} <img src={flechaDerechaIcon} alt="" aria-hidden="true" />
+              {etiqueta} <i className="fa-solid fa-arrow-right" aria-hidden="true" />
             </button>
           );
         })}
@@ -75,31 +67,53 @@ export default function IAMantia({
   abiertoInicial = false,
   onSend = async () => 'Aún no hay un backend conectado. Pasa la prop onSend a <IAMantia />.',
 }) {
-  const crearBienvenida = () => ({
-    id: nuevoId(), rol: 'ia', texto: bienvenida, hora: hora(), bienvenida: true,
-  });
-
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { usuario } = useAuth();
   // Misma foto (o avatar con iniciales) que se ve en el header y en el perfil de la página
   const fotoPerfil = usuario?.photo_url || avatarPorDefecto(`${usuario?.name ?? ''} ${usuario?.last_name ?? ''}`);
+  const idUsuario = usuario?.id ?? usuario?.email ?? null;
   const sugerencias = chips ?? sugerenciasPorPantalla(pathname);
 
-  const [abierto, setAbierto] = useState(abiertoInicial);
-  const [sinLeer, setSinLeer] = useState(!abiertoInicial);
-  const [mensajes, setMensajes] = useState(() => [crearBienvenida()]);
-  const [valor, setValor] = useState('');
-  const [enviando, setEnviando] = useState(false);
+  // La conversación vive en chatStore (fuera del componente): no se pierde al cambiar de página
+  const { mensajes: guardados, abierto, sinLeer, valor, enviando, pantallaUltimaPregunta } =
+    useSyncExternalStore(suscribir, obtenerEstado);
+
+  const crearBienvenida = () => ({
+    id: nuevoId(), rol: 'ia', texto: bienvenida, hora: hora(), bienvenida: true,
+  });
+  // Mientras no haya mensajes guardados se muestra la bienvenida
+  const bienvenidaInicial = useMemo(
+    () => ({ id: 0, rol: 'ia', texto: bienvenida, hora: hora(), bienvenida: true }),
+    [bienvenida]
+  );
+  const conBienvenida = useCallback(
+    (s) => (s.mensajes.length ? s.mensajes : [bienvenidaInicial]),
+    [bienvenidaInicial]
+  );
+  const mensajes = guardados.length ? guardados : [bienvenidaInicial];
+
+  const setAbierto = useCallback(
+    (v) => actualizar((p) => ({ abierto: typeof v === 'function' ? v(p.abierto) : v })),
+    []
+  );
 
   const mensajesRef = useRef(null);
   const textareaRef = useRef(null);
 
-  // Pantalla desde la que se envió la última pregunta
-  const [pantallaUltimaPregunta, setPantallaUltimaPregunta] = useState(null);
-
   // Se muestran al empezar y cada vez que el usuario cambia de pantalla
   const mostrarChips = !enviando && pathname !== pantallaUltimaPregunta;
+
+  // Si entra otro usuario, la conversación empieza de cero
+  useEffect(() => {
+    asegurarUsuario(idUsuario);
+  }, [idUsuario]);
+
+  // Solo la primera vez (sin conversación guardada) se respeta abiertoInicial
+  useEffect(() => {
+    if (abiertoInicial && obtenerEstado().mensajes.length === 0) actualizar({ abierto: true, sinLeer: false });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Lleva al usuario a la pantalla del enlace. En celular se cierra el chat para que vea la página.
   const irA = useCallback(
@@ -107,13 +121,13 @@ export default function IAMantia({
       navigate(ruta);
       if (window.matchMedia('(max-width: 600px)').matches) setAbierto(false);
     },
-    [navigate]
+    [navigate, setAbierto]
   );
 
   // Al abrir: quita el badge y enfoca el campo de texto
   useEffect(() => {
     if (abierto) {
-      setSinLeer(false);
+      if (obtenerEstado().sinLeer) actualizar({ sinLeer: false });
       textareaRef.current?.focus();
     }
   }, [abierto]);
@@ -124,13 +138,13 @@ export default function IAMantia({
     const alTeclear = (e) => e.key === 'Escape' && setAbierto(false);
     document.addEventListener('keydown', alTeclear);
     return () => document.removeEventListener('keydown', alTeclear);
-  }, [abierto]);
+  }, [abierto, setAbierto]);
 
   // Scroll al último mensaje
   useEffect(() => {
     const el = mensajesRef.current;
     if (el) el.scrollTop = el.scrollHeight;
-  }, [mensajes, abierto]);
+  }, [guardados, abierto]);
 
   // El textarea crece con el texto (máximo 96px)
   useEffect(() => {
@@ -143,49 +157,54 @@ export default function IAMantia({
   const enviar = useCallback(
     async (texto) => {
       texto = (texto || '').trim();
-      if (!texto || enviando) return;
+      const actual = obtenerEstado();
+      if (!texto || actual.enviando) return;
 
-      const historial = aHistorial(mensajes);
+      const historial = aHistorial(conBienvenida(actual));
       const idUser = nuevoId();
       const idIA = nuevoId();
 
-      setEnviando(true);
-      setPantallaUltimaPregunta(pathname);
-      setValor('');
-      setMensajes((prev) => [
-        ...prev,
-        { id: idUser, rol: 'user', texto, hora: hora() },
-        { id: idIA, rol: 'ia', texto: '', hora: hora(), escribiendo: true },
-      ]);
+      actualizar((prev) => ({
+        enviando: true,
+        pantallaUltimaPregunta: pathname,
+        valor: '',
+        mensajes: [
+          ...conBienvenida(prev),
+          { id: idUser, rol: 'user', texto, hora: hora() },
+          { id: idIA, rol: 'ia', texto: '', hora: hora(), escribiendo: true },
+        ],
+      }));
 
+      // Si el usuario cambia de página mientras la IA responde, la respuesta igual llega al almacén
       try {
         const resultado = await onSend(texto, historial, pathname);
         // onSend puede devolver solo el texto o { respuesta, acciones } (acciones de administrador)
         const { respuesta, acciones = [] } =
           typeof resultado === 'object' && resultado !== null ? resultado : { respuesta: resultado };
-        setMensajes((prev) =>
-          prev.map((m) => (m.id === idIA ? { ...m, texto: String(respuesta), acciones, escribiendo: false } : m))
-        );
+        actualizar((prev) => ({
+          mensajes: prev.mensajes.map((m) =>
+            m.id === idIA ? { ...m, texto: String(respuesta), acciones, escribiendo: false } : m
+          ),
+        }));
       } catch (error) {
-        setMensajes((prev) =>
-          prev.map((m) => {
+        actualizar((prev) => ({
+          mensajes: prev.mensajes.map((m) => {
             if (m.id === idIA)
               return { ...m, texto: error?.message || 'No pude responder en este momento. Intenta de nuevo.', escribiendo: false, excluir: true };
             if (m.id === idUser) return { ...m, excluir: true };
             return m;
-          })
-        );
+          }),
+        }));
       } finally {
-        setEnviando(false);
+        actualizar({ enviando: false });
         textareaRef.current?.focus();
       }
     },
-    [enviando, mensajes, onSend, pathname]
+    [onSend, pathname, conBienvenida]
   );
 
   const limpiar = () => {
-    setMensajes([crearBienvenida()]);
-    setPantallaUltimaPregunta(null);
+    actualizar({ mensajes: [crearBienvenida()], pantallaUltimaPregunta: null, acciones: {} });
   };
 
   const alTeclear = (e) => {
@@ -227,17 +246,17 @@ export default function IAMantia({
       {/* Ventana */}
       <div className={'mc-win' + (abierto ? ' open' : '')} role="dialog" aria-label="Chat MANTIA IA">
         <div className="mc-header">
-          <div className="mc-avatar"><img src={robotIcon} alt="" aria-hidden="true" /></div>
+          <div className="mc-avatar"><i className="fa-solid fa-robot" /></div>
           <div className="mc-info">
             <h4>{titulo}</h4>
             <p><span className="mc-dot" /> <span>{estado}</span></p>
           </div>
           <div className="mc-actions">
             <button type="button" title="Limpiar conversación" onClick={limpiar}>
-              <img src={borrarIcon} alt="" aria-hidden="true" />
+              <i className="fa-solid fa-trash-can" />
             </button>
-            <button type="button" title="Cerrar" onClick={() => setAbierto(false)}>
-              <img src={cerrarIcon} alt="" aria-hidden="true" />
+            <button type="button" className="mc-cerrar" title="Cerrar" aria-label="Cerrar chat" onClick={() => setAbierto(false)}>
+              <i className="fa-solid fa-xmark" />
             </button>
           </div>
         </div>
@@ -246,7 +265,11 @@ export default function IAMantia({
           {mensajes.map((m) => (
             <div key={m.id} className={`mc-row ${m.rol}`}>
               <div className={`mc-icon ${m.rol}`}>
-                <img src={m.rol === 'user' ? adminIcon : robotIcon} alt="" aria-hidden="true" />
+                {m.rol === 'user' ? (
+                  <img src={fotoPerfil} alt={usuario?.name || 'Tú'} />
+                ) : (
+                  <i className="fa-solid fa-robot" />
+                )}
               </div>
               <div>
                 <div className="mc-bubble">
@@ -281,7 +304,7 @@ export default function IAMantia({
             rows={1}
             value={valor}
             placeholder={placeholder}
-            onChange={(e) => setValor(e.target.value)}
+            onChange={(e) => actualizar({ valor: e.target.value })}
             onKeyDown={alTeclear}
           />
           <button
@@ -291,7 +314,7 @@ export default function IAMantia({
             disabled={enviando}
             onClick={() => enviar(valor)}
           >
-            <img src={avionPapelIcon} alt="" aria-hidden="true" />
+            <i className="fa-solid fa-paper-plane" />
           </button>
         </div>
       </div>
