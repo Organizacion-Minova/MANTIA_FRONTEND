@@ -15,7 +15,7 @@ export default function RegistrosMaquina() {
     const [registros, setRegistros] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(false);
-    const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(registros, 8);
+    const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(registros, 7);
 
     useEffect(() => {
         GetMachineRecords(id, kind)

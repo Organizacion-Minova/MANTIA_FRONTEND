@@ -558,7 +558,6 @@ function Formulario({onCancel, onGuardado, maquinaEditar, usuarioId}){
                     previewAlt="Vista previa de la imagen del equipo"
                     previewLabel={archivoImagen?.name || "Imagen actual"}
                     error={errorImagen}
-                    required={!esEdicion && !archivoImagen}
                 />
             </div>
             <div className="col-span-6">
@@ -577,6 +576,9 @@ function Formulario({onCancel, onGuardado, maquinaEditar, usuarioId}){
     )
 
 }
+function FormularioConsumibles(){
+
+}
 function Maquinas(){
     const { usuario } = useAuth();
     const usuarioId = usuario?.id;
@@ -584,6 +586,8 @@ function Maquinas(){
     let [maquina, setMaquina]=useState([])
     const [maquinaEditar, setMaquinaEditar]=useState(null);
     const [cargando, setCargando]=useState(true)
+    
+
     maquina.map((maquina)=>({
         ...maquina,
         categoriaBusqueda: maquina.category_maquina?.name || "",
@@ -694,8 +698,8 @@ function Maquinas(){
             </header>
             <div className="table-responsive">
                 <table className="table">
-                        <thead>
-                            <tr>
+                    <thead>
+                        <tr>
                             <th>Código</th>
                             <th>Nombre</th>
                             <th>Número de serie</th>
