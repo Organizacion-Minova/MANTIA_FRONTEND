@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
 import { login as loginRequest, logout as logoutRequest, getUser, quickLogin } from "../api/auth";
 import { mensajeDeError } from "../utils/errores";
-
+import { limpiarChatIA } from "../components/IAMantia/chatStore.js";
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
@@ -61,12 +61,13 @@ export function AuthProvider({ children }) {
         }
     }
 
-    async function logout() {
+        async function logout() {
         try {
             await logoutRequest();
         } catch {
             // Aunque el servidor ya haya cerrado la sesión, aquí también se cierra.
         } finally {
+            limpiarChatIA(); // la conversación de la IA no debe quedar al cerrar sesión
             versionSesionRef.current += 1;
             setUsuario(null);
             ultimaRevisionRef.current = 0;

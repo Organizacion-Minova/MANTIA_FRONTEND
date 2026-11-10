@@ -5,26 +5,26 @@
    acción. Esta tarjeta muestra el resumen y los botones; la acción se
    hace en el backend solo al pulsar "Confirmar".
    ===================================================================== */
-import { useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import api from '../../api/axios';
 import { mensajeDeError } from '../../utils/errores';
+import { guardarAccion, obtenerEstado, suscribir } from './chatStore.js';
 import '../../styles/IA-acciones.css';
-import escudoIcon from '../../assets/icons/escudo.svg';
 
 // pendiente → enviando → hecha | cancelada | error
 export default function TarjetaAccion({ accion }) {
-  const [estado, setEstado] = useState('pendiente');
-  const [mensaje, setMensaje] = useState('');
+  // El estado de la tarjeta se guarda en chatStore: al cambiar de página no vuelve a "pendiente"
+  const guardada = useSyncExternalStore(suscribir, () => obtenerEstado().acciones[accion.id]);
+  const estado = guardada?.estado ?? 'pendiente';
+  const mensaje = guardada?.mensaje ?? '';
 
   const responder = async (confirmar) => {
-    setEstado('enviando');
+    guardarAccion(accion.id, { estado: 'enviando', mensaje: '' });
     try {
       const { data } = await api.post(`/api/ai/acciones/${accion.id}/${confirmar ? 'confirmar' : 'cancelar'}`);
-      setEstado(confirmar ? 'hecha' : 'cancelada');
-      setMensaje(data.message);
+      guardarAccion(accion.id, { estado: confirmar ? 'hecha' : 'cancelada', mensaje: data.message });
     } catch (error) {
-      setEstado('error');
-      setMensaje(mensajeDeError(error, 'No se pudo completar la acción.'));
+      guardarAccion(accion.id, { estado: 'error', mensaje: mensajeDeError(error, 'No se pudo completar la acción.') });
     }
   };
 
@@ -33,7 +33,7 @@ export default function TarjetaAccion({ accion }) {
   return (
     <div className={`mc-accion mc-accion-${estado}`} role="group" aria-label="Acción por confirmar">
       <p className="mc-accion-titulo">
-        <img src={escudoIcon} alt="" aria-hidden="true" /> {accion.resumen}
+        <i className="fa-solid fa-user-shield" aria-hidden="true" /> {accion.resumen}
       </p>
 
       {abierta ? (
