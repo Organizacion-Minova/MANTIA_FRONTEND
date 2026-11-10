@@ -141,3 +141,8 @@ const descargarBlob = (data, filename, mimeType = 'application/vnd.openxmlformat
     link.click();
     document.body.removeChild(link);
 };
+
+export async function GetInspectionOverviewEquipment() {
+    const { data } = await api.get("/api/inspection-overview/equipment");
+    return data;
+}

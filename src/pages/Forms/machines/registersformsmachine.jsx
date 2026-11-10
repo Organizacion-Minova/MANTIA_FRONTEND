@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { BotonLink } from "../../../components/common/Button";
-import { PageWelcome } from "../../../components/common/welcome";
+import { PageWelcome, Searcher } from "../../../components/common/welcome";
+import { useSearch } from "../../../hooks/useSearch";
 import LoadingScreen from "../../../components/LoadingScreen";
 import { usePaginacion, Paginacion } from "../../../components/common/Paginacion";
 import { GetMachineRecords } from "../../../api/machinesapi";
@@ -15,7 +16,14 @@ export default function RegistrosMaquina() {
     const [registros, setRegistros] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(false);
-    const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(registros, 7);
+
+    const { busqueda, setBusqueda, rangoFecha, setRangoFecha, itemsFiltrados } = useSearch(
+        registros,
+        ["id", "inspector", "date", "week_end", "format_version"],
+        "date"
+    );
+
+    const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(itemsFiltrados, 7);
 
     useEffect(() => {
         GetMachineRecords(id, kind)
@@ -30,6 +38,10 @@ export default function RegistrosMaquina() {
             .finally(() => setCargando(false));
     }, [id, kind]);
 
+    useEffect(() => {
+        setPaginaActual(1);
+    }, [busqueda, rangoFecha, setPaginaActual]);
+
     if (!tipo) return <p>Tipo de formato no válido.</p>;
     if (cargando) return <LoadingScreen indeterminado />;
     if (error) return <p>No se pudieron cargar los formatos guardados.</p>;
@@ -41,6 +53,13 @@ export default function RegistrosMaquina() {
                     titulo={`${tipo.titulo}: ${maquina.name}`}
                     descripcion="Registros guardados, del más reciente al más antiguo."
                     mostrarHistorial={true}
+                />
+                <Searcher
+                    value={busqueda}
+                    onChange={(e) => setBusqueda(e.target.value)}
+                    rangoFecha={rangoFecha}
+                    onRangoFechaChange={setRangoFecha}
+                    placeholder="Buscar por código, fecha o inspector"
                 />
             </header>
 
@@ -54,8 +73,14 @@ export default function RegistrosMaquina() {
                         </tr>
                     </thead>
                     <tbody>
-                        {registros.length === 0 ? (
-                            <tr><td colSpan="3">Todavía no hay registros guardados.</td></tr>
+                        {datosPagina.length === 0 ? (
+                            <tr>
+                                <td colSpan="3">
+                                    {registros.length === 0
+                                        ? "Todavía no hay registros guardados."
+                                        : "No se encontraron registros con esos criterios."}
+                                </td>
+                            </tr>
                         ) : (
                             datosPagina.map((r) => (
                                 <tr key={r.id}>
