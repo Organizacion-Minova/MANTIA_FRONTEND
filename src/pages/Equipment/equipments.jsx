@@ -16,6 +16,7 @@ import editarIcono from "../../assets/icons/editar.svg";
 import editarIconoDark from "../../assets/icons/editar-2.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
 import verIcono from "../../assets/icons/ver.svg";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 function obtenerUrlImagen(imagen) {
     if (!imagen) return null;
@@ -26,29 +27,161 @@ function obtenerUrlImagen(imagen) {
     return `${baseUrl}/storage/${ruta}`;
 }
 
-function Formulario({onCancel, onGuardado, equiposEditar}){
+const obtenerClaveBorrador = (usuarioId) => {
+    return `mantia_borrador_equipos_${usuarioId}`;
+};
+
+const obtenerBorrador = (usuarioId) => {
+    if (!usuarioId) return null;
+
+    try {
+        const borrador = sessionStorage.getItem(obtenerClaveBorrador(usuarioId));
+
+        return borrador ? JSON.parse(borrador) : null;
+    } catch (error) {
+        console.error("Error al recuperar el borrador de equipos:", error);
+        return null;
+    }
+};
+
+const eliminarBorrador = (usuarioId) => {
+    if (!usuarioId) return;
+
+    sessionStorage.removeItem(obtenerClaveBorrador(usuarioId));
+};
+
+function Formulario({onCancel, onGuardado, equiposEditar, usuarioId}) {
     const esEdicion = equiposEditar != null;
     const { advertencia } = useToast();
-    const [codigo, setCodigo] = useState(equiposEditar?.code || "");
-    const [nombre, setNombre] = useState(equiposEditar?.name || "");
-    const [modelo, setModelo] = useState(equiposEditar?.model || "");
-    const [descripcion, setDescripcion] = useState(equiposEditar?.description || "");
-    const [serie, setSerie] = useState(equiposEditar?.serial_number || "");
-    const [responsable, setResponsable] = useState(equiposEditar?.responsible || "");
-    const [estado, setEstado] = useState(equiposEditar?.status || "active");
-    const [fechaIngreso, setFechaIngreso] = useState(equiposEditar?.start_up_date || "");
-    const [marca, setMarca] = useState(equiposEditar?.brand || "");
-    const [placa, setPlaca] = useState(equiposEditar?.plate || "");
-    const [combustible, setCombustible] = useState(equiposEditar?.fuel || "");
-    const [potencia, setPotencia] = useState(equiposEditar?.power || "");
-    const [voltaje, setVoltaje] = useState(equiposEditar?.voltage || "");
-    const [locationid, setLocationid] = useState(equiposEditar?.ubicacion?.id || equiposEditar?.location?.id || "");
+    const [borradorInicial] = useState(() => {
+        return esEdicion ? null : obtenerBorrador(usuarioId);
+    });
+    const [codigo, setCodigo] = useState(
+    borradorInicial?.codigo ?? equiposEditar?.code ?? ""
+);
+
+const [nombre, setNombre] = useState(
+    borradorInicial?.nombre ?? equiposEditar?.name ?? ""
+);
+
+const [modelo, setModelo] = useState(
+    borradorInicial?.modelo ?? equiposEditar?.model ?? ""
+);
+
+const [descripcion, setDescripcion] = useState(
+    borradorInicial?.descripcion ?? equiposEditar?.description ?? ""
+);
+
+const [serie, setSerie] = useState(
+    borradorInicial?.serie ?? equiposEditar?.serial_number ?? ""
+);
+
+const [responsable, setResponsable] = useState(
+    borradorInicial?.responsable ?? equiposEditar?.responsible ?? ""
+);
+
+const [estado, setEstado] = useState(
+    equiposEditar?.status || "active"
+);
+
+const [fechaIngreso, setFechaIngreso] = useState(
+    borradorInicial?.fechaIngreso ?? equiposEditar?.start_up_date ?? ""
+);
+
+const [marca, setMarca] = useState(
+    borradorInicial?.marca ?? equiposEditar?.brand ?? ""
+);
+
+const [placa, setPlaca] = useState(
+    borradorInicial?.placa ?? equiposEditar?.plate ?? ""
+);
+
+const [combustible, setCombustible] = useState(
+    borradorInicial?.combustible ?? equiposEditar?.fuel ?? ""
+);
+
+const [potencia, setPotencia] = useState(
+    borradorInicial?.potencia ?? equiposEditar?.power ?? ""
+);
+
+const [voltaje, setVoltaje] = useState(
+    borradorInicial?.voltaje ?? equiposEditar?.voltage ?? ""
+);
+
+const [locationid, setLocationid] = useState(
+    borradorInicial?.locationid ??
+    equiposEditar?.ubicacion?.id ??
+    equiposEditar?.location?.id ??
+    ""
+);
     const [archivoImagen, setArchivoImagen] = useState(null);
     const [ubicaciones, setUbicaciones] = useState([]);
     const [errores, setErrores] = useState({});
     const [errorImagen, setErrorImagen] = useState("");
     const [vistaPrevia, setVistaPrevia] = useState(null);
     const imagenActual = obtenerUrlImagen(equiposEditar?.image);
+    
+    const hayDatosIngresados = [
+    codigo,
+    nombre,
+    modelo,
+    descripcion,
+    serie,
+    responsable,
+    fechaIngreso,
+    marca,
+    placa,
+    combustible,
+    potencia,
+    voltaje,
+    locationid
+].some(valor => String(valor ?? "").trim() !== "");
+
+useEffect(() => {
+    if (esEdicion || !usuarioId) return;
+
+    const borrador = {
+        codigo,
+        nombre,
+        modelo,
+        descripcion,
+        serie,
+        responsable,
+        fechaIngreso,
+        marca,
+        placa,
+        combustible,
+        potencia,
+        voltaje,
+        locationid
+    };
+
+    try {
+        sessionStorage.setItem(
+            obtenerClaveBorrador(usuarioId),
+            JSON.stringify(borrador)
+        );
+    } catch (error) {
+        console.error("Error al guardar el borrador de equipos:", error);
+    }
+
+}, [
+    esEdicion,
+    usuarioId,
+    codigo,
+    nombre,
+    modelo,
+    descripcion,
+    serie,
+    responsable,
+    fechaIngreso,
+    marca,
+    placa,
+    combustible,
+    potencia,
+    voltaje,
+    locationid
+]);
 
     useEffect(()=>{
         obtenerUbicaciones()
@@ -197,15 +330,21 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
             
             if (archivoImagen) datos.append("image", archivoImagen);
         try {
-            if (esEdicion){
-                await UpdateEquipment(equiposEditar.id, datos);
-            } else {
-                await CreateEquipment(datos);
-            }
-            onGuardado();
-            onCancel();
-        } catch (error) {
-            const respuesta = error.response?.data;
+    if (esEdicion){
+        await UpdateEquipment(equiposEditar.id, datos);
+    } else {
+        await CreateEquipment(datos);
+
+        // Eliminar el borrador después de crear correctamente.
+        eliminarBorrador(usuarioId);
+    }
+
+    onGuardado();
+    onCancel();
+
+}   catch (error) {
+    const respuesta = error.response?.data;
+
             if (respuesta?.errors && typeof respuesta.errors === "object") {
                 setErrores(respuesta.errors);
                 console.error("Errores de validación al guardar el equipo:", respuesta.errors);
@@ -222,11 +361,26 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
             .map(ubi => ({ valor: ubi.id, etiqueta: ubi.status === 'active' ? ubi.name : `${ubi.name} (Inactiva)` }))
     ];
 
+    const pedirConfirmacion = useConfirm();
+
+    const handleDescartar = async () => {
+    const confirmar = await pedirConfirmacion({
+        titulo: "Descartar borrador",
+        mensaje: "¿Estás seguro de que deseas descartar este borrador? Se perderán todos los datos ingresados."
+    });
+
+    if (!confirmar) return;
+
+    eliminarBorrador(usuarioId);
+    onCancel();
+};
+
     return(
         <Form
             titulo={esEdicion?"Editar Equipo":"Agregar Nuevo Equipo"}
             descripcion={esEdicion?"Ingrese los datos que desea editar":"Ingrese los datos del nuevo equipo"}
             onCancel={onCancel}
+           onDiscard={!esEdicion && hayDatosIngresados ? handleDescartar : undefined}
             textoBoton="Guardar"
             iconoBoton="fa-solid fa-floppy-disk"
             onSubmit={handleSubmit}
@@ -382,8 +536,8 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
                         value={estado}
                         onChange={(e) => setEstado(e.target.value)}
                         opciones={[
-                            { valor: "active", etiqueta: "Activo" },
-                            { valor: "inactive", etiqueta: "Inactivo" },
+                            { valor: "Activo", etiqueta: "Activo" },
+                            { valor: "Inactivo", etiqueta: "Inactivo" },
                         ]}
                         required
                     />
@@ -421,6 +575,8 @@ function Formulario({onCancel, onGuardado, equiposEditar}){
     )
 }
 function Equipos(){
+     const { usuario } = useAuth();
+    const usuarioId = usuario?.id;
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     let [equipo, setEquipo]= useState([])
     const [equiposEditar, setEquiposEditar]=useState(null);
@@ -538,7 +694,7 @@ function Equipos(){
                         <td>{e.responsible}</td>
                         <td>{e.brand}</td>
                         <td>{e.ubicacion.name}</td>
-                        <td>{e.status==='active'?'Activo':'Inactivo'}</td>
+                        <td>{e.status}</td>
                         <td>
                             <div className="btn-container__acciones">
                                 <BotonLink
@@ -585,14 +741,15 @@ function Equipos(){
                 />
             </div>
             
-            {mostrarFormulario && (
-                <Formulario 
-                    key={equiposEditar?.id || "nuevo"}
-                    onCancel={() => setMostrarFormulario(false)} 
-                    onGuardado={cargarEquipos} 
-                    equiposEditar={equiposEditar}
-                />
-            )}
+           {mostrarFormulario && (
+        <Formulario 
+        key={`${usuarioId}-${equiposEditar?.id || "nuevo"}`}
+        onCancel={() => setMostrarFormulario(false)} 
+        onGuardado={cargarEquipos} 
+        equiposEditar={equiposEditar}
+        usuarioId={usuarioId}
+         />
+    )}
         
         </div>
     )}

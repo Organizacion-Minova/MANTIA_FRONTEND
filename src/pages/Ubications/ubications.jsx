@@ -9,6 +9,7 @@ import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
 import { validarGroserias } from "../../components/common/Validations";
 import { useToast } from "../../context/ToastContext";
 import { useConfirm } from "../../context/ConfirmContext.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 import editarIcono from "../../assets/icons/editar.svg";
 import editarIconoDark from "../../assets/icons/editar-2.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
@@ -25,12 +26,9 @@ const obtenerMensajeError = (err, porDefecto) => {
     return (errores && Object.values(errores)[0]?.[0]) || err.response?.data?.message || porDefecto;
 };
 
-const regex_nombre = /^[\p{L}\p{N}\s\-_.,#/()°:]+$/u;
-
 const validar = ({ nombre, descripcion, categoria }) => {
     if (!nombre) return "El nombre es obligatorio.";
     if (nombre.length > 100) return "El nombre no puede superar los 100 caracteres.";
-    if (!regex_nombre.test(nombre)) return "El nombre solo puede contener letras, números, espacios y los caracteres - _ . , # / ( ) ° :";
     if (!categoria) return "La categoría es obligatoria.";
     if (!descripcion) return "La descripción es obligatoria.";
     if (descripcion.length > 5000) return "La descripción no puede superar los 5000 caracteres.";
@@ -43,17 +41,54 @@ const validar = ({ nombre, descripcion, categoria }) => {
     return null;
 };
 
-function Formulario({ onCancel, onSuccess, categorias, ubicacionEditar = null }) {
-    const [formData, setFormData] = useState({
-        nombre: ubicacionEditar ? ubicacionEditar.name : '',
-        descripcion: ubicacionEditar?.description ?? '',
-        categoria: ubicacionEditar ? ubicacionEditar.location_category_id : '',
+const obtenerClaveBorrador = (usuarioId) => `mantia_borrador_ubicaciones_${usuarioId}`;
+
+const obtenerBorrador = (usuarioId) => {
+    if (!usuarioId) return null;
+
+    try {
+        const borrador = sessionStorage.getItem(obtenerClaveBorrador(usuarioId));
+        return borrador ? JSON.parse(borrador) : null;
+    } catch (error) {
+        console.error("Error al recuperar el borrador de ubicaciones:", error);
+        return null;
+    }
+};
+
+const eliminarBorrador = (usuarioId) => {
+    if (!usuarioId) return;
+    sessionStorage.removeItem(obtenerClaveBorrador(usuarioId));
+};
+
+function Formulario({ onCancel, onSuccess, categorias, ubicacionEditar = null, usuarioId }) {
+    const isEditing = Boolean(ubicacionEditar);
+    const [borradorInicial] = useState(() => isEditing ? null : obtenerBorrador(usuarioId));
+    const [formData, setFormData] = useState(() => ({
+        nombre: borradorInicial?.nombre ?? (ubicacionEditar ? ubicacionEditar.name : ''),
+        descripcion: borradorInicial?.descripcion ?? (ubicacionEditar?.description ?? ''),
+        categoria: borradorInicial?.categoria ?? (ubicacionEditar ? ubicacionEditar.location_category_id : ''),
         estado: ubicacionEditar ? ubicacionEditar.status : 'active'
-    });
+    }));
 
     const [cargando, setCargando] = useState(false);
     const { advertencia } = useToast(); 
-    const isEditing = Boolean(ubicacionEditar);
+    const pedirConfirmacion = useConfirm();
+    const hayDatosIngresados = [formData.nombre, formData.descripcion, formData.categoria]
+        .some(valor => String(valor ?? "").trim() !== "");
+
+    useEffect(() => {
+        if (isEditing || !usuarioId) return;
+
+        try {
+            sessionStorage.setItem(obtenerClaveBorrador(usuarioId), JSON.stringify({
+                nombre: formData.nombre,
+                descripcion: formData.descripcion,
+                categoria: formData.categoria,
+            }));
+        } catch (error) {
+            console.error("Error al guardar el borrador de ubicaciones:", error);
+        }
+    }, [isEditing, usuarioId, formData.nombre, formData.descripcion, formData.categoria]);
 
     const opcionesCategoria = [
         { valor: "", etiqueta: "Seleccione una categoría" },
@@ -85,6 +120,7 @@ function Formulario({ onCancel, onSuccess, categorias, ubicacionEditar = null })
                 await actualizarUbicacion(ubicacionEditar.id, datos);
             } else {
                 await guardarUbicacion(datos);
+                eliminarBorrador(usuarioId);
             }
             onSuccess();
             onCancel();
@@ -95,11 +131,24 @@ function Formulario({ onCancel, onSuccess, categorias, ubicacionEditar = null })
         }
     };
 
+    const handleDescartar = async () => {
+        const confirmar = await pedirConfirmacion({
+            titulo: "Descartar borrador",
+            mensaje: "¿Estás seguro de que deseas descartar este borrador? Se perderán todos los datos ingresados.",
+        });
+
+        if (!confirmar) return;
+
+        eliminarBorrador(usuarioId);
+        onCancel();
+    };
+
     return (
         <Form
             titulo={isEditing ? "Editar ubicación" : "Agregar nueva ubicación"}
             descripcion={isEditing ? "Modifique los datos de la ubicación" : "Ingrese los datos para la nueva ubicación"}
             onCancel={onCancel}
+            onDiscard={!isEditing && hayDatosIngresados ? handleDescartar : undefined}
             onSubmit={handleSubmit}
             textoBoton={cargando ? "Guardando..." : isEditing ? "Actualizar" : "Guardar"}
             iconoBoton="fa-solid fa-floppy-disk"
@@ -156,6 +205,8 @@ function Formulario({ onCancel, onSuccess, categorias, ubicacionEditar = null })
 }
 
 function Ubicaciones() {
+    const { usuario } = useAuth();
+    const usuarioId = usuario?.id;
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [ubicacionAEditar, setUbicacionAEditar] = useState(null);
     const [ubicaciones, setUbicaciones] = useState([]);
@@ -341,10 +392,12 @@ function Ubicaciones() {
             </div>
             {mostrarFormulario && (
                 <Formulario
+                    key={`${usuarioId ?? "sin-usuario"}-${ubicacionAEditar?.id ?? "nuevo"}`}
                     ubicacionEditar={ubicacionAEditar}
                     categorias={categorias}
                     onCancel={() => setMostrarFormulario(false)}
                     onSuccess={cargarDatos}
+                    usuarioId={usuarioId}
                 />
             )}
         </div>

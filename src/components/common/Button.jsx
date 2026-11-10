@@ -68,15 +68,7 @@ export function BotonAccion({ clase, texto, onClick, icono, iconoDark, disabled,
     const { manejarClick, ocupado } = useUnSoloClic(onClick);
 
     return (
-        <button
-            type="submit"
-            className={clase}
-            onClick={manejarClick}
-            disabled={disabled || ocupado}
-            aria-busy={ocupado || undefined}
-            key={key}
-            title={titulo}
-        >
+        <button type="button" className={clase} onClick={onClick} disabled={disabled} key={key} title={titulo}>
             {icono && (
                 <img
                     className={`boton-accion__icono${iconoDark ? " boton-accion__icono--light" : ""}`}

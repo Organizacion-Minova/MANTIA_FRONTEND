@@ -16,41 +16,110 @@ import editarIcono from "../../assets/icons/editar.svg";
 import editarIconoDark from "../../assets/icons/editar-2.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
 import verIcono from "../../assets/icons/ver.svg";
+import { useAuth } from "../../context/AuthContext.jsx";
+import { mensajeDeError } from "../../utils/errores";
 
 const valorSelect = (valor) => (valor == null ? "" : String(valor));
-const valorOperacion = (valor) => {
-    if (valor === true || valor === 1 || valor === "1" || valor === "yes" || valor === "true") return "1";
-    if (valor === false || valor === 0 || valor === "0" || valor === "no" || valor === "false") return "0";
-    return valorSelect(valor);
+const normalizarEstado = (estado) => {
+    const valor = String(estado || "").trim().toLocaleLowerCase("es");
+    if (valor === "inactive" || valor === "inactivo") return "Inactivo";
+    if (valor === "maintenance" || valor === "mantenimiento") return "Mantenimiento";
+    return "Activo";
+};
+const obtenerClaveBorrador = (usuarioId) => `mantia_borrador_maquinas_${usuarioId}`;
+
+const obtenerBorrador = (usuarioId) => {
+    if (!usuarioId) return null;
+
+    try {
+        const borrador = sessionStorage.getItem(obtenerClaveBorrador(usuarioId));
+        return borrador ? JSON.parse(borrador) : null;
+    } catch (error) {
+        console.error("Error al recuperar el borrador de máquinas:", error);
+        return null;
+    }
 };
 
-function Formulario({onCancel, onGuardado, maquinaEditar}){
+const eliminarBorrador = (usuarioId) => {
+    if (!usuarioId) return;
+    sessionStorage.removeItem(obtenerClaveBorrador(usuarioId));
+};
+
+function Formulario({onCancel, onGuardado, maquinaEditar, usuarioId}){
     const esEdicion=maquinaEditar!=null;
-    const { advertencia } = useToast();
-    const [codigo, setCodigo] = useState(maquinaEditar?.code || "");
-    const [nombre, setNombre] = useState(maquinaEditar?.name || "");
-    const [modelo, setModelo] = useState(maquinaEditar?.model || "");
-    const [numeroSerie, setNumeroSerie] = useState(maquinaEditar?.serial_number || "");
-    const [fechaAdquisicion, setFechaAdquisicion] = useState(maquinaEditar?.acquisition_date || "");
-    const [costoAdquisicion, setCostoAdquisicion] = useState(maquinaEditar?.acquisition_cost ?? "");
-    const [estado, setEstado] = useState(maquinaEditar?.status || "active");
-    const [garantia, setGarantia] = useState(maquinaEditar?.warranty ?? "");
-    const [archivoImagen, setArchivoImagen] = useState(null);
-    const [categoriaid, setCategoriaid] = useState(valorSelect(maquinaEditar?.category_maquina?.id ?? maquinaEditar?.category_id));
-    const [locationid, setLocationid] = useState(valorSelect(maquinaEditar?.ubicacion?.id ?? maquinaEditar?.location?.id ?? maquinaEditar?.location_id));
-    const [marca, setMarca] = useState(maquinaEditar?.brand || "");
-    const [responsable, setResponsable] = useState(maquinaEditar?.responsible || "");
-    const [usoMaquina, setUsoMaquina] = useState(maquinaEditar?.machine_usage || "");
-    const [maquinaEnOperacion, setMaquinaEnOperacion] = useState(valorOperacion(maquinaEditar?.in_operation));
-    const [caracteristicas, setCaracteristicas] = useState(maquinaEditar?.characteristics || "");
+    const { advertencia, peligro } = useToast();
+    const [borradorInicial] = useState(() => esEdicion ? null : obtenerBorrador(usuarioId));
+    const [codigo, setCodigo] = useState(borradorInicial?.codigo ?? maquinaEditar?.code ?? "");
+    const [nombre, setNombre] = useState(borradorInicial?.nombre ?? maquinaEditar?.name ?? "");
+    const [modelo, setModelo] = useState(borradorInicial?.modelo ?? maquinaEditar?.model ?? "");
+    const [numeroSerie, setNumeroSerie] = useState(borradorInicial?.numeroSerie ?? maquinaEditar?.serial_number ?? "");
+    const [responsable, setResponsable] = useState(borradorInicial?.responsable ?? maquinaEditar?.responsible ?? "");
+    const [estado, setEstado] = useState(normalizarEstado(maquinaEditar?.status));
+    const [fechaInicio, setFechaInicio] = useState(borradorInicial?.fechaInicio ?? maquinaEditar?.start_up_date?.slice(0, 10) ?? "");
+    const [marca, setMarca] = useState(borradorInicial?.marca ?? maquinaEditar?.brand ?? "");
+    const [placa, setPlaca] = useState(borradorInicial?.placa ?? maquinaEditar?.plate ?? "");
+    const [combustible, setCombustible] = useState(borradorInicial?.combustible ?? maquinaEditar?.fuel ?? "");
+    const [potencia, setPotencia] = useState(borradorInicial?.potencia ?? maquinaEditar?.power ?? "");
+    const [voltaje, setVoltaje] = useState(borradorInicial?.voltaje ?? maquinaEditar?.voltage ?? "");
+    const [locationid, setLocationid] = useState(borradorInicial?.locationid ?? valorSelect(maquinaEditar?.ubicacion?.id ?? maquinaEditar?.location?.id ?? maquinaEditar?.location_id));
+    const [categoriaid, setCategoriaid] = useState(borradorInicial?.categoriaid ?? valorSelect(maquinaEditar?.category_maquina?.id ?? maquinaEditar?.category_id));
+    const [caracteristicas, setCaracteristicas] = useState(borradorInicial?.caracteristicas ?? maquinaEditar?.characteristics ?? "");
     const [categorias,setCategorias]=useState([]);
     const [ubicaciones, setUbicaciones] = useState([]);
+    const [archivoImagen, setArchivoImagen] = useState(null);
     const [errorImagen, setErrorImagen] = useState("");
     const [vistaPrevia, setVistaPrevia] = useState(null);
-    const [errores, setErrores] = useState({});
-    const [mensajeError, setMensajeError] = useState("");
     const imagenActual = maquinaEditar?.image || null;
     const opcionesResponsable = useRolesResponsables(maquinaEditar?.responsible);
+
+    const hayDatosIngresados = [
+        codigo,
+        nombre,
+        modelo,
+        numeroSerie,
+        responsable,
+        fechaInicio,
+        marca,
+        placa,
+        combustible,
+        potencia,
+        voltaje,
+        locationid,
+        categoriaid,
+        caracteristicas,
+        archivoImagen,
+    ].some(valor => String(valor ?? "").trim() !== "");
+
+    useEffect(() => {
+        if (esEdicion || !usuarioId) return;
+
+        const borrador = {
+            codigo,
+            nombre,
+            modelo,
+            numeroSerie,
+            responsable,
+            fechaInicio,
+            marca,
+            placa,
+            combustible,
+            potencia,
+            voltaje,
+            locationid,
+            categoriaid,
+            caracteristicas,
+        };
+
+        try {
+            sessionStorage.setItem(obtenerClaveBorrador(usuarioId), JSON.stringify(borrador));
+        } catch (error) {
+            console.error("Error al guardar el borrador de máquinas:", error);
+        }
+    }, [
+        esEdicion, usuarioId, codigo, nombre, modelo, numeroSerie, responsable,
+        fechaInicio, marca, placa, combustible, potencia, voltaje, locationid,
+        categoriaid, caracteristicas,
+    ]);
 
     useEffect(()=>{
         GetCategoryMachine()
@@ -98,24 +167,17 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setErrores({});
-        setMensajeError("");
         const imagenFaltante = !esEdicion && !archivoImagen;
         if (!validarCamposRequeridos({
             "Código": codigo,
             "Nombre": nombre,
             "Modelo": modelo,
             "Número de serie": numeroSerie,
-            "Fecha de adquisición": fechaAdquisicion,
-            "Costo de adquisición": costoAdquisicion,
-            "Marca": marca,
-            "Ubicación": locationid,
-            "Uso de la máquina": usoMaquina,
             "Responsable": responsable,
-            "Operación de la máquina": maquinaEnOperacion,
-            "Garantía": garantia,
+            "Marca": marca,
+            "Placa": placa,
+            "Ubicación": locationid,
             "Categoría": categoriaid,
-            "Características": caracteristicas,
             ...(esEdicion ? { "Estado": estado } : {}),
             ...(imagenFaltante ? { "Imagen": "" } : {}),
         })) {
@@ -123,11 +185,39 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
             return;
         }
 
+        if (esEdicion) {
+            const sinCambios =
+                codigo === (maquinaEditar.code || "") &&
+                nombre === (maquinaEditar.name || "") &&
+                modelo === (maquinaEditar.model || "") &&
+                numeroSerie === (maquinaEditar.serial_number || "") &&
+                responsable === (maquinaEditar.responsible || "") &&
+                estado === normalizarEstado(maquinaEditar.status) &&
+                fechaInicio === (maquinaEditar.start_up_date?.slice(0, 10) || "") &&
+                marca === (maquinaEditar.brand || "") &&
+                placa === (maquinaEditar.plate || "") &&
+                combustible === (maquinaEditar.fuel || "") &&
+                potencia === (maquinaEditar.power || "") &&
+                voltaje === (maquinaEditar.voltage || "") &&
+                locationid === valorSelect(maquinaEditar.ubicacion?.id ?? maquinaEditar.location?.id ?? maquinaEditar.location_id) &&
+                categoriaid === valorSelect(maquinaEditar.category_maquina?.id ?? maquinaEditar.category_id) &&
+                caracteristicas === (maquinaEditar.characteristics || "") &&
+                !archivoImagen;
+            if (sinCambios) {
+                onCancel();
+                return;
+            }
+        }
+
         const camposTexto = {
+            code: codigo,
             name: nombre,
             model: modelo,
-            machine_usage: usoMaquina,
+            serial_number: numeroSerie,
             responsible: responsable,
+            brand: marca,
+            plate: placa,
+            fuel: combustible,
             characteristics: caracteristicas,
         };
         const camposTextoValidados = esEdicion
@@ -139,58 +229,86 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
             : camposTexto;
         const erroresGroserias = validarGroserias(camposTextoValidados);
         if (Object.keys(erroresGroserias).length > 0) {
-            advertencia("No se permiten palabras inapropiadas.", "Palabras inapropiadas");
+            advertencia(
+                `Se encontraron palabras inapropiadas en: ${Object.keys(erroresGroserias).join(", ")}.`,
+                "Revisa los datos"
+            );
             return;
         }
 
-        const erroresLocales = validarCaracteresEspeciales({ name: nombre });
-        if (Object.keys(erroresLocales).length > 0) {
-            setErrores(erroresLocales);
+        const patronIdentificador = /^[\p{L}\p{N}]+(?:[ ._/-][\p{L}\p{N}]+)*$/u;
+        const identificadores = [
+            { nombre: "Código", valor: codigo, original: maquinaEditar?.code },
+            { nombre: "Modelo", valor: modelo, original: maquinaEditar?.model },
+            { nombre: "Número de serie", valor: numeroSerie, original: maquinaEditar?.serial_number },
+            { nombre: "Placa", valor: placa, original: maquinaEditar?.plate },
+        ].filter(({ valor, original }) => !esEdicion || valor !== (original || ""));
+        const identificadoresInvalidos = identificadores
+            .filter(({ valor }) => !patronIdentificador.test(valor.trim()))
+            .map(({ nombre }) => nombre);
+        if (identificadoresInvalidos.length > 0) {
+            advertencia(
+                `${identificadoresInvalidos.join(", ")}: usa solo letras, números, espacios, puntos, guiones, barras o guiones bajos.`,
+                "Revisa los datos"
+            );
+            return;
+        }
+
+        const camposConLongitudMinima = [
+            { nombre: "Código", valor: codigo, minimo: 2 },
+            { nombre: "Nombre", valor: nombre, minimo: 3 },
+            { nombre: "Modelo", valor: modelo, minimo: 2 },
+            { nombre: "Número de serie", valor: numeroSerie, minimo: 3 },
+            { nombre: "Responsable", valor: responsable, minimo: 3 },
+            { nombre: "Marca", valor: marca, minimo: 2 },
+            { nombre: "Placa", valor: placa, minimo: 3 },
+            { nombre: "Características", valor: caracteristicas, minimo: 10 },
+        ];
+        const camposInvalidos = camposConLongitudMinima.filter(({ nombre, valor, minimo }) => {
+            const longitud = Array.from(String(valor).trim()).length;
+            const original = {
+                Código: maquinaEditar?.code,
+                Nombre: maquinaEditar?.name,
+                Modelo: maquinaEditar?.model,
+                "Número de serie": maquinaEditar?.serial_number,
+                Responsable: maquinaEditar?.responsible,
+                Marca: maquinaEditar?.brand,
+                Placa: maquinaEditar?.plate,
+                Características: maquinaEditar?.characteristics,
+            }[nombre] || "";
+            return (longitud > 0 && longitud < minimo) &&
+                (!esEdicion || valor !== original);
+        });
+        if (camposInvalidos.length > 0) {
+            advertencia(
+                camposInvalidos.map(({ nombre, minimo }) => `${nombre}: mínimo ${minimo} caracteres`).join(". "),
+                "Mínimo de caracteres"
+            );
+            return;
+        }
+        if (Array.from(placa.trim()).length > 80) {
+            advertencia("La placa no puede superar los 80 caracteres.", "Revisa los datos");
             return;
         }
         if (!esEdicion && !archivoImagen) {
             setErrorImagen("Debe seleccionar una imagen.");
             return;
         }
-        if (esEdicion){
-            const sincambios=
-                codigo===maquinaEditar.code &&
-                nombre===maquinaEditar.name &&
-                modelo===maquinaEditar.model &&
-                numeroSerie===maquinaEditar.serial_number &&
-                fechaAdquisicion===maquinaEditar.acquisition_date &&
-                costoAdquisicion===maquinaEditar.acquisition_cost &&
-                estado===maquinaEditar.status &&
-                garantia===maquinaEditar.warranty &&
-                categoriaid===valorSelect(maquinaEditar.category_maquina?.id ?? maquinaEditar.category_id) &&
-                locationid===valorSelect(maquinaEditar.ubicacion?.id ?? maquinaEditar.location?.id ?? maquinaEditar.location_id) &&
-                marca===maquinaEditar.brand &&
-                responsable===maquinaEditar.responsible &&
-                caracteristicas===maquinaEditar.characteristics &&
-                usoMaquina===maquinaEditar.machine_usage &&
-                maquinaEnOperacion===valorOperacion(maquinaEditar.in_operation) &&
-                !archivoImagen;
-            if (sincambios){
-                onCancel();
-                return;
-            }
-
-        }
         const datos = new FormData();
             datos.append("code", codigo);
             datos.append("name", nombre);
             datos.append("model", modelo);
             datos.append("serial_number", numeroSerie);
-            datos.append("acquisition_date", fechaAdquisicion);
-            datos.append("acquisition_cost", costoAdquisicion);
-            datos.append("status", estado);
-            datos.append("warranty", garantia);
-            datos.append("machine_category_id", categoriaid);
-            datos.append("location_id", locationid);
-            datos.append("brand", marca);
             datos.append("responsible", responsable);
-            datos.append("machine_usage", usoMaquina);
-            datos.append("in_operation", maquinaEnOperacion);
+            datos.append("status", estado);
+            datos.append("start_up_date", fechaInicio);
+            datos.append("brand", marca);
+            datos.append("plate", placa);
+            datos.append("fuel", combustible);
+            datos.append("power", potencia);
+            datos.append("voltage", voltaje);
+            datos.append("location_id", locationid);
+            datos.append("machine_category_id", categoriaid);
             datos.append("characteristics", caracteristicas);
             if (archivoImagen) datos.append("image", archivoImagen);
         try {
@@ -198,18 +316,18 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
                 await UpdateMachine(maquinaEditar.id, datos);
             } else {
                 await CreateMachine(datos);
+                eliminarBorrador(usuarioId);
             }
             onGuardado();
             onCancel();
         } catch (error) {
             const respuesta = error.response?.data;
             if (respuesta?.errors && typeof respuesta.errors === "object") {
-                setErrores(respuesta.errors);
-                setMensajeError(respuesta.message || "El servidor rechazó algunos datos.");
                 console.error("Error de validación al guardar la máquina:", JSON.stringify(respuesta, null, 2));
+                advertencia(mensajeDeError(error, "Revisa los datos de la máquina."), "No se pudo guardar");
             } else {
                 console.error("Error al guardar la maquina:", respuesta || error.message);
-                setMensajeError(respuesta?.message || "No se pudo guardar la máquina. Intente de nuevo.");
+                peligro(mensajeDeError(error, "No se pudo guardar la máquina."), "No se pudo guardar");
             }
         }
     }
@@ -217,15 +335,36 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
     const opcionesUbicaciones = [
         { valor: "", etiqueta: "Seleccione una ubicación" },
         ...ubicaciones
-            .filter(ubi => ubi.status === 'active' || ubi.id === maquinaEditar?.location_id)
+            .filter((ubi) =>
+                ubi.status === "active" ||
+                String(ubi.id) === valorSelect(
+                    maquinaEditar?.ubicacion?.id ??
+                    maquinaEditar?.location?.id ??
+                    maquinaEditar?.location_id
+                )
+            )
             .map(ubi => ({ valor: ubi.id, etiqueta: ubi.status === 'active' ? ubi.name : `${ubi.name} (Inactiva)` }))
     ];
+
+    const pedirConfirmacion = useConfirm();
+    const handleDescartar = async () => {
+        const confirmar = await pedirConfirmacion({
+            titulo: "Descartar borrador",
+            mensaje: "¿Estás seguro de que deseas descartar este borrador? Se perderán todos los datos ingresados.",
+        });
+
+        if (!confirmar) return;
+
+        eliminarBorrador(usuarioId);
+        onCancel();
+    };
 
     return(
         <Form
             titulo={esEdicion?"Editar máquina":"Agregar nueva máquina"}
             descripcion={esEdicion?"Ingrese los datos que desea editar":"Ingrese los datos de la nueva maquina"}
             onCancel={onCancel}
+            onDiscard={!esEdicion && hayDatosIngresados ? handleDescartar : undefined}
             textoBoton="Guardar"
             iconoBoton="fa-solid fa-floppy-disk"
             onSubmit={handleSubmit}
@@ -239,6 +378,7 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
                     placeholder="Código de la máquina"
                     value={codigo}
                     onChange={(e) => setCodigo(e.target.value)}
+                    maxLength={50}
                     required
                 />
             </div>
@@ -251,10 +391,9 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
                     value={nombre}
                     onChange={(e) => {
                         const valor = e.target.value;
-                        if (valor === "" || sinCaracteresEspeciales(valor)) {
-                            setNombre(capitalizarPrimeraLetra(valor));
-                        }
+                        setNombre(capitalizarPrimeraLetra(valor));
                     }}
+                    maxLength={50}
                     required
                 />
             </div>
@@ -266,20 +405,11 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
                     placeholder="Modelo de la máquina"
                     value={modelo}
                     onChange={(e) => setModelo(capitalizarPrimeraLetra(e.target.value))}
+                    maxLength={50}
                     required
                 />
             </div>
-            <div className="col-span-3">
-                <Text
-                    label="Marca:"
-                    id="marca"
-                    name="marca"
-                    placeholder="Marca de la máquina"
-                    value={marca}
-                    onChange={(e) => setMarca(e.target.value)}
-                    required
-                />
-            </div>
+            
             <div className="col-span-3">
                 <Text
                     label="Número de serie:"
@@ -288,28 +418,7 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
                     placeholder="Número de serie"
                     value={numeroSerie}
                     onChange={(e) =>setNumeroSerie(e.target.value)}
-                    required
-                />
-            </div>
-            <div className="col-span-3">
-                <Select
-                    label="Ubicación: "
-                    id="ubicacion"
-                    name="ubicacion"
-                    value={locationid}
-                    onChange={(e) => setLocationid(e.target.value)}
-                    opciones={opcionesUbicaciones}
-                    required
-                />
-            </div>
-            <div className="col-span-3">
-                <Text
-                    label="Uso de la máquina: "
-                    id="usoMaquina"
-                    name="usoMaquina"
-                    placeholder="Uso de la máquina"
-                    value={usoMaquina}
-                    onChange={(e) => setUsoMaquina(capitalizarPrimeraLetra(e.target.value))}
+                    maxLength={50}
                     required
                 />
             </div>
@@ -326,69 +435,80 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
             </div>
             <div className="col-span-3">
                 <Date
-                    label="Fecha de adquisición:"
-                    id="fechaAdquisicion"
-                    name="fechaAdquisicion"
-                    value={fechaAdquisicion}
-                    onChange={(e) => setFechaAdquisicion(e.target.value)}
-                    required
+                    label="Fecha de inicio :"
+                    id="fechainicio"
+                    name="fechaInicio"
+                    value={fechaInicio}
+                    onChange={(e) => setFechaInicio(e.target.value)}
                 />
             </div>
             <div className="col-span-3">
                 <Text
-                    label="Costo adquisición:"
-                    id="costoAdquisicion"
-                    name="costoAdquisicion"
-                    type="number"
-                    placeholder="Costo de adquisición"
-                    value={costoAdquisicion}
-                    onChange={(e) => setCostoAdquisicion(e.target.value)}
+                    label="Marca:"
+                    id="marca"
+                    name="marca"
+                    placeholder="Marca de la máquina"
+                    value={marca}
+                    onChange={(e) => setMarca(capitalizarPrimeraLetra(e.target.value))}
+                    maxLength={50}
                     required
                 />
             </div>
-            {esEdicion && (
-                <div className="col-span-3">
-                    <Select
-                        label="Estado:"
-                        id="estado"
-                        name="estado"
-                        value={estado}
-                        onChange={(e) => setEstado(e.target.value)}
-                        opciones={[
-                            {valor:"", etiqueta:"Seleccione un estado"},
-                            {valor:"active", etiqueta:"Activo"},
-                            {valor:"inactive", etiqueta:"Inactivo"},
-                            {valor:"maintenance", etiqueta:"Mantenimiento"}
-                        ]}
-                        required
-                    />
-                </div>
-            )}
             
-            <div className={esEdicion?"col-span-3":"col-span-6"}>
-                <Select
-                    label="Máquina en operación:"
-                    id="maquinaenoperacion"
-                    name="maquinaenoperacion"
-                    value={maquinaEnOperacion}
-                    onChange={(e) => setMaquinaEnOperacion(e.target.value)}
-                    opciones={[
-                        {valor:"", etiqueta:"Seleccione una opción"},
-                        {valor:"1", etiqueta:"Sí"},
-                        {valor:"0", etiqueta:"No"}
-                    ]}
+            <div className="col-span-3">
+                <Text
+                    label="Placa:"
+                    id="placa"
+                    name="placa"
+                    placeholder="Ingrese la placa del equipo"
+                    value={placa}
+                    onChange={(e) => setPlaca(e.target.value)}
+                    maxLength={80}
                     required
                 />
             </div>
             <div className="col-span-3">
                 <Text
-                    label="Garantía:"
-                    id="garantia"
-                    name="garantia"
-                    type="number"
-                    placeholder="Garantía en meses"
-                    value={garantia}
-                    onChange={(e) => setGarantia(e.target.value)}
+                    label="Combustible (opcional):"
+                    id="combustible"
+                    name="combustible"
+                    placeholder="Ingrese el combustible del equipo"
+                    value={combustible}
+                    onChange={(e) => setCombustible(capitalizarPrimeraLetra(e.target.value))}
+                    maxLength={50}
+
+                />
+            </div>
+            <div className="col-span-3">
+                <Text
+                    label="Potencia (opcional):"
+                    id="potencia"
+                    name="potencia"
+                    placeholder="Ingrese la potencia del equipo"
+                    value={potencia}
+                    onChange={(e) => setPotencia(e.target.value)}
+                    maxLength={50}
+                />
+            </div>
+            <div className="col-span-3">
+                <Text
+                    label="Voltaje (opcional):"
+                    id="voltaje"
+                    name="voltaje"
+                    placeholder="Ingrese el voltaje del equipo"
+                    value={voltaje}
+                    onChange={(e) => setVoltaje(e.target.value)}
+                    maxLength={50}
+                />
+            </div>
+            <div className="col-span-3">
+                <Select
+                    label="Ubicación: "
+                    id="ubicacion"
+                    name="ubicacion"
+                    value={locationid}
+                    onChange={(e) => setLocationid(e.target.value)}
+                    opciones={opcionesUbicaciones}
                     required
                 />
             </div>
@@ -406,21 +526,27 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
                     required
                 />
             </div>
-            <div className="col-span-6">
-                <Textarea
-                    label="Características:"
-                    id="caracteristicas"
-                    name="caracteristicas"
-                    placeholder="Características de la máquina"
-                    rows="4"
-                    value={caracteristicas}
-                    onChange={(e) => setCaracteristicas(capitalizarPrimeraLetra(e.target.value))}
-                    required
-                />
-            </div>
+            {esEdicion && (
+                <div className="col-span-3">
+                    <Select
+                        label="Estado:"
+                        id="estado"
+                        name="estado"
+                        value={estado}
+                        onChange={(e) => setEstado(e.target.value)}
+                        opciones={[
+                            {valor:"Activo", etiqueta:"Activo"},
+                            {valor:"Inactivo", etiqueta:"Inactivo"},
+                            {valor:"Mantenimiento", etiqueta:"Mantenimiento"}
+                        ]}
+                        required
+                    />
+                </div>
+            )}
+            
             <div className="col-span-6">
                 <Dropzone
-                    label="Imagen:"
+                    label="Imagen (opcional):"
                     id="imagen"
                     name="imagen"
                     accept="image/*"
@@ -432,18 +558,36 @@ function Formulario({onCancel, onGuardado, maquinaEditar}){
                     previewAlt="Vista previa de la imagen del equipo"
                     previewLabel={archivoImagen?.name || "Imagen actual"}
                     error={errorImagen}
-                    required={!esEdicion && !archivoImagen}
                 />
             </div>
+            <div className="col-span-6">
+                <Textarea
+                    label="Características (opcional):"
+                    id="caracteristicas"
+                    name="caracteristicas"
+                    placeholder="Características de la máquina"
+                    rows="4"
+                    value={caracteristicas}
+                    onChange={(e) => setCaracteristicas(capitalizarPrimeraLetra(e.target.value))}
+                />
+            </div>
+            
         </Form>
     )
 
 }
+function FormularioConsumibles(){
+
+}
 function Maquinas(){
+    const { usuario } = useAuth();
+    const usuarioId = usuario?.id;
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     let [maquina, setMaquina]=useState([])
     const [maquinaEditar, setMaquinaEditar]=useState(null);
     const [cargando, setCargando]=useState(true)
+    
+
     maquina.map((maquina)=>({
         ...maquina,
         categoriaBusqueda: maquina.category_maquina?.name || "",
@@ -554,8 +698,8 @@ function Maquinas(){
             </header>
             <div className="table-responsive">
                 <table className="table">
-                        <thead>
-                            <tr>
+                    <thead>
+                        <tr>
                             <th>Código</th>
                             <th>Nombre</th>
                             <th>Número de serie</th>
@@ -575,7 +719,7 @@ function Maquinas(){
                                 <td>{m.category_maquina?.name||""}</td>
                                 <td>{m.brand}</td>
                                 <td>{m.ubicacion?.name||""}</td>
-                                <td>{m.status==="active"?"Activo":m.status==="inactive"?"Inactivo":m.status==="maintenance"?"En mantenimiento":"Desconocido"}</td>
+                                <td>{m.status}</td>
                                 <td>
                                 <div className="btn-container__acciones">
                                 <BotonLink
@@ -629,10 +773,11 @@ function Maquinas(){
             </div>
             {mostrarFormulario && (
                 <Formulario
-                    key={maquinaEditar?.id || "nuevo"}
+                    key={`${usuarioId ?? "sin-usuario"}-${maquinaEditar?.id ?? "nuevo"}`}
                     onCancel={() => setMostrarFormulario(false)}
                     onGuardado={cargarMaquinas}
                     maquinaEditar={maquinaEditar}
+                    usuarioId={usuarioId}
                 />
             )}
         </div>

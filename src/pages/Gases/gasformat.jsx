@@ -7,6 +7,8 @@ import { obtenerMedicionPorId, actualizarDetalleGases, actualizarCabeceraGases }
 import { useSearch } from "../../hooks/useSearch";
 import LoadingScreen from "../../components/LoadingScreen";
 import { useToast } from "../../context/ToastContext.jsx";
+import { useConfirm } from "../../context/ConfirmContext.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 import { validarGroserias } from "../../components/common/Validations";
 import { exportarGasExcelUnitario, exportarGasPdfUnitario } from "../../api/gasMeasurement";
 import editarIcono from "../../assets/icons/editar.svg";
@@ -22,6 +24,26 @@ const gases = [
 ];
 
 const camposBusqueda = [...gases.map((g) => g.key), 'responsible_name', 'observation'];
+
+const obtenerClaveBorrador = (usuarioId, detalleId) =>
+    `mantia_borrador_gases_${usuarioId}_${detalleId}`;
+
+const obtenerBorrador = (usuarioId, detalleId) => {
+    if (!usuarioId || !detalleId) return null;
+
+    try {
+        const borrador = sessionStorage.getItem(obtenerClaveBorrador(usuarioId, detalleId));
+        return borrador ? JSON.parse(borrador) : null;
+    } catch (error) {
+        console.error("Error al recuperar el borrador de gases:", error);
+        return null;
+    }
+};
+
+const eliminarBorrador = (usuarioId, detalleId) => {
+    if (!usuarioId || !detalleId) return;
+    sessionStorage.removeItem(obtenerClaveBorrador(usuarioId, detalleId));
+};
 
 const diligenciada = (detalle) => {
     if (!detalle) return false;
@@ -53,8 +75,6 @@ const camposFaltantes = (medicion) => {
     return faltan;
 };
 
-const regex_responsable = /^[\p{L}\s.'\-]+$/u;
-const regex_observacion = /^[\p{L}\p{N}\s.,;:()\-/%°#¿?¡!]+$/u;
 const tipos_firma = ['image/png', 'image/jpeg', 'image/webp'];
 const peso_maximo_firma = 2 * 1024 * 1024;
 
@@ -71,11 +91,9 @@ const validar = (datos) => {
     if (!datos.observation) return "Las observaciones son obligatorias.";
     if (datos.responsible_name) {
         if (datos.responsible_name.length > 100) return "El nombre del responsable no puede superar los 100 caracteres.";
-        if (!regex_responsable.test(datos.responsible_name)) return "El nombre del responsable solo puede contener letras, espacios, puntos, apóstrofes y guiones.";
     }
     if (datos.observation) {
         if (datos.observation.length > 100) return "La observación no puede superar los 100 caracteres.";
-        if (!regex_observacion.test(datos.observation)) return "La observación contiene caracteres no permitidos.";
     }
     const erroresGroserias = validarGroserias({ 
         responsible_name: datos.responsible_name, 
@@ -86,15 +104,35 @@ const validar = (datos) => {
     return null;
 };
 
-function FormularioGases({ detalle, onCancel, onSuccess }) {
+function FormularioGases({ detalle, onCancel, onSuccess, usuarioId }) {
     const isEditing = diligenciada(detalle);
-    const [formData, setFormData] = useState({
-        ...Object.fromEntries(gases.map((g) => [g.key, detalle[g.key] ?? ''])),
-        responsible_name: detalle.responsible_name ?? '',
-        observation: detalle.observation ?? ''
-    });
+    const [borradorInicial] = useState(() =>
+        isEditing ? null : obtenerBorrador(usuarioId, detalle.id)
+    );
+    const [formData, setFormData] = useState(() => ({
+        ...Object.fromEntries(gases.map((g) => [g.key, borradorInicial?.[g.key] ?? detalle[g.key] ?? ''])),
+        responsible_name: borradorInicial?.responsible_name ?? detalle.responsible_name ?? '',
+        observation: borradorInicial?.observation ?? detalle.observation ?? ''
+    }));
     const [cargando, setCargando] = useState(false);
     const { advertencia } = useToast(); 
+    const pedirConfirmacion = useConfirm();
+
+    const hayDatosIngresados = Object.values(formData)
+        .some(valor => String(valor ?? "").trim() !== "");
+
+    useEffect(() => {
+        if (isEditing || !usuarioId) return;
+
+        try {
+            sessionStorage.setItem(
+                obtenerClaveBorrador(usuarioId, detalle.id),
+                JSON.stringify(formData)
+            );
+        } catch (error) {
+            console.error("Error al guardar el borrador de gases:", error);
+        }
+    }, [isEditing, usuarioId, detalle.id, formData]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -113,6 +151,7 @@ function FormularioGases({ detalle, onCancel, onSuccess }) {
 
         try {
             await actualizarDetalleGases(detalle.id, datos);
+            if (!isEditing) eliminarBorrador(usuarioId, detalle.id);
             onSuccess();
             onCancel();
         } catch (err) {
@@ -124,11 +163,24 @@ function FormularioGases({ detalle, onCancel, onSuccess }) {
         }
     };
 
+    const handleDescartar = async () => {
+        const confirmar = await pedirConfirmacion({
+            titulo: "Descartar borrador",
+            mensaje: "¿Estás seguro de que deseas descartar este borrador? Se perderán todos los datos ingresados.",
+        });
+
+        if (!confirmar) return;
+
+        eliminarBorrador(usuarioId, detalle.id);
+        onCancel();
+    };
+
     return (
         <Form
             titulo={isEditing ? "Editar registro" : "Agregar nuevo registro"}
             descripcion={isEditing ? "Modifica los datos de la medición" : "Ingresa los datos del formulario diario de gases"}
             onCancel={onCancel}
+            onDiscard={!isEditing && hayDatosIngresados ? handleDescartar : undefined}
             onSubmit={handleSubmit}
             textoBoton={cargando ? "Guardando..." : isEditing ? "Actualizar" : "Guardar"}
             iconoBoton="fa-solid fa-floppy-disk"
@@ -190,6 +242,8 @@ function FormularioGases({ detalle, onCancel, onSuccess }) {
 
 export function FormatoGases() {
     const { advertencia } = useToast();
+    const { usuario } = useAuth();
+    const usuarioId = usuario?.id;
     const { id } = useParams();
     const [medicion, setMedicion] = useState(null);
     const [cargando, setCargando] = useState(true);
@@ -464,9 +518,11 @@ export function FormatoGases() {
             </div>
             {detalleEditar && (
                 <FormularioGases
+                    key={`${usuarioId ?? "sin-usuario"}-${detalleEditar.id}`}
                     detalle={detalleEditar}
                     onCancel={() => setDetalleEditar(null)}
                     onSuccess={cargarDatos}
+                    usuarioId={usuarioId}
                 />
             )}
         </div>
