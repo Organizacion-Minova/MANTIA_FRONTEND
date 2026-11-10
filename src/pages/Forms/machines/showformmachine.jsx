@@ -6,6 +6,7 @@ import LoadingScreen from "../../../components/LoadingScreen";
 import FormatoPapelMaquina from "./formpapermachine";
 import { GetMachineRecord } from "../../../api/machinesapi";
 import { TIPOS, rutaForm } from "../../../components/common/Formarchine";
+import { exportarInspeccionMaquinaPdfUnitario, exportarInspeccionMaquinaExcelUnitario } from "../../../api/machinesapi";
 
 export default function VerRegistroMaquina() {
     const { id, kind, recordId } = useParams();
@@ -56,6 +57,39 @@ export default function VerRegistroMaquina() {
                     texto="Imprimir" 
                     onClick={() => window.print()} 
                 />
+                {kind === "inspection" ? (
+                    <>
+                        <Boton 
+                            clase="btn-azul" 
+                            icono="fa-solid fa-file-excel" 
+                            texto="Exportar Excel" 
+                            onClick={() => exportarInspeccionMaquinaExcelUnitario(recordId, registro.machine.name, fecha.slice(0, 10))} 
+                            titulo="Exportar inspección en un archivo de Excel"
+                        />
+                        <Boton 
+                            clase="btn-azul" 
+                            icono="fa-solid fa-file-pdf" 
+                            texto="Exportar PDF" 
+                            onClick={() => exportarInspeccionMaquinaPdfUnitario(recordId, registro.machine.name, fecha.slice(0, 10))} 
+                            titulo="Exportar inspección en un archivo PDF"
+                        />
+                    </>
+                ) : (
+                    <>
+                        <Boton 
+                            clase="btn-azul" 
+                            icono="fa-solid fa-file-excel" 
+                            texto="Exportar Excel" 
+                            titulo="Exportar preoperacional en un archivo de Excel"
+                        />
+                        <Boton 
+                            clase="btn-azul" 
+                            icono="fa-solid fa-file-pdf" 
+                            texto="Exportar PDF" 
+                            titulo="Exportar preoperacional en un archivo PDF"
+                        />
+                    </>
+                )}
                 <BotonLink
                     link={rutaForm(id, kind, "/records")}
                     clase="btn-2"
