@@ -47,6 +47,8 @@ const LlenarRegistroMaquina = lazy(() => import('./pages/Forms/machines/complete
 const ConstructorFormatoMaquina = lazy(() => import('./pages/Forms/machines/questionsformmachine.jsx'));
 const RegistrosMaquina = lazy(() => import('./pages/Forms/machines/registersformsmachine.jsx'));
 const VerRegistroMaquina = lazy(() => import('./pages/Forms/machines/showformmachine.jsx'));
+const InspeccionesEquipos = lazy(() => import('./pages/Forms/InspectionsEquipments.jsx'))
+const InspeccionesMaquinas = lazy(() => import('./pages/Forms/InspecionsMachines.jsx'))
 
 function LoadingGate({ children }) {
   const { cargando } = useAuth();
@@ -92,6 +94,9 @@ createRoot(document.getElementById('root')).render(
               <Route path="equipment/cardequipment/:id/inspection/complete" element={<LlenarInspeccion />} />
               <Route path="equipment/cardequipment/:id/inspection/records" element={<RegistrosInspeccion />} />
               <Route path="equipment/cardequipment/:id/inspection/records/:inspectionId" element={<VerInspeccion />} />
+              <Route path="inspections/machines" element={<InspeccionesMaquinas kind="inspection" />} />
+              <Route path="preoperational/machines" element={<InspeccionesMaquinas kind="preoperational" />} />
+              <Route path="inspections/equipment" element={<InspeccionesEquipos />} />
               <Route path='consumables/tools/types' element={<RutaConPermiso permiso="category-tools.view"><Consumibles /></RutaConPermiso>} />
               <Route path='noconsumables/tools/types' element={<RutaConPermiso permiso="category-tools.view"><No_Consumibles /></RutaConPermiso>} />
               <Route path='consumables/tools' element={<RutaConPermiso permiso="tool.view"><ToolsConsumables /></RutaConPermiso>} />

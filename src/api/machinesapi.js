@@ -154,3 +154,8 @@ export async function UpdateMachineTool(id, payload) {
 export async function DeleteMachineTool(id) {
     await api.delete(`/api/machine-tools/${id}`);
 }
+
+export async function GetInspectionOverviewMachines() {
+    const { data } = await api.get("/api/inspection-overview/machines");
+    return data;
+}
