@@ -6,7 +6,7 @@ import LoadingScreen from "../../../components/LoadingScreen";
 import FormatoPapelMaquina from "./formpapermachine";
 import { GetMachineRecord } from "../../../api/machinesapi";
 import { TIPOS, rutaForm } from "../../../components/common/Formarchine";
-import { exportarInspeccionMaquinaPdfUnitario, exportarInspeccionMaquinaExcelUnitario } from "../../../api/machinesapi";
+import { exportarInspeccionMaquinaPdfUnitario, exportarInspeccionMaquinaExcelUnitario, exportarPreoperacionalMaquinaPdfUnitario, exportarPreoperacionalMaquinaExcelUnitario } from "../../../api/machinesapi";
 
 export default function VerRegistroMaquina() {
     const { id, kind, recordId } = useParams();
@@ -80,12 +80,14 @@ export default function VerRegistroMaquina() {
                             clase="btn-azul" 
                             icono="fa-solid fa-file-excel" 
                             texto="Exportar Excel" 
+                            onClick={() => exportarPreoperacionalMaquinaExcelUnitario(recordId, registro.machine.name, fecha.slice(0, 10))} 
                             titulo="Exportar preoperacional en un archivo de Excel"
                         />
                         <Boton 
                             clase="btn-azul" 
                             icono="fa-solid fa-file-pdf" 
                             texto="Exportar PDF" 
+                            onClick={() => exportarPreoperacionalMaquinaPdfUnitario(recordId, registro.machine.name, fecha.slice(0, 10))} 
                             titulo="Exportar preoperacional en un archivo PDF"
                         />
                     </>
