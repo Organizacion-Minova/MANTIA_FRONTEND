@@ -50,7 +50,7 @@ const eliminarBorrador = (usuarioId) => {
     sessionStorage.removeItem(obtenerClaveBorrador(usuarioId));
 };
 
-function Formulario({onCancel, onGuardado, equiposEditar, usuarioId}) {
+function Formulario({onCancel, onGuardado, equiposEditar, usuarioId, categoria}) {
     const esEdicion = equiposEditar != null;
     const { advertencia } = useToast();
     const [borradorInicial] = useState(() => {
@@ -81,7 +81,11 @@ const [responsable, setResponsable] = useState(
 );
 
 const [estado, setEstado] = useState(
-    equiposEditar?.status || "active"
+    equiposEditar?.status || "Activo"
+);
+
+const [categoriaEquipo, setCategoriaEquipo] = useState(
+    equiposEditar?.category ?? categoria
 );
 
 const [fechaIngreso, setFechaIngreso] = useState(
@@ -229,7 +233,6 @@ useEffect(() => {
     const handleSubmit = async (e) =>{
         e.preventDefault();
         setErrores({});
-        const imagenFaltante = !esEdicion && !archivoImagen;
         if (!validarCamposRequeridos({
             "Código": codigo,
             "Nombre": nombre,
@@ -239,10 +242,10 @@ useEffect(() => {
             "Ubicación": locationid,
             "Responsable": responsable,
             "Modelo": modelo,
+            ...(esEdicion ? { "Categoría": categoriaEquipo } : {}),
             ...(esEdicion ? { "Estado": estado } : {}),
-            ...(imagenFaltante ? { "Imagen": "" } : {}),
+
         })) {
-            if (imagenFaltante) setErrorImagen("Debe seleccionar una imagen.");
             return;
         }
         const erroresGroserias = validarGroserias({
@@ -256,14 +259,11 @@ useEffect(() => {
             advertencia("Se han detectado palabras inapropiadas en los campos: " + Object.keys(erroresGroserias).join(", "));
             return;
         }
-        if (!esEdicion && !archivoImagen) {
-            setErrorImagen("Debe seleccionar una imagen.");
-            return;
-        }
         if (esEdicion){
             const sincambios=
                 codigo === equiposEditar.code &&
                 nombre === equiposEditar.name &&
+                categoriaEquipo === equiposEditar.category &&
                 modelo === equiposEditar.model &&
                 serie === equiposEditar.serial_number &&
                 estado === equiposEditar.status &&
@@ -293,7 +293,6 @@ useEffect(() => {
             { nombre: "Marca", valor: marca, minimo: 2 },
             { nombre: "Placa", valor: placa, minimo: 3 },
             { nombre: "Combustible", valor: combustible, minimo: 2, opcional: true },
-            { nombre: "Descripción", valor: descripcion, minimo: 10 },
         ];
         const camposInvalidos = camposConLongitudMinima.filter(({ valor, minimo, opcional }) => {
             const longitud = Array.from(String(valor).trim()).length;
@@ -329,6 +328,7 @@ useEffect(() => {
             datos.append("description", descripcion);
             
             if (archivoImagen) datos.append("image", archivoImagen);
+            datos.append("category", categoriaEquipo);
         try {
     if (esEdicion){
         await UpdateEquipment(equiposEditar.id, datos);
@@ -414,6 +414,7 @@ useEffect(() => {
                     required
                 />
             </div>
+            
             <div className="col-span-3">
                 <Text
                     label="Modelo:"
@@ -528,7 +529,7 @@ useEffect(() => {
             </div>
             
             {esEdicion && (
-                <div className="col-span-6">
+                <div className="col-span-3">
                     <Select
                         label="Estado:"
                         id="estado"
@@ -543,9 +544,25 @@ useEffect(() => {
                     />
                 </div>
             )}
+            {esEdicion && (
+                <div className="col-span-3">
+                    <Select
+                        label="Categoría:"
+                        id="category"
+                        name="category"
+                        value={categoriaEquipo}
+                        onChange={(e) => setCategoriaEquipo(e.target.value)}
+                        opciones={[
+                            { valor: "Consumible", etiqueta: "Consumible" },
+                            { valor: "NoConsumible", etiqueta: "No consumible" },
+                        ]}
+                        required
+                    />
+                </div>
+            )}
             <div className="col-span-6">
                 <Dropzone
-                    label="Imagen:"
+                    label="Imagen (opcional):"
                     id="imagen"
                     name="imagen"
                     accept="image/*"
@@ -557,12 +574,11 @@ useEffect(() => {
                     previewAlt="Vista previa de la imagen del equipo"
                     previewLabel={archivoImagen?.name || "Imagen actual"}
                     error={errorImagen}
-                    required={!esEdicion && !archivoImagen}
                 />
             </div>
             <div className="col-span-6">
                 <Textarea
-                    label="Descripción:"
+                    label="Descripción (opcional):"
                     id="descripcion"
                     name="descripcion"
                     placeholder="Descripción del equipo"
@@ -574,7 +590,8 @@ useEffect(() => {
         </Form>
     )
 }
-function Equipos(){
+function EquiposConsumibles(){
+    const categoria = "Consumible";
      const { usuario } = useAuth();
     const usuarioId = usuario?.id;
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -587,7 +604,7 @@ function Equipos(){
     }))
 
     const { busqueda, setBusqueda, filtrosEspeciales, setFiltroEspecial, itemsFiltrados: equiposFiltrados } = useSearch(
-        equipo,
+        equipo.filter((e) => e.category === categoria),
         ["code","name", "description","responsible","model","ubicacionBusqueda"]
     );
     const ubicacionesUnicas = Array.from(
@@ -605,7 +622,7 @@ function Equipos(){
         setCargando(true);
         GetEquipments()
             .then((data) => {
-                setEquipo(data);   
+                setEquipo(data.filter((elemento) => elemento.category === categoria));
             })
             .catch((error) => {
                 console.error("Error al cargar los equipos:", error);
@@ -647,7 +664,7 @@ function Equipos(){
         <div className="list-grid">
             <header className="bienvenida">
                 <PageWelcome
-                    titulo="Equipos"
+                    titulo="Equipos consumibles"
                     descripcion="Este es el formato de los equipos"
                     mostrarHistorial={true}
                 />
@@ -741,17 +758,17 @@ function Equipos(){
                 />
             </div>
             
-           {mostrarFormulario && (
-        <Formulario 
-        key={`${usuarioId}-${equiposEditar?.id || "nuevo"}`}
-        onCancel={() => setMostrarFormulario(false)} 
-        onGuardado={cargarEquipos} 
-        equiposEditar={equiposEditar}
-        usuarioId={usuarioId}
-         />
-    )}
-        
+            {mostrarFormulario && (
+                <Formulario 
+                    key={`${usuarioId}-${equiposEditar?.id || "nuevo"}`}
+                    onCancel={() => setMostrarFormulario(false)} 
+                    onGuardado={cargarEquipos} 
+                    equiposEditar={equiposEditar}
+                    usuarioId={usuarioId}
+                    categoria={categoria}
+                />
+            )}
         </div>
     )}
 
-export default Equipos;
+export default EquiposConsumibles;
