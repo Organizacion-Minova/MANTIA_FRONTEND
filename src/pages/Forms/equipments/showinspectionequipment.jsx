@@ -54,20 +54,6 @@ export default function VerInspeccion() {
                     texto="Editar esta semana"
                     titulo="Editar la inspección preoperacional de esta semana"
                 />
-                <Boton
-                    clase="btn-azul"
-                    icono="fa-solid fa-file-excel"
-                    texto="Exportar Excel"
-                    onClick={() => exportarInspeccionEquipoExcelUnitario(inspectionId, equipo.name, inspeccion.week_start)}
-                    titulo="Exportar inspección preoperacional en un archivo de Excel"
-                />
-                <Boton
-                    clase="btn-azul"
-                    icono="fa-solid fa-file-pdf"
-                    texto="Exportar PDF"
-                    onClick={() => exportarInspeccionEquipoPdfUnitario(inspectionId, equipo.name, inspeccion.week_start)}
-                    titulo="Exportar inspección preoperacional en un archivo PDF"
-                />
                 <BotonLink
                     link={`/equipment/cardequipment/${id}/inspection/records`}
                     clase="btn-2"
@@ -75,6 +61,21 @@ export default function VerInspeccion() {
                     texto="Formatos guardados"
                     titulo="Ver inspecciones preoperacionales guardadas"
                 />
+                <Boton
+                    clase="btn-3"
+                    icono="fa-solid fa-file-excel"
+                    texto="Exportar Excel"
+                    onClick={() => exportarInspeccionEquipoExcelUnitario(inspectionId, equipo.name, inspeccion.week_start)}
+                    titulo="Exportar inspección preoperacional en un archivo de Excel"
+                />
+                <Boton
+                    clase="btn-3"
+                    icono="fa-solid fa-file-pdf"
+                    texto="Exportar PDF"
+                    onClick={() => exportarInspeccionEquipoPdfUnitario(inspectionId, equipo.name, inspeccion.week_start)}
+                    titulo="Exportar inspección preoperacional en un archivo PDF"
+                />
+                
             </div>
         </div>
     );

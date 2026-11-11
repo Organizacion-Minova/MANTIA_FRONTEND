@@ -183,6 +183,56 @@
     }
 }
 
+/* GRID PARA LA CONFIGURACION DE FORMATOS DE EQUIPOS */
+.equipment-format-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+    gap: 1rem;
+    min-width: 0;
+}
+
+.equipment-format-grid > .bienvenida,
+.equipment-format-grid > .equipment-format-grid__wide {
+    grid-column: 1 / -1;
+}
+
+.equipment-format-grid > .btn-container {
+    grid-area: auto;
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 767px) {
+    .equipment-format-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* GRID PARA LOS FORMATOS DE MAQUINAS */
+.machine-format-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+    gap: 1rem;
+    min-width: 0;
+}
+
+.machine-format-grid > .bienvenida,
+.machine-format-grid > .machine-format-grid__wide {
+    grid-column: 1 / -1;
+}
+
+.machine-format-grid > .btn-container {
+    grid-area: auto;
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 767px) {
+    .machine-format-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
 /*==========================================
     Alertas griiiiiiiiiiiiiiiiiiiiiiiiiiid
 ============================================*/

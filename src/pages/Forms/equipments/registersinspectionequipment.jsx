@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { BotonLink } from "../../../components/common/Button";
-import { PageWelcome, Searcher } from "../../../components/common/welcome";
+import { PageWelcome } from "../../../components/common/welcome";
 import LoadingScreen from "../../../components/LoadingScreen";
 import { usePaginacion, Paginacion } from "../../../components/common/Paginacion";
 import { GetEquipmentInspections } from "../../../api/Equipmentsapi";
 import { formatearFechaCorta } from "../../../components/common/Validations";
 import verIcono from "../../../assets/icons/ver.svg";
-import { useSearch } from "../../../hooks/useSearch";
 
 export default function RegistrosInspeccion() {
     const { id } = useParams();
@@ -15,12 +14,7 @@ export default function RegistrosInspeccion() {
     const [registros, setRegistros] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(false);
-    const { busqueda, setBusqueda, rangoFecha, setRangoFecha, itemsFiltrados } = useSearch(
-        registros,
-        ["id", "inspector", "format_version", "week_start", "week_end"],
-        "week_start"
-    );
-    const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(itemsFiltrados, 8);
+    const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(registros, 8);
 
     useEffect(() => {
         GetEquipmentInspections(id)
@@ -35,10 +29,6 @@ export default function RegistrosInspeccion() {
             .finally(() => setCargando(false));
     }, [id]);
 
-    useEffect(() => {
-        setPaginaActual(1);
-    }, [busqueda, rangoFecha, setPaginaActual]);
-
     if (cargando) return <LoadingScreen indeterminado />;
     if (error) return <p>No se pudieron cargar los formatos guardados.</p>;
 
@@ -48,13 +38,6 @@ export default function RegistrosInspeccion() {
                 <PageWelcome
                     titulo={`Formatos guardados: ${equipo.name}`}
                     descripcion="Inspecciones preoperacionales registradas, de la más reciente a la más antigua."
-                />
-                <Searcher
-                    value={busqueda}
-                    onChange={(e) => setBusqueda(e.target.value)}
-                    rangoFecha={rangoFecha}
-                    onRangoFechaChange={setRangoFecha}
-                    placeholder="Buscar por código, fecha o inspector"
                 />
             </header>
 
@@ -69,14 +52,8 @@ export default function RegistrosInspeccion() {
                         </tr>
                     </thead>
                     <tbody>
-                        {datosPagina.length === 0 ? (
-                            <tr>
-                                <td colSpan="4">
-                                    {registros.length === 0
-                                        ? "Todavía no hay inspecciones guardadas."
-                                        : "No se encontraron inspecciones con esos criterios."}
-                                </td>
-                            </tr>
+                        {registros.length === 0 ? (
+                            <tr><td colSpan="4">Todavía no hay inspecciones guardadas.</td></tr>
                         ) : (
                             datosPagina.map((r) => (
                                 <tr key={r.id}>
@@ -107,13 +84,15 @@ export default function RegistrosInspeccion() {
                         texto="Nueva inspección" 
                         titulo="Crear nueva inspección" 
                     />
+                    <div className="footer-btns">
                     <BotonLink 
-                        link={`/equipment/cardequipment/${id}`} 
-                        clase="btn-2"
+                        link={`/equipment/cardequipment/${id}/inspection/complete`} 
+                        clase="btn-regresar"
                         icono="fa-solid fa-arrow-left" 
-                        texto="Regresar" 
-                        titulo="Regresar a la página del equipo" 
+                        texto="Regresar al formato" 
+                        titulo="Regresar al formato de inspección" 
                     />
+                    </div>
                 </div>
                 <Paginacion paginaActual={paginaActual} totalPaginas={totalPaginas} setPaginaActual={setPaginaActual} />
             </div>

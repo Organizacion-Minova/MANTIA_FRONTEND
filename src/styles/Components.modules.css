@@ -134,19 +134,26 @@ main.cerrado{
             width: 100%;
         }
         .btn-container2{
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    width: 100%;
-}
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+         width: 100%;
+    }
 
-.btn-container-page{
-    display: flex;
-    gap: 15px;
-    flex-direction: column;
-  align-items: center;
-  
-}
+    .btn-container-page{
+        display: flex;
+        gap: 15px;
+        flex-direction: column;
+      align-items: center;
+    
+    }
+    .footer-btns{
+     border-left:none !important;
+     border-top: 0.0625rem solid var(--texto2);
+      padding-left: none;
+      padding-top: var(--space-xs);
+
+    }
 }
 
 .btn-container-page{
@@ -154,6 +161,7 @@ main.cerrado{
     gap: 15px;
     justify-content: space-between;
 }
+
 
 /* Este boton se usa para la opcion mas probable a escoger por el usuario */
 .btn-azul {
@@ -170,7 +178,6 @@ main.cerrado{
     justify-content: center;
     gap:           0.5rem;
     transition:    background 0.2s, transform 0.15s, box-shadow 0.2s;
-   
     letter-spacing: 0.0125rem;
     text-decoration: none;
     width:         fit-content;
@@ -180,18 +187,16 @@ main.cerrado{
     background:    var(--fondo);
     color:        var(--secundario);
     border: solid 2px var(--secundario);
-    
-    border-radius: 3.125rem;
+    border-radius: 1rem;
     padding:       0.875rem 1.75rem;
     font-size:     0.9375rem;
-    font-weight:   700;
+    font-weight:   650;
     cursor:        pointer;
     display:       inline-flex;
     align-items:   center;
     justify-content: center;
     gap:           0.5rem;
     transition:    background 0.2s, transform 0.15s, box-shadow 0.2s;
-   
     letter-spacing: 0.0125rem;
     text-decoration: none;
     width:         fit-content;
@@ -202,10 +207,57 @@ main.cerrado{
     box-sizing: border-box;
 }
 
+.btn-3 {
+    background: transparent;
+    color: var(--texto2);
+    border: 2px solid transparent;
+    border-radius: 1rem;
+    padding:       0.875rem 1.75rem;
+    font-size:     0.9375rem;
+    font-weight:   500;
+    cursor:        pointer;
+    display:       inline-flex;
+    align-items:   center;
+    justify-content: center;
+    gap:           0.5rem;
+    transition:    background 0.2s, transform 0.15s, box-shadow 0.2s;
+    letter-spacing: 0.0125rem;
+    text-decoration: none;
+    width:         fit-content;
+}
+
+/* NAVEGACIÓN */
+.btn-regresar {
+    background: transparent;
+    color: var(--texto);
+    border: 1px solid transparent;
+    border-radius: 1rem;
+    padding:       0.875rem 1.75rem;
+    font-size:     0.9375rem;
+    font-weight:   700;
+    cursor:        pointer;
+    display:       inline-flex;
+    align-items:   center;
+    justify-content: center;
+    gap:           0.5rem;
+    transition:    background 0.2s, transform 0.15s, box-shadow 0.2s;
+    letter-spacing: 0.0125rem;
+    text-decoration: none;
+    width:         100%;
+}
+
+.footer-btns{
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    border-left: 0.0625rem solid var(--texto2);
+    padding-left: var(--space-xs);
+}
 .btn-editar{
     background:none;
     border:none;
-    border-radius: 1rem;
+    border-radius: 1.5rem;
     padding:       0.875rem 1.75rem;
     cursor:        pointer;
     display:       inline-flex;
@@ -221,7 +273,7 @@ main.cerrado{
 .btn-borrar{
     background:none;
     border:none;
-    border-radius: 1rem;
+    border-radius: 1.5rem;
     color: var(--rojo);
     padding:       0.875rem 1.75rem;
     cursor:        pointer;
@@ -244,7 +296,7 @@ main.cerrado{
 
 .boton-link__icono {
     display: block;
-       object-fit: contain;
+    object-fit: contain;
     width: 1.1rem;
   
 }
@@ -261,12 +313,23 @@ html.dark-theme .boton-accion__icono--dark {
     display: block;
 }
 
-
+.btn-regresar:hover,
 .btn-azul:hover{
     transform: translateY(-10%);
 }
 .btn-2:hover{
-     transform: translateY(-10%);
+     transform: translateY(-8%);
+     background: var(--hover-principal );
+}
+.btn-3:hover {
+    transform: translateY(-5%);
+    background: var(--hover-principal );
+    filter: brightness(0.92);
+}
+
+.btn-regresar:hover {
+  background: var(--hover-principal );
+    color: var(--texto);
 }
 
 .btn-editar:hover{

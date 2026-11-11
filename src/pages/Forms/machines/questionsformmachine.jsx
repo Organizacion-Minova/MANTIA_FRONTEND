@@ -258,7 +258,7 @@ export default function ConstructorFormatoMaquina({ editar = false }) {
     }
 
     return (
-        <div className="list-grid">
+        <div className="machine-format-grid">
             <header className="bienvenida">
                 <PageWelcome
                     titulo={`${editar ? "Editar" : "Nuevo"} formato: ${categoria.name}`}
@@ -267,7 +267,7 @@ export default function ConstructorFormatoMaquina({ editar = false }) {
                 />
             </header>
 
-            <div className="card">
+            <div className="card machine-format-grid__wide">
                 <div className="form-grid">
                     <div className="col-span-2">
                         <Text 
@@ -310,7 +310,7 @@ export default function ConstructorFormatoMaquina({ editar = false }) {
             </div>
 
             {secciones.map((s, i) => (
-                <div key={s.id} className="card">
+                <div key={s.id} className="card machine-format-grid__wide">
                     <h3>Sección {letraSeccion(i + 1)}</h3>
                     <div className="form-grid">
                         <div className="col-span-6">
@@ -367,7 +367,7 @@ export default function ConstructorFormatoMaquina({ editar = false }) {
                             titulo="Agregar un grupo de preguntas (con título y varias preguntas dentro)"
                         />
                         <Boton 
-                            clase="btn-azul" 
+                            clase="btn-2" 
                             icono="fa-solid fa-plus" 
                             texto="Agregar pregunta"
                             onClick={() => agregarFila(s.id, "item")} 
@@ -375,8 +375,8 @@ export default function ConstructorFormatoMaquina({ editar = false }) {
                         />
                         {secciones.length > 1 && (
                             <Boton 
-                                clase="btn-2" 
-                                icono="fa-solid fa-trash" 
+                                clase="btn-borrar" 
+                                icono="fa-solid fa-trash-can" 
                                 texto="Eliminar sección"
                                 onClick={() => eliminarSeccion(s.id)} 
                                 titulo="Eliminar esta sección y todas sus preguntas"
@@ -387,7 +387,7 @@ export default function ConstructorFormatoMaquina({ editar = false }) {
             ))}
 
             {editar && (
-                <p>
+                <p className="machine-format-grid__wide">
                     Si quitas una pregunta que ya tiene respuestas guardadas, no se borra: se desactiva
                     para no perder los registros anteriores.
                 </p>
@@ -403,19 +403,21 @@ export default function ConstructorFormatoMaquina({ editar = false }) {
                     titulo="Agregar una nueva sección de preguntas"
                 />
                 <Boton 
-                    clase="btn-azul" 
+                    clase="btn-2" 
                     icono="fa-solid fa-floppy-disk"
                     texto={enviando ? "Guardando..." : editar ? "Guardar cambios" : "Guardar formato"}
                     onClick={handleGuardar} 
                     titulo="Guardar los cambios realizados"
                 />
-                <BotonLink 
-                    link={rutaMaquina(id)} 
-                    clase="btn-2" 
-                    icono="fa-solid fa-arrow-left"
-                    texto="Cancelar" 
-                    titulo="Cancelar y regresar" 
-                />
+                <div className="footer-btns">
+                    <BotonLink 
+                        link={rutaMaquina(id)} 
+                        clase="btn-regresar" 
+                        icono="fa-solid fa-arrow-left"
+                        texto="Regresar" 
+                        titulo="Cancelar y regresar" 
+                    />
+                </div>
             </div>
         </div>
     );

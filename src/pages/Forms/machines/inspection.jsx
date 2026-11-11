@@ -118,7 +118,7 @@ function AgregarInspeccion(){
                         />
                     </div>
                     <Boton
-                        clase="btn-azul"
+                        clase="btn-borrar"
                         icono="fa-solid fa-trash"
                         texto="Eliminar"
                         onClick={() => eliminarPregunta(pregunta.id)}

@@ -301,7 +301,7 @@ export default function ConstructorFormato({ editar = false }) {
                 <div className="btn-container">
                     <BotonLink 
                         link="/equipment" 
-                        clase="btn-2" 
+                        clase="btn-regresar" 
                         icono="fa-solid fa-arrow-left" 
                         texto="Regresar" 
                         titulo="Regresar a la página del equipo"
@@ -314,14 +314,16 @@ export default function ConstructorFormato({ editar = false }) {
     if (!equipment) return <LoadingScreen indeterminado />;
 
     return (
-        <div className="list-grid">
+        <div className="equipment-format-grid">
             <header className="bienvenida">
                 <PageWelcome
                     titulo={editar ? `Editar formato: ${equipment.name}` : `Nuevo formato: ${equipment.name}`}
+                    mostrarHistorial={true}
                     descripcion={ editar ? "Modifica las secciones y preguntas del formato." : "Este equipo aún no tiene formato de inspección. Arma el formato por secciones."}
-                />
+                />  
+
             </header>
-            <div className="card">
+            <div className="card equipment-format-grid__wide">
                 <div className="form-grid">
                     
                     <div className="col-span-2">
@@ -402,7 +404,7 @@ export default function ConstructorFormato({ editar = false }) {
             </div>
 
             {secciones.map((s, i) => (
-                <div key={s.id} className="card">
+                <div key={s.id} className="card equipment-format-grid__wide">
                     <h3>Sección {i + 1}</h3>
                     <div className="form-grid">
                         <div className="col-span-6">
@@ -528,7 +530,7 @@ export default function ConstructorFormato({ editar = false }) {
                             onClick={() => agregarPregunta(s.id)} />
                         {secciones.length > 1 && (
                             <Boton 
-                                clase="btn-2" 
+                                clase="btn-borrar" 
                                 icono="fa-solid fa-trash" 
                                 texto="Eliminar sección"
                                 titulo="Eliminar sección"
@@ -543,17 +545,22 @@ export default function ConstructorFormato({ editar = false }) {
                     clase="btn-azul" 
                     icono="fa-solid fa-plus" 
                     texto="Agregar sección"
-                    onClick={() => setSecciones((prev) => [...prev, nuevaSeccion()])} />
+                    onClick={() => setSecciones((prev) => [...prev, nuevaSeccion()])} 
+                    titulo="Agregar sección"/>
                 <Boton 
-                    clase="btn-azul" 
+                    clase="btn-2" 
                     icono="fa-solid fa-floppy-disk"
                     texto={enviando ? "Guardando..." : "Guardar formato"} 
-                    onClick={handleGuardar} />
-                <BotonLink 
-                    link={`/equipment/cardequipment/${id}`} 
-                    clase="btn-2" 
-                    icono="fa-solid fa-arrow-left" 
-                    texto="Cancelar" />
+                    onClick={handleGuardar} 
+                    titulo="Guardar el formato de inspección"/>
+                <div className="footer-btns">
+                    <BotonLink 
+                        link={`/equipment/cardequipment/${id}/inspection/complete`} 
+                        clase="btn-regresar" 
+                        icono="fa-solid fa-arrow-left" 
+                        texto="Regresar al formato" 
+                        titulo="Regresar al formato"/>
+                </div>
             </div>
         </div>
     );

@@ -156,6 +156,7 @@ export default function FormularioRegistroMaquina({
     return (
         <div>
             <div className="card">
+                <div className="table-responsive">
                 <table className="form">
                     <tbody>
                         <tr>
@@ -172,6 +173,7 @@ export default function FormularioRegistroMaquina({
                         </tr>
                     </tbody>
                 </table>
+                </div>
                 <br />
 
                 <div className="form-grid">

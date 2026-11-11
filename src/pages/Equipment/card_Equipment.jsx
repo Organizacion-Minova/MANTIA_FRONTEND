@@ -135,27 +135,31 @@ export function CardEquipment() {
                         clase="btn-azul"
                         icono="fas fa-wind"
                         texto="Inspección"
+                        titulo="Ir a la inspección del equipo"
                     />
                     <Boton
-                        clase="btn-azul"
+                        clase="btn-3"
                         icono="fa-solid fa-file-excel"
                         texto="Exportar Excel"
                         onClick={() => exportarFichaTecnicaEquipoExcelUnitario(equipo.id, equipo.name)}
                         titulo="Exportar ficha técnica en un archivo de Excel"
                     />
                     <Boton
-                        clase="btn-azul"
+                        clase="btn-3"
                         icono="fa-solid fa-file-pdf"
                         texto="Exportar PDF"
                         onClick={() => exportarFichaTecnicaEquipoPdfUnitario(equipo.id, equipo.name)}
                         titulo="Exportar ficha técnica en un archivo PDF"
                     />
-                    <BotonLink
-                        link="/equipment"
-                        clase="btn-2"
-                        icono="fa-solid fa-arrow-left"
-                        texto="Regresar"
-                    />
+                    <div className="footer-btns">
+                        <BotonLink
+                            link={equipo.category === "Consumible" ? "/equipment/consumables" : "/equipment/noconsumables"}
+                            clase="btn-regresar"
+                            icono="fa-solid fa-arrow-left"
+                            texto="Regresar"
+                            titulo={`Regresar a la lista de equipos ${equipo.category === "Consumible" ? "consumibles" : "no consumibles"}`}
+                        />
+                    </div>
                 </div>
 
         </div>

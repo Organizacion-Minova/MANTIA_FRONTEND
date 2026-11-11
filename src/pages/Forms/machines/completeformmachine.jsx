@@ -98,7 +98,7 @@ export default function LlenarRegistroMaquina() {
     }
 
     return (
-        <div className="list-grid">
+        <div className="machine-format-grid">
             <header className="bienvenida">
                 <PageWelcome
                     titulo={`${tipo.titulo}: ${datos.machine.name}`}
@@ -107,7 +107,7 @@ export default function LlenarRegistroMaquina() {
                 />
             </header>
 
-            <div className="form-grid">
+            <div className="form-grid machine-format-grid__wide">
                 <div className="col-span-3">
                     <Text
                         label={tipo.diario ? "Semana que incluye el día:" : "Fecha de la inspección:"}
@@ -124,47 +124,51 @@ export default function LlenarRegistroMaquina() {
             </div>
 
             {periodo?.record && (
-                <p>Ya hay un registro guardado para este periodo: al guardar se actualiza.</p>
+                <p className="machine-format-grid__wide">Ya hay un registro guardado para este periodo: al guardar se actualiza.</p>
             )}
 
-            {cargandoPeriodo || !periodo ? (
-                <LoadingScreen indeterminado />
-            ) : (
-                <FormularioRegistroMaquina
-                    key={periodo.start}
-                    kind={kind}
-                    machine={datos.machine}
-                    format={datos.format}
-                    start={periodo.start}
-                    end={periodo.end}
-                    record={periodo.record}
-                    onSave={guardar}
-                    enviando={enviando}
-                />
-            )}
+            <div className="machine-format-grid__wide">
+                {cargandoPeriodo || !periodo ? (
+                    <LoadingScreen indeterminado />
+                ) : (
+                    <FormularioRegistroMaquina
+                        key={periodo.start}
+                        kind={kind}
+                        machine={datos.machine}
+                        format={datos.format}
+                        start={periodo.start}
+                        end={periodo.end}
+                        record={periodo.record}
+                        onSave={guardar}
+                        enviando={enviando}
+                    />
+                )}
+            </div>
 
             <div className="btn-container">
                 <BotonLink 
                     link={rutaForm(id, kind, "/records")} 
-                    clase="btn-azul"
+                    clase="btn-2"
                     icono="fa-solid fa-list" 
                     texto="Ver formatos guardados"
                     titulo="Ver formatos guardados"
                 />
                 <BotonLink 
                     link={rutaForm(id, kind, "/edit")} 
-                    clase="btn-azul"
+                    clase="btn-2"
                     icono="fa-solid fa-pen" 
                     texto="Editar formato"
                     titulo="Editar formato"
                 />
-                <BotonLink 
-                    link={rutaMaquina(id)} 
-                    clase="btn-2"
-                    icono="fa-solid fa-arrow-left" 
-                    texto="Regresar" 
-                    titulo="Regresar a la máquina"
-                />
+                <div className="footer-btns">
+                     <BotonLink 
+                         link={rutaMaquina(id)} 
+                         clase="btn-regresar"
+                         icono="fa-solid fa-arrow-left" 
+                         texto="Regresar" 
+                         titulo="Regresar a la máquina"
+                     />
+                </div>
             </div>
         </div>
     );

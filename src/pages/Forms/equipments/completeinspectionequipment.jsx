@@ -71,14 +71,14 @@ export default function LlenarInspeccion() {
             <div className="list-grid">
                 <p>No se pudo cargar el formato de inspección.</p>
                 <div className="btn-container">
-                    <BotonLink link={`/equipment/${id}`} clase="btn-2" icono="fa-solid fa-arrow-left" texto="Regresar" />
+                    <BotonLink link={`/equipment/${id}`} clase="btn-regresar" icono="fa-solid fa-arrow-left" texto="Regresar" />
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="list-grid">
+        <div className="equipment-format-grid">
             <header className="bienvenida">
                 <PageWelcome
                     titulo={`Inspección preoperacional ${datos.equipment.name}`}
@@ -86,7 +86,7 @@ export default function LlenarInspeccion() {
                 />
             </header>
 
-            <div className="form-grid">
+            <div className="form-grid equipment-format-grid__wide">
                 <div className="col-span-3">
                     <CampoFecha
                         label="Semana que incluye el día:"
@@ -99,35 +99,31 @@ export default function LlenarInspeccion() {
             </div>
 
             {semanaInfo?.inspection && (
-                <p>Ya hay una inspección guardada de esta semana: al guardar se actualiza.</p>
+                <p className="equipment-format-grid__wide">Ya hay una inspección guardada de esta semana: al guardar se actualiza.</p>
             )}
 
-            {cargandoSemana || !semanaInfo ? (
-                <LoadingScreen indeterminado />
-            ) : (
-                <FormatoInspeccion
-                    key={semanaInfo.week_start}
-                    format={datos.format}
-                    equipment={datos.equipment}
-                    weekStart={semanaInfo.week_start}
-                    weekEnd={semanaInfo.week_end}
-                    inspection={semanaInfo.inspection}
-                    onSave={guardar}
-                    enviando={enviando}
-                />
-            )}
+            <div className="equipment-format-grid__wide">
+                {cargandoSemana || !semanaInfo ? (
+                    <LoadingScreen indeterminado />
+                ) : (
+                    <FormatoInspeccion
+                        key={semanaInfo.week_start}
+                        format={datos.format}
+                        equipment={datos.equipment}
+                        weekStart={semanaInfo.week_start}
+                        weekEnd={semanaInfo.week_end}
+                        inspection={semanaInfo.inspection}
+                        onSave={guardar}
+                        enviando={enviando}
+                    />
+                )}
+            </div>
 
             <div className="btn-container">
-                <BotonLink
-                    link={`/equipment/cardequipment/${id}`}
-                    clase="btn-2"
-                    icono="fa-solid fa-arrow-left"
-                    texto="Regresar"
-                    titulo="Regresar a la página del equipo"
-                />
+                
                 <BotonLink
                     link={`/equipment/cardequipment/${id}/inspection/records`}
-                    clase="btn-azul"
+                    clase="btn-2"
                     icono="fa-solid fa-list"
                     texto="Ver formatos guardados"
                     titulo="Ver inspecciones guardadas"
@@ -135,11 +131,20 @@ export default function LlenarInspeccion() {
                 
                 <BotonLink
                     link={`/equipment/cardequipment/${id}/inspection/edit`}
-                    clase="btn-azul"
+                    clase="btn-2"
                     icono="fa-solid fa-pen"
                     texto="Editar formato"
                     titulo="Editar el formato de inspección"
                 />
+                <div className="footer-btns">
+                    <BotonLink
+                        link={`/equipment/cardequipment/${id}`}
+                        clase="btn-regresar"
+                        icono="fa-solid fa-arrow-left"
+                        texto="Regresar"
+                        titulo="Regresar a la página del equipo"
+                     />
+                </div>
             </div>
         </div>
     );
