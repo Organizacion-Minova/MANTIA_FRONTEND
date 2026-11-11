@@ -37,17 +37,23 @@ const eliminarBorrador = (usuarioId) => {
 function Formulario({onCancel,onGuardado, herramientaEditar, usuarioId}){
     const esEdicion = herramientaEditar != null;
     const [borradorInicial] = useState(() => esEdicion ? null : obtenerBorrador(usuarioId));
+    const [codigo, setCodigo] = useState(borradorInicial?.codigo ?? herramientaEditar?.code ?? "");
     const [nombre, setNombre] = useState(borradorInicial?.nombre ?? herramientaEditar?.name ?? "");
     const [stockBueno, setStockBueno] = useState(borradorInicial?.stockBueno ?? herramientaEditar?.condiciones?.find(c => c.condition === "bueno")?.stock ?? "");
     const [stockRegular, setStockRegular] = useState(borradorInicial?.stockRegular ?? herramientaEditar?.condiciones?.find(c => c.condition === "regular")?.stock ?? "");
     const [stockMalo, setStockMalo] = useState(borradorInicial?.stockMalo ?? herramientaEditar?.condiciones?.find(c => c.condition === "malo")?.stock ?? "");
-    const [locationId, setLocationId] = useState(borradorInicial?.locationId ?? herramientaEditar?.ubicacion?.id ?? "");
-    const [categoryId, setCategoryId] = useState(borradorInicial?.categoryId ?? herramientaEditar?.catogoria?.id ?? "");
+    const [locationId, setLocationId] = useState(
+        borradorInicial?.locationId ?? String(herramientaEditar?.location_id ?? herramientaEditar?.ubicacion?.id ?? "")
+    );
+    const [categoryId, setCategoryId] = useState(
+        borradorInicial?.categoryId ?? String(herramientaEditar?.category_id ?? herramientaEditar?.categoria?.id ?? "")
+    );
     const [categoria, setCategoria]= useState([])
     const [ubicaciones, setUbicaciones] = useState([]);
     const [errores, setErrores] = useState({});
 
     const hayDatosIngresados = [
+        codigo,
         nombre,
         stockBueno,
         stockRegular,
@@ -59,14 +65,14 @@ function Formulario({onCancel,onGuardado, herramientaEditar, usuarioId}){
     useEffect(() => {
         if (esEdicion || !usuarioId) return;
 
-        const borrador = { nombre, stockBueno, stockRegular, stockMalo, locationId, categoryId };
+        const borrador = { codigo, nombre, stockBueno, stockRegular, stockMalo, locationId, categoryId };
 
         try {
             sessionStorage.setItem(obtenerClaveBorrador(usuarioId), JSON.stringify(borrador));
         } catch (error) {
             console.error("Error al guardar el borrador de herramientas:", error);
         }
-    }, [esEdicion, usuarioId, nombre, stockBueno, stockRegular, stockMalo, locationId, categoryId]);
+    }, [esEdicion, usuarioId, codigo, nombre, stockBueno, stockRegular, stockMalo, locationId, categoryId]);
 
     useEffect(() => {
         obtenerUbicaciones()
@@ -84,6 +90,9 @@ function Formulario({onCancel,onGuardado, herramientaEditar, usuarioId}){
     const handleSubmit = async (e) =>{
         e.preventDefault();
         setErrores({});
+        const codigoNormalizado = String(codigo ?? "").trim();
+        const codigoOriginal = String(herramientaEditar?.code ?? "").trim();
+        const codigoModificado = codigoNormalizado !== codigoOriginal;
 
         if (!validarCamposRequeridos({
             "Nombre": nombre,
@@ -94,11 +103,16 @@ function Formulario({onCancel,onGuardado, herramientaEditar, usuarioId}){
             "Categoria": categoryId
         })) return;
 
-        const erroresLocales = {};
-
-        Object.assign(erroresLocales, validarCaracteresEspeciales({ name: nombre }));
-        if (tieneGroserias(nombre)) {
+        const validarNombre = !esEdicion || nombre !== herramientaEditar.name;
+        const validarCodigo = !esEdicion || codigoModificado;
+        const erroresLocales = validarNombre
+            ? validarCaracteresEspeciales({ name: nombre })
+            : {};
+        if (validarNombre && tieneGroserias(nombre)) {
             erroresLocales.name = ["El nombre contiene palabras inapropiadas."];
+        }
+        if (validarCodigo && tieneGroserias(codigoNormalizado)) {
+            erroresLocales.code = ["El código contiene palabras inapropiadas."];
         }
         if (Object.keys(erroresLocales).length > 0) {
             setErrores(erroresLocales);
@@ -106,12 +120,13 @@ function Formulario({onCancel,onGuardado, herramientaEditar, usuarioId}){
         }
         if (esEdicion) {
             const sincambios =
+                !codigoModificado &&
                 nombre === herramientaEditar.name &&
                 Number(stockBueno) === herramientaEditar.condiciones?.find(c => c.condition === "bueno")?.stock &&
                 Number(stockRegular) === herramientaEditar.condiciones?.find(c => c.condition === "regular")?.stock &&
                 Number(stockMalo) === herramientaEditar.condiciones?.find(c => c.condition === "malo")?.stock &&
-                Number(locationId) === herramientaEditar.location_id &&
-                Number(categoryId) === herramientaEditar.category_id;
+                locationId === String(herramientaEditar.location_id ?? herramientaEditar.ubicacion?.id ?? "") &&
+                categoryId === String(herramientaEditar.category_id ?? herramientaEditar.categoria?.id ?? "");
             if (sincambios) {
                 onCancel();
                 return;
@@ -127,6 +142,9 @@ function Formulario({onCancel,onGuardado, herramientaEditar, usuarioId}){
                 malo: Number(stockMalo) || 0,
             },
         };
+        if (!esEdicion || codigoModificado || herramientaEditar.code != null) {
+            datos.code = codigoNormalizado || null;
+        }
         try {
             if (esEdicion) {
                 await UpdateTool(herramientaEditar.id, datos);
@@ -148,7 +166,10 @@ function Formulario({onCancel,onGuardado, herramientaEditar, usuarioId}){
     const opcionesUbicaciones = [
         { valor: "", etiqueta: "Seleccione una ubicación" },
         ...ubicaciones
-            .filter(ubi => ubi.status === 'active' || ubi.id === herramientaEditar?.location_id)
+            .filter(ubi =>
+                ubi.status === 'active' ||
+                String(ubi.id) === String(herramientaEditar?.location_id ?? herramientaEditar?.ubicacion?.id)
+            )
             .map(ubi => ({ valor: ubi.id, etiqueta: ubi.status === 'active' ? ubi.name : `${ubi.name} (Inactiva)` }))
     ];
 
@@ -176,6 +197,20 @@ function Formulario({onCancel,onGuardado, herramientaEditar, usuarioId}){
             onSubmit={handleSubmit}
             noValidate
         >
+            <div className="col-span-3">
+                <Text
+                    label='Codigo (opcional):'
+                    id='codigo'
+                    name='codigo'
+                    placeholder='Codigo de la herramienta'
+                    value={codigo}
+                    onChange={(e) => {
+                        const valor = e.target.value;
+                        setCodigo(capitalizarPrimeraLetra(valor));
+                    }
+                    }
+                />
+            </div>
             <div className="col-span-3">
                 <Text
                     label="Nombre:"
@@ -254,7 +289,7 @@ function Formulario({onCancel,onGuardado, herramientaEditar, usuarioId}){
                     required
                 />
             </div>
-            <div className="col-span-3">
+            <div className="col-span-6">
                 <Select
                     label="Ubicación: "
                     id="ubicacion"
@@ -265,6 +300,11 @@ function Formulario({onCancel,onGuardado, herramientaEditar, usuarioId}){
                     required
                 />
             </div>
+            {Object.values(errores).flat().map((error, index) => (
+                <p key={`${index}-${error}`} className="error-texto" role="alert">
+                    {error}
+                </p>
+            ))}
         </Form>
     )
 }
@@ -313,7 +353,7 @@ function ToolsNoConsumables(){
     ).values()]
     const { busqueda, setBusqueda, filtrosEspeciales, setFiltroEspecial, itemsFiltrados: herramientasFiltradas } = useSearch(
         herramienta,
-        ["name", "ubicacionBusqueda", "categoriaBusqueda"]
+        ['code', 'name', 'ubicacionBusqueda', 'categoriaBusqueda']
     );
     const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(herramientasFiltradas, 7);
 
@@ -377,7 +417,7 @@ function ToolsNoConsumables(){
                 <Searcher
                     value={busqueda}
                     onChange={(e) => setBusqueda(e.target.value)}
-                    placeholder="Buscar por nombre o ubicacion"
+                    placeholder="Buscar por codigo, nombre, categoria o ubicacion"
                     filtrosAdicionales={
                         <div className="btn-container">
                             <Select
@@ -414,6 +454,7 @@ function ToolsNoConsumables(){
                 <table className="table">
                     <thead>
                         <tr>
+                            <th>Código</th>
                             <th>Nombre</th>
                             <th>Condición</th>
                             <th>Cantidad</th>
@@ -427,6 +468,7 @@ function ToolsNoConsumables(){
                         const estadoActual = estadoSeleccionado[h.id] || "total";
                         return (
                         <tr key={h.id}>
+                            <td>{h.code}</td>
                             <td>{h.name}</td>
                             <td>
                                 <Select
