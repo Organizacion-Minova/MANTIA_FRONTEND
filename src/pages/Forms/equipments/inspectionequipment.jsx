@@ -34,7 +34,7 @@ function InspeccionEquipo() {
                 <div className="btn-container">
                     <BotonLink
                         link={`/equipment/cardequipment/${id}`}
-                        clase="btn-2"
+                        clase="btn-regresar"
                         icono="fa-solid fa-arrow-left"
                         texto="Regresar"
                         titulo="Regresar a la página del equipo"

@@ -495,26 +495,28 @@ export function FormatoGases() {
             </div>
             <div className="btn-container">
                 <Boton
-                    clase="btn-azul"
+                    clase="btn-3"
                     icono="fa-solid fa-file-excel"
                     texto="Exportar Excel"
                     onClick={() => exportarGasExcelUnitario(medicion.id, medicion.measurement_date)}
                     titulo="Exportar en un archivo de Excel"
                 />
                 <Boton
-                    clase="btn-azul"
+                    clase="btn-3"
                     icono="fa-solid fa-file-pdf"
                     texto="Exportar PDF"
                     onClick={() => exportarGasPdfUnitario(medicion.id, medicion.measurement_date)}
                     titulo="Exportar en un archivo PDF"
                 />
-                <BotonLink
-                    link="/gases"
-                    clase="btn-2"
-                    icono="fa-solid fa-arrow-left"
-                    texto="Regresar"
-                    titulo="Ir a la página de Medición de gases"
-                />
+                <div className="footer-btns">
+                    <BotonLink
+                        link="/gases"
+                        clase="btn-regresar"
+                        icono="fa-solid fa-arrow-left"
+                        texto="Regresar"
+                        titulo="Ir a la página de Medición de gases"
+                    />
+                </div>
             </div>
             {detalleEditar && (
                 <FormularioGases

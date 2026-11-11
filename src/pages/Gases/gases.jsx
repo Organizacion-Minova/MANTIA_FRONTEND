@@ -227,27 +227,29 @@ function Gases() {
                         onClick={handleCrear}
                         titulo="Registrar nueva medición de gases"
                     />
+
+                      <BotonLink
+                        link="/gases/compare_gases"
+                        clase="btn-2"
+                        icono="fa-solid fa-chart-line"
+                        texto="Comparar mediciones"
+                        titulo="Ir a la página de Comparación de gases"
+                    />
                     <Boton
-                        clase="btn-azul"
+                        clase="btn-3"
                         icono="fa-solid fa-file-excel"
                         texto="Exportar Excel"
                         onClick={() => setShowRangoModal('excel')}
                         titulo="Exportar en un archivo de Excel"
                     />
                     <Boton
-                        clase="btn-azul"
+                        clase="btn-3"
                         icono="fa-solid fa-file-pdf"
                         texto="Exportar PDF"
                         onClick={() => setShowRangoModal('pdf')}
                         titulo="Exportar en un archivo PDF"
                     />
-                    <BotonLink
-                        link="/gases/compare_gases"
-                        clase="btn-azul"
-                        icono="fa-solid fa-chart-line"
-                        texto="Comparar mediciones"
-                        titulo="Ir a la página de Comparación de gases"
-                    />
+                  
                 </div>
                 {showRangoModal && (
                     <RangoFormModal

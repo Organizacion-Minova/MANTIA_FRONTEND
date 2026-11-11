@@ -448,13 +448,6 @@ export function CardMachine() {
                         </table>
                         <br />
                         <div className=" btn-container-page">
-                            <Boton
-                                clase="btn-azul"
-                                icono="fa-solid fa-plus"
-                                texto="Nuevo consumible"
-                                onClick={handleAbrirCrear}
-                                titulo="Agregar consumible a la máquina"
-                            />
                             <Paginacion
                                 paginaActual={paginaActual}
                                 totalPaginas={totalPaginas}
@@ -466,46 +459,53 @@ export function CardMachine() {
                     </div>
                 </section>
                 <div className="btn-container">
-                    <BotonLink
-                        link="/machines"
-                        clase="btn-2"
-                        icono="fa-solid fa-arrow-left"
-                        texto="Regresar"
-                    />
-                    
+                     <Boton
+                                clase="btn-azul"
+                                icono="fa-solid fa-plus"
+                                texto="Nuevo consumible"
+                                onClick={handleAbrirCrear}
+                                titulo="Agregar consumible a la máquina"
+                            />
                     <BotonLink
                         link="/dailyuse"
-                        clase="btn-azul"
+                        clase="btn-2"
                         icono="fas fa-home"
                         texto="Uso diario"
                     />
                     <BotonLink 
                         link={rutaForm(id, "preoperational", "/complete")} 
-                        clase="btn-azul"
+                        clase="btn-2"
                         icono="fa-solid fa-clipboard-check" 
                         texto="Preoperacional" 
                     />
                     <BotonLink 
                         link={rutaForm(id, "inspection", "/complete")} 
-                        clase="btn-azul"
+                        clase="btn-2"
                         icono="fa-solid fa-clipboard-list" 
                         texto="Inspección" 
                     />
                     <Boton
-                        clase="btn-azul"
+                        clase="btn-3"
                         icono="fa-solid fa-file-excel"
                         texto="Exportar Excel"
                         onClick={() => exportarFichaTecnicaMaquinaExcelUnitario(maquina.id, maquina.name)}
                         titulo="Exportar ficha técnica en un archivo de Excel"
                     />
                     <Boton
-                        clase="btn-azul"
+                        clase="btn-3"
                         icono="fa-solid fa-file-pdf"
                         texto="Exportar PDF"
                         onClick={() => exportarFichaTecnicaMaquinaPdfUnitario(maquina.id, maquina.name)}
                         titulo="Exportar ficha técnica en un archivo PDF"
                     />
-                    
+                    <div className="footer-btns">
+                        <BotonLink
+                            link="/machines"
+                            clase="btn-regresar"
+                            icono="fa-solid fa-arrow-left"
+                            texto="Regresar"
+                        />
+                   </div> 
                 </div>
                 {mostrarFormulario && (
                     <FormularioConsumible

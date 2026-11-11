@@ -580,9 +580,9 @@ function Ayuda() {
                             autoComplete="off"
                         />
                     </div>
-                    <button className="btn-buscar" type="button" onClick={ejecutarBusqueda}>
+                    {/* <button className="btn-buscar" type="button" onClick={ejecutarBusqueda}>
                         <i className="fa-solid fa-magnifying-glass"></i> Buscar
-                    </button>
+                    </button> */}
                 </div>
 
                 <section className="help-faq">
@@ -676,9 +676,9 @@ function Ayuda() {
                         ></i>
                     )}
                 </div>
-                <button className="btn-buscar" type="submit">
+                {/* <button className="btn-buscar" type="submit">
                     <i className="fa-solid fa-magnifying-glass"></i> Buscar
-                </button>
+                </button> */}
             </form>
 
             <div className="help-suggestions" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.5rem", marginTop: "0.5rem" }}>

@@ -114,13 +114,15 @@ export default function RegistrosMaquina() {
                         texto="Nuevo registro" 
                         titulo="Crear un nuevo registro"
                     />
-                    <BotonLink 
-                        link={rutaMaquina(id)} 
-                        clase="btn-2"
-                        icono="fa-solid fa-arrow-left" 
-                        texto="Regresar" 
-                        titulo="Regresar a la máquina"
-                    />
+                    <div className="footer-btns">
+                        <BotonLink 
+                            link={rutaMaquina(id)} 
+                            clase="btn-regresar"
+                            icono="fa-solid fa-arrow-left" 
+                            texto="Regresar" 
+                            titulo="Regresar a la máquina"
+                        />
+                    </div>
                 </div>
                 <Paginacion 
                     paginaActual={paginaActual} 

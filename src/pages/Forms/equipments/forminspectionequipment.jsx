@@ -226,37 +226,39 @@ export default function FormatoInspeccion({
     return (
         <div>
             <div className="card">
-                <table>
-                    <tbody className="form">
-                        <tr>
-                            <th colSpan="6">Datos del equipo</th>
-                        </tr>
-                        <tr>
-                            <th>Equipo:</th>
-                            <td>{equipment.name}</td>
-                            <th>Código:</th>
-                            <td>{equipment.code || "—"}</td>
-                            <th>Marca:</th>
-                            <td>{equipment.brand}</td>
-                        </tr>
-                        <tr>
-                            <th>Modelo:</th>
-                            <td>{equipment.model || "—"}</td>
-                            <th>Serie:</th>
-                            <td>{equipment.serial_number || "—"}</td>
-                            <th>Ubicación:</th>
-                            <td>{equipment.ubicacion?.name || "—"}</td>
-                        </tr>
-                        <tr>
-                            <th>Semana:</th>
-                            <td>{formatearFechaCorta(weekStart)} al {formatearFechaCorta(weekEnd)}</td>
-                            <th>Código del formato:</th>
-                            <td>{format.code}</td>
-                            <th>Versión:</th>
-                            <td>{format.version}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div className="table-responsive">
+                    <table>
+                        <tbody className="form">
+                            <tr>
+                                <th colSpan="6">Datos del equipo</th>
+                            </tr>
+                            <tr>
+                                <th>Equipo:</th>
+                                <td>{equipment.name}</td>
+                                <th>Código:</th>
+                                <td>{equipment.code || "—"}</td>
+                                <th>Marca:</th>
+                                <td>{equipment.brand}</td>
+                            </tr>
+                            <tr>
+                                <th>Modelo:</th>
+                                <td>{equipment.model || "—"}</td>
+                                <th>Serie:</th>
+                                <td>{equipment.serial_number || "—"}</td>
+                                <th>Ubicación:</th>
+                                <td>{equipment.ubicacion?.name || "—"}</td>
+                            </tr>
+                            <tr>
+                                <th>Semana:</th>
+                                <td>{formatearFechaCorta(weekStart)} al {formatearFechaCorta(weekEnd)}</td>
+                                <th>Código del formato:</th>
+                                <td>{format.code}</td>
+                                <th>Versión:</th>
+                                <td>{format.version}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
                 <br />
                 
                 {(format.header_fields || []).length > 0 && (

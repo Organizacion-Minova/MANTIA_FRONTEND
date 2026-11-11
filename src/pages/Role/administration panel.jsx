@@ -1,10 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { PageWelcome } from "../../components/common/welcome";
-import { Boton } from "../../components/common/Button";
+import { Boton, BotonAccion } from "../../components/common/Button";
 import { Form, Text, Checkbox, Select } from "../../components/common/forms";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
 import LoadingScreen from "../../components/LoadingScreen";
+import contrasenaIcono from "../../assets/icons/contrasena.svg";
+import borrarIcono from "../../assets/icons/borrar.svg";
+import editarIcono from "../../assets/icons/editar.svg";
 import {
     getPendingRequests, approveRequest, rejectRequest
 } from "../../api/auth";
@@ -109,8 +112,8 @@ function PanelSolicitudes({ onCambioConteo }) {
                                 <td>{new Date(s.created_at).toLocaleDateString("es-CO")}</td>
                                 <td>
                                     <div className="btn-container">
-                                        <Boton clase="btn-azul" icono="fa-solid fa-check" titulo="Aprobar solicitud" onClick={() => handleAprobar(s.id)} />
-                                        <Boton clase="btn-2" icono="fa-solid fa-xmark" titulo="Rechazar solicitud" onClick={() => handleRechazar(s.id)} />
+                                        <Boton clase="btn-azul" icono="fa-solid fa-check" titulo="Aprobar solicitud" texto="Aprobar"onClick={() => handleAprobar(s.id)} />
+                                        <Boton clase="btn-borrar" icono="fa-solid fa-xmark" texto="Rechazar" titulo="Rechazar solicitud" onClick={() => handleRechazar(s.id)} />
                                     </div>
                                 </td>
                             </tr>
@@ -276,16 +279,18 @@ function PanelUsuarios() {
                                 </td>
                                 <td>
                                     <div className="btn-container">
-                                        <Boton
+                                        <BotonAccion
                                             clase="btn-azul"
-                                            icono="fa-solid fa-key"
+                                            icono={contrasenaIcono}
                                             titulo="Cambiar contraseña"
+                                            texto="Cambiar"
                                             onClick={() => setUsuarioPassword(u)}
                                         />
                                         <Boton
-                                            clase={u.is_active ? "btn-2" : "btn-azul"}
+                                            clase={u.is_active ? "btn-borrar" : "btn-2"}
                                             icono={u.is_active ? "fa-solid fa-ban" : "fa-solid fa-circle-check"}
                                             titulo={u.is_active ? "Desactivar usuario" : "Activar usuario"}
+                                            texto={u.is_active ? "Desactivar" : "Activar"}
                                             disabled={u.id === usuarioActual?.id}
                                             onClick={() => handleToggleActivo(u)}
                                         />
@@ -483,19 +488,24 @@ function PanelRoles() {
                                 </td>
                                 <td>
                                     <div className="btn-container">
-                                        <Boton
-                                            clase="btn-azul" icono="fa-solid fa-edit" titulo="Editar rol"
+                                         
+                                        <BotonAccion
+                                            clase="btn-editar" icono={editarIcono} titulo="Editar rol"
                                             onClick={() => { setRolAEditar(r); setMostrarFormulario(true); }}
                                         />
-                                        <Boton
-                                            clase={r.is_active ? "btn-2" : "btn-azul"}
+
+                                       
+                                        <BotonAccion
+                                            clase="btn-borrar" icono={borrarIcono} titulo="Eliminar rol"
+                                            onClick={() => handleEliminar(r)}
+                                        />
+
+                                           <Boton
+                                            clase={r.is_active ? "btn-borrar" : "btn-azul"}
                                             icono={r.is_active ? "fa-solid fa-ban" : "fa-solid fa-circle-check"}
                                             titulo={r.is_active ? "Desactivar rol" : "Activar rol"}
                                             onClick={() => handleToggleActivo(r)}
-                                        />
-                                        <Boton
-                                            clase="btn-2" icono="fa-solid fa-trash" titulo="Eliminar rol"
-                                            onClick={() => handleEliminar(r)}
+                                            texto={r.is_active ? "Desactivar" : "Activar"}
                                         />
                                     </div>
                                 </td>

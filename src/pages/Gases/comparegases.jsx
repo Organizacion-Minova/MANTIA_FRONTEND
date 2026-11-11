@@ -204,13 +204,15 @@ function CompararGases() {
             </section>
          
             <div className="btn-container">
-                <BotonLink
-                    link="/gases"
-                    clase="btn-2"
-                    icono="fa-solid fa-arrow-left"
-                    texto="Regresar"
-                    titulo="Ir a la página de Medición de gases"
-                />
+                <div className='footer-btns'>
+                    <BotonLink
+                        link="/gases"
+                        clase="btn-regresar"
+                        icono="fa-solid fa-arrow-left"
+                        texto="Regresar"
+                        titulo="Ir a la página de Medición de gases"
+                    />
+                </div>
             </div>
         </div>
     );

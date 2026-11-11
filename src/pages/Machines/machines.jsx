@@ -750,19 +750,20 @@ function Maquinas(){
             </div>
             <div className="btn-container-page">
                 <div className="btn-container">
-                    <BotonLink
-                        link="/machines/categoriesmachines"
-                        clase="btn-2"
-                        texto="Categorías de máquinas"
-                        icono="fa-solid fa-list"
-                        titulo="Volver a categorías de máquinas"
-                    />
+                    
                     <Boton
                         clase="btn-azul"
                         icono="fa-solid fa-plus"
                         texto="Nueva Máquina"
                         onClick={handleAbrirCrear}
                         titulo="Agregar nueva máquina"
+                    />
+                    <BotonLink
+                        link="/machines/categoriesmachines"
+                        clase="btn-2"
+                        texto="Categorías de máquinas"
+                        icono="fa-solid fa-list"
+                        titulo="Volver a categorías de máquinas"
                     />
                 </div>
                 <Paginacion

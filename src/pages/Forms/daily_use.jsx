@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Boton, BotonAccion } from "../../components/common/Button";
+import { Boton, BotonAccion, BotonLink } from "../../components/common/Button";
 import { PageWelcome,Searcher } from "../../components/common/welcome";
 import { Form, Text, Textarea, Time, Select } from '../../components/common/forms';
 import { GetDailyUse, CreateDailyUse, DeleteDailyUse, UpdateDailyUse  } from "../../api/dailyuseapi";
@@ -10,9 +10,29 @@ import { useSearch } from "../../hooks/useSearch";
 import { useRolesResponsables } from "../../hooks/useRolesResponsables";
 import { exportarUsoDiarioExcelUnitario, exportarUsoDiarioPdfUnitario } from "../../api/dailyuseapi";
 import { useConfirm } from "../../context/ConfirmContext.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 import editarIcono from "../../assets/icons/editar.svg";
 import editarIconoDark from "../../assets/icons/editar-2.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
+
+const obtenerClaveBorrador = (usuarioId) => `mantia_borrador_uso_diario_${usuarioId}`;
+
+const obtenerBorrador = (usuarioId) => {
+    if (!usuarioId) return null;
+
+    try {
+        const borrador = sessionStorage.getItem(obtenerClaveBorrador(usuarioId));
+        return borrador ? JSON.parse(borrador) : null;
+    } catch (error) {
+        console.error("Error al recuperar el borrador de uso diario:", error);
+        return null;
+    }
+};
+
+const eliminarBorrador = (usuarioId) => {
+    if (!usuarioId) return;
+    sessionStorage.removeItem(obtenerClaveBorrador(usuarioId));
+};
 
 export function fechaHoy() {
     const hoy = new Date();
@@ -25,18 +45,29 @@ function horaParaInput(hora) {
     return hora ? hora.slice(0, 5) : "";
 }
 
-function Formulario({onCancel, onGuardado, registroEditar}){
+function Formulario({onCancel, onGuardado, registroEditar, usuarioId}){
     const esEdicion= registroEditar!=null;
-    const [date, setDate] = useState(registroEditar?.date || fechaHoy());
-    const [operatingStatus, setOperatingStatus] = useState(registroEditar?.operating_status || "");
-    const [operationStart, setOperationStart] = useState(horaParaInput(registroEditar?.operation_start));
-    const [operationEnd, setOperationEnd] = useState(horaParaInput(registroEditar?.operation_end));
-    const [responsible, setResponsible] = useState(registroEditar?.responsible || "");
-    const [observations, setObservations] = useState(registroEditar?.observations || "");
-    const [machineId, setMachineId] = useState(registroEditar?.machine_id || "");
+    const [borradorInicial] = useState(() => (
+        esEdicion ? null : obtenerBorrador(usuarioId)
+    ));
+    const [date, setDate] = useState(borradorInicial?.date ?? registroEditar?.date ?? fechaHoy());
+    const [operatingStatus, setOperatingStatus] = useState(borradorInicial?.operatingStatus ?? registroEditar?.operating_status ?? "");
+    const [operationStart, setOperationStart] = useState(borradorInicial?.operationStart ?? horaParaInput(registroEditar?.operation_start));
+    const [operationEnd, setOperationEnd] = useState(borradorInicial?.operationEnd ?? horaParaInput(registroEditar?.operation_end));
+    const [responsible, setResponsible] = useState(borradorInicial?.responsible ?? registroEditar?.responsible ?? "");
+    const [observations, setObservations] = useState(borradorInicial?.observations ?? registroEditar?.observations ?? "");
+    const [machineId, setMachineId] = useState(borradorInicial?.machineId ?? registroEditar?.machine_id ?? "");
     const [machines, setMachines] = useState([]);
     const [timeError, setTimeError] = useState("");
     const opcionesResponsable = useRolesResponsables(registroEditar?.responsible);
+    const hayDatosIngresados = [
+        operatingStatus,
+        operationStart,
+        operationEnd,
+        responsible,
+        observations,
+        machineId,
+    ].some((valor) => String(valor ?? "").trim() !== "") || date !== fechaHoy();
 
     useEffect(() => {
         GetMachine()
@@ -44,6 +75,45 @@ function Formulario({onCancel, onGuardado, registroEditar}){
                 setMachines(data);
             });
     }, []);
+
+    useEffect(() => {
+        if (esEdicion || !usuarioId) return;
+
+        try {
+            if (!hayDatosIngresados) {
+                eliminarBorrador(usuarioId);
+                return;
+            }
+
+            sessionStorage.setItem(
+                obtenerClaveBorrador(usuarioId),
+                JSON.stringify({
+                    date,
+                    operatingStatus,
+                    operationStart,
+                    operationEnd,
+                    responsible,
+                    observations,
+                    machineId,
+                })
+            );
+        } catch (error) {
+            console.error("Error al guardar el borrador de uso diario:", error);
+        }
+    }, [
+        esEdicion,
+        usuarioId,
+        hayDatosIngresados,
+        date,
+        operatingStatus,
+        operationStart,
+        operationEnd,
+        responsible,
+        observations,
+        machineId,
+    ]);
+
+    const pedirConfirmacion = useConfirm();
 
     const handleSubmit = async (e) =>{
         e.preventDefault();
@@ -84,6 +154,7 @@ function Formulario({onCancel, onGuardado, registroEditar}){
                 await UpdateDailyUse(registroEditar.id, formData);
             } else {
                 await CreateDailyUse(formData);
+                eliminarBorrador(usuarioId);
             }
             onGuardado();
             onCancel();
@@ -92,11 +163,24 @@ function Formulario({onCancel, onGuardado, registroEditar}){
         }
     }
 
+    const handleDescartar = async () => {
+        const confirmar = await pedirConfirmacion({
+            titulo: "Descartar borrador",
+            mensaje: "¿Estás seguro de que deseas descartar este borrador? Se perderán todos los datos ingresados.",
+        });
+
+        if (!confirmar) return;
+
+        eliminarBorrador(usuarioId);
+        onCancel();
+    };
+
     return(
         <Form
             titulo={esEdicion ? "Editar registro" : "Agregar nuevo registro"}
             descripcion={esEdicion ? "Edita los datos del registro existente" : "Ingresa los datos del nuevo registro"}
             onCancel={onCancel}
+            onDiscard={!esEdicion && hayDatosIngresados ? handleDescartar : undefined}
             textoBoton="Guardar"
             iconoBoton="fa-solid fa-floppy-disk"
             onSubmit={handleSubmit}
@@ -180,6 +264,8 @@ function Formulario({onCancel, onGuardado, registroEditar}){
     )
 }
 export function UsoDiario(){
+    const { usuario } = useAuth();
+    const usuarioId = usuario?.id;
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     let [registro, setRegistro] = useState([]);
     const [registroEditar, setRegistroEditar] = useState([]);
@@ -358,17 +444,25 @@ export function UsoDiario(){
                         onClick={handleAbrirCrear}
                     />
                     <Boton
-                        clase="btn-azul"
+                        clase="btn-3"
                         icono="fa-solid fa-file-excel"
                         texto="Exportar Excel"
                         onClick={handleExportarExcel}
                     />
                     <Boton
-                        clase="btn-azul"
+                        clase="btn-3"
                         icono="fa-solid fa-file-pdf"
                         texto="Exportar Pdf"
                         onClick={handleExportarPdf}
                     />
+                     <div className="footer-btns">
+                        <BotonLink
+                            link={`/Machines`}
+                            clase="btn-regresar"
+                            icono="fa-solid fa-arrow-left"
+                            texto="Regresar"
+                        />
+                    </div> 
                 </div>
                 <Paginacion
                     paginaActual={paginaActual}
@@ -382,6 +476,7 @@ export function UsoDiario(){
                     onCancel={() => setMostrarFormulario(false)} 
                     onGuardado={cargarRegistros}
                     registroEditar={registroEditar}
+                    usuarioId={usuarioId}
                 />
             )}
         </div>
