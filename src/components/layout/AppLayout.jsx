@@ -42,6 +42,8 @@ import cerrarSesionIcon from "../../assets/icons/cerrar-sesion.svg";
 import consumibleIcon from "../../assets/icons/consumibles.svg";
 import noconsumibleIcon from "../../assets/icons/no-consumibles.svg";
 import inspeccionMaquinaIcon from "../../assets/icons/InspeccionMaquina.svg";
+import EquipoConsumibleIcon from "../../assets/icons/equiposConsumibles.svg"; 
+import EquipoNoConsumibleIcon from "../../assets/icons/equiposNoConsumibles.svg"; 
 
 
 function AppLayout({ children }) {
@@ -59,6 +61,7 @@ function AppLayout({ children }) {
     const [vistaPerfil, setVistaPerfil] = useState("datos");
     const fotoPerfil = usuario?.photo_url || avatarPorDefecto(`${usuario?.name ?? ""} ${usuario?.last_name ?? ""}`);
     const [inspeccionesAbierto, setInspeccionesAbierto] = useState(false);
+    const [equiposAbierto, setEquiposAbierto] = useState(false);
 
     const abrirPerfil = (vista) => {
         setVistaPerfil(vista);
@@ -364,15 +367,41 @@ function AppLayout({ children }) {
                             )}
 
                             {tienePermiso("equipment.view") && (
-                            <li>
-                                <NavLink 
-                                    to="/equipment"
-                                    title="Ir a equipos"
-                                >
-                                    <img className="sidebar__icon" src={equiposIcon} alt="" aria-hidden="true" />
-                                    <span>Equipos</span>
-                                </NavLink>
-                            </li>
+                                <li className={`menu-desplegable ${equiposAbierto ? "activo" : ""}`}>
+                                    <a 
+                                        onClick={() => setEquiposAbierto(!equiposAbierto)} 
+                                        className="menu-titulo"
+                                    >
+                                        <img className="sidebar__icon" src={equiposIcon} alt="" aria-hidden="true" />
+                                        <span>Equipos</span>
+                                    </a>
+
+                                    <ul className="submenu">
+                                        <li>
+                                            <NavLink 
+                                                to="/equipment/consumables"
+                                                title="Ir a equipos consumibles"
+                                            >
+                                                <img className="sidebar__icon" src={EquipoConsumibleIcon} alt="" aria-hidden="true" />
+                                                <span>Consumibles</span>
+                                            </NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink 
+                                                to="/equipment/noconsumables"
+                                                title=" Ir a equipos no consumibles"
+                                            >
+                                                <img 
+                                                    className="sidebar__icon" 
+                                                    src={EquipoNoConsumibleIcon} 
+                                                    alt="" 
+                                                    aria-hidden="true" 
+                                                />
+                                                <span>No consumibles</span>
+                                            </NavLink>
+                                        </li>
+                                    </ul>
+                                </li>
                             )}
                             {tienePermiso("machine.view") && (
                             <li>
@@ -427,7 +456,10 @@ function AppLayout({ children }) {
 
                             <ul className="submenu">
                                 <li>
-                                    <Link to="/inspections/machines">
+                                    <NavLink 
+                                        to="/inspections/machines"
+                                        titulo="Ir al formato de inspección"
+                                        >
                                         <img
                                             className="sidebar__icon"
                                             src={inspeccionIcon}
@@ -435,7 +467,7 @@ function AppLayout({ children }) {
                                             aria-hidden="true"
                                         />
                                         <span>Inspeccion</span>
-                                    </Link>
+                                    </NavLink>
                                 </li>
 
                                 {tienePermiso("daily-use.view") && (
@@ -451,13 +483,13 @@ function AppLayout({ children }) {
                                 )}
                                 {tienePermiso("inspection.view") && (
                                     <li>
-                                        <Link
+                                        <NavLink
                                             to="/preoperational/machines"
                                             title="Ir al formato preoperacional"
                                         >
                                             <img className="sidebar__icon" src={preoperacionalIcon} alt="" aria-hidden="true" />
                                             <span>Preoperacional</span>
-                                        </Link>
+                                        </NavLink>
                                     </li>
                                 )}
                             </ul>
@@ -480,7 +512,10 @@ function AppLayout({ children }) {
 
                             <ul className="submenu">
                                 <li>
-                                    <Link to="/inspections/equipment">
+                                    <NavLink 
+                                    to="/inspections/equipment"
+                                    title="Ir al formato de inspección"
+                                    >
                                         <img
                                             className="sidebar__icon"
                                             src={inspeccionIcon}
@@ -488,7 +523,7 @@ function AppLayout({ children }) {
                                             aria-hidden="true"
                                         />
                                         <span>Inspeccion</span>
-                                    </Link>
+                                    </NavLink>
                                 </li>
                             </ul>
                         </li>
