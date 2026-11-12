@@ -5,7 +5,9 @@ import "../../styles/grid_content.css";
 import { useAuth } from "../../context/AuthContext.jsx";
 import AppLayout from "../../components/layout/AppLayout.jsx";
 import PublicLayout from "../../components/layout/PublicLayout.jsx";
-import { PageWelcome } from "../../components/common/welcome";
+import { PageWelcome, Searcher } from "../../components/common/welcome";
+import { BotonAccion } from "../../components/common/Button";
+import reestablecerFiltrosIcon from "../../assets/icons/reestablecerFiltros.svg";
 import { useMemo, useRef, useState } from "react";
 
 
@@ -567,23 +569,22 @@ function Ayuda() {
                 />
                 </section>
 
-                <div className="search-main help-search">
-                    <div className="search-wrapper">
-                        <i className="fa-solid fa-magnifying-glass"></i>
-                        <input
-                            type="text"
-                            id="q"
-                            placeholder="Buscar en preguntas frecuentes"
-                            value={busqueda}
-                            onChange={(e) => cambiarBusqueda(e.target.value)}
-                            onKeyDown={(e) => { if (e.key === "Enter") ejecutarBusqueda(e); }}
-                            autoComplete="off"
-                        />
-                    </div>
-                    {/* <button className="btn-buscar" type="button" onClick={ejecutarBusqueda}>
-                        <i className="fa-solid fa-magnifying-glass"></i> Buscar
-                    </button> */}
-                </div>
+                <Searcher
+                    value={busqueda}
+                    onChange={(e) => cambiarBusqueda(e.target.value)}
+                    placeholder="Buscar en preguntas frecuentes"
+                    filtrosAdicionales={
+                        (hayBusqueda || categoriaActiva) && (
+                            <BotonAccion
+                                clase="btn-borrar"
+                                icono={reestablecerFiltrosIcon}
+                                texto="Borrar filtros"
+                                onClick={limpiar}
+                                titulo="Quitar la búsqueda y la categoría activa"
+                            />
+                        )
+                    }
+                />
 
                 <section className="help-faq">
                     <h2 ref={resultadosRef} style={{ scrollMarginTop: "6rem" }}>Preguntas frecuentes</h2>
@@ -653,33 +654,25 @@ function Ayuda() {
                     titulo="Centro de ayuda"
                     descripcion="Busca cómo usar cada módulo de MANTIA o escríbenos directamente."
                 />
+                <Searcher
+                value={busqueda}
+                onChange={(e) => cambiarBusqueda(e.target.value)}
+                placeholder="Escribe tu duda, por ejemplo: olvidé mi contraseña"
+                filtrosAdicionales={
+                    (hayBusqueda || categoriaActiva) && (
+                        <BotonAccion
+                            clase="btn-borrar"
+                            icono={reestablecerFiltrosIcon}
+                            texto="Borrar filtros"
+                            onClick={limpiar}
+                            titulo="Quitar la búsqueda y la categoría activa"
+                        />
+                    )
+                }
+            />
             </section>
 
-            <form className="search-main help-search" onSubmit={ejecutarBusqueda} role="search">
-                <div className="search-wrapper">
-                    <i className="fa-solid fa-magnifying-glass"></i>
-                    <input
-                        type="text"
-                        id="q"
-                        placeholder="Escribe tu duda, por ejemplo: olvidé mi contraseña"
-                        value={busqueda}
-                        onChange={(e) => cambiarBusqueda(e.target.value)}
-                        autoComplete="off"
-                        aria-label="Buscar en preguntas frecuentes"
-                    />
-                    {busqueda && (
-                        <i
-                            className="fa-solid fa-xmark"
-                            onClick={() => cambiarBusqueda("")}
-                            title="Borrar búsqueda"
-                            style={{ cursor: "pointer" }}
-                        ></i>
-                    )}
-                </div>
-                {/* <button className="btn-buscar" type="submit">
-                    <i className="fa-solid fa-magnifying-glass"></i> Buscar
-                </button> */}
-            </form>
+            
 
             <div className="help-suggestions" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.5rem", marginTop: "0.5rem" }}>
                 <span style={{ color: "var(--texto2)", fontSize: "0.85rem" }}>Búsquedas frecuentes:</span>

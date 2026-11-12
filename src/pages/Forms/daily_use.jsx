@@ -21,6 +21,7 @@ import pdfIcon from "../../assets/icons/pdf.svg";
 import pdfIconDark from "../../assets/icons/pdf2.svg";
 import izquierdaIcon from "../../assets/icons/flecha-izquierda.svg";
 import izquierdaIcon2 from "../../assets/icons/flecha-izquierda2.svg";
+import reestablecerFiltrosIcon from "../../assets/icons/reestablecerFiltros.svg";
 
 const obtenerClaveBorrador = (usuarioId) => `mantia_borrador_uso_diario_${usuarioId}`;
 
@@ -284,6 +285,12 @@ export function UsoDiario(){
         registro,
         ['date','responsible','observations','operating_status']
     )
+    const hayFiltros = busqueda.trim() !== "";
+
+    const handleBorrarFiltros = () => {
+        setBusqueda("");
+        setPaginaActual(1);
+    };
 
     const cargarRegistros = async () => {
         setCargando(true);
@@ -379,6 +386,20 @@ export function UsoDiario(){
                         setPaginaActual(1);
                     }}
                     placeholder="Buscar por fecha, responsable, observaciones o estado de funcionamiento"
+                    filtrosAdicionales={
+                        <>
+                        {hayFiltros && (
+                            <BotonAccion
+                                clase='btn-borrar'
+                                icono={reestablecerFiltrosIcon}
+                                texto="Borrar filtros"
+                                onClick={handleBorrarFiltros}
+                                titulo="Quitar la búsqueda y todos los filtros"
+                            />
+                        )}
+                    </>
+                    }
+                      
                 />
            </header>
             <div className="table-responsive">

@@ -20,6 +20,7 @@ import pdfIcon from "../../assets/icons/pdf.svg";
 import pdfIconDark from "../../assets/icons/pdf2.svg";
 import izquierdaIcon from "../../assets/icons/flecha-izquierda.svg";
 import izquierdaIcon2 from "../../assets/icons/flecha-izquierda2.svg";
+import reestablecerFiltrosIcon from "../../assets/icons/reestablecerFiltros.svg";
 
 const gases = [
     { key: 'oxygen', label: 'O2', nombre: 'Oxígeno', simbolo: '%', max: 100 },
@@ -265,6 +266,16 @@ export function FormatoGases() {
         detalles,
         camposBusqueda
     );
+    const hayFiltros =
+        busqueda.trim() !== "" ||
+        Object.values(filtrosEspeciales).some((v) => v !== "" && v != null);
+
+    const handleBorrarFiltros = () => {
+        setBusqueda("");
+        setFiltroEspecial("ubicacion", "");
+        setFiltroEspecial("responsible_name", "");
+        setPaginaActual(1);
+    };
 
     const cargarDatos = async (avisar = false) => {
         try {
@@ -360,6 +371,15 @@ export function FormatoGases() {
                                 onChange={(e) => setFiltroEspecial('responsible_name', e.target.value)}
                                 opciones={opcionesResponsable}
                             />
+                            {hayFiltros && (
+                                <BotonAccion
+                                    clase='btn-borrar'
+                                    icono={reestablecerFiltrosIcon}
+                                    texto="Borrar filtros"
+                                    onClick={handleBorrarFiltros}
+                                    titulo="Quitar la búsqueda y todos los filtros"
+                                />
+                            )}
                         </>
                     }
                 />

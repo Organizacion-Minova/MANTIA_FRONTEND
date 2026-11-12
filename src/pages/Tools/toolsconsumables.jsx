@@ -16,6 +16,7 @@ import editarIconoDark from "../../assets/icons/editar-2.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
 import agregarIcon from "../../assets/icons/agregar.svg";
 import listaIcon from "../../assets/icons/lista.svg";
+import reestablecerFiltrosIcon from "../../assets/icons/reestablecerFiltros.svg";
 
 const obtenerClaveBorrador = (usuarioId) => `mantia_borrador_herramientas_${usuarioId}`;
 
@@ -360,6 +361,16 @@ function ToolsConsumables(){
         herramienta,
         ['code', 'name', 'ubicacionBusqueda', 'categoriaBusqueda']
     );
+    const hayFiltros =
+        busqueda.trim() !== "" ||
+        Object.values(filtrosEspeciales).some((v) => v !== "" && v != null);
+
+    const handleBorrarFiltros = () => {
+        setBusqueda("");
+        setFiltroEspecial("category_id", "");
+        setFiltroEspecial("location_id", "");
+        setPaginaActual(1);
+    };
     const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(herramientasFiltradas, 7);
 
     useEffect(() => {
@@ -430,7 +441,7 @@ function ToolsConsumables(){
                     onChange={(e) => setBusqueda(e.target.value)}
                     placeholder="Buscar por codigo, nombre, categoria o ubicacion"
                     filtrosAdicionales={
-                        <div className="btn-container">
+                        <>
                             <Select
                                 id="filtro-ubicacion"
                                 name="filtro-ubicacion"
@@ -457,7 +468,16 @@ function ToolsConsumables(){
                                     })),
                                 ]}
                             />
-                        </div>
+                            {hayFiltros && (
+                                <BotonAccion
+                                    clase='btn-borrar'
+                                    icono={reestablecerFiltrosIcon}
+                                    texto="Borrar filtros"
+                                    onClick={handleBorrarFiltros}
+                                    titulo="Quitar la búsqueda y todos los filtros"
+                                />
+                            )}
+                        </>
                     }
                 />
             </header>

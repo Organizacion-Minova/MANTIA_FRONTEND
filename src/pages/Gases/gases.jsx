@@ -16,6 +16,8 @@ import excelIcon from "../../assets/icons/excel.svg";
 import excelIconDark from "../../assets/icons/excel2.svg";
 import pdfIcon from "../../assets/icons/pdf.svg";
 import pdfIconDark from "../../assets/icons/pdf2.svg";
+import reestablecerFiltrosIcon from "../../assets/icons/reestablecerFiltros.svg";
+
 
 function RangoFormModal({ tipo, onCancel, onSuccess, mediciones }) {
     const [formData, setFormData] = useState({ fecha_inicio: '', fecha_fin: '' });
@@ -112,6 +114,15 @@ function Gases() {
         ['id', 'measurement_date', 'measurement_time'],
         'measurement_date'
     );
+    const hayFiltros=
+        busqueda.trim() !== "" ||
+        (typeof rangoFecha === "string" ? rangoFecha.trim() !== "" : Object.values(rangoFecha || {}).some((v) => v !== "" && v != null));
+
+    const handleBorrarFiltros = () => {
+        setBusqueda("");
+        setRangoFecha("");
+        setPaginaActual(1);
+    };
 
     const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(medicionesFiltradas, 7);
     useEffect(() => {
@@ -136,7 +147,6 @@ function Gases() {
             await crearMedicionGases({});
             cargarDatos();
        } catch (err) {
-            // El aviso de error lo muestra api/axios.js; aquí solo se restaura lo guardado
             console.error("No se pudieron guardar los datos:", err);
             cargarDatos();
         }
@@ -172,6 +182,17 @@ function Gases() {
                     rangoFecha={rangoFecha}
                     onRangoFechaChange={setRangoFecha}
                     placeholder="Buscar por código, fecha, hora"
+                    filtrosAdicionales={
+                        hayFiltros && (
+                            <BotonAccion
+                                clase="btn-borrar"
+                                icono={reestablecerFiltrosIcon}
+                                texto="Borrar filtros"
+                                onClick={handleBorrarFiltros}
+                                titulo="Quitar la búsqueda y el filtro de fechas"
+                            />
+                        )
+                    }
                 />
             </header>
             <div className="table-responsive">
