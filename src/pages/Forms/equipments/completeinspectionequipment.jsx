@@ -4,6 +4,8 @@ import { BotonLink } from "../../../components/common/Button";
 import { PageWelcome } from "../../../components/common/welcome";
 import { Date as CampoFecha } from "../../../components/common/forms";
 import LoadingScreen from "../../../components/LoadingScreen";
+import izquierdaIcon from "../../../assets/icons/flecha-izquierda.svg";
+import izquierdaIcon2 from "../../../assets/icons/flecha-izquierda2.svg";
 import FormatoInspeccion from "./forminspectionequipment";
 import { GetEquipmentInspectionFormat, GetInspectionWeek, SaveInspection } from "../../../api/Equipmentsapi";
 import { fechaHoy } from "../daily_use";
@@ -71,7 +73,7 @@ export default function LlenarInspeccion() {
             <div className="list-grid">
                 <p>No se pudo cargar el formato de inspección.</p>
                 <div className="btn-container">
-                    <BotonLink link={`/equipment/${id}`} clase="btn-regresar" icono="fa-solid fa-arrow-left" texto="Regresar" />
+                    <BotonLink link={`/equipment/${id}`} clase="btn-regresar" img={izquierdaIcon} imgDark={izquierdaIcon2} texto="Regresar" />
                 </div>
             </div>
         );
@@ -140,7 +142,8 @@ export default function LlenarInspeccion() {
                     <BotonLink
                         link={`/equipment/cardequipment/${id}`}
                         clase="btn-regresar"
-                        icono="fa-solid fa-arrow-left"
+                        img={izquierdaIcon}
+                        imgDark={izquierdaIcon2}
                         texto="Regresar"
                         titulo="Regresar a la página del equipo"
                      />

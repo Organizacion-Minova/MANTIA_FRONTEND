@@ -6,6 +6,13 @@ import { GetEquipmentById } from "../../api/Equipmentsapi";
 import api from "../../api/axios";
 import LoadingScreen from "../../components/LoadingScreen";
 import imagenPorDefecto from "../../assets/img/Mantia - logo.png";
+import inspeccionIcon from "../../assets/icons/inspeccion.svg"
+import excelIcon from "../../assets/icons/excel.svg"
+import pdfIcon from "../../assets/icons/pdf.svg"
+import excelIcon2 from "../../assets/icons/excel2.svg"
+import pdfIcon2 from "../../assets/icons/pdf2.svg"
+import izquierdaIcon from"../../assets/icons/flecha-izquierda.svg"
+import izquierdaIcon2 from"../../assets/icons/flecha-izquierda2.svg"
 import { exportarFichaTecnicaEquipoExcelUnitario, exportarFichaTecnicaEquipoPdfUnitario } from "../../api/Equipmentsapi";
 
 function obtenerUrlImagen(imagen) {
@@ -133,20 +140,22 @@ export function CardEquipment() {
                     <BotonLink
                         link={`/equipment/cardequipment/${id}/inspection`}
                         clase="btn-azul"
-                        icono="fas fa-wind"
+                        img={inspeccionIcon}
                         texto="Inspección"
                         titulo="Ir a la inspección del equipo"
                     />
                     <Boton
                         clase="btn-3"
-                        icono="fa-solid fa-file-excel"
+                        img={excelIcon}
+                        imgDark={excelIcon2}
                         texto="Exportar Excel"
                         onClick={() => exportarFichaTecnicaEquipoExcelUnitario(equipo.id, equipo.name)}
                         titulo="Exportar ficha técnica en un archivo de Excel"
                     />
                     <Boton
                         clase="btn-3"
-                        icono="fa-solid fa-file-pdf"
+                        img={pdfIcon}
+                        imgDark={pdfIcon2}
                         texto="Exportar PDF"
                         onClick={() => exportarFichaTecnicaEquipoPdfUnitario(equipo.id, equipo.name)}
                         titulo="Exportar ficha técnica en un archivo PDF"
@@ -155,7 +164,8 @@ export function CardEquipment() {
                         <BotonLink
                             link={equipo.category === "Consumible" ? "/equipment/consumables" : "/equipment/noconsumables"}
                             clase="btn-regresar"
-                            icono="fa-solid fa-arrow-left"
+                            img={izquierdaIcon}
+                            imgDark={izquierdaIcon2}
                             texto="Regresar"
                             titulo={`Regresar a la lista de equipos ${equipo.category === "Consumible" ? "consumibles" : "no consumibles"}`}
                         />

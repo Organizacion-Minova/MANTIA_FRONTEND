@@ -7,6 +7,10 @@ import FormatoPapelMaquina from "./formpapermachine";
 import { GetMachineRecord } from "../../../api/machinesapi";
 import { TIPOS, rutaForm } from "../../../components/common/Formarchine";
 import { exportarInspeccionMaquinaPdfUnitario, exportarInspeccionMaquinaExcelUnitario, exportarPreoperacionalMaquinaPdfUnitario, exportarPreoperacionalMaquinaExcelUnitario } from "../../../api/machinesapi";
+import excelIcon from "../../../assets/icons/excel.svg";
+import excelIconDark from "../../../assets/icons/excel2.svg";
+import pdfIcon from "../../../assets/icons/pdf.svg";
+import pdfIconDark from "../../../assets/icons/pdf2.svg";
 
 export default function VerRegistroMaquina() {
     const { id, kind, recordId } = useParams();
@@ -61,14 +65,16 @@ export default function VerRegistroMaquina() {
                     <>
                         <Boton 
                             clase="btn-azul" 
-                            icono="fa-solid fa-file-excel" 
+                            img={excelIcon}
+                            imgDark={excelIconDark}
                             texto="Exportar Excel" 
                             onClick={() => exportarInspeccionMaquinaExcelUnitario(recordId, registro.machine.name, fecha.slice(0, 10))} 
                             titulo="Exportar inspección en un archivo de Excel"
                         />
                         <Boton 
                             clase="btn-azul" 
-                            icono="fa-solid fa-file-pdf" 
+                            img={pdfIcon}
+                            imgDark={pdfIconDark}
                             texto="Exportar PDF" 
                             onClick={() => exportarInspeccionMaquinaPdfUnitario(recordId, registro.machine.name, fecha.slice(0, 10))} 
                             titulo="Exportar inspección en un archivo PDF"
@@ -78,14 +84,16 @@ export default function VerRegistroMaquina() {
                     <>
                         <Boton 
                             clase="btn-azul" 
-                            icono="fa-solid fa-file-excel" 
+                            img={excelIcon}
+                            imgDark={excelIconDark}
                             texto="Exportar Excel" 
                             onClick={() => exportarPreoperacionalMaquinaExcelUnitario(recordId, registro.machine.name, fecha.slice(0, 10))} 
                             titulo="Exportar preoperacional en un archivo de Excel"
                         />
                         <Boton 
                             clase="btn-azul" 
-                            icono="fa-solid fa-file-pdf" 
+                            img={pdfIcon}
+                            imgDark={pdfIconDark}
                             texto="Exportar PDF" 
                             onClick={() => exportarPreoperacionalMaquinaPdfUnitario(recordId, registro.machine.name, fecha.slice(0, 10))} 
                             titulo="Exportar preoperacional en un archivo PDF"

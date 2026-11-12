@@ -18,6 +18,16 @@ import { mensajeDeError } from "../../utils/errores";
 import editarIcono from "../../assets/icons/editar.svg";
 import editarIconoDark from "../../assets/icons/editar-2.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
+import agregarIcon from "../../assets/icons/agregar.svg";
+import excelIcon from "../../assets/icons/excel.svg";
+import excelIconDark from "../../assets/icons/excel2.svg";
+import pdfIcon from "../../assets/icons/pdf.svg";
+import pdfIconDark from "../../assets/icons/pdf2.svg";
+import izquierdaIcon from "../../assets/icons/flecha-izquierda.svg";
+import izquierdaIcon2 from "../../assets/icons/flecha-izquierda2.svg";
+import inspeccionIcon from"../../assets/icons/inspeccion3.svg";
+import usodiarioIcon from"../../assets/icons/diario3.svg";
+import preoperacionalIcon from"../../assets/icons/preoperacional3.svg";
 import { Paginacion, usePaginacion } from "../../components/common/Paginacion";
 
 function obtenerUrlImagen(imagen) {
@@ -461,39 +471,43 @@ export function CardMachine() {
                 <div className="btn-container">
                      <Boton
                                 clase="btn-azul"
-                                icono="fa-solid fa-plus"
+                                img={agregarIcon}
                                 texto="Nuevo consumible"
                                 onClick={handleAbrirCrear}
                                 titulo="Agregar consumible a la máquina"
                             />
+                    <BotonLink 
+                        link={rutaForm(id, "inspection", "/complete")} 
+                        clase="btn-2"
+                        img={inspeccionIcon} 
+                        texto="Inspección" 
+                    />
+
                     <BotonLink
                         link="/dailyuse"
                         clase="btn-2"
-                        icono="fas fa-home"
+                       img={usodiarioIcon} 
                         texto="Uso diario"
                     />
                     <BotonLink 
                         link={rutaForm(id, "preoperational", "/complete")} 
                         clase="btn-2"
-                        icono="fa-solid fa-clipboard-check" 
+                       img={preoperacionalIcon} 
                         texto="Preoperacional" 
                     />
-                    <BotonLink 
-                        link={rutaForm(id, "inspection", "/complete")} 
-                        clase="btn-2"
-                        icono="fa-solid fa-clipboard-list" 
-                        texto="Inspección" 
-                    />
+                    
                     <Boton
                         clase="btn-3"
-                        icono="fa-solid fa-file-excel"
+                        img={excelIcon}
+                        imgDark={excelIconDark}
                         texto="Exportar Excel"
                         onClick={() => exportarFichaTecnicaMaquinaExcelUnitario(maquina.id, maquina.name)}
                         titulo="Exportar ficha técnica en un archivo de Excel"
                     />
                     <Boton
                         clase="btn-3"
-                        icono="fa-solid fa-file-pdf"
+                        img={pdfIcon}
+                        imgDark={pdfIconDark}
                         texto="Exportar PDF"
                         onClick={() => exportarFichaTecnicaMaquinaPdfUnitario(maquina.id, maquina.name)}
                         titulo="Exportar ficha técnica en un archivo PDF"
@@ -502,7 +516,8 @@ export function CardMachine() {
                         <BotonLink
                             link="/machines"
                             clase="btn-regresar"
-                            icono="fa-solid fa-arrow-left"
+                            img={izquierdaIcon}
+                            imgDark={izquierdaIcon2}
                             texto="Regresar"
                         />
                    </div> 

@@ -7,6 +7,7 @@ import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
 import { useSearch } from "../../hooks/useSearch";
 import { GetInspectionOverviewMachines } from "../../api/machinesapi";
 import { TIPOS, rutaForm } from "../../components/common/Formarchine";
+import verIcono  from "../../assets/icons/ver.svg";
 
 export default function InspeccionesMaquinas({ kind = "inspection" }) {
     const [maquinas, setMaquinas] = useState([]);
@@ -93,7 +94,7 @@ export default function InspeccionesMaquinas({ kind = "inspection" }) {
                                             <BotonLink
                                                 link={rutaForm(m.id, kind, "/complete")}
                                                 clase="btn-azul"
-                                                icono="fa-solid fa-eye"
+                                                img={verIcono}
                                                 titulo={m.has_format ? "Llenar formato" : "Armar formato"}
                                             />
                                         ) : (

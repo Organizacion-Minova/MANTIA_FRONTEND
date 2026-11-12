@@ -17,6 +17,8 @@ import {
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { Bar } from 'react-chartjs-2';
 import '../../styles/Gases/gases.css';
+import izquierdaIcon from "../../assets/icons/flecha-izquierda.svg";
+import izquierdaIcon2 from "../../assets/icons/flecha-izquierda2.svg";
 
 ChartJS.register(
     CategoryScale,
@@ -208,7 +210,8 @@ function CompararGases() {
                     <BotonLink
                         link="/gases"
                         clase="btn-regresar"
-                        icono="fa-solid fa-arrow-left"
+                        img={izquierdaIcon}
+                        imgDark={izquierdaIcon2}
                         texto="Regresar"
                         titulo="Ir a la página de Medición de gases"
                     />

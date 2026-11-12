@@ -7,6 +7,11 @@ import FormatoPapel from "./formpaperequipment";
 import { GetInspection } from "../../../api/Equipmentsapi";
 import { formatearFechaCorta } from "../../../components/common/Validations";
 import { exportarInspeccionEquipoExcelUnitario, exportarInspeccionEquipoPdfUnitario } from "../../../api/Equipmentsapi";
+import listaIcon from "../../../assets/icons/lista.svg";
+import excelIcon from "../../../assets/icons/excel.svg";
+import excelIconDark from "../../../assets/icons/excel2.svg";
+import pdfIcon from "../../../assets/icons/pdf.svg";
+import pdfIconDark from "../../../assets/icons/pdf2.svg";
 
 export default function VerInspeccion() {
     const { id, inspectionId } = useParams();
@@ -63,14 +68,16 @@ export default function VerInspeccion() {
                 />
                 <Boton
                     clase="btn-3"
-                    icono="fa-solid fa-file-excel"
+                    img={excelIcon}
+                    imgDark={excelIconDark}
                     texto="Exportar Excel"
                     onClick={() => exportarInspeccionEquipoExcelUnitario(inspectionId, equipo.name, inspeccion.week_start)}
                     titulo="Exportar inspección preoperacional en un archivo de Excel"
                 />
                 <Boton
                     clase="btn-3"
-                    icono="fa-solid fa-file-pdf"
+                    img={pdfIcon}
+                    imgDark={pdfIconDark}
                     texto="Exportar PDF"
                     onClick={() => exportarInspeccionEquipoPdfUnitario(inspectionId, equipo.name, inspeccion.week_start)}
                     titulo="Exportar inspección preoperacional en un archivo PDF"

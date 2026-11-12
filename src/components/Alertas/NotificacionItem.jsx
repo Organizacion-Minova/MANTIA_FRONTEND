@@ -1,18 +1,24 @@
 import { useNavigate } from "react-router-dom";
 import { rutaDeAlerta } from "../../utils/notificaciones";
 import "../../styles/Alerts/notificaciones-sistema.css";
+import advertenciaIcon from "../../assets/icons/advertencia.svg";
+import peligroIcon from "../../assets/icons/critico.svg"
+import infoIcon from "../../assets/icons/info-notificaciones.svg"
+import confirmadoIcon from "../../assets/icons/confirmado.svg"
+
 
 const ICONO_POR_NIVEL = {
-    danger: "fa-solid fa-circle-exclamation",
-    warning: "fa-solid fa-triangle-exclamation",
-    success: "fa-solid fa-circle-check",
-    info: "fa-solid fa-circle-info",
+    danger: { src: peligroIcon, alt: "Error" },
+    warning: { src: advertenciaIcon, alt: "Advertencia" },
+    success: { src: confirmadoIcon, alt: "Confirmación" },
+    info: { src: infoIcon, alt: "Información" },
 };
 
 function NotificacionItem({ notificacion, onMarcarUna, onCerrar }) {
     const navigate = useNavigate();
     const { id, tipo, titulo, mensaje, hora, leida } = notificacion;
     const nivel = ICONO_POR_NIVEL[tipo] ? tipo : "info";
+    const icono = ICONO_POR_NIVEL[nivel];
 
     // Pantalla del registro (ej: ficha de la máquina). Las de inicio de sesión no llevan a ninguna.
     const ruta = rutaDeAlerta(notificacion);
@@ -37,7 +43,7 @@ function NotificacionItem({ notificacion, onMarcarUna, onCerrar }) {
             title={ruta ? "Ir a la pantalla de esta alerta" : leida ? undefined : "Clic para marcar como leída"}
         >
             <span className="alerta-icono">
-                <i className={ICONO_POR_NIVEL[nivel]}></i>
+                <img src={icono.src} alt={icono.alt} />
             </span>
             <div className="alerta-cuerpo">
                 <div className="alerta-titulo">

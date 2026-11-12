@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Boton, BotonLink } from "../common/Button";
+import { Boton} from "../common/Button";
 import NotificacionItem from "./NotificacionItem";
 import "../../styles/Alerts/notificaciones-sistema.css";
 

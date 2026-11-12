@@ -18,6 +18,8 @@ import borrarIcono from "../../assets/icons/borrar.svg";
 import verIcono from "../../assets/icons/ver.svg";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { mensajeDeError } from "../../utils/errores";
+import agregarIcon from "../../assets/icons/agregar.svg";
+import listaIcon from "../../assets/icons/lista.svg";
 
 const valorSelect = (valor) => (valor == null ? "" : String(valor));
 const normalizarEstado = (estado) => {
@@ -753,7 +755,7 @@ function Maquinas(){
                     
                     <Boton
                         clase="btn-azul"
-                        icono="fa-solid fa-plus"
+                        img={agregarIcon}
                         texto="Nueva Máquina"
                         onClick={handleAbrirCrear}
                         titulo="Agregar nueva máquina"
@@ -762,7 +764,7 @@ function Maquinas(){
                         link="/machines/categoriesmachines"
                         clase="btn-2"
                         texto="Categorías de máquinas"
-                        icono="fa-solid fa-list"
+                        img={listaIcon}
                         titulo="Volver a categorías de máquinas"
                     />
                 </div>

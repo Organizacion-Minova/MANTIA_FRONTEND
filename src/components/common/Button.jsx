@@ -45,7 +45,7 @@ function useUnSoloClic(onClick) {
     return { manejarClick, ocupado };
 }
 
-export function Boton( {clase, texto, onClick, icono, disabled, key, titulo} ){
+export function Boton( {clase, texto, onClick, icono, img, imgDark, disabled, key, titulo} ){
     const { manejarClick, ocupado } = useUnSoloClic(onClick);
 
     return(
@@ -58,18 +58,40 @@ export function Boton( {clase, texto, onClick, icono, disabled, key, titulo} ){
             key={key}
             title={titulo}
         >
-            <i className={icono}></i>
+             {img ? (
+                <>
+                    <img
+                        className={`boton-link__icono${imgDark ? " boton-link__icono--light" : ""}`}
+                        src={img}
+                        alt=""
+                        aria-hidden="true"
+                    />
+                    {imgDark && (
+                        <img
+                            className="boton-link__icono boton-link__icono--dark"
+                            src={imgDark}
+                            alt=""
+                            aria-hidden="true"
+                        />
+                    )}
+                </>
+            ) : icono ? (
+                <i className={icono}></i>
+            ) : null}
             {texto}
+            
         </button> 
     )
 }
 
-export function BotonAccion({ clase, texto, onClick, icono, iconoDark, disabled, key, titulo }) {
+export function BotonAccion({ clase, texto, onClick, icono, iconoDark, iconoFa, disabled, key, titulo }) {
     const { manejarClick, ocupado } = useUnSoloClic(onClick);
 
     return (
         <button type="button" className={clase} onClick={onClick} disabled={disabled} key={key} title={titulo}>
-            {icono && (
+            {iconoFa ? (
+                <i className={iconoFa} aria-hidden="true"></i>
+            ) : icono && (
                 <img
                     className={`boton-accion__icono${iconoDark ? " boton-accion__icono--light" : ""}`}
                     src={icono}
@@ -77,7 +99,7 @@ export function BotonAccion({ clase, texto, onClick, icono, iconoDark, disabled,
                     aria-hidden="true"
                 />
             )}
-            {iconoDark && (
+            {!iconoFa && iconoDark && (
                 <img
                     className="boton-accion__icono boton-accion__icono--dark"
                     src={iconoDark}
@@ -90,11 +112,26 @@ export function BotonAccion({ clase, texto, onClick, icono, iconoDark, disabled,
     );
 }
 
-export function BotonLink({link,clase,texto,icono,img,titulo}){
+export function BotonLink({link,clase,texto,icono,img,imgDark,titulo}){
     return(
         <Link to={link}><button  className={clase} title={titulo}>
             {img ? (
-                <img className="boton-link__icono" src={img} alt="" aria-hidden="true" />
+                <>
+                    <img
+                        className={`boton-link__icono${imgDark ? " boton-link__icono--light" : ""}`}
+                        src={img}
+                        alt=""
+                        aria-hidden="true"
+                    />
+                    {imgDark && (
+                        <img
+                            className="boton-link__icono boton-link__icono--dark"
+                            src={imgDark}
+                            alt=""
+                            aria-hidden="true"
+                        />
+                    )}
+                </>
             ) : icono ? (
                 <i className={icono}></i>
             ) : null}

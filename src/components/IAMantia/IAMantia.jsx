@@ -8,7 +8,7 @@
    [{ role: 'user' | 'assistant', content: '...' }] y debe devolver
    (o resolver con) el texto de la respuesta, o { respuesta, acciones }
    cuando hay acciones de administrador por confirmar. Ahí conectas tu backend.
-   Requiere IA_Mantia.css, Font Awesome 6 y las fuentes Archivo + Barlow.
+   Requiere IA.css y las fuentes Archivo + Barlow.
    ===================================================================== */
 import { Fragment, useCallback, useEffect, useMemo, useRef, useSyncExternalStore } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -17,6 +17,11 @@ import TarjetaAccion from './TarjetaAccion.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { avatarPorDefecto } from '../../utils/avatar';
 import { actualizar, asegurarUsuario, nuevoId, obtenerEstado, suscribir } from './chatStore.js';
+import flechaDerecha from '../../assets/icons/flecha-derecha.svg';
+import robotIcon from '../../assets/icons/robot.svg';
+import borrarIcon from '../../assets/icons/borrar.svg';
+import cerrarIcon from '../../assets/icons/cerrar.svg';
+import enviarIcon from '../../assets/icons/avion-papel.svg';
 
 
 const hora = () =>
@@ -50,7 +55,7 @@ function Texto({ children, onIr }) {
 
           return (
             <button key={j} type="button" className="mc-link" onClick={() => onIr(ruta)} title={etiqueta}>
-              {etiqueta} <i className="fa-solid fa-arrow-right" aria-hidden="true" />
+              {etiqueta} <img src={flechaDerecha} alt="" aria-hidden="true" />
             </button>
           );
         })}
@@ -246,17 +251,17 @@ export default function IAMantia({
       {/* Ventana */}
       <div className={'mc-win' + (abierto ? ' open' : '')} role="dialog" aria-label="Chat MANTIA IA">
         <div className="mc-header">
-          <div className="mc-avatar"><i className="fa-solid fa-robot" /></div>
+          <div className="mc-avatar"><img src={robotIcon} alt="" aria-hidden="true" /></div>
           <div className="mc-info">
             <h4>{titulo}</h4>
             <p><span className="mc-dot" /> <span>{estado}</span></p>
           </div>
           <div className="mc-actions">
             <button type="button" title="Limpiar conversación" onClick={limpiar}>
-              <i className="fa-solid fa-trash-can" />
+              <img src={borrarIcon} alt="" aria-hidden="true" />
             </button>
             <button type="button" className="mc-cerrar" title="Cerrar" aria-label="Cerrar chat" onClick={() => setAbierto(false)}>
-              <i className="fa-solid fa-xmark" />
+              <img src={cerrarIcon} alt="" aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -268,7 +273,7 @@ export default function IAMantia({
                 {m.rol === 'user' ? (
                   <img src={fotoPerfil} alt={usuario?.name || 'Tú'} />
                 ) : (
-                  <i className="fa-solid fa-robot" />
+                  <img src={robotIcon} alt="" aria-hidden="true" />
                 )}
               </div>
               <div>
@@ -314,7 +319,7 @@ export default function IAMantia({
             disabled={enviando}
             onClick={() => enviar(valor)}
           >
-            <i className="fa-solid fa-paper-plane" />
+            <img src={enviarIcon} alt="" aria-hidden="true" />
           </button>
         </div>
       </div>

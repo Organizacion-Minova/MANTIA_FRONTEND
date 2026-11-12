@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Boton, BotonLink } from "./Button";
-
+import  paginacionDerecha  from "../../assets/icons/paginacion-derecha.svg";
+import paginacionIzquierda from "../../assets/icons/paginacion-izquierda.svg";
 export function usePaginacion(datos, elementosPorPagina = 6) {
     const [paginaActual, setPaginaActual] = useState(1);
 
@@ -38,7 +39,7 @@ export function Paginacion({ paginaActual, totalPaginas, setPaginaActual, maxBot
                 onClick={() => setPaginaActual(paginaActual - 1)}
                 disabled={paginaActual === 1}
                 clase="btn-2"
-                icono="fa-solid fa-chevron-left"
+                img={paginacionIzquierda}
             />
 
             {numerosVisibles.map((numero) => (
@@ -54,7 +55,7 @@ export function Paginacion({ paginaActual, totalPaginas, setPaginaActual, maxBot
                 onClick={() => setPaginaActual(paginaActual + 1)}
                 disabled={paginaActual === totalPaginas}
                 clase="btn-2"
-                icono="fa-solid fa-chevron-right"
+                img={paginacionDerecha}
             />
         </div>
     );

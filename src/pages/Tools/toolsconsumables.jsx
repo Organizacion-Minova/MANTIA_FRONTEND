@@ -14,6 +14,8 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import editarIcono from "../../assets/icons/editar.svg";
 import editarIconoDark from "../../assets/icons/editar-2.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
+import agregarIcon from "../../assets/icons/agregar.svg";
+import listaIcon from "../../assets/icons/lista.svg";
 
 const obtenerClaveBorrador = (usuarioId) => `mantia_borrador_herramientas_${usuarioId}`;
 
@@ -523,7 +525,7 @@ function ToolsConsumables(){
                     
                     <Boton
                         clase="btn-azul"
-                        icono="fa-solid fa-plus"
+                        img={agregarIcon}
                         texto="Nueva Herramienta"
                         onClick={handleAbrirCrear}
                         titulo="Agregar nueva herramienta"
@@ -531,9 +533,9 @@ function ToolsConsumables(){
                     <BotonLink
                         link="/consumables/tools/types"
                         clase="btn-2"
-                        icono="fa-solid fa-list"
-                        texto="Ir a las categorías de las herramientas consumibles"
-                        titulo="Ir a las categorías de las herramientas consumibles"
+                        img={listaIcon}
+                        texto="Ir a categorías de herramientas consumibles"
+                        titulo="Ir a categorías de las herramientas consumibles"
                     />
                 </div>
                 <Paginacion

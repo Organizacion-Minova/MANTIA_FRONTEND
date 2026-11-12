@@ -13,6 +13,13 @@ import { validarGroserias } from "../../components/common/Validations";
 import { exportarGasExcelUnitario, exportarGasPdfUnitario } from "../../api/gasMeasurement";
 import editarIcono from "../../assets/icons/editar.svg";
 import editarIconoDark from "../../assets/icons/editar-2.svg";
+import agregarIcon from "../../assets/icons/agregar.svg";
+import excelIcon from "../../assets/icons/excel.svg";
+import excelIconDark from "../../assets/icons/excel2.svg";
+import pdfIcon from "../../assets/icons/pdf.svg";
+import pdfIconDark from "../../assets/icons/pdf2.svg";
+import izquierdaIcon from "../../assets/icons/flecha-izquierda.svg";
+import izquierdaIcon2 from "../../assets/icons/flecha-izquierda2.svg";
 
 const gases = [
     { key: 'oxygen', label: 'O2', nombre: 'Oxígeno', simbolo: '%', max: 100 },
@@ -423,7 +430,7 @@ export function FormatoGases() {
                                             ) : (
                                                 <Boton
                                                     clase="btn-azul"
-                                                    icono="fa-solid fa-plus"
+                                                    img={agregarIcon}
                                                     titulo="Agregar registro"
                                                     onClick={() => setDetalleEditar(d)}
                                                 />
@@ -496,14 +503,16 @@ export function FormatoGases() {
             <div className="btn-container">
                 <Boton
                     clase="btn-3"
-                    icono="fa-solid fa-file-excel"
+                    img={excelIcon}
+                    imgDark={excelIconDark}
                     texto="Exportar Excel"
                     onClick={() => exportarGasExcelUnitario(medicion.id, medicion.measurement_date)}
                     titulo="Exportar en un archivo de Excel"
                 />
                 <Boton
                     clase="btn-3"
-                    icono="fa-solid fa-file-pdf"
+                    img={pdfIcon}
+                    imgDark={pdfIconDark}
                     texto="Exportar PDF"
                     onClick={() => exportarGasPdfUnitario(medicion.id, medicion.measurement_date)}
                     titulo="Exportar en un archivo PDF"
@@ -512,7 +521,8 @@ export function FormatoGases() {
                     <BotonLink
                         link="/gases"
                         clase="btn-regresar"
-                        icono="fa-solid fa-arrow-left"
+                        img={izquierdaIcon}
+                        imgDark={izquierdaIcon2}
                         texto="Regresar"
                         titulo="Ir a la página de Medición de gases"
                     />

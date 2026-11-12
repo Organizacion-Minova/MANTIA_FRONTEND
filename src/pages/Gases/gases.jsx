@@ -11,6 +11,11 @@ import { Form, Date as InputDate } from "../../components/common/forms";
 import { useConfirm } from "../../context/ConfirmContext.jsx";
 import borrarIcono from "../../assets/icons/borrar.svg";
 import verIcono from "../../assets/icons/ver.svg";
+import agregarIcon from "../../assets/icons/agregar.svg";
+import excelIcon from "../../assets/icons/excel.svg";
+import excelIconDark from "../../assets/icons/excel2.svg";
+import pdfIcon from "../../assets/icons/pdf.svg";
+import pdfIconDark from "../../assets/icons/pdf2.svg";
 
 function RangoFormModal({ tipo, onCancel, onSuccess, mediciones }) {
     const [formData, setFormData] = useState({ fecha_inicio: '', fecha_fin: '' });
@@ -222,7 +227,7 @@ function Gases() {
                 <div className="btn-container">
                     <Boton
                         clase="btn-azul"
-                        icono="fa-solid fa-plus"
+                        img={agregarIcon}
                         texto="Nueva Medición"
                         onClick={handleCrear}
                         titulo="Registrar nueva medición de gases"
@@ -237,14 +242,16 @@ function Gases() {
                     />
                     <Boton
                         clase="btn-3"
-                        icono="fa-solid fa-file-excel"
+                        img={excelIcon}
+                        imgDark={excelIconDark}
                         texto="Exportar Excel"
                         onClick={() => setShowRangoModal('excel')}
                         titulo="Exportar en un archivo de Excel"
                     />
                     <Boton
                         clase="btn-3"
-                        icono="fa-solid fa-file-pdf"
+                        img={pdfIcon}
+                        imgDark={pdfIconDark}
                         texto="Exportar PDF"
                         onClick={() => setShowRangoModal('pdf')}
                         titulo="Exportar en un archivo PDF"

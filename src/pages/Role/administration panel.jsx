@@ -8,6 +8,7 @@ import LoadingScreen from "../../components/LoadingScreen";
 import contrasenaIcono from "../../assets/icons/contrasena.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
 import editarIcono from "../../assets/icons/editar.svg";
+import agregarIcon from "../../assets/icons/agregar.svg";
 import {
     getPendingRequests, approveRequest, rejectRequest
 } from "../../api/auth";
@@ -522,7 +523,7 @@ function PanelRoles() {
                 <Boton
                     clase="btn-azul" 
                     texto="Nuevo rol" 
-                    icono="fa-solid fa-plus"
+                    img={agregarIcon}
                     onClick={() => { setRolAEditar(null); setMostrarFormulario(true); }}
                     titulo="Añadir nuevo rol"
                 />

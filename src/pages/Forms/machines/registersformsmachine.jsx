@@ -8,6 +8,9 @@ import { usePaginacion, Paginacion } from "../../../components/common/Paginacion
 import { GetMachineRecords } from "../../../api/machinesapi";
 import { TIPOS, rutaForm, rutaMaquina } from "../../../components/common/Formarchine";
 import { formatearFechaCorta } from "../../../components/common/Validations";
+import agregarIcon from "../../../assets/icons/agregar.svg";
+import izquierdaIcon from "../../../assets/icons/flecha-izquierda.svg";
+import izquierdaIcon2 from "../../../assets/icons/flecha-izquierda2.svg";
 
 export default function RegistrosMaquina() {
     const { id, kind } = useParams();
@@ -110,7 +113,7 @@ export default function RegistrosMaquina() {
                     <BotonLink 
                         link={rutaForm(id, kind, "/complete")} 
                         clase="btn-azul"
-                        icono="fa-solid fa-plus" 
+                        img={agregarIcon}
                         texto="Nuevo registro" 
                         titulo="Crear un nuevo registro"
                     />
@@ -118,7 +121,8 @@ export default function RegistrosMaquina() {
                         <BotonLink 
                             link={rutaMaquina(id)} 
                             clase="btn-regresar"
-                            icono="fa-solid fa-arrow-left" 
+                            img={izquierdaIcon}
+                            imgDark={izquierdaIcon2}
                             texto="Regresar" 
                             titulo="Regresar a la máquina"
                         />

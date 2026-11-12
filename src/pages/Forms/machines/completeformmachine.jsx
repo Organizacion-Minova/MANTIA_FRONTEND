@@ -10,6 +10,8 @@ import { TIPOS, rutaForm, rutaMaquina } from "../../../components/common/Formarc
 import { fechaHoy } from "../daily_use"
 import { useToast } from "../../../context/ToastContext";
 import { mensajeDeError } from "../../../utils/errores";
+import izquierdaIcon from "../../../assets/icons/flecha-izquierda.svg";
+import izquierdaIcon2 from "../../../assets/icons/flecha-izquierda2.svg";
 
 export default function LlenarRegistroMaquina() {
     const { id, kind } = useParams();
@@ -91,7 +93,7 @@ export default function LlenarRegistroMaquina() {
                         : "Esta máquina no tiene categoría asignada, así que no tiene formato."}
                 </p>
                 <div className="btn-container">
-                    <BotonLink link={rutaMaquina(id)} clase="btn-2" icono="fa-solid fa-arrow-left" texto="Regresar" />
+                    <BotonLink link={rutaMaquina(id)} clase="btn-2" img={izquierdaIcon} imgDark={izquierdaIcon2} texto="Regresar" />
                 </div>
             </div>
         );
@@ -149,7 +151,7 @@ export default function LlenarRegistroMaquina() {
                 <BotonLink 
                     link={rutaForm(id, kind, "/records")} 
                     clase="btn-2"
-                    icono="fa-solid fa-list" 
+                    icono="fa-solid fa-list"
                     texto="Ver formatos guardados"
                     titulo="Ver formatos guardados"
                 />
@@ -164,7 +166,8 @@ export default function LlenarRegistroMaquina() {
                      <BotonLink 
                          link={rutaMaquina(id)} 
                          clase="btn-regresar"
-                         icono="fa-solid fa-arrow-left" 
+                         img={izquierdaIcon}
+                         imgDark={izquierdaIcon2}
                          texto="Regresar" 
                          titulo="Regresar a la máquina"
                      />

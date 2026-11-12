@@ -60,7 +60,8 @@ function AppLayout({ children }) {
     const [editandoPerfil, setEditandoPerfil] = useState(false);
     const [vistaPerfil, setVistaPerfil] = useState("datos");
     const fotoPerfil = usuario?.photo_url || avatarPorDefecto(`${usuario?.name ?? ""} ${usuario?.last_name ?? ""}`);
-    const [inspeccionesAbierto, setInspeccionesAbierto] = useState(false);
+    const [formatosMaquinasAbierto, setFormatosMaquinasAbierto] = useState(false);
+    const [formatosEquiposAbierto, setFormatosEquiposAbierto] = useState(false);
     const [equiposAbierto, setEquiposAbierto] = useState(false);
 
     const abrirPerfil = (vista) => {
@@ -70,7 +71,13 @@ function AppLayout({ children }) {
     };
     const herramientasRutaActiva = pathname.startsWith("/consumables/tools")
         || pathname.startsWith("/noconsumables/tools");
-    const formatosRutaActiva = ["/dailyuse", "/gases", "/inspection"].some((ruta) => pathname.startsWith(ruta));
+    const equiposRutaActiva = pathname.startsWith("/equipment");
+    const formatosMaquinasRutaActiva = [
+        "/inspections/machines",
+        "/dailyuse",
+        "/preoperational/machines",
+    ].some((ruta) => pathname.startsWith(ruta));
+    const formatosEquiposRutaActiva = pathname.startsWith("/inspections/equipment");
 
     const { notificar } = useToast();
     const [notificaciones, setNotificaciones] = useState([]);
@@ -367,10 +374,10 @@ function AppLayout({ children }) {
                             )}
 
                             {tienePermiso("equipment.view") && (
-                                <li className={`menu-desplegable ${equiposAbierto ? "activo" : ""}`}>
+                                <li className={`menu-desplegable ${equiposAbierto || equiposRutaActiva ? "activo" : ""}`}>
                                     <a 
                                         onClick={() => setEquiposAbierto(!equiposAbierto)} 
-                                        className="menu-titulo"
+                                        className={`menu-titulo ${equiposRutaActiva ? "active" : ""}`}
                                     >
                                         <img className="sidebar__icon" src={equiposIcon} alt="" aria-hidden="true" />
                                         <span>Equipos</span>
@@ -440,10 +447,10 @@ function AppLayout({ children }) {
                         )}
                     </li>
                     {tienePermiso("inspection.view") && (
-                        <li className={`menu-desplegable ${inspeccionesAbierto ? "activo" : ""}`}>
+                        <li className={`menu-desplegable ${formatosMaquinasAbierto || formatosMaquinasRutaActiva ? "activo" : ""}`}>
                             <a
-                                className="menu-titulo"
-                                onClick={() => setInspeccionesAbierto(!inspeccionesAbierto)}
+                                className={`menu-titulo ${formatosMaquinasRutaActiva ? "active" : ""}`}
+                                onClick={() => setFormatosMaquinasAbierto(!formatosMaquinasAbierto)}
                             >
                                 <img
                                     className="sidebar__icon"
@@ -496,10 +503,10 @@ function AppLayout({ children }) {
                         </li>
                     )}
                     {tienePermiso("inspection.view") && (
-                    <li className={`menu-desplegable ${inspeccionesAbierto ? "activo" : ""}`}>
+                    <li className={`menu-desplegable ${formatosEquiposAbierto || formatosEquiposRutaActiva ? "activo" : ""}`}>
                             <a
-                                className="menu-titulo"
-                                onClick={() => setInspeccionesAbierto(!inspeccionesAbierto)}
+                                className={`menu-titulo ${formatosEquiposRutaActiva ? "active" : ""}`}
+                                onClick={() => setFormatosEquiposAbierto(!formatosEquiposAbierto)}
                             >
                                 <img
                                     className="sidebar__icon"

@@ -10,6 +10,7 @@ import api from '../../api/axios';
 import { mensajeDeError } from '../../utils/errores';
 import { guardarAccion, obtenerEstado, suscribir } from './chatStore.js';
 import '../../styles/IA-acciones.css';
+import escudoIcon from '../../assets/icons/escudo.svg';
 
 // pendiente → enviando → hecha | cancelada | error
 export default function TarjetaAccion({ accion }) {
@@ -33,7 +34,7 @@ export default function TarjetaAccion({ accion }) {
   return (
     <div className={`mc-accion mc-accion-${estado}`} role="group" aria-label="Acción por confirmar">
       <p className="mc-accion-titulo">
-        <i className="fa-solid fa-user-shield" aria-hidden="true" /> {accion.resumen}
+        <img src={escudoIcon} alt="" aria-hidden="true" /> {accion.resumen}
       </p>
 
       {abierta ? (
