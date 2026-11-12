@@ -1,16 +1,20 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import "../../styles/variables.css";
 import "../../styles/global.css";
 import "../../styles/Components.modules.css";
 import "../../styles/animations/login.css";
-import { Boton } from "../../components/common/Button";
+import { Boton, BotonAccion } from "../../components/common/Button";
 import loginImage from "../../assets/img/Mantia2..png";
 import AuthScene from "./AuthScene";
 import { register } from "../../api/auth";
 import { useToast } from "../../context/ToastContext.jsx";
 import { mensajeDeError } from "../../utils/errores";
 import Turnstile, { CAPTCHA_ACTIVO } from "../../components/Turnstile.jsx";
+import verIcono from "../../assets/icons/ver-contrasena.svg"
+import verIconoDark from "../../assets/icons/ver-contrasena2.svg"
+import ocultarIcono from "../../assets/icons/ocultar.svg"
+import ocultarIconoDark from "../../assets/icons/ocultar2.svg"
 
 const Register = () => {
     const navigate = useNavigate();
@@ -30,6 +34,14 @@ const Register = () => {
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
+
+    const [showPassword, setShowPassword] = useState(false);
+     
+    
+        const togglePasswordVisibility = () => {
+            setShowPassword((visible) => !visible);
+        };
+    
 
 const handleSubmit = async (e) => {
     e.preventDefault();
@@ -183,19 +195,28 @@ const handleSubmit = async (e) => {
                                     />
                                 </div>
 
-                                <div className="input-box">
+                                <div className="input-box password-box">
                                     <label htmlFor="confirmPassword">
                                         Confirmar contraseña <span className="required-mark">*</span>
                                     </label>
                                     <input
                                         id="confirmPassword"
-                                        type="password"
+                                        type={showPassword ? "text" : "password"}
                                         name="confirmPassword"
                                         placeholder="Repite tu contraseña"
                                         value={formData.confirmPassword}
                                         onChange={handleChange}
                                         required
                                     />
+                                    
+                                     <BotonAccion
+                                     clase="btn-toggle-password"
+                                     onClick={togglePasswordVisibility}
+                                     ariaLabel={showPassword ? "Ocultar contraseña" : "Ver contraseña"}
+                                     icono={showPassword ? ocultarIcono : verIcono}
+                                     iconoDark={showPassword ? ocultarIconoDark : verIconoDark}
+                                    />
+
                                 </div>
                             </div>
 

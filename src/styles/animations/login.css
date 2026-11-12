@@ -363,3 +363,31 @@
     transform-origin: center;
 }
 
+/* Posicionamiento relativo para que el botón quede dentro del input */
+.input-box.password-box {
+    position: relative;
+}
+
+.input-box.password-box input {
+    padding-right: 42px;
+}
+
+/* Estilo base para el botón del icono */
+.btn-toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 38px; /* Ajusta según la altura de tu label/input */
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-toggle-password img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
