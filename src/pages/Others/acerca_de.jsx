@@ -201,30 +201,25 @@ const equipoDesarrollo = [
 
 /* ---------------------------- componente ---------------------------- */
 
-function AcercaDe() {
-
-    const { isAuthenticated } = useAuth();
-    const Layout = isAuthenticated ? AppLayout : PublicLayout;
-
+function ContenidoAcerca({ isAuthenticated }) {
     return (
-        <Layout>
-            
         <div className={`public-page about-grid${isAuthenticated ? " about-grid-authenticated" : ""}`}>
+             
             
             <section className="about-intro">
-            <div className="mt-legal__ruta">
-                <Link to="/">Inicio</Link>
-                <span aria-hidden="true">/</span>
-                <span>Acerca de</span>
-            </div>
-                <PageWelcome
-                    titulo="Acerca de MANTIA"
-                    descripcion="Mantenimiento e inventario de activos, pensado para la industria minera colombiana."
-                />
-                <p style={{ color: "var(--texto2)", marginBottom: "0" }}>
-                    <i className="fa-solid fa-graduation-cap" aria-hidden="true"></i>{" "}
-                    Proyecto formativo del SENA, Centro Nacional Minero.
-                </p>
+                        
+                 {!isAuthenticated && (
+                <div className="mt-legal__ruta">
+                    <Link to="/">Inicio</Link>
+                    <span aria-hidden="true">/</span>
+                    <span>Acerca de</span>
+                </div>
+            )}
+            <PageWelcome
+                titulo="Acerca de MANTIA"
+                descripcion="Proyecto formativo para la mina SENA, Centro Nacional Minero"
+                mostrarHistorial={isAuthenticated}
+            />
             </section>
 
             {/* ================= POR QUÉ EXISTE ================= */}
@@ -474,7 +469,25 @@ function AcercaDe() {
             </div>
 
         </div>
-        </Layout>
+    );
+}
+
+function AcercaDe() {
+    const { isAuthenticated } = useAuth();
+
+    if (!isAuthenticated) {
+        return (
+            <PublicLayout>
+                
+                <ContenidoAcerca isAuthenticated={false} />
+            </PublicLayout>
+        );
+    }
+
+    return (
+        <AppLayout>
+            <ContenidoAcerca isAuthenticated />
+        </AppLayout>
     );
 }
 

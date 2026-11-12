@@ -6,8 +6,13 @@ import AccessibilityPanel from "../accessibility/AccessibilityPanel";
 function PublicLayout({ children }) {
   return (
     <div className="mt-app">
+      
       <TopbarPublic solid />
-      <main className="mt-main" style={{ display: "block", width: "100%" }}>{children}</main>
+      
+      <main className="mt-main" style={{ display: "block", width: "100%" }}>{children}
+            
+      </main>
+      
       <AccessibilityPanel />
       <FooterPublic />
     </div>

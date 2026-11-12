@@ -556,6 +556,7 @@ function Ayuda() {
     if (!isAuthenticated) {
         return (
             <PublicLayout>
+                
             <div className="public-page help-grid">
                 <section className="help-intro">
                 <div className="mt-legal__ruta">
@@ -653,6 +654,7 @@ function Ayuda() {
                 <PageWelcome
                     titulo="Centro de ayuda"
                     descripcion="Busca cómo usar cada módulo de MANTIA o escríbenos directamente."
+                    mostrarHistorial={true}
                 />
                 <Searcher
                 value={busqueda}

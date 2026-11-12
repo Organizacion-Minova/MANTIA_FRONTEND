@@ -85,6 +85,7 @@ export default function LlenarInspeccion() {
                 <PageWelcome
                     titulo={`Inspección preoperacional ${datos.equipment.name}`}
                     descripcion="Complete el formato de la semana y guárdelo."
+                    mostrarHistorial={true}
                 />
             </header>
 
