@@ -16,6 +16,7 @@ import editarIcono from "../../assets/icons/editar.svg";
 import editarIconoDark from "../../assets/icons/editar-2.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
 import verIcono from "../../assets/icons/ver.svg";
+import reestablecerFiltrosIcon from "../../assets/icons/reestablecerFiltros.svg";
 import { useAuth } from "../../context/AuthContext.jsx";
 import agregarIcon from "../../assets/icons/agregar.svg";
 
@@ -608,6 +609,15 @@ function EquiposConsumibles(){
         equipo.filter((e) => e.category === categoria),
         ["code","name", "description","responsible","model","ubicacionBusqueda"]
     );
+    const hayFiltros =
+        busqueda.trim() !== "" ||
+        Object.values(filtrosEspeciales).some((v) => v !== "" && v != null);
+
+    const handleBorrarFiltros = () => {
+        setBusqueda("");
+        setFiltroEspecial("location_id", "");
+        setPaginaActual(1);
+    };
     const ubicacionesUnicas = Array.from(
         new Map(
             equipo
@@ -674,7 +684,7 @@ function EquiposConsumibles(){
                     onChange={(e)=>setBusqueda(e.target.value)}
                     placeholder="Buscar por nombre, código, descripción, responsable, modelo, ubicación o marca"
                     filtrosAdicionales={
-                        <div className="btn-container">
+                        <>
                             <Select
                                 id="filtro-ubicacion"
                                 name="filtro-ubicacion"
@@ -685,7 +695,16 @@ function EquiposConsumibles(){
                                     ...ubicacionesUnicas,
                                 ]}
                             />
-                        </div>
+                            {hayFiltros && (
+                                <BotonAccion
+                                    clase='btn-borrar'
+                                    icono={reestablecerFiltrosIcon}
+                                    texto="Borrar filtros"
+                                    onClick={handleBorrarFiltros}
+                                    titulo="Quitar la búsqueda y todos los filtros"
+                                />
+                            )}
+                        </>
                     }
                 />
                 

@@ -15,6 +15,7 @@ import editarIconoDark from "../../assets/icons/editar-2.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
 import agregarIcon from "../../assets/icons/agregar.svg";
 import listaIcon from "../../assets/icons/lista.svg";
+import reestablecerFiltrosIcon from "../../assets/icons/reestablecerFiltros.svg";
 
 const obtenerClaveBorrador = (usuarioId, tipo) =>
     `mantia_borrador_categorias_herramientas_${tipo}_${usuarioId}`;
@@ -345,6 +346,15 @@ export function Consumibles(){
         categorias,
         ["name", "description", "status"]
     );
+    const hayFiltros =
+        busqueda.trim() !== "" ||
+        Object.values(filtrosEspeciales).some((v) => v !== "" && v != null);
+
+    const handleBorrarFiltros = () => {
+        setBusqueda("");
+        setFiltroEspecial("status", "");
+        setPaginaActual(1);
+    };
     const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(categoriasFiltradas, 7);
 
     useEffect(() => {
@@ -397,17 +407,28 @@ export function Consumibles(){
                     onChange={(e) => setBusqueda(e.target.value)}
                     placeholder="Buscar por nombre o descripción"
                     filtrosAdicionales={
-                        <Select
-                            id="filtro-estado-consumibles"
-                            name="filtro-estado-consumibles"
-                            value={filtrosEspeciales.status || ""}
-                            onChange={(e) => setFiltroEspecial("status", e.target.value)}
-                            opciones={[
-                                { valor: "", etiqueta: "Todos los estados" },
-                                { valor: "Activo", etiqueta: "Activo" },
-                                { valor: "Inactivo", etiqueta: "Inactivo" },
-                            ]}
-                        />
+                        <div className="btn-container">
+                            <Select
+                                id="filtro-estado-consumibles"
+                                name="filtro-estado-consumibles"
+                                value={filtrosEspeciales.status || ""}
+                                onChange={(e) => setFiltroEspecial("status", e.target.value)}
+                                opciones={[
+                                    { valor: "", etiqueta: "Todos los estados" },
+                                    { valor: "Activo", etiqueta: "Activo" },
+                                    { valor: "Inactivo", etiqueta: "Inactivo" },
+                                ]}
+                            />
+                            {hayFiltros && (
+                                <BotonAccion
+                                clase='btn-borrar'
+                                icono={reestablecerFiltrosIcon}
+                                texto="Borrar filtros"
+                                onClick={handleBorrarFiltros}
+                                titulo="Quitar la búsqueda y todos los filtros"
+                                />
+                            )}
+                        </div>
                     }
                 />
             </header>
@@ -498,6 +519,15 @@ export function No_Consumibles(){
     categorias,
     ["name", "description", "status"]
     );
+    const hayFiltros =
+        busqueda.trim() !== "" ||
+        Object.values(filtrosEspeciales).some((v) => v !== "" && v != null);
+
+    const handleBorrarFiltros = () => {
+        setBusqueda("");
+        setFiltroEspecial("status", "");
+        setPaginaActual(1);
+    };
     const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(categoriasFiltradas, 7);
 
     useEffect(() => {
@@ -549,17 +579,28 @@ export function No_Consumibles(){
                     onChange={(e) => setBusqueda(e.target.value)}
                     placeholder="Buscar por nombre o descripción"
                     filtrosAdicionales={
-                        <Select
-                            id="filtro-estado-consumibles"
-                            name="filtro-estado-consumibles"
-                            value={filtrosEspeciales.status || ""}
-                            onChange={(e) => setFiltroEspecial("status", e.target.value)}
-                            opciones={[
-                                { valor: "", etiqueta: "Todos los estados" },
-                                { valor: "Activo", etiqueta: "Activo" },
-                                { valor: "Inactivo", etiqueta: "Inactivo" },
-                            ]}
-                        />
+                        <div className="btn-container">
+                            <Select
+                                id="filtro-estado-consumibles"
+                                name="filtro-estado-consumibles"
+                                value={filtrosEspeciales.status || ""}
+                                onChange={(e) => setFiltroEspecial("status", e.target.value)}
+                                opciones={[
+                                    { valor: "", etiqueta: "Todos los estados" },
+                                    { valor: "Activo", etiqueta: "Activo" },
+                                    { valor: "Inactivo", etiqueta: "Inactivo" },
+                                ]}
+                            />
+                            {hayFiltros && (
+                                <BotonAccion
+                                clase='btn-borrar'
+                                icono={reestablecerFiltrosIcon}
+                                texto="Borrar filtros"
+                                onClick={handleBorrarFiltros}
+                                titulo="Quitar la búsqueda y todos los filtros"
+                                />
+                            )}
+                        </div>
                     }
                 />
             </header>

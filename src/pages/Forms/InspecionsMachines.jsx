@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BotonLink } from "../../components/common/Button";
+import { BotonAccion, BotonLink } from "../../components/common/Button";
 import { PageWelcome, Searcher } from "../../components/common/welcome";
 import { Select } from "../../components/common/forms";
 import LoadingScreen from "../../components/LoadingScreen";
@@ -8,6 +8,7 @@ import { useSearch } from "../../hooks/useSearch";
 import { GetInspectionOverviewMachines } from "../../api/machinesapi";
 import { TIPOS, rutaForm } from "../../components/common/Formarchine";
 import verIcono  from "../../assets/icons/ver.svg";
+import reestablecerFiltrosIcon from "../../assets/icons/reestablecerFiltros.svg";
 
 export default function InspeccionesMaquinas({ kind = "inspection" }) {
     const [maquinas, setMaquinas] = useState([]);
@@ -31,6 +32,13 @@ export default function InspeccionesMaquinas({ kind = "inspection" }) {
     );
 
     const { busqueda, setBusqueda, itemsFiltrados } = useSearch(filtradas, ["name", "category"]);
+    const hayFiltros = busqueda.trim() !== "" || estado !== "";
+
+    const handleBorrarFiltros = () => {
+        setBusqueda("");
+        setEstado("");
+        setPaginaActual(1);
+    };
     const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(itemsFiltrados, 7);
 
     useEffect(() => {
@@ -53,7 +61,7 @@ export default function InspeccionesMaquinas({ kind = "inspection" }) {
                     onChange={(e) => setBusqueda(e.target.value)}
                     placeholder="Buscar por nombre o categoría"
                     filtrosAdicionales={
-                        <div className="btn-container">
+                        <>
                             <Select
                                 id="filtro-estado"
                                 name="filtro-estado"
@@ -65,7 +73,16 @@ export default function InspeccionesMaquinas({ kind = "inspection" }) {
                                     { valor: "sin", etiqueta: "Sin formato" },
                                 ]}
                             />
-                        </div>
+                            {hayFiltros && (
+                                <BotonAccion
+                                    clase="btn-borrar"
+                                    icono={reestablecerFiltrosIcon}
+                                    texto="Borrar filtros"
+                                    onClick={handleBorrarFiltros}
+                                    titulo="Quitar la búsqueda y los filtros"
+                                />
+                            )}
+                        </>
                     }
                 />
             </header>

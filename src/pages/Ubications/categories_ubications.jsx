@@ -15,6 +15,7 @@ import editarIconoDark from "../../assets/icons/editar-2.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
 import agregarIcon from "../../assets/icons/agregar.svg";
 import listaIcon from "../../assets/icons/lista.svg";
+import reestablecerFiltrosIcon from "../../assets/icons/reestablecerFiltros.svg";
 
 const opciones_estado = [
     { valor: "active", etiqueta: "Activo" },
@@ -201,8 +202,17 @@ function CategoriasUbicacion() {
 
     const { busqueda, setBusqueda, filtrosEspeciales, setFiltroEspecial, itemsFiltrados: categoriasFiltradas } = useSearch(
         categorias,
-        ['name', 'description']
+        ['name', 'description', 'status']
     );
+    const hayFiltros =
+        busqueda.trim() !== "" ||
+        Object.values(filtrosEspeciales).some((v) => v !== "" && v != null);
+
+    const handleBorrarFiltros = () => {
+        setBusqueda("");
+        setFiltroEspecial("status", "");
+        setPaginaActual(1);
+    };
 
     const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(categoriasFiltradas, 7);
     useEffect(() => {
@@ -270,13 +280,24 @@ function CategoriasUbicacion() {
                         onChange={(e) => setBusqueda(e.target.value)}
                         placeholder="Buscar por nombre o descripción"
                         filtrosAdicionales={
-                            <Select
-                                id="filtroEstado"
-                                name="filtroEstado"
-                                value={filtrosEspeciales.status || ""}
-                                onChange={(e) => setFiltroEspecial('status', e.target.value)}
-                                opciones={opcionesEstados}
-                            />
+                            <div className="btn-container">
+                                <Select
+                                    id="filtroEstado"
+                                    name="filtroEstado"
+                                    value={filtrosEspeciales.status || ""}
+                                    onChange={(e) => setFiltroEspecial('status', e.target.value)}
+                                    opciones={opcionesEstados}
+                                />
+                                {hayFiltros && (
+                                    <BotonAccion
+                                        clase='btn-borrar'
+                                        icono={reestablecerFiltrosIcon}
+                                        texto="Borrar filtros"
+                                        onClick={handleBorrarFiltros}
+                                        titulo="Quitar la búsqueda y todos los filtros"
+                                    />
+                                )}
+                            </div>
                         }
                     />
             </header>

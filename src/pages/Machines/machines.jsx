@@ -20,6 +20,7 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import { mensajeDeError } from "../../utils/errores";
 import agregarIcon from "../../assets/icons/agregar.svg";
 import listaIcon from "../../assets/icons/lista.svg";
+import reestablecerFiltrosIcon from "../../assets/icons/reestablecerFiltros.svg";
 
 const valorSelect = (valor) => (valor == null ? "" : String(valor));
 const normalizarEstado = (estado) => {
@@ -578,9 +579,6 @@ function Formulario({onCancel, onGuardado, maquinaEditar, usuarioId}){
     )
 
 }
-function FormularioConsumibles(){
-
-}
 function Maquinas(){
     const { usuario } = useAuth();
     const usuarioId = usuario?.id;
@@ -597,8 +595,17 @@ function Maquinas(){
     }));
     const { busqueda, setBusqueda, filtrosEspeciales, setFiltroEspecial, itemsFiltrados: maquinasFiltrados } = useSearch(
         maquina,
-        ["code","name","responsible","model","ubicacionBusqueda","marcaBusqueda"]
-    );
+        ["code", "name", "responsible", "model", "brand", "categoriaBusqueda", "ubicacionBusqueda"]    );
+    const hayFiltros =
+        busqueda.trim() !== "" ||
+        Object.values(filtrosEspeciales).some((v) => v !== "" && v != null);
+
+    const handleBorrarFiltros = () => {
+        setBusqueda("");
+        setFiltroEspecial("machine_category_id", "");
+        setFiltroEspecial("location_id", "");
+        setPaginaActual(1);
+    };
     const ubicacionesUnicas = Array.from(
         new Map(
             maquina
@@ -671,9 +678,9 @@ function Maquinas(){
                 <Searcher
                     value={busqueda}
                     onChange={(e)=>setBusqueda(e.target.value)}
-                    placeholder="Buscar por código, nombre, responsable, modelo o ubicación"
+                    placeholder="Buscar por código, nombre, responsable, modelo, marca, categoría o ubicación"
                     filtrosAdicionales={
-                        <div className="btn-container">
+                        <>
                             <Select
                                 id="filtro-categoria"
                                 name="filtro-categoria"
@@ -695,7 +702,16 @@ function Maquinas(){
                                 ]}
                             
                             />
-                    </div>}
+                            {hayFiltros && (
+                                <BotonAccion
+                                    clase='btn-borrar'
+                                    icono={reestablecerFiltrosIcon}
+                                    texto="Borrar filtros"
+                                    onClick={handleBorrarFiltros}
+                                    titulo="Quitar la búsqueda y todos los filtros"
+                                />
+                            )}
+                    </>}
                 />
             </header>
             <div className="table-responsive">

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { BotonLink } from "../../../components/common/Button";
+import { BotonLink, BotonAccion } from "../../../components/common/Button";
 import { PageWelcome, Searcher } from "../../../components/common/welcome";
 import { useSearch } from "../../../hooks/useSearch";
 import LoadingScreen from "../../../components/LoadingScreen";
@@ -11,6 +11,7 @@ import { formatearFechaCorta } from "../../../components/common/Validations";
 import agregarIcon from "../../../assets/icons/agregar.svg";
 import izquierdaIcon from "../../../assets/icons/flecha-izquierda.svg";
 import izquierdaIcon2 from "../../../assets/icons/flecha-izquierda2.svg";
+import reestablecerFiltrosIcon from "../../../assets/icons/reestablecerFiltros.svg";
 
 export default function RegistrosMaquina() {
     const { id, kind } = useParams();
@@ -22,9 +23,17 @@ export default function RegistrosMaquina() {
 
     const { busqueda, setBusqueda, rangoFecha, setRangoFecha, itemsFiltrados } = useSearch(
         registros,
-        ["id", "inspector", "date", "week_end", "format_version"],
+        ["inspector", "date", "week_end", "format_version"],
         "date"
     );
+    const hayFiltros =
+        busqueda.trim() !== "" ||
+        (typeof rangoFecha === "string" ? rangoFecha.trim() !== "" : Object.values(rangoFecha || {}).some((v) => v !== "" && v != null));
+    const handleBorrarFiltros = () => {
+        setBusqueda("");
+        setRangoFecha("");
+        setPaginaActual(1);
+    };
 
     const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(itemsFiltrados, 7);
 
@@ -63,6 +72,17 @@ export default function RegistrosMaquina() {
                     rangoFecha={rangoFecha}
                     onRangoFechaChange={setRangoFecha}
                     placeholder="Buscar por código, fecha o inspector"
+                    filtrosAdicionales={
+                        hayFiltros && (
+                            <BotonAccion
+                                clase="btn-borrar"
+                                icono={reestablecerFiltrosIcon}
+                                texto="Borrar filtros"
+                                onClick={handleBorrarFiltros}
+                                titulo="Quitar la búsqueda y el filtro de fechas"
+                            />
+                        )
+                    }
                 />
             </header>
 
