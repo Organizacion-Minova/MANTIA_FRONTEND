@@ -3,6 +3,8 @@ import { useParams, Navigate } from "react-router-dom";
 import { BotonLink } from "../../../components/common/Button";
 import { HasInspectionFormat } from "../../../api/Equipmentsapi";
 import LoadingScreen from "../../../components/LoadingScreen";
+import izquierdaIcon from "../../../assets/icons/flecha-izquierda.svg";
+import izquierdaIcon2 from "../../../assets/icons/flecha-izquierda2.svg";
 
 function InspeccionEquipo() {
     const { id } = useParams();
@@ -35,7 +37,8 @@ function InspeccionEquipo() {
                     <BotonLink
                         link={`/equipment/cardequipment/${id}`}
                         clase="btn-regresar"
-                        icono="fa-solid fa-arrow-left"
+                        img={izquierdaIcon}
+                        imgDark={izquierdaIcon2}
                         texto="Regresar"
                         titulo="Regresar a la página del equipo"
                     />

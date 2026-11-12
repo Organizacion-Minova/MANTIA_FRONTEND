@@ -8,7 +8,8 @@ import { GetEquipmentInspectionFormat, CreateInspectionFormat, UpdateInspectionF
 import { capitalizarPrimeraLetra, sinCaracteresEspeciales, validarGroserias } from "../../../components/common/Validations";
 import { useToast } from "../../../context/ToastContext";
 import { mensajeDeError } from "../../../utils/errores";
-import borrarIcono from "../../../assets/icons/borrar.svg"
+import izquierdaIcon from "../../../assets/icons/flecha-izquierda.svg";
+import izquierdaIcon2 from "../../../assets/icons/flecha-izquierda2.svg";
 
 const PRESETS_OPCIONES = {
     "B,M": ["B", "M"],
@@ -302,7 +303,8 @@ export default function ConstructorFormato({ editar = false }) {
                     <BotonLink 
                         link="/equipment" 
                         clase="btn-regresar" 
-                        icono="fa-solid fa-arrow-left" 
+                        img={izquierdaIcon}
+                        imgDark={izquierdaIcon2}
                         texto="Regresar" 
                         titulo="Regresar a la página del equipo"
                     />
@@ -509,7 +511,7 @@ export default function ConstructorFormato({ editar = false }) {
                                     <div className="machine-question-actions">
                                         <BotonAccion
                                             clase="btn-borrar" 
-                                            icono={borrarIcono}
+                                            iconoFa="fa-solid fa-trash"
                                             titulo="Eliminar pregunta"
                                             onClick={() => eliminarPregunta(s.id, q.id)} 
                                         />
@@ -524,7 +526,7 @@ export default function ConstructorFormato({ editar = false }) {
                     <div className="btn-container">
                         <Boton 
                             clase="btn-azul" 
-                            icono="fa-solid fa-plus" 
+                            icono="fa-solid fa-plus"
                             texto="Agregar pregunta"
                             titulo="Agregar pregunta a la sección"
                             onClick={() => agregarPregunta(s.id)} />
@@ -543,7 +545,7 @@ export default function ConstructorFormato({ editar = false }) {
             <div className="btn-container">
                 <Boton 
                     clase="btn-azul" 
-                    icono="fa-solid fa-plus" 
+                    icono="fa-solid fa-plus"
                     texto="Agregar sección"
                     onClick={() => setSecciones((prev) => [...prev, nuevaSeccion()])} 
                     titulo="Agregar sección"/>
@@ -557,7 +559,8 @@ export default function ConstructorFormato({ editar = false }) {
                     <BotonLink 
                         link={`/equipment/cardequipment/${id}/inspection/complete`} 
                         clase="btn-regresar" 
-                        icono="fa-solid fa-arrow-left" 
+                        img={izquierdaIcon}
+                        imgDark={izquierdaIcon2}
                         texto="Regresar al formato" 
                         titulo="Regresar al formato"/>
                 </div>

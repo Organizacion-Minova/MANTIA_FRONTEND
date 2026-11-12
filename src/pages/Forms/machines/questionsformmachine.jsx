@@ -6,7 +6,6 @@ import { Text } from "../../../components/common/forms";
 import LoadingScreen from "../../../components/LoadingScreen";
 import { GetMachineFormat, CreateMachineFormat, UpdateMachineFormat } from "../../../api/machinesapi";
 import { TIPOS, rutaForm, rutaMaquina, letraSeccion, numerarPreguntas } from "../../../components/common/Formarchine";
-import borrarIcono from "../../../assets/icons/borrar.svg"
 import {
     capitalizarPrimeraLetra,
     sinCaracteresEspeciales,
@@ -14,6 +13,8 @@ import {
 } from "../../../components/common/Validations";
 import { useToast } from "../../../context/ToastContext";
 import { mensajeDeError } from "../../../utils/errores";
+import izquierdaIcon from "../../../assets/icons/flecha-izquierda.svg";
+import izquierdaIcon2 from "../../../assets/icons/flecha-izquierda2.svg";
 
 const validarCodigo = (valor) => {
     const texto = valor.trim();
@@ -229,7 +230,8 @@ export default function ConstructorFormatoMaquina({ editar = false }) {
                     <BotonLink 
                         link="/machines" 
                         clase="btn-2" 
-                        icono="fa-solid fa-arrow-left" 
+                        img={izquierdaIcon}
+                        imgDark={izquierdaIcon2}
                         texto="Regresar" 
                         titulo="Regresar a la lista de máquinas"
                     />
@@ -248,7 +250,8 @@ export default function ConstructorFormatoMaquina({ editar = false }) {
                     <BotonLink 
                         link={rutaMaquina(id)} 
                         clase="btn-2" 
-                        icono="fa-solid fa-arrow-left" 
+                        img={izquierdaIcon}
+                        imgDark={izquierdaIcon2}
                         texto="Regresar" 
                         titulo="Regresar a la máquina"
                     />
@@ -345,7 +348,7 @@ export default function ConstructorFormatoMaquina({ editar = false }) {
                                     <div className="machine-question-actions">
                                         <BotonAccion
                                             clase="btn-borrar" 
-                                            icono={borrarIcono}
+                                            iconoFa="fa-solid fa-trash-can"
                                             titulo="Eliminar"
                                             onClick={() => eliminarFila(s.id, r.id)} 
                                         />
@@ -361,14 +364,14 @@ export default function ConstructorFormatoMaquina({ editar = false }) {
                     <div className="btn-container">
                         <Boton 
                             clase="btn-azul" 
-                            icono="fa-solid fa-plus" 
+                            icono="fa-solid fa-plus"
                             texto="Agregar grupo"
                             onClick={() => agregarFila(s.id, "group")} 
                             titulo="Agregar un grupo de preguntas (con título y varias preguntas dentro)"
                         />
                         <Boton 
                             clase="btn-2" 
-                            icono="fa-solid fa-plus" 
+                            icono="fa-solid fa-plus"
                             texto="Agregar pregunta"
                             onClick={() => agregarFila(s.id, "item")} 
                             titulo="Agregar una pregunta individual (sin título de grupo)"
@@ -397,7 +400,7 @@ export default function ConstructorFormatoMaquina({ editar = false }) {
             <div className="btn-container">
                 <Boton 
                     clase="btn-azul" 
-                    icono="fa-solid fa-plus" 
+                    icono="fa-solid fa-plus"
                     texto="Agregar sección"
                     onClick={() => setSecciones((prev) => [...prev, nuevaSeccion()])} 
                     titulo="Agregar una nueva sección de preguntas"
@@ -413,7 +416,8 @@ export default function ConstructorFormatoMaquina({ editar = false }) {
                     <BotonLink 
                         link={rutaMaquina(id)} 
                         clase="btn-regresar" 
-                        icono="fa-solid fa-arrow-left"
+                        img={izquierdaIcon}
+                        imgDark={izquierdaIcon2}
                         texto="Regresar" 
                         titulo="Cancelar y regresar" 
                     />

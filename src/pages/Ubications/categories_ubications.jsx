@@ -13,6 +13,8 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import editarIcono from "../../assets/icons/editar.svg";
 import editarIconoDark from "../../assets/icons/editar-2.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
+import agregarIcon from "../../assets/icons/agregar.svg";
+import listaIcon from "../../assets/icons/lista.svg";
 
 const opciones_estado = [
     { valor: "active", etiqueta: "Activo" },
@@ -332,7 +334,7 @@ function CategoriasUbicacion() {
                 <div className="btn-container">
                     <Boton
                         clase="btn-azul"
-                        icono="fa-solid fa-plus"
+                        img={agregarIcon}
                         texto="Nueva Categoría"
                         onClick={handleCrear}
                         titulo="Registrar nueva categoría"
@@ -340,7 +342,7 @@ function CategoriasUbicacion() {
                     <BotonLink
                         link="/ubications"
                         clase="btn-2"
-                        icono="fa-solid fa-list"
+                        img={listaIcon}
                         texto="Volver a Ubicaciones"
                         titulo="Ir a la página de Ubicaciones"
                     />

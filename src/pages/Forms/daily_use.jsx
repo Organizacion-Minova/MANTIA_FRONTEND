@@ -14,6 +14,13 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import editarIcono from "../../assets/icons/editar.svg";
 import editarIconoDark from "../../assets/icons/editar-2.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
+import agregarIcon from "../../assets/icons/agregar.svg";
+import excelIcon from "../../assets/icons/excel.svg";
+import excelIconDark from "../../assets/icons/excel2.svg";
+import pdfIcon from "../../assets/icons/pdf.svg";
+import pdfIconDark from "../../assets/icons/pdf2.svg";
+import izquierdaIcon from "../../assets/icons/flecha-izquierda.svg";
+import izquierdaIcon2 from "../../assets/icons/flecha-izquierda2.svg";
 
 const obtenerClaveBorrador = (usuarioId) => `mantia_borrador_uso_diario_${usuarioId}`;
 
@@ -439,19 +446,21 @@ export function UsoDiario(){
                 <div className="btn-container">
                     <Boton
                         clase="btn-azul"
-                        icono="fa-solid fa-plus"
+                        img={agregarIcon}
                         texto="Nuevo Registro"
                         onClick={handleAbrirCrear}
                     />
                     <Boton
                         clase="btn-3"
-                        icono="fa-solid fa-file-excel"
+                        img={excelIcon}
+                        imgDark={excelIconDark}
                         texto="Exportar Excel"
                         onClick={handleExportarExcel}
                     />
                     <Boton
                         clase="btn-3"
-                        icono="fa-solid fa-file-pdf"
+                        img={pdfIcon}
+                        imgDark={pdfIconDark}
                         texto="Exportar Pdf"
                         onClick={handleExportarPdf}
                     />
@@ -459,7 +468,8 @@ export function UsoDiario(){
                         <BotonLink
                             link={`/Machines`}
                             clase="btn-regresar"
-                            icono="fa-solid fa-arrow-left"
+                            img={izquierdaIcon}
+                            imgDark={izquierdaIcon2}
                             texto="Regresar"
                         />
                     </div> 

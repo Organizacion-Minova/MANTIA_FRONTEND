@@ -7,6 +7,9 @@ import { usePaginacion, Paginacion } from "../../../components/common/Paginacion
 import { GetEquipmentInspections } from "../../../api/Equipmentsapi";
 import { formatearFechaCorta } from "../../../components/common/Validations";
 import verIcono from "../../../assets/icons/ver.svg";
+import agregarIcon from "../../../assets/icons/agregar.svg";
+import izquierdaIcon from "../../../assets/icons/flecha-izquierda.svg";
+import izquierdaIcon2 from "../../../assets/icons/flecha-izquierda2.svg";
 
 export default function RegistrosInspeccion() {
     const { id } = useParams();
@@ -80,7 +83,7 @@ export default function RegistrosInspeccion() {
                     <BotonLink 
                         link={`/equipment/cardequipment/${id}/inspection/complete`} 
                         clase="btn-azul"
-                        icono="fa-solid fa-plus" 
+                        img={agregarIcon}
                         texto="Nueva inspección" 
                         titulo="Crear nueva inspección" 
                     />
@@ -88,7 +91,8 @@ export default function RegistrosInspeccion() {
                     <BotonLink 
                         link={`/equipment/cardequipment/${id}/inspection/complete`} 
                         clase="btn-regresar"
-                        icono="fa-solid fa-arrow-left" 
+                        img={izquierdaIcon}
+                        imgDark={izquierdaIcon2}
                         texto="Regresar al formato" 
                         titulo="Regresar al formato de inspección" 
                     />

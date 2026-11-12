@@ -185,7 +185,7 @@ main.cerrado{
 /* ESTE BOTON SE USA PARA OPCION SECUNDARIA */
 .btn-2{
     background:    var(--fondo);
-    color:        var(--secundario);
+    color:        #15ad94;
     border: solid 2px var(--secundario);
     border-radius: 1rem;
     padding:       0.875rem 1.75rem;
@@ -299,6 +299,18 @@ main.cerrado{
     object-fit: contain;
     width: 1.1rem;
   
+}
+
+.boton-link__icono--dark {
+    display: none;
+}
+
+html.dark-theme .boton-link__icono--light {
+    display: none;
+}
+
+html.dark-theme .boton-link__icono--dark {
+    display: block;
 }
 
 .boton-accion__icono--dark {

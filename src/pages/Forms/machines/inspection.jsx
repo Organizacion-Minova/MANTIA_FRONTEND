@@ -65,7 +65,7 @@ function AgregarInspeccion(){
             <div className="btn-container">
                 <Boton 
                     clase="btn-azul" 
-                    icono="fa-solid fa-plus" 
+                    icono="fa-solid fa-plus"
                     texto="Agregar Pregunta" 
                     onClick={agregarPregunta} 
                     titulo="Agregar una nueva pregunta al formulario"

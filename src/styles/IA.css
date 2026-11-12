@@ -100,6 +100,7 @@ flex-shrink:0;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255
 .mc-actions{display:flex;gap:2px}
 .mc-actions button{width:2rem;height:2rem;display:grid;place-items:center;background:none;border:0;color:inherit;opacity:.78;cursor:pointer;padding:.4rem;border-radius:.65rem;transition:background .18s,opacity .18s}
 .mc-actions button:hover{opacity:1;background:rgba(255,255,255,.16)}
+.mc-actions img{width:1rem;height:1rem;object-fit:contain;filter:brightness(0) invert(1)}
 /* Cerrar: igual que el del panel de accesibilidad (X blanca, esquinas 20%, rojo --rojo al pasar el cursor) */
 .mc-actions .mc-cerrar{color:#fff;opacity:1;border-radius:20%}
 .mc-actions .mc-cerrar:hover{background:var(--rojo)}
@@ -180,6 +181,9 @@ display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:
 .mc-link{display:inline-flex;align-items:center;gap:.35rem;margin:.3rem .3rem 0 0;padding:.3rem .7rem;cursor:pointer;
 font:600 .74rem var(--fuente-principal);color:var(--texto);background:var(--contenedor);
 border:1px solid var(--secundario);border-radius:2rem;transition:background .18s,transform .18s}
-.mc-link i{font-size:.65rem;color:var(--secundario)}
+.mc-link img{width:.65rem;height:.65rem;object-fit:contain}
+.mc-avatar img{width:1.55rem;height:1.55rem;object-fit:contain}
+.mc-icon.ia img{width:1rem;height:1rem;object-fit:contain}
+.mc-send img{width:1rem;height:1rem;object-fit:contain}
 .mc-link:hover{background:var(--hover-principal);transform:translateY(-1px)}
 .mc-link:focus-visible{outline:2px solid var(--secundario);outline-offset:2px}

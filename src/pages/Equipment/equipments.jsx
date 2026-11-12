@@ -17,6 +17,7 @@ import editarIconoDark from "../../assets/icons/editar-2.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
 import verIcono from "../../assets/icons/ver.svg";
 import { useAuth } from "../../context/AuthContext.jsx";
+import agregarIcon from "../../assets/icons/agregar.svg";
 
 function obtenerUrlImagen(imagen) {
     if (!imagen) return null;
@@ -744,7 +745,7 @@ function EquiposConsumibles(){
                 <div className="btn-container2">
                 <Boton
                     clase="btn-azul"
-                    icono="fa-solid fa-plus"
+                    img={agregarIcon}
                     texto="Nuevo equipo"
                     onClick={handleAbrirCrear}
                     titulo="Agregar nuevo equipo"

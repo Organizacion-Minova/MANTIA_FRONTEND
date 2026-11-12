@@ -6,6 +6,7 @@ import LoadingScreen from "../../components/LoadingScreen";
 import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
 import { useSearch } from "../../hooks/useSearch";
 import { GetInspectionOverviewEquipment } from "../../api/Equipmentsapi";
+import verIcono  from "../../assets/icons/ver.svg";
 
 export default function InspeccionesEquipos() {
     const [equipos, setEquipos] = useState([]);
@@ -90,7 +91,7 @@ export default function InspeccionesEquipos() {
                                         <BotonLink
                                             link={`/equipment/cardequipment/${e.id}/inspection`}
                                             clase="btn-azul"
-                                            icono="fa-solid fa-eye"
+                                            img={verIcono}
                                             titulo={e.has_format ? "Llenar formato" : "Armar formato"}
                                         />
                                     </td>

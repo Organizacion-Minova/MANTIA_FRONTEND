@@ -13,6 +13,8 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import editarIcono from "../../assets/icons/editar.svg";
 import editarIconoDark from "../../assets/icons/editar-2.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
+import agregarIcon from "../../assets/icons/agregar.svg";
+import listaIcon from "../../assets/icons/lista.svg";
 
 const obtenerClaveBorrador = (usuarioId, tipo) =>
     `mantia_borrador_categorias_herramientas_${tipo}_${usuarioId}`;
@@ -452,13 +454,13 @@ export function Consumibles(){
                     <BotonLink
                         link={`/consumables/tools`}
                         clase="btn-azul"
-                        icono="fa-solid fa-list"
+                        img={listaIcon}
                         texto="Ver herramientas consumibles"
                         titulo="Ver herramientas consumibles "
                     />
                     <Boton
                         clase="btn-2"
-                        icono="fa-solid fa-plus"
+                        img={agregarIcon}
                         texto="Agregar tipo herramienta"
                         onClick={handleAbrirCrear}
                         titulo="Agregar nueva categoría consumible"
@@ -604,13 +606,13 @@ export function No_Consumibles(){
                     <BotonLink
                         link={`/noconsumables/tools`}
                         clase="btn-azul"
-                        icono="fa-solid fa-list"
+                        img={listaIcon}
                         texto="Ver herramientas no consumibles"
                         titulo="Ver herramientas no consumibles "
                     />
                     <Boton
                         clase="btn-2"
-                        icono="fa-solid fa-plus"
+                        img={agregarIcon}
                         texto="Agregar tipo herramienta"
                         onClick={handleAbrirCrear}
                         titulo="Agregar nueva categoría no consumible"
