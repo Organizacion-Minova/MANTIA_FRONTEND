@@ -23,12 +23,12 @@ export async function DeleteDailyUse(id) {
 
 export const exportarUsoDiarioExcelUnitario = async (id, name) => {
     const response = await api.get(`/api/dailyuse/${id}/export/excel`, { responseType: 'blob' });
-    descargarBlob(response.data, `Uso_diario_${name}.xlsx`);
+    descargarBlob(response.data, `Uso diario ${name}.xlsx`);
 };
 
 export const exportarUsoDiarioPdfUnitario = async (id, name) => {
     const response = await api.get(`/api/dailyuse/${id}/export/pdf`, { responseType: 'blob' });
-    descargarBlob(response.data, `Uso_diario_${name}.pdf`, 'application/pdf');
+    descargarBlob(response.data, `Uso diario ${name}.pdf`, 'application/pdf');
 };
 
 const descargarBlob = (data, filename, mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') => {

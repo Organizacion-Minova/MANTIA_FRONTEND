@@ -37,22 +37,22 @@ export const eliminarMedicionGases = async (id) => {
 
 export const exportarGasExcelUnitario = async (id, fecha) => {
     const response = await api.get(`/api/gas-measurements/${id}/export/excel`, { responseType: 'blob' });
-    descargarBlob(response.data, `Medición_gases_${fecha}.xlsx`);
+    descargarBlob(response.data, `Medición gases ${fecha}.xlsx`);
 };
 
 export const exportarGasPdfUnitario = async (id, fecha) => {
     const response = await api.get(`/api/gas-measurements/${id}/export/pdf`, { responseType: 'blob' });
-    descargarBlob(response.data, `Medición_gases_${fecha}.pdf`, 'application/pdf');
+    descargarBlob(response.data, `Medición gases ${fecha}.pdf`, 'application/pdf');
 };
 
 export const exportarGasExcelRango = async (fechaInicio, fechaFin) => {
     const response = await api.get(`/api/gas-measurements/export/range/excel?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`, { responseType: 'blob' });
-    descargarBlob(response.data, `Medición_gases_${fechaInicio}_al_${fechaFin}.xlsx`);
+    descargarBlob(response.data, `Medición gases ${fechaInicio} al ${fechaFin}.xlsx`);
 };
 
 export const exportarGasPdfRango = async (fechaInicio, fechaFin) => {
     const response = await api.get(`/api/gas-measurements/export/range/pdf?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`, { responseType: 'blob' });
-    descargarBlob(response.data, `Medición_gases_${fechaInicio}_al_${fechaFin}.pdf`, 'application/pdf');
+    descargarBlob(response.data, `Medición gases ${fechaInicio} al ${fechaFin}.pdf`, 'application/pdf');
 };
 
 const descargarBlob = (data, filename, mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') => {

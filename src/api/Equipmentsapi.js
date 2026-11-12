@@ -114,22 +114,22 @@ export async function HasInspectionFormat(equipmentId) {
 
 export const exportarFichaTecnicaEquipoExcelUnitario = async (id, name) => {
     const response = await api.get(`/api/equipment/${id}/export/excel`, { responseType: 'blob' });
-    descargarBlob(response.data, `Ficha_técnica_${name}.xlsx`);
+    descargarBlob(response.data, `Ficha técnica ${name}.xlsx`);
 };
 
 export const exportarFichaTecnicaEquipoPdfUnitario = async (id, name) => {
     const response = await api.get(`/api/equipment/${id}/export/pdf`, { responseType: 'blob' });
-    descargarBlob(response.data, `Ficha_técnica_${name}.pdf`, 'application/pdf');
+    descargarBlob(response.data, `Ficha técnica ${name}.pdf`, 'application/pdf');
 };
 
 export const exportarInspeccionEquipoPdfUnitario = async (inspectionId, equipmentName, weekStart) => {
     const response = await api.get(`/api/inspection-equipment/${inspectionId}/export/pdf`, { responseType: 'blob' });
-    descargarBlob(response.data, `Inspección_${equipmentName}_${weekStart}.pdf`, 'application/pdf');
+    descargarBlob(response.data, `Inspección ${equipmentName} ${weekStart}.pdf`, 'application/pdf');
 };
 
 export const exportarInspeccionEquipoExcelUnitario = async (inspectionId, equipmentName, weekStart) => {
     const response = await api.get(`/api/inspection-equipment/${inspectionId}/export/excel`, { responseType: 'blob' });
-    descargarBlob(response.data, `Inspección_${equipmentName}_${weekStart}.xlsx`);
+    descargarBlob(response.data, `Inspección ${equipmentName} ${weekStart}.xlsx`);
 };
 
 const descargarBlob = (data, filename, mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') => {

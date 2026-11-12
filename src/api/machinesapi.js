@@ -55,32 +55,42 @@ export async function GetMachineOptions() {
 
 export const exportarFichaTecnicaMaquinaExcelUnitario = async (id, name) => {
     const response = await api.get(`/api/machine/${id}/export/excel`, { responseType: 'blob' });
-    descargarBlob(response.data, `Ficha_técnica_${name}.xlsx`);
+    descargarBlob(response.data, `Ficha técnica ${name}.xlsx`);
 };
 
 export const exportarFichaTecnicaMaquinaPdfUnitario = async (id, name) => {
     const response = await api.get(`/api/machine/${id}/export/pdf`, { responseType: 'blob' });
-    descargarBlob(response.data, `Ficha_técnica_${name}.pdf`, 'application/pdf');
+    descargarBlob(response.data, `Ficha técnica ${name}.pdf`, 'application/pdf');
 };
 
 export const exportarInspeccionMaquinaPdfUnitario = async (inspectionId, machineName, date) => {
     const response = await api.get(`/api/inspection-machine/${inspectionId}/export/pdf`, { responseType: 'blob' });
-    descargarBlob(response.data, `Inspección_${machineName}_${date}.pdf`, 'application/pdf');
+    descargarBlob(response.data, `Inspección ${machineName} ${date}.pdf`, 'application/pdf');
 };
 
 export const exportarInspeccionMaquinaExcelUnitario = async (inspectionId, machineName, date) => {
     const response = await api.get(`/api/inspection-machine/${inspectionId}/export/excel`, { responseType: 'blob' });
-    descargarBlob(response.data, `Inspección_${machineName}_${date}.xlsx`);
+    descargarBlob(response.data, `Inspección ${machineName} ${date}.xlsx`);
 };
 
 export const exportarPreoperacionalMaquinaPdfUnitario = async (preoperationalId, machineName, date) => {
     const response = await api.get(`/api/preoperational-machine/${preoperationalId}/export/pdf`, { responseType: 'blob' });
-    descargarBlob(response.data, `Preoperacional_${machineName}_${date}.pdf`, 'application/pdf');
+    descargarBlob(response.data, `Preoperacional ${machineName} ${date}.pdf`, 'application/pdf');
 };
 
 export const exportarPreoperacionalMaquinaExcelUnitario = async (preoperationalId, machineName, date) => {
     const response = await api.get(`/api/preoperational-machine/${preoperationalId}/export/excel`, { responseType: 'blob' });
-    descargarBlob(response.data, `Preoperacional_${machineName}_${date}.xlsx`);
+    descargarBlob(response.data, `Preoperacional ${machineName} ${date}.xlsx`);
+};
+
+export const exportarInspeccionMaquinaExcelRango = async (machineId, machineName, fechaInicio, fechaFin) => {
+    const response = await api.get(`/api/machines/${machineId}/inspection-machine/export/range/excel?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`, { responseType: 'blob' });
+    descargarBlob(response.data, `Inspecciones ${machineName} ${fechaInicio} al ${fechaFin}.xlsx`);
+};
+
+export const exportarInspeccionMaquinaPdfRango = async (machineId, machineName, fechaInicio, fechaFin) => {
+    const response = await api.get(`/api/machines/${machineId}/inspection-machine/export/range/pdf?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`, { responseType: 'blob' });
+    descargarBlob(response.data, `Inspecciones ${machineName} ${fechaInicio} al ${fechaFin}.pdf`, 'application/pdf');
 };
 
 const descargarBlob = (data, filename, mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') => {
