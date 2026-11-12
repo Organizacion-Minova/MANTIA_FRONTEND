@@ -1,0 +1,117 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: navigation.spec.js >> cerrar sesión devuelve a /login y bloquea de nuevo las rutas privadas
+- Location: tests\e2e\navigation.spec.js:52:1
+
+# Error details
+
+```
+Error: expect(page).toHaveURL(expected) failed
+
+Expected pattern: /\/machines/
+Received string:  "http://localhost:5173/login"
+Timeout: 5000ms
+
+Call log:
+  - Expect "toHaveURL" with timeout 5000ms
+    14 × locator resolved to <html lang="en">…</html>
+       - unexpected value "http://localhost:5173/login"
+
+```
+
+```yaml
+- img: SENA Servicio Nacional de Aprendizaje
+- img "Mantia"
+- heading "Inicia Sesión" [level=3]
+- text: "Correo electrónico:"
+- textbox "Correo electrónico:":
+  - /placeholder: usuario@sena.edu.co
+  - text: A
+- text: "Contraseña:"
+- textbox "Contraseña:":
+  - /placeholder: ••••••••
+- button "Iniciar Sesión"
+- text: ¿No recuerdas tu contraseña?
+- link "Restablecer":
+  - /url: /ResetPassword
+- text: ¿No tienes una cuenta?
+- link "Solicitar":
+  - /url: /register
+- strong:
+  - link " Regresar al inicio":
+    - /url: /
+- paragraph: Esa letra no corresponde a ningún desarrollador.
+- button "Abrir accesibilidad": 
+```
+
+# Test source
+
+```ts
+  1  | // tests/e2e/navigation.spec.js
+  2  | // Recorre el panel completo ya autenticado, módulo por módulo.
+  3  | // Requiere backend en APP_ENV=local, con el admin sembrado (dev_letter 'A').
+  4  | import { test, expect } from '@playwright/test';
+  5  | 
+  6  | // Inicia sesión como admin antes de cada test de este archivo.
+  7  | test.beforeEach(async ({ page }) => {
+  8  |   await page.goto('/login');
+  9  |   await page.locator('#email').fill('A');
+  10 |   await page.getByRole('button', { name: /iniciar sesión/i }).click();
+> 11 |   await expect(page).toHaveURL(/\/machines/);
+     |                      ^ Error: expect(page).toHaveURL(expected) failed
+  12 | });
+  13 | 
+  14 | // Rutas protegidas que debe poder abrir cualquier usuario autenticado.
+  15 | const rutasDelPanel = [
+  16 |   { path: '/dashboard', nombre: 'Dashboard' },
+  17 |   { path: '/ubications', nombre: 'Ubicaciones' },
+  18 |   { path: '/machines', nombre: 'Máquinas' },
+  19 |   { path: '/equipment', nombre: 'Equipos' },
+  20 |   
+  21 |   { path: '/types/consumables', nombre: 'Consumibles' },
+  22 |   { path: '/types/noconsumables', nombre: 'No consumibles' },
+  23 |   { path: '/gases', nombre: 'Gases' },
+  24 |   { path: '/alerts', nombre: 'Alertas' },
+  25 |   { path: '/profile', nombre: 'Perfil' },
+  26 | ];
+  27 | 
+  28 | for (const ruta of rutasDelPanel) {
+  29 |   test(`el módulo "${ruta.nombre}" carga sin errores (${ruta.path})`, async ({ page }) => {
+  30 |     await page.goto(ruta.path);
+  31 | 
+  32 |     // No debe caer en la 404 ni quedar en blanco por un error de React.
+  33 |     await expect(page.getByText('Pagina no encontrada')).toHaveCount(0);
+  34 |     await expect(page).toHaveURL(new RegExp(ruta.path.replace(/\//g, '\\/')));
+  35 |   });
+  36 | }
+  37 | 
+  38 | test('el menú lateral navega a cada módulo (clic real, no goto)', async ({ page }) => {
+  39 |   await page.getByRole('link', { name: 'Equipos' }).click();
+  40 |   await expect(page).toHaveURL(/\/equipment/);
+  41 | 
+  42 |   await page.getByRole('link', { name: 'Maquinas' }).click();
+  43 |   await expect(page).toHaveURL(/\/machines/);
+  44 | 
+  45 |   await page.getByRole('link', { name: 'Ubicaciones' }).click();
+  46 |   await expect(page).toHaveURL(/\/ubications/);
+  47 | 
+  48 | 
+  49 |   
+  50 | });
+  51 | 
+  52 | test('cerrar sesión devuelve a /login y bloquea de nuevo las rutas privadas', async ({ page }) => {
+  53 |   await page.getByText('Cerrar sesión').first().click();
+  54 |   await expect(page).toHaveURL(/\/login/);
+  55 | 
+  56 |   // Intentar volver a una ruta privada debe mandar otra vez a /login
+  57 |   await page.goto('/dashboard');
+  58 |   await expect(page).toHaveURL(/\/login/);
+  59 | });
+  60 | 
+```
