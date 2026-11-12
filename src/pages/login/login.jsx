@@ -4,13 +4,18 @@ import "../../styles/variables.css";
 import loginImage from "../../assets/img/Mantia2..png";
 import "../../styles/global.css";
 import "../../styles/Components.modules.css";
-import { Boton } from "../../components/common/Button";
+import { Boton, BotonAccion } from "../../components/common/Button";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import AuthScene from "./AuthScene";
 import { useAuth } from "../../context/AuthContext.jsx";
 import LoadingScreen from "../../components/LoadingScreen.jsx";
 import { useToast } from "../../context/ToastContext.jsx";
 import Turnstile, { CAPTCHA_ACTIVO } from "../../components/Turnstile.jsx";
+import verIcono from "../../assets/icons/ver-contrasena.svg"
+import verIconoDark from "../../assets/icons/ver-contrasena2.svg"
+import ocultarIcono from "../../assets/icons/ocultar.svg"
+import ocultarIconoDark from "../../assets/icons/ocultar2.svg"
+
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -23,6 +28,12 @@ const Login = () => {
     const [reinicioCaptcha, setReinicioCaptcha] = useState(0);
     const navigate = useNavigate();
     const [params] = useSearchParams();
+    const [showPassword, setShowPassword] = useState(false);
+ 
+
+    const togglePasswordVisibility = () => {
+        setShowPassword((visible) => !visible);
+    };
 
     // Resultado del enlace de verificación que llega por correo
     useEffect(() => {
@@ -108,15 +119,23 @@ const Login = () => {
                                 />
                             </div>
 
-                            <div className="input-box">
+                            <div className="input-box password-box">
                                 <label htmlFor="password">Contraseña:</label>
                                 <input
                                     id="password"
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     name="password"
                                     value={password}
                                     onChange={handleChange}
                                     placeholder="••••••••"
+                                />
+
+                                <BotonAccion
+                                    clase="btn-toggle-password"
+                                    onClick={togglePasswordVisibility}
+                                    ariaLabel={showPassword ? "Ocultar contraseña" : "Ver contraseña"}
+                                    icono={showPassword ? ocultarIcono : verIcono}
+                                    iconoDark={showPassword ? ocultarIconoDark : verIconoDark}
                                 />
                             </div>
                             <Turnstile onToken={setCaptchaToken} reiniciar={reinicioCaptcha} />

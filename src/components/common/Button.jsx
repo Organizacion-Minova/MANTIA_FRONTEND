@@ -84,11 +84,11 @@ export function Boton( {clase, texto, onClick, icono, img, imgDark, disabled, ke
     )
 }
 
-export function BotonAccion({ clase, texto, onClick, icono, iconoDark, iconoFa, disabled, key, titulo }) {
+export function BotonAccion({ clase, texto, onClick, icono, iconoDark, iconoFa, disabled, key, titulo, ariaLabel }) {
     const { manejarClick, ocupado } = useUnSoloClic(onClick);
 
     return (
-        <button type="button" className={clase} onClick={onClick} disabled={disabled} key={key} title={titulo}>
+        <button type="button" className={clase} onClick={onClick} disabled={disabled} key={key} title={titulo} aria-label={ariaLabel}>
             {iconoFa ? (
                 <i className={iconoFa} aria-hidden="true"></i>
             ) : icono && (
