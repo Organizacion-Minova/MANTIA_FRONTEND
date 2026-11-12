@@ -616,9 +616,9 @@ html.dark-theme .boton-accion__icono--dark {
 }
 
 .public-page .date {
-    padding: 1.85rem 1.75rem;
-    border: 0.0625rem solid var(--borde-contenedor);
-    border-radius: 1.1rem;
+    
+    
+    border-radius: 1rem;
     background: var(--contenedor);
 }
 
@@ -677,9 +677,7 @@ html.dark-theme .boton-accion__icono--dark {
         padding: 6rem 1rem 3rem;
     }
 
-    .public-page .date {
-        padding: 1.5rem 1.35rem;
-    }
+    
 }
 
 .paginacion-container {

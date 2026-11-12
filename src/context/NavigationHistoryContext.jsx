@@ -15,6 +15,7 @@ import {
 } from "react-router-dom";
 
 import { useAuth } from "./AuthContext.jsx";
+import { GetMachineById } from "../api/machinesapi.js";
 
 import {
     obtenerInterfazHistorial,
@@ -90,12 +91,16 @@ function recuperarHistorial(idUsuario) {
             .slice(-MAXIMO_ENTRADAS)
             .map((entrada) => {
                 const interfaz = obtenerInterfazHistorial(
-                    entrada.pathname
+                    entrada.pathname,
+                    entrada.nombreMaquina
                 );
 
                 return {
                     ...entrada,
                     titulo: interfaz.titulo,
+                    ...(entrada.nombreMaquina
+                        ? { nombreMaquina: entrada.nombreMaquina }
+                        : {}),
                 };
             });
 
@@ -223,8 +228,12 @@ export function NavigationHistoryProvider({ children }) {
         if (indiceRutaActual !== -1) {
             const entradas = [...historialGuardado.entradas];
 
+            const entradaActual = historialGuardado.entradas[indiceRutaActual];
             entradas[indiceRutaActual] = crearEntrada(
-                obtenerInterfazHistorial(location.pathname),
+                obtenerInterfazHistorial(
+                    location.pathname,
+                    entradaActual.nombreMaquina
+                ),
                 location.key
             );
 
@@ -462,6 +471,71 @@ export function NavigationHistoryProvider({ children }) {
         historialInicializado,
     ]);
 
+    useEffect(() => {
+        if (
+            !isAuthenticated ||
+            identidadUsuario === null ||
+            !historialInicializado
+        ) {
+            return undefined;
+        }
+
+        const interfaz = obtenerInterfazHistorial(location.pathname);
+        if (!interfaz?.machineId) {
+            return undefined;
+        }
+
+        let vigente = true;
+
+        GetMachineById(interfaz.machineId)
+            .then((maquina) => {
+                if (!vigente || !maquina?.name) {
+                    if (vigente) {
+                        throw new Error("La respuesta no contiene el nombre de la máquina.");
+                    }
+                    return;
+                }
+
+                setHistorial((actual) => ({
+                    ...actual,
+                    entradas: actual.entradas.map((entrada) => {
+                        if (
+                            entrada.pathname !== location.pathname ||
+                            entrada.locationKey !== location.key
+                        ) {
+                            return entrada;
+                        }
+
+                        const interfazConMaquina = obtenerInterfazHistorial(
+                            entrada.pathname,
+                            maquina.name
+                        );
+
+                        return {
+                            ...entrada,
+                            ...interfazConMaquina,
+                            locationKey: entrada.locationKey,
+                        };
+                    }),
+                }));
+            })
+            .catch((error) => {
+                if (vigente) {
+                    console.error("No se pudo cargar la máquina para el historial de navegación:", error);
+                }
+            });
+
+        return () => {
+            vigente = false;
+        };
+    }, [
+        location.key,
+        location.pathname,
+        isAuthenticated,
+        identidadUsuario,
+        historialInicializado,
+    ]);
+
     /*
      * Guardar los cambios del historial después de inicializarlo.
      */
@@ -532,4 +606,3 @@ export function useNavigationHistory() {
 
     return contexto;
 }
-

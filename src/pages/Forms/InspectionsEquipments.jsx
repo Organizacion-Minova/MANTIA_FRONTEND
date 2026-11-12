@@ -51,7 +51,7 @@ export default function InspeccionesEquipos() {
         <div className="list-grid">
             <header className="bienvenida">
                 <PageWelcome
-                    titulo="INSPECCIONES DE EQUIPOS"
+                    titulo="INSPECCIÓNES DE EQUIPOS"
                     descripcion="Entra a un equipo para llenar su formato o, si aún no lo tiene, armarlo."
                     mostrarHistorial={true}
                 />
