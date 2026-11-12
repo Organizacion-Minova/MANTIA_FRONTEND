@@ -66,7 +66,7 @@ export function sugerenciasPorPantalla(ruta = '') {
 // Deben coincidir con ContextoPantalla::RUTAS del backend y con las rutas de main.jsx.
 // (Quién puede entrar a cada una lo decide el backend por rol/permiso, ver ContextoPantalla.)
 const RUTAS_PERMITIDAS = [
-    /^\/(dashboard|machines|equipment|ubications|dailyuse|inspection|gases|admin|help|about)(?:\/.*)?$/i,
+    /^\/(dashboard|machines|equipment|ubications|dailyuse|inspection|gases|alerts|admin|help|about)(?:\/.*)?$/i,
     /^\/machines\/categoriesmachines(?:\/.*)?$/i,
     /^\/ubications\/categoriesubications(?:\/.*)?$/i,
     /^\/(consumables|noconsumables)\/tools(?:\/.*)?$/i,
@@ -80,4 +80,4 @@ const RUTAS_PERMITIDAS = [
 export function esRutaPermitida(ruta = '') {
     const rutaNormalizada = normalizarRuta(ruta);
     return RUTAS_PERMITIDAS.some((patron) => patron.test(rutaNormalizada));
-x}
+}

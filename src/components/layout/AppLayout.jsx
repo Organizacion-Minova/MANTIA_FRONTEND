@@ -44,6 +44,7 @@ import noconsumibleIcon from "../../assets/icons/no-consumibles.svg";
 import inspeccionMaquinaIcon from "../../assets/icons/InspeccionMaquina.svg";
 import EquipoConsumibleIcon from "../../assets/icons/equiposConsumibles.svg"; 
 import EquipoNoConsumibleIcon from "../../assets/icons/equiposNoConsumibles.svg"; 
+import alertasIcon from "../../assets/icons/campana.svg"; 
 
 
 function AppLayout({ children }) {
@@ -422,7 +423,7 @@ function AppLayout({ children }) {
                                 
                             </li>
                             )}
-                            {tienePermiso("location.update") && (
+                            {tienePermiso("location.view") && (
                             <li>
                                 <NavLink 
                                     to="/ubications"
@@ -435,8 +436,9 @@ function AppLayout({ children }) {
                             )}
                         </>
                     )}
-                    <li>
+                    
                         {tienePermiso("gas-measurements.view") && (
+                            <li>
                                 <NavLink
                                     to="/gases"
                                     title="Ir al formato de medicion de gases"
@@ -444,8 +446,9 @@ function AppLayout({ children }) {
                                     <img className="sidebar__icon" src={gasesIcon} alt="" aria-hidden="true" />
                                     <span>Medición de gases</span>
                                 </NavLink>
+                            </li>
                         )}
-                    </li>
+                    
                     {tienePermiso("inspection.view") && (
                         <li className={`menu-desplegable ${formatosMaquinasAbierto || formatosMaquinasRutaActiva ? "activo" : ""}`}>
                             <a
@@ -534,6 +537,14 @@ function AppLayout({ children }) {
                                 </li>
                             </ul>
                         </li>
+                    )}
+                    {isAuthenticated && (
+                    <li>
+                        <NavLink to="/alerts" title="Ir a alertas">
+                            <img className="sidebar__icon" src={alertasIcon} alt="" aria-hidden="true" />
+                            <span>Alertas</span>
+                        </NavLink>
+                    </li>
                     )}
 
                     <li>

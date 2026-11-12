@@ -13,6 +13,10 @@ export const RUTAS_HISTORIAL = [
         titulo: "Ubicaciones",
     },
     {
+        path: "/ubications/cardubication/:id",
+        titulo: "Detalle de ubicación",
+    },
+    {
         path: "/ubications/categoriesubications",
         titulo: "Categorías de ubicaciones",
     },

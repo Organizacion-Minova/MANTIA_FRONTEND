@@ -21,7 +21,8 @@ const CategoriasUbicacion = lazy(() => import("./pages/Ubications/categories_ubi
 const Maquinas = lazy(() => import("./pages/Machines/machines"));
 const CategoriasMaquinas = lazy(() => import('./pages/Machines/categories_machines'));
 const CardMachine = nombrada(() => import('./pages/Machines/card_machine'), 'CardMachine');
-const Equipos = lazy(() => import('./pages/Equipment/equipments'));
+const CardUbication = lazy(() => import("./pages/Ubications/card_ubication"));
+const Alertas = lazy(() => import('./pages/Alerts/alerts'));
 const CardEquipment = nombrada(() => import('./pages/Equipment/card_Equipment'), 'CardEquipment');
 const Consumibles = nombrada(() => import('./pages/Tools/types'), 'Consumibles');
 const No_Consumibles = nombrada(() => import('./pages/Tools/types'), 'No_Consumibles');
@@ -80,6 +81,7 @@ createRoot(document.getElementById('root')).render(
               <Route path='dashboard' element={<Dashboard />} />
               <Route path='ubications' element={<RutaConPermiso permiso="location.update"><Ubicaciones /></RutaConPermiso>} />
               <Route path='ubications/categoriesubications' element={<RutaConPermiso permiso="location-category.update"><CategoriasUbicacion /></RutaConPermiso>} />
+               <Route path='ubications/cardubication/:id' element={<RutaConPermiso permiso="location.update"><CardUbication /></RutaConPermiso>} />
               <Route path='machines' element={<RutaConPermiso permiso="machine.view"><Maquinas /></RutaConPermiso>} />
               <Route path='machines/categoriesmachines' element={<RutaConPermiso permiso="machine-category.update"><CategoriasMaquinas /></RutaConPermiso>} />
               <Route path='machines/cardMachine/:id' element={<RutaConPermiso permiso="machine.view"><CardMachine /></RutaConPermiso>} />
@@ -104,6 +106,7 @@ createRoot(document.getElementById('root')).render(
               <Route path='noconsumables/tools/types' element={<RutaConPermiso permiso="category-tools.view"><No_Consumibles /></RutaConPermiso>} />
               <Route path='consumables/tools' element={<RutaConPermiso permiso="tool.view"><ToolsConsumables /></RutaConPermiso>} />
               <Route path='noconsumables/tools' element={<RutaConPermiso permiso="tool.view"><ToolsNoConsumables /></RutaConPermiso>} />
+               <Route path='alerts' element={<Alertas />} />
               <Route path='dailyuse' element={<RutaConPermiso permiso="daily-use.view"><UsoDiario /></RutaConPermiso>} />
               <Route path='gases' element={<RutaConPermiso permiso="gas-measurements.view"><Gases /></RutaConPermiso>} />
               <Route path='gases/compare_gases' element={<RutaConPermiso permiso="gas-measurements.view"><CompararGases /></RutaConPermiso>} />

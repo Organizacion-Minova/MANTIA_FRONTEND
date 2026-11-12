@@ -32,7 +32,7 @@ const ESTADOS = {
 function traducirMensaje(mensaje = "") {
     return mensaje.replace(
         /(cambió a estado: )(\w+)/,
-        (_, prefijo, estado) => `${prefijo}${ESTADOS[estado] ?? estado}`
+        (_, prefijo, estado) => `${prefijo}${ESTADOS[estado] ?? "Actualizado"}`
     );
 }
 
@@ -40,11 +40,8 @@ function traducirMensaje(mensaje = "") {
 const RUTA_POR_CATEGORIA = {
     gas: "/gases",
     maquina: "/machines",
-    equipo: "/equipment",
     herramienta: "/consumables/tools",
     ubicacion: "/ubications",
-    categoria: "/machines/categoriesmachines",
-    inspeccion: "/inspection",
     uso_diario: "/dailyuse",
 };
 
@@ -75,8 +72,8 @@ export function mapearNotificacionBackend(registro) {
     return {
         id: registro.id,
         tipo: nivel, // 'info' | 'warning' | 'danger'
-        titulo: ETIQUETAS_CATEGORIA[categoria] ?? categoria,
-        mensaje: traducirMensaje(mensaje),
+        titulo: ETIQUETAS_CATEGORIA[categoria] ?? "Notificación del sistema",
+        mensaje: traducirMensaje(mensaje ?? "Se generó una notificación del sistema."),
         categoria,
         enlace: enlace ?? null, // pantalla exacta (ej: /machines/cardMachine/5)
         fecha: registro.created_at,
