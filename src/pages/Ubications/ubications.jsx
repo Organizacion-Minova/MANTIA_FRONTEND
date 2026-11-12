@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Boton, BotonAccion, BotonLink } from "../../components/common/Button";
 import { PageWelcome, Searcher } from "../../components/common/welcome";
 import { Form, Text, Textarea, Select } from "../../components/common/forms";
@@ -16,6 +16,7 @@ import borrarIcono from "../../assets/icons/borrar.svg";
 import agregarIcon from "../../assets/icons/agregar.svg";
 import listaIcon from "../../assets/icons/lista.svg";
 import reestablecerFiltrosIcon from "../../assets/icons/reestablecerFiltros.svg";
+import verIcono from "../../assets/icons/ver.svg";
 
 
 const opciones_estado = [
@@ -210,6 +211,7 @@ function Formulario({ onCancel, onSuccess, categorias, ubicacionEditar = null, u
 
 function Ubicaciones() {
     const { usuario } = useAuth();
+    const { peligro } = useToast();
     const usuarioId = usuario?.id;
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [ubicacionAEditar, setUbicacionAEditar] = useState(null);
@@ -217,14 +219,20 @@ function Ubicaciones() {
     const [categorias, setCategorias] = useState([]);
     const [cargando, setCargando] = useState(true);
 
-    ubicaciones.map((u)=>({
-       ...u,
-       categoriaBusqueda: u.locationCategory?.name || ""
-    }))
+    const ubicacionesParaBuscar = useMemo(
+        () => ubicaciones.map((ubicacion) => ({
+            ...ubicacion,
+            categoriaBusqueda: ubicacion.location_category?.name
+                ?? ubicacion.locationCategory?.name
+                ?? "",
+            estadoBusqueda: etiqueta_estado[ubicacion.status] ?? ubicacion.status ?? "",
+        })),
+        [ubicaciones]
+    );
 
     const { busqueda, setBusqueda, filtrosEspeciales, setFiltroEspecial, itemsFiltrados: ubicacionesFiltradas } = useSearch(
-        ubicaciones,
-        ['name', 'description','categoriaBusqueda','status']
+        ubicacionesParaBuscar,
+        ["name", "description", "categoriaBusqueda", "estadoBusqueda"]
     );
     const hayFiltros =
         busqueda.trim() !== "" ||
@@ -249,6 +257,8 @@ function Ubicaciones() {
             setUbicaciones(Array.isArray(data.ubicaciones) ? data.ubicaciones : []);
             setCategorias(Array.isArray(data.categorias) ? data.categorias : []);
         } catch (err) {
+            console.error("No se pudieron cargar las ubicaciones", err);
+            peligro("No se pudieron cargar las ubicaciones.");
             setUbicaciones([]);
             setCategorias([]);
         } finally {
@@ -257,8 +267,25 @@ function Ubicaciones() {
     };
 
     useEffect(() => {
-        cargarDatos();
-    }, []);
+        let activo = true;
+        obtenerUbicaciones()
+            .then((data) => {
+                if (!activo) return;
+                setUbicaciones(Array.isArray(data.ubicaciones) ? data.ubicaciones : []);
+                setCategorias(Array.isArray(data.categorias) ? data.categorias : []);
+            })
+            .catch((err) => {
+                if (!activo) return;
+                console.error("No se pudieron cargar las ubicaciones", err);
+                peligro("No se pudieron cargar las ubicaciones.");
+                setUbicaciones([]);
+                setCategorias([]);
+            })
+            .finally(() => {
+                if (activo) setCargando(false);
+            });
+        return () => { activo = false; };
+    }, [peligro]);
 
     const handleCrear = () => {
         setUbicacionAEditar(null);
@@ -280,7 +307,7 @@ function Ubicaciones() {
                 await eliminarUbicacion(id);
                 cargarDatos();
             } catch (err) {
-                setCargando(false);
+                peligro(obtenerMensajeError(err, "No se pudo eliminar la ubicación."));
             }
         }
     };
@@ -363,11 +390,12 @@ function Ubicaciones() {
                                     <td>{etiqueta_estado[ubi.status]}</td>
                                     <td>
                                         <div className="btn-container__acciones">
-                                            {/* <Boton
+                                            <BotonLink
+                                                link={`/ubications/cardubication/${ubi.id}` }
                                                 clase="btn-azul"
-                                                titulo="Ver registro"
-                                                icono="fa-solid fa-eye"
-                                            /> */}
+                                                img={verIcono}
+                                                titulo="Ver lo que hay en esta ubicación"
+                                            />
                                             <BotonAccion
                                                 clase="btn-editar"
                                                 onClick={() => handleEditar(ubi)}
@@ -388,7 +416,7 @@ function Ubicaciones() {
                         ) : (
                             <tr>
                                 <td colSpan="5" style={{ textAlign: "center" }}>
-                                    {busqueda || filtrosEspeciales.location_category_id ? "No se encontraron resultados" : "No hay ubicaciones registradas"}
+                                    {hayFiltros ? "No se encontraron resultados" : "No hay ubicaciones registradas"}
                                 </td>
                             </tr>
                         )}
