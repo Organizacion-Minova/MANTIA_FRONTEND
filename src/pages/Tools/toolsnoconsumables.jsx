@@ -51,6 +51,9 @@ function Formulario({onCancel,onGuardado, herramientaEditar, usuarioId}){
     const [categoryId, setCategoryId] = useState(
         borradorInicial?.categoryId ?? String(herramientaEditar?.category_id ?? herramientaEditar?.categoria?.id ?? "")
     );
+    const [observaciones, setObservaciones] = useState(
+        borradorInicial?.observations ?? herramientaEditar?.observations ?? "" 
+    )
     const [categoria, setCategoria]= useState([])
     const [ubicaciones, setUbicaciones] = useState([]);
     const [errores, setErrores] = useState({});
@@ -63,19 +66,20 @@ function Formulario({onCancel,onGuardado, herramientaEditar, usuarioId}){
         stockMalo,
         locationId,
         categoryId,
+        observaciones
     ].some(valor => String(valor ?? "").trim() !== "");
 
     useEffect(() => {
         if (esEdicion || !usuarioId) return;
 
-        const borrador = { codigo, nombre, stockBueno, stockRegular, stockMalo, locationId, categoryId };
+        const borrador = { codigo, nombre, stockBueno, stockRegular, stockMalo, locationId, categoryId, observaciones};
 
         try {
             sessionStorage.setItem(obtenerClaveBorrador(usuarioId), JSON.stringify(borrador));
         } catch (error) {
             console.error("Error al guardar el borrador de herramientas:", error);
         }
-    }, [esEdicion, usuarioId, codigo, nombre, stockBueno, stockRegular, stockMalo, locationId, categoryId]);
+    }, [esEdicion, usuarioId, codigo, nombre, stockBueno, stockRegular, stockMalo, locationId, categoryId, observaciones]);
 
     useEffect(() => {
         obtenerUbicaciones()
@@ -108,6 +112,7 @@ function Formulario({onCancel,onGuardado, herramientaEditar, usuarioId}){
 
         const validarNombre = !esEdicion || nombre !== herramientaEditar.name;
         const validarCodigo = !esEdicion || codigoModificado;
+        const validarObsevaciones = !esEdicion || observaciones !== herramientaEditar.observations
         const erroresLocales = validarNombre
             ? validarCaracteresEspeciales({ name: nombre })
             : {};
@@ -116,6 +121,9 @@ function Formulario({onCancel,onGuardado, herramientaEditar, usuarioId}){
         }
         if (validarCodigo && tieneGroserias(codigoNormalizado)) {
             erroresLocales.code = ["El código contiene palabras inapropiadas."];
+        }
+        if (validarObsevaciones && tieneGroserias(observaciones)) {
+            erroresLocales.observations = ["El código contiene palabras inapropiadas."];
         }
         if (Object.keys(erroresLocales).length > 0) {
             setErrores(erroresLocales);
@@ -130,6 +138,7 @@ function Formulario({onCancel,onGuardado, herramientaEditar, usuarioId}){
                 Number(stockMalo) === herramientaEditar.condiciones?.find(c => c.condition === "malo")?.stock &&
                 locationId === String(herramientaEditar.location_id ?? herramientaEditar.ubicacion?.id ?? "") &&
                 categoryId === String(herramientaEditar.category_id ?? herramientaEditar.categoria?.id ?? "");
+                observaciones === herramientaEditar.observaciones;
             if (sincambios) {
                 onCancel();
                 return;
@@ -144,6 +153,7 @@ function Formulario({onCancel,onGuardado, herramientaEditar, usuarioId}){
                 regular: Number(stockRegular) || 0,
                 malo: Number(stockMalo) || 0,
             },
+            observations: observaciones
         };
         if (!esEdicion || codigoModificado || herramientaEditar.code != null) {
             datos.code = codigoNormalizado || null;
@@ -302,6 +312,17 @@ function Formulario({onCancel,onGuardado, herramientaEditar, usuarioId}){
                     opciones={opcionesUbicaciones}
                     required
                 />
+            </div>
+            <div className="col-span-6">
+                <Textarea
+                    label="Observaciones (opcional):"
+                    id="observaciones"
+                    name="observaciones"
+                    placeholder="Observaciones de las herramientas"
+                    rows="4"
+                    value={observaciones}
+                    onChange={(e) => setObservaciones(capitalizarPrimeraLetra(e.target.value))}                
+                    />
             </div>
 
         </Form>
@@ -478,6 +499,7 @@ function ToolsNoConsumables(){
                             <th>Cantidad</th>
                             <th>Ubicación</th>
                             <th>Categoría</th>
+                            <th>Observaciones</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -505,6 +527,7 @@ function ToolsNoConsumables(){
                             </td>
                             <td>{h.ubicacion.name}</td>
                             <td>{h.categoria?.name || "Sin categoría"}</td>
+                            <td>{h.observations}</td>
                             <td>
                                 <div className="btn-container__acciones">
                                      <BotonAccion
