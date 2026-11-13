@@ -224,12 +224,6 @@ function Gases() {
                                                 img={verIcono}
                                                 titulo="Ver registro"
                                             />
-                                            <BotonAccion
-                                                clase="btn-borrar"
-                                                icono={borrarIcono}
-                                                onClick={() => handleEliminar(m.id)}
-                                                titulo="Eliminar registro"
-                                            />
                                         </div>
                                     </td>
                                 </tr>
