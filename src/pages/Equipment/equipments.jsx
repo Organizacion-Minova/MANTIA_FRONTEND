@@ -541,6 +541,7 @@ useEffect(() => {
                         opciones={[
                             { valor: "Activo", etiqueta: "Activo" },
                             { valor: "Inactivo", etiqueta: "Inactivo" },
+                            { valor: "Mantenimiento", etiqueta: "Mantenimiento"}
                         ]}
                         required
                     />
