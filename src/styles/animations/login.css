@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
 
 *,
 *::before,
@@ -9,7 +9,7 @@
 }
 
 .login-page {
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--fuente-principal);
     min-height: 100vh;
     width: 100%;
     position: relative;
@@ -162,7 +162,7 @@
     color: var(--texto);
     font-size: 0.9rem;
     transition: all 0.25s ease;
-    font-family: inherit;
+    font-family: var(--fuente-secundaria);
 }
 
 .input-box input:focus {
@@ -180,7 +180,7 @@
     border-radius: 8px;
     color: var(--texto);
     font-size: 0.9rem;
-    font-family: inherit;
+    font-family: var(--fuente-principal);
     transition: all 0.25s ease;
     appearance: none;
     -webkit-appearance: none;
@@ -363,24 +363,34 @@
     transform-origin: center;
 }
 
-/* Posicionamiento relativo para que el botón quede dentro del input */
+/* Alineación del botón de visibilidad dentro del input */
 .input-box.password-box {
-    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.input-box.password-box label {
+    grid-column: 1;
+    grid-row: 1;
 }
 
 .input-box.password-box input {
+    grid-column: 1;
+    grid-row: 2;
     padding-right: 42px;
 }
 
-/* Estilo base para el botón del icono */
 .btn-toggle-password {
-    position: absolute;
-    right: 12px;
-    top: 38px; /* Ajusta según la altura de tu label/input */
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: end;
+    align-self: center;
+    z-index: 1;
     background: transparent;
     border: none;
     cursor: pointer;
     padding: 0;
+    margin-right: 12px;
     display: flex;
     align-items: center;
     justify-content: center;

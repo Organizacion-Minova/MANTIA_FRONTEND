@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import "../../styles/accessibility.css";
 import accesibilidadBtnIcon from "../../assets/icons/accesibilidad-btn.svg";
 import accesibilidadIcon from "../../assets/icons/accesibilidad.svg";
 import cerrarIcon from "../../assets/icons/cerrar.svg";
@@ -9,6 +10,12 @@ import contrasteIcon from "../../assets/icons/contraste.svg";
 import leerIcon from "../../assets/icons/leer.svg";
 import dejaLeerIcon from "../../assets/icons/deja-leer.svg";
 import reestablecerIcon from "../../assets/icons/reestablecer.svg";
+import negritaIcon from "../../assets/icons/negrita.svg";
+import resaltarIcon from "../../assets/icons/resaltar-enlaces.svg";
+import eyeIcon from "../../assets/icons/ver.svg";
+import protanopiaIcon from "../../assets/icons/protanopia.svg";
+import deuteranopiaIcon from "../../assets/icons/deuteranopia.svg";
+import tritanopiaIcon from "../../assets/icons/paleta.svg";
 
 const NIVELES = [13, 14, 15, 16, 17, 18, 19, 20];
 const NIVEL_INICIAL = 3;
@@ -17,11 +24,15 @@ const preferenciasDefecto = {
     tamanoTexto: NIVEL_INICIAL,
     modoOscuro: false,
     altoContraste: false,
+    negrita: false,
+    resaltarEnlaces: false,
+    daltonismo: null,
 };
 
 function AccessibilityPanel({ onModoOscuroChange }) {
     const [abierto, setAbierto] = useState(false);
     const [textoActivo, setTextoActivo] = useState(false);
+    const [daltonismoActivo, setDaltonismoActivo] = useState(false);
     const [leyendo, setLeyendo] = useState(false);
 
     // Estado inicial perezoso: lee localStorage UNA sola vez, antes de cualquier efecto
@@ -36,6 +47,11 @@ function AccessibilityPanel({ onModoOscuroChange }) {
         document.documentElement.style.fontSize = NIVELES[preferencias.tamanoTexto] + "px";
         document.documentElement.classList.toggle("dark-theme", preferencias.modoOscuro);
         document.documentElement.classList.toggle("alto-contraste", preferencias.altoContraste);
+        document.documentElement.classList.toggle("texto-negrita", preferencias.negrita);
+        document.documentElement.classList.toggle("resaltar-enlaces", preferencias.resaltarEnlaces);
+        document.documentElement.classList.toggle("daltonismo-protanopia", preferencias.daltonismo === "protanopia");
+        document.documentElement.classList.toggle("daltonismo-deuteranopia", preferencias.daltonismo === "deuteranopia");
+        document.documentElement.classList.toggle("daltonismo-tritanopia", preferencias.daltonismo === "tritanopia");
     }, [preferencias]);
 
     // ...el resto de las funciones (aumentarTexto, alternarModoOscuro, etc.) igual que antes
@@ -67,6 +83,21 @@ function AccessibilityPanel({ onModoOscuroChange }) {
 
     function alternarAltoContraste() {
         setPreferencias({ ...preferencias, altoContraste: !preferencias.altoContraste });
+    }
+
+    function alternarNegrita() {
+        setPreferencias({ ...preferencias, negrita: !preferencias.negrita });
+    }
+
+    function alternarResaltado() {
+        setPreferencias({ ...preferencias, resaltarEnlaces: !preferencias.resaltarEnlaces });
+    }
+
+    function alternarDaltonismo(tipo) {
+        setPreferencias({
+            ...preferencias,
+            daltonismo: preferencias.daltonismo === tipo ? null : tipo,
+        });
     }
 
     function restablecerPreferencias() {
@@ -189,6 +220,96 @@ function AccessibilityPanel({ onModoOscuroChange }) {
                         />
                         <span>{leyendo ? "Detener lectura" : "Leer página"}</span>
                     </button>
+                    <button
+                        type="button"
+                        className={preferencias.negrita ? "activo" : ""}
+                        onClick={alternarNegrita}
+                        aria-pressed={Boolean(preferencias.negrita)}
+                        title={preferencias.negrita ? "Desactivar texto en negrita" : "Activar texto en negrita"}
+                    >
+                        <img className="accessibility-option-icon" src={negritaIcon} alt="" aria-hidden="true" />
+                        <span>Negrita</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        className={preferencias.resaltarEnlaces ? "activo" : ""}
+                        onClick={alternarResaltado}
+                        aria-pressed={Boolean(preferencias.resaltarEnlaces)}
+                        title={preferencias.resaltarEnlaces ? "Desactivar resaltado de enlaces" : "Activar resaltado de enlaces"}
+                    >
+                        <img className="accessibility-option-icon" src={resaltarIcon} alt="" aria-hidden="true" />
+                        <span>Resaltar enlaces</span>
+                    </button>
+
+                </div>
+                <div
+                    className={`contenedor-texto ${daltonismoActivo ? "daltonismo-activo" : ""}`}
+                    id="grupoDaltonismo"
+                    onClick={() => setDaltonismoActivo(!daltonismoActivo)}
+                    title={daltonismoActivo ? "Cerrar opciones de daltonismo" : "Abrir opciones de daltonismo"}
+                >
+                    <img className="accessibility-option-icon" src={eyeIcon} alt="" aria-hidden="true" />
+                    <span>Daltonismo</span>
+                    <div className="grupo-botones grupo-daltonismo">
+                        <button
+                            type="button"
+                            className={`btn-daltonismo ${preferencias.daltonismo === "protanopia" ? "activo" : ""}`}
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                alternarDaltonismo("protanopia");
+                            }}
+                            aria-pressed={preferencias.daltonismo === "protanopia"}
+                            title={preferencias.daltonismo === "protanopia" ? "Desactivar protanopía" : "Activar protanopía"}
+                        >
+                            <img className="accessibility-option-icon" src={protanopiaIcon} alt="" aria-hidden="true" />
+                            <span>Protanopía</span>
+                            <span className="daltonismo-paleta" aria-hidden="true">
+                                <span className="muestra-rojo" />
+                                <span className="muestra-verde" />
+                                <span className="muestra-amarillo" />
+                                <span className="muestra-secundario" />
+                            </span>
+                        </button>
+                        <button
+                            type="button"
+                            className={`btn-daltonismo ${preferencias.daltonismo === "deuteranopia" ? "activo" : ""}`}
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                alternarDaltonismo("deuteranopia");
+                            }}
+                            aria-pressed={preferencias.daltonismo === "deuteranopia"}
+                            title={preferencias.daltonismo === "deuteranopia" ? "Desactivar deuteranopía" : "Activar deuteranopía"}
+                        >
+                            <img className="accessibility-option-icon" src={deuteranopiaIcon} alt="" aria-hidden="true" />
+                            <span>Deuteranopía</span>
+                            <span className="daltonismo-paleta" aria-hidden="true">
+                                <span className="muestra-rojo" />
+                                <span className="muestra-verde" />
+                                <span className="muestra-amarillo" />
+                                <span className="muestra-secundario" />
+                            </span>
+                        </button>
+                        <button
+                            type="button"
+                            className={`btn-daltonismo ${preferencias.daltonismo === "tritanopia" ? "activo" : ""}`}
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                alternarDaltonismo("tritanopia");
+                            }}
+                            aria-pressed={preferencias.daltonismo === "tritanopia"}
+                            title={preferencias.daltonismo === "tritanopia" ? "Desactivar tritanopía" : "Activar tritanopía"}
+                        >
+                            <img className="accessibility-option-icon" src={tritanopiaIcon} alt="" aria-hidden="true" />
+                            <span>Tritanopía</span>
+                            <span className="daltonismo-paleta" aria-hidden="true">
+                                <span className="muestra-rojo" />
+                                <span className="muestra-verde" />
+                                <span className="muestra-amarillo" />
+                                <span className="muestra-secundario" />
+                            </span>
+                        </button>
+                    </div>
                 </div>
 
                 <button type="button" 

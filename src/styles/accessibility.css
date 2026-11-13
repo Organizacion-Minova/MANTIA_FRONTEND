@@ -205,6 +205,103 @@
     border-color: var(--acento-mantia);
 }
 
+html.texto-negrita body * {
+    font-weight: 700 !important;
+}
+
+html.resaltar-enlaces body a {
+    color: var(--texto) !important;
+    background-color: var(--acento-mantia2) !important;
+    text-decoration: underline !important;
+    text-decoration-thickness: 2px;
+    border-radius: 0.15em;
+    box-decoration-break: clone;
+}
+
+.grupo-botones.grupo-daltonismo {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    gap: 0.35rem;
+    width: 100%;
+}
+
+.contenedor-texto.daltonismo-activo .grupo-daltonismo {
+    max-height: 8rem;
+    opacity: 1;
+    margin-top: 0.75rem;
+}
+
+.grupo-daltonismo .btn-daltonismo {
+    flex: 1 1 0;
+    min-width: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    margin: 0;
+    padding: 0.45rem 0.25rem;
+    color: var(--blanco);
+    background: var(--principal);
+    border-color: var(--acento-mantia);
+    text-align: center;
+}
+
+.grupo-daltonismo .btn-daltonismo.activo,
+.grupo-daltonismo .btn-daltonismo:hover {
+    background: var(--acento-mantia);
+}
+
+.grupo-daltonismo .btn-daltonismo:focus-visible {
+    outline: 2px solid var(--amarillo);
+    outline-offset: 2px;
+}
+
+.grupo-daltonismo .btn-daltonismo .accessibility-option-icon {
+    flex: 0 0 1.35rem;
+    margin: 0 0 0.15rem;
+}
+
+.btn-daltonismo > span:not(.daltonismo-paleta) {
+    display: flex;
+    min-height: 2.3em;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.76rem;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+}
+
+.daltonismo-paleta {
+    display: flex;
+    justify-content: center;
+    gap: 0.18rem;
+}
+
+.daltonismo-paleta span {
+    width: 0.45rem;
+    height: 0.45rem;
+    border: 1px solid var(--borde-contenedor);
+    border-radius: 50%;
+}
+
+.daltonismo-paleta .muestra-rojo {
+    background: var(--rojo);
+}
+
+.daltonismo-paleta .muestra-verde {
+    background: var(--verde);
+}
+
+.daltonismo-paleta .muestra-amarillo {
+    background: var(--amarillo);
+}
+
+.daltonismo-paleta .muestra-secundario {
+    background: var(--secundario);
+}
+
 
 @media (max-width: 991px) {
     .panel-accesibilidad {
