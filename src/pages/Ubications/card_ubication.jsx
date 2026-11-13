@@ -15,6 +15,12 @@ import {
     exportarInventarioUbicacionPdf,
 } from "../../api/location";
 import verIcono from "../../assets/icons/ver.svg";
+import izquierdaIcon from"../../assets/icons/flecha-izquierda.svg"
+import izquierdaIcon2 from"../../assets/icons/flecha-izquierda2.svg"
+import excelIcon from "../../assets/icons/excel.svg"
+import pdfIcon from "../../assets/icons/pdf.svg"
+import excelIcon2 from "../../assets/icons/excel2.svg"
+import pdfIcon2 from "../../assets/icons/pdf2.svg"
 import "../../styles/Ubications/ubications.css";
 
 const CLASE_ESTADO = {
@@ -138,13 +144,13 @@ function TarjetaResumen({ titulo, valor, alerta = false }) {
     );
 }
 
-function TablaInventario({ filas, vacio, reiniciar }) {
+function TablaInventario({ filas, vacio, reiniciar, acciones }) {
     const {
         datosPagina,
         paginaActual,
         totalPaginas,
         setPaginaActual,
-    } = usePaginacion(filas, 10);
+    } = usePaginacion(filas, 7);
 
     useEffect(() => {
         setPaginaActual(1);
@@ -193,11 +199,15 @@ function TablaInventario({ filas, vacio, reiniciar }) {
                 </table>
             </div>
 
-            <Paginacion
-                paginaActual={paginaActual}
-                totalPaginas={totalPaginas}
-                setPaginaActual={setPaginaActual}
-            />
+            <div className="ubicacion-seccion__pie">
+                {acciones}
+                <Paginacion
+                    paginaActual={paginaActual}
+                    totalPaginas={totalPaginas}
+                    setPaginaActual={setPaginaActual}
+                />
+                
+            </div>
         </section>
     );
 }
@@ -560,6 +570,17 @@ export function CardUbication() {
         setFiltroCondicion("");
     };
 
+    const botonRegresar = (
+        <BotonLink
+            link="/ubications"
+            clase="btn-regresar"
+            img={izquierdaIcon}
+            imgDark={izquierdaIcon2}
+            texto="Regresar"
+            titulo="Regresar a las ubicaciones"
+        />
+    );
+
     if (cargando) {
         return <LoadingScreen indeterminado />;
     }
@@ -779,50 +800,54 @@ export function CardUbication() {
                                     : "Esta ubicación no tiene elementos"
                             }
                             reiniciar={claveFiltros}
+                            acciones={
+                                <div className="ubicacion-seccion__acciones">
+                                    <div className="ubicacion-seccion__exportar">
+                                        <Boton
+                                            clase="btn-3"
+                                            img={excelIcon}
+                                            imgDark={excelIcon2}
+                                            texto="Exportar Excel"
+                                            onClick={() =>
+                                                exportar(
+                                                    exportarInventarioUbicacionExcel
+                                                )
+                                            }
+                                            disabled={exportando}
+                                            titulo="Exportar inventario en un archivo de Excel"
+                                        />
+
+                                        <Boton
+                                            clase="btn-3"
+                                            img={pdfIcon}
+                                            imgDark={pdfIcon2}
+                                            texto="Exportar PDF"
+                                            onClick={() =>
+                                                exportar(
+                                                    exportarInventarioUbicacionPdf
+                                                )
+                                            }
+                                            disabled={exportando}
+                                            titulo="Exportar inventario en un archivo PDF"
+                                        />
+                                    </div>
+
+                                    <div className="footer-btns">
+                                        {botonRegresar}
+                                    </div>
+                                </div>
+                            }
                         />
                     </>
                 )}
 
-                <div className="btn-container">
-                    {!sinAcceso && (
-                        <>
-                            <Boton
-                                clase="btn-3"
-                                icono="fa-solid fa-file-excel"
-                                texto="Exportar Excel"
-                                onClick={() =>
-                                    exportar(
-                                        exportarInventarioUbicacionExcel
-                                    )
-                                }
-                                disabled={exportando}
-                                titulo="Exportar inventario en un archivo de Excel"
-                            />
-
-                            <Boton
-                                clase="btn-3"
-                                icono="fa-solid fa-file-pdf"
-                                texto="Exportar PDF"
-                                onClick={() =>
-                                    exportar(
-                                        exportarInventarioUbicacionPdf
-                                    )
-                                }
-                                disabled={exportando}
-                                titulo="Exportar inventario en un archivo PDF"
-                            />
-                        </>
-                    )}
-
-                    <div className="footer-btns">
-                        <BotonLink
-                            link="/ubications"
-                            clase="btn-2"
-                            icono="fa-solid fa-arrow-left"
-                            texto="Regresar"
-                        />
+                {sinAcceso && (
+                    <div className="btn-container">
+                        <div className="footer-btns">
+                            {botonRegresar}
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </div>
     );

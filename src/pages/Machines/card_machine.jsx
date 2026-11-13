@@ -484,9 +484,9 @@ export function CardMachine() {
                     />
 
                     <BotonLink
-                        link="/dailyuse"
+                        link={`/machines/cardMachine/${id}/dailyuse`}
                         clase="btn-2"
-                       img={usodiarioIcon} 
+                        img={usodiarioIcon} 
                         texto="Uso diario"
                     />
                     <BotonLink 

@@ -106,8 +106,9 @@ createRoot(document.getElementById('root')).render(
               <Route path='noconsumables/tools/types' element={<RutaConPermiso permiso="category-tools.view"><No_Consumibles /></RutaConPermiso>} />
               <Route path='consumables/tools' element={<RutaConPermiso permiso="tool.view"><ToolsConsumables /></RutaConPermiso>} />
               <Route path='noconsumables/tools' element={<RutaConPermiso permiso="tool.view"><ToolsNoConsumables /></RutaConPermiso>} />
-               <Route path='alerts' element={<Alertas />} />
+              <Route path='alerts' element={<Alertas />} />
               <Route path='dailyuse' element={<RutaConPermiso permiso="daily-use.view"><UsoDiario /></RutaConPermiso>} />
+              <Route path='machines/cardMachine/:id/dailyuse' element={<RutaConPermiso permiso="daily-use.view"><UsoDiario /></RutaConPermiso>} />
               <Route path='gases' element={<RutaConPermiso permiso="gas-measurements.view"><Gases /></RutaConPermiso>} />
               <Route path='gases/compare_gases' element={<RutaConPermiso permiso="gas-measurements.view"><CompararGases /></RutaConPermiso>} />
               <Route path='gases/gas_format/:id' element={<RutaConPermiso permiso="gas-measurements.view"><FormatoGases /></RutaConPermiso>} />

@@ -714,6 +714,7 @@ function EquiposConsumibles(){
                 
                 <thead>
                     <tr>
+                        <th>Codigo</th>
                         <th>Nombre</th>
                         <th>N° Serie</th>
                         <th>Responsable</th>
@@ -726,6 +727,7 @@ function EquiposConsumibles(){
                 <tbody>
                     {datosPagina.map((e) => (
                     <tr key={e.id}>
+                        <td>{e.code}</td>
                         <td>{e.name}</td>
                         <td>{e.serial_number}</td>
                         <td>{e.responsible}</td>
