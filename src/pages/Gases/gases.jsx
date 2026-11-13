@@ -34,7 +34,11 @@ function RangoFormModal({ tipo, onCancel, onSuccess, mediciones }) {
             advertencia("Debe seleccionar ambas fechas.");
             return;
         }
-        const hoy = new Date().toISOString().split('T')[0];
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hoy = `${year}-${month}-${day}`;
         if (fecha_fin > hoy) {
             advertencia("La fecha final no puede ser mayor a la actual.");
             return;

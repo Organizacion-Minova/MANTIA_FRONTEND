@@ -93,6 +93,16 @@ export const exportarInspeccionMaquinaPdfRango = async (machineId, machineName, 
     descargarBlob(response.data, `Inspecciones ${machineName} ${fechaInicio} al ${fechaFin}.pdf`, 'application/pdf');
 };
 
+export const exportarPreoperacionalMaquinaExcelRango = async (machineId, machineName, weekStart, weekEnd) => {
+    const response = await api.get(`/api/machines/${machineId}/preoperational-machine/export/range/excel?week_start=${weekStart}&week_end=${weekEnd}`, { responseType: 'blob' });
+    descargarBlob(response.data, `Preoperacionales ${machineName} ${weekStart} al ${weekEnd}.xlsx`);
+};
+
+export const exportarPreoperacionalMaquinaPdfRango = async (machineId, machineName, weekStart, weekEnd) => {
+    const response = await api.get(`/api/machines/${machineId}/preoperational-machine/export/range/pdf?week_start=${weekStart}&week_end=${weekEnd}`, { responseType: 'blob' });
+    descargarBlob(response.data, `Preoperacionales ${machineName} ${weekStart} al ${weekEnd}.pdf`, 'application/pdf');
+};
+
 const descargarBlob = (data, filename, mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') => {
     const blob = new Blob([data], { type: mimeType });
     const link = document.createElement('a');

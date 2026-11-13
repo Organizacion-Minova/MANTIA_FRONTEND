@@ -18,9 +18,9 @@ import pdfIcon from "../../../assets/icons/pdf.svg";
 import pdfIconDark from "../../../assets/icons/pdf2.svg";
 import { useToast } from "../../../context/ToastContext.jsx";
 import { Form, Date as InputDate } from "../../../components/common/forms";
-import { exportarInspeccionMaquinaPdfRango, exportarInspeccionMaquinaExcelRango } from "../../../api/machinesapi";
+import { exportarInspeccionMaquinaPdfRango, exportarInspeccionMaquinaExcelRango, exportarPreoperacionalMaquinaPdfRango, exportarPreoperacionalMaquinaExcelRango } from "../../../api/machinesapi";
 
-function RangoFormModal({ tipo, onCancel, onSuccess, registros, machineId, machineName }) {
+function RangoFormModal({ tipo, onCancel, onSuccess, registros, machineId, machineName, isPreoperational }) {
     const [formData, setFormData] = useState({ fecha_inicio: '', fecha_fin: '' });
     const { advertencia } = useToast();
 
@@ -35,7 +35,11 @@ function RangoFormModal({ tipo, onCancel, onSuccess, registros, machineId, machi
             advertencia("Debe seleccionar ambas fechas.");
             return;
         }
-        const hoy = new Date().toISOString().split('T')[0];
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hoy = `${year}-${month}-${day}`;
         if (fecha_fin > hoy) {
             advertencia("La fecha final no puede ser mayor a la actual.");
             return;
@@ -46,26 +50,36 @@ function RangoFormModal({ tipo, onCancel, onSuccess, registros, machineId, machi
         }
         const diffTime = Math.abs(new Date(fecha_fin) - new Date(fecha_inicio));
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-        if (diffDays > 31) {
-            advertencia("El rango máximo permitido es de 31 días.");
+        const maxDias = isPreoperational ? 28 : 31;
+
+        if (diffDays > maxDias) {
+            advertencia(`El rango máximo permitido es de ${maxDias} días.`);
             return;
         }
 
         const existeRegistroEnRango = registros.some(r => {
-            const fechaReg = r.date; 
+            const fechaReg = isPreoperational ? r.date : r.date; 
             return fechaReg >= fecha_inicio && fechaReg <= fecha_fin;
         });
 
         if (!existeRegistroEnRango) {
-            advertencia("No se encontraron registros de inspección en el rango de fechas seleccionado.");
+            advertencia("No se encontraron registros en el rango de fechas seleccionado.");
             return;
         }
 
         try {
-            if (tipo === 'excel') {
-                await exportarInspeccionMaquinaExcelRango(machineId, machineName, fecha_inicio, fecha_fin);
+            if (isPreoperational) {
+                if (tipo === 'excel') {
+                    await exportarPreoperacionalMaquinaExcelRango(machineId, machineName, fecha_inicio, fecha_fin);
+                } else {
+                    await exportarPreoperacionalMaquinaPdfRango(machineId, machineName, fecha_inicio, fecha_fin);
+                }
             } else {
-                await exportarInspeccionMaquinaPdfRango(machineId, machineName, fecha_inicio, fecha_fin);
+                if (tipo === 'excel') {
+                    await exportarInspeccionMaquinaExcelRango(machineId, machineName, fecha_inicio, fecha_fin);
+                } else {
+                    await exportarInspeccionMaquinaPdfRango(machineId, machineName, fecha_inicio, fecha_fin);
+                }
             }
             onSuccess();
         } catch (err) {
@@ -230,26 +244,22 @@ function RegistrosMaquina() {
                         texto="Nuevo registro" 
                         titulo="Crear un nuevo registro"
                     />
-                    {kind === 'inspection' && (
-                        <>
-                            <Boton
-                                clase="btn-3"
-                                img={excelIcon}
-                                imgDark={excelIconDark}
-                                texto="Exportar Excel"
-                                onClick={() => setShowRangoModal('excel')}
-                                titulo="Exportar en un archivo de Excel"
-                            />
-                            <Boton
-                                clase="btn-3"
-                                img={pdfIcon}
-                                imgDark={pdfIconDark}
-                                texto="Exportar PDF"
-                                onClick={() => setShowRangoModal('pdf')}
-                                titulo="Exportar en un archivo PDF"
-                            />
-                        </>
-                    )}
+                    <Boton
+                        clase="btn-3"
+                        img={excelIcon}
+                        imgDark={excelIconDark}
+                        texto="Exportar Excel"
+                        onClick={() => setShowRangoModal('excel')}
+                        titulo="Exportar en un archivo de Excel"
+                    />
+                    <Boton
+                        clase="btn-3"
+                        img={pdfIcon}
+                        imgDark={pdfIconDark}
+                        texto="Exportar PDF"
+                        onClick={() => setShowRangoModal('pdf')}
+                        titulo="Exportar en un archivo PDF"
+                    />
                     <div className="footer-btns">
                         <BotonLink 
                             link={rutaMaquina(id)} 
@@ -267,6 +277,7 @@ function RegistrosMaquina() {
                         registros={registros}
                         machineId={id}
                         machineName={maquina.name}
+                        isPreoperational={kind === 'preoperational'}
                         onCancel={() => setShowRangoModal(null)}
                         onSuccess={() => setShowRangoModal(null)}
                     />
