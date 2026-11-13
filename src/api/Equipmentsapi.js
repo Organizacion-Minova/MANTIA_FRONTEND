@@ -132,6 +132,16 @@ export const exportarInspeccionEquipoExcelUnitario = async (inspectionId, equipm
     descargarBlob(response.data, `Inspección ${equipmentName} ${weekStart}.xlsx`);
 };
 
+export const exportarInspeccionEquipoExcelRango = async (equipmentId, equipmentName, weekStart, weekEnd) => {
+    const response = await api.get(`/api/equipment/${equipmentId}/inspection-equipment/export/range/excel?week_start=${weekStart}&week_end=${weekEnd}`, { responseType: 'blob' });
+    descargarBlob(response.data, `Inspecciones ${equipmentName} ${weekStart} al ${weekEnd}.xlsx`);
+};
+
+export const exportarInspeccionEquipoPdfRango = async (equipmentId, equipmentName, weekStart, weekEnd) => {
+    const response = await api.get(`/api/equipment/${equipmentId}/inspection-equipment/export/range/pdf?week_start=${weekStart}&week_end=${weekEnd}`, { responseType: 'blob' });
+    descargarBlob(response.data, `Inspecciones ${equipmentName} ${weekStart} al ${weekEnd}.pdf`, 'application/pdf');
+};
+
 const descargarBlob = (data, filename, mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') => {
     const blob = new Blob([data], { type: mimeType });
     const link = document.createElement('a');

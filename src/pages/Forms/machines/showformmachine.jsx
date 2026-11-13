@@ -64,7 +64,7 @@ export default function VerRegistroMaquina() {
                 {kind === "inspection" ? (
                     <>
                         <Boton 
-                            clase="btn-azul" 
+                            clase="btn-3" 
                             img={excelIcon}
                             imgDark={excelIconDark}
                             texto="Exportar Excel" 
@@ -72,7 +72,7 @@ export default function VerRegistroMaquina() {
                             titulo="Exportar inspección en un archivo de Excel"
                         />
                         <Boton 
-                            clase="btn-azul" 
+                            clase="btn-3" 
                             img={pdfIcon}
                             imgDark={pdfIconDark}
                             texto="Exportar PDF" 
@@ -83,7 +83,7 @@ export default function VerRegistroMaquina() {
                 ) : (
                     <>
                         <Boton 
-                            clase="btn-azul" 
+                            clase="btn-3" 
                             img={excelIcon}
                             imgDark={excelIconDark}
                             texto="Exportar Excel" 
@@ -91,7 +91,7 @@ export default function VerRegistroMaquina() {
                             titulo="Exportar preoperacional en un archivo de Excel"
                         />
                         <Boton 
-                            clase="btn-azul" 
+                            clase="btn-3" 
                             img={pdfIcon}
                             imgDark={pdfIconDark}
                             texto="Exportar PDF" 
