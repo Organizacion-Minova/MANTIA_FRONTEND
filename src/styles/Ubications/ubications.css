@@ -1,0 +1,87 @@
+/* Ficha de ubicación (pages/Ubications/card_ubication.jsx) */
+
+.ubicacion-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  margin: 0 0 1rem;
+}
+
+.ubicacion-info__dato {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ubicacion-resumen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.ubicacion-resumen .summary-card {
+  cursor: default;
+}
+
+/* Todo lo que va debajo del encabezado: en columna y con aire entre bloques (igual que el resto de páginas) */
+.ubicacion-contenido {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Título, tabla y paginación separados entre sí (la paginación ya no queda pegada a la tabla) */
+.ubicacion-seccion {
+  display: grid;
+  gap: 1rem;
+}
+.ubicacion-seccion__pie,
+.ubicacion-seccion__acciones,
+.ubicacion-seccion__exportar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ubicacion-seccion__pie {
+  justify-content: space-between;
+}
+
+.ubicacion-seccion__acciones {
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.ubicacion-seccion__titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.5rem;
+}
+
+.ubicacion-fuera-rango {
+  color: var(--rojo);
+  font-weight: 700;
+}
+
+@media (max-width: 990px) {
+  .ubicacion-seccion__pie {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ubicacion-seccion__acciones,
+  .ubicacion-seccion__exportar {
+    justify-content: center;
+  }
+
+  .ubicacion-seccion__acciones {
+    margin-left: 0;
+  }
+
+  .ubicacion-seccion__acciones .footer-btns {
+    border: 0;
+    padding: 0;
+  }
+}

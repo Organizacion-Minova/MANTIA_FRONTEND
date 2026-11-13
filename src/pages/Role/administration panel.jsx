@@ -1,0 +1,610 @@
+import { useState, useEffect, useCallback } from "react";
+import { PageWelcome } from "../../components/common/welcome";
+import { Boton, BotonAccion } from "../../components/common/Button";
+import { Form, Text, Checkbox, Select } from "../../components/common/forms";
+import { useAuth } from "../../context/AuthContext";
+import { useToast } from "../../context/ToastContext";
+import LoadingScreen from "../../components/LoadingScreen";
+import contrasenaIcono from "../../assets/icons/contrasena.svg";
+import borrarIcono from "../../assets/icons/borrar.svg";
+import editarIcono from "../../assets/icons/editar.svg";
+import agregarIcon from "../../assets/icons/agregar.svg";
+import {
+    getPendingRequests, approveRequest, rejectRequest
+} from "../../api/auth";
+import {
+    obtenerUsuarios, alternarActivoUsuario, cambiarPasswordUsuario, cambiarRolUsuario,
+    obtenerRoles, crearRol, actualizarRol, alternarActivoRol, eliminarRol,
+    obtenerPermisosDisponibles
+} from "../../api/admin";
+import PanelBackups from "./PanelBackups";
+import { useConfirm } from "../../context/ConfirmContext.jsx";
+import { usePaginacion,Paginacion } from "../../components/common/Paginacion";
+
+const TABS = [
+    { id: "solicitudes", texto: "Solicitudes", icono: "fa-solid fa-user-clock",titulo:"Gestionar solicitudes" },
+    { id: "usuarios", texto: "Usuarios", icono: "fa-solid fa-users", titulo:"Gestionar usuarios" },
+    { id: "roles", texto: "Roles", icono: "fa-solid fa-user-shield", titulo:"Gestionar de roles" },
+    { id: "copias-seguridad", texto: "Copias de seguridad", icono: "fa-solid fa-cloud", titulo:"Gestionar backups" },
+];
+
+// ---------- 1. Solicitudes de cuenta ----------
+function PanelSolicitudes({ onCambioConteo }) {
+    const [solicitudes, setSolicitudes] = useState([]);
+    const [cargando, setCargando] = useState(true);
+    const [error, setError] = useState(null);
+    const { exito, peligro } = useToast();
+
+    const {datosPagina, paginaActual, totalPaginas, setPaginaActual} = usePaginacion(solicitudes, 7);
+
+    const cargar = useCallback(async () => {
+        setCargando(true);
+        setError(null);
+        try {
+            const data = await getPendingRequests();
+            setSolicitudes(Array.isArray(data) ? data : []);
+            onCambioConteo?.(Array.isArray(data) ? data.length : 0);
+        } catch (err) {
+            console.error("Error al cargar solicitudes:", err);
+            setError(err.response?.data?.message || "No se pudieron cargar las solicitudes.");
+            setSolicitudes([]);
+        } finally {
+            setCargando(false);
+        }
+    }, [onCambioConteo]);
+
+    useEffect(() => { cargar(); }, [cargar]);
+
+    const handleAprobar = async (id) => {
+        try {
+            await approveRequest(id);
+            exito("Cuenta aprobada correctamente.");
+            cargar();
+        } catch (err) {
+            peligro(err.response?.data?.message || "No se pudo aprobar la solicitud.");
+        }
+    };
+
+    const pedirConfirmacion = useConfirm();
+    const handleRechazar = async (id) => {
+        if (!(await pedirConfirmacion({
+            titulo: "Rechazar solicitud",
+            mensaje: "¿Está seguro de rechazar esta solicitud?",
+            textoConfirmar: "Rechazar",
+            tipo: "warning",
+        }))) return;
+        try {
+            await rejectRequest(id);
+            exito("Solicitud rechazada.");
+            cargar();
+        } catch (err) {
+            peligro(err.response?.data?.message || "No se pudo rechazar la solicitud.");
+        }
+    };
+
+    if (cargando) return <LoadingScreen indeterminado />;
+
+    return (
+        <>
+            {error && <div style={{ color: "#d9534f", marginBottom: "1rem" }}>{error}</div>}
+            <div className="table-responsive">
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Correo</th>
+                            <th>Documento</th>
+                            <th>Rol solicitado</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {datosPagina.length > 0 ? datosPagina.map((s) => (
+                            <tr key={s.id}>
+                                <td>{s.name} {s.last_name}</td>
+                                <td>{s.email}</td>
+                                <td>{s.document_type} {s.document_number}</td>
+                                <td>
+                                    <span className="badge badge-mantto">
+                                        {s.requested_role}{s.technician_type ? ` · ${s.technician_type}` : ""}
+                                    </span>
+                                </td>
+                                <td>{new Date(s.created_at).toLocaleDateString("es-CO")}</td>
+                                <td>
+                                    <div className="btn-container">
+                                        <Boton clase="btn-azul" icono="fa-solid fa-check" titulo="Aprobar solicitud" texto="Aprobar"onClick={() => handleAprobar(s.id)} />
+                                        <Boton clase="btn-borrar" icono="fa-solid fa-xmark" texto="Rechazar" titulo="Rechazar solicitud" onClick={() => handleRechazar(s.id)} />
+                                    </div>
+                                </td>
+                            </tr>
+                        )) : (
+                            <tr>
+                                <td colSpan="6" style={{ textAlign: "center" }}>No hay solicitudes pendientes.</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+                <div className="roles-actions">
+                    <Paginacion
+                        paginaActual={paginaActual}
+                        totalPaginas={totalPaginas}
+                        setPaginaActual={setPaginaActual}
+                    />
+                </div>
+            </div>
+        </>
+    );
+}
+
+// ---------- 2. Usuarios ----------
+function FormularioPassword({ usuario, onCancel, onSuccess }) {
+    const [password, setPassword] = useState("");
+    const [confirmar, setConfirmar] = useState("");
+    const [error, setError] = useState(null);
+    const [cargando, setCargando] = useState(false);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError(null);
+        if (password !== confirmar) {
+            setError("Las contraseñas no coinciden.");
+            return;
+        }
+        setCargando(true);
+        try {
+            await cambiarPasswordUsuario(usuario.id, password, confirmar);
+            onSuccess();
+            onCancel();
+        } catch (err) {
+            setError(err.response?.data?.message || "No se pudo cambiar la contraseña.");
+        } finally {
+            setCargando(false);
+        }
+    };
+
+    return (
+        <Form
+            titulo={`Cambiar contraseña de ${usuario.name}`}
+            descripcion="El usuario deberá usar esta nueva contraseña en su próximo inicio de sesión."
+            onCancel={onCancel}
+            onSubmit={handleSubmit}
+            textoBoton={cargando ? "Guardando..." : "Actualizar"}
+            iconoBoton="fa-solid fa-key"
+        >
+            {error && <div className="col-span-6">{error}</div>}
+            <div className="col-span-3">
+                <Text
+                    label="Nueva contraseña:" id="password" name="password" type="password"
+                    placeholder="Mínimo 8 caracteres" value={password}
+                    onChange={(e) => setPassword(e.target.value)} required
+                />
+            </div>
+            <div className="col-span-3">
+                <Text
+                    label="Confirmar contraseña:" id="confirmar" name="confirmar" type="password"
+                    placeholder="Repite la contraseña" value={confirmar}
+                    onChange={(e) => setConfirmar(e.target.value)} required
+                />
+            </div>
+        </Form>
+    );
+}
+
+function PanelUsuarios() {
+    const [usuarios, setUsuarios] = useState([]);
+    const [roles, setRoles] = useState([]);
+    const [cargando, setCargando] = useState(true);
+    const [error, setError] = useState(null);
+    const [usuarioPassword, setUsuarioPassword] = useState(null);
+    const { usuario: usuarioActual } = useAuth();
+    const { exito, peligro } = useToast();
+
+    const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(usuarios, 7);
+
+    const cargar = useCallback(async () => {
+        setCargando(true);
+        setError(null);
+        try {
+            const [listaUsuarios, listaRoles] = await Promise.all([obtenerUsuarios(), obtenerRoles()]);
+            setUsuarios(Array.isArray(listaUsuarios) ? listaUsuarios : []);
+            setRoles(Array.isArray(listaRoles) ? listaRoles.filter(r => r.is_active) : []);
+        } catch (err) {
+            console.error("Error al cargar usuarios:", err);
+            setError(err.response?.data?.message || "No se pudieron cargar los usuarios.");
+        } finally {
+            setCargando(false);
+        }
+    }, []);
+
+    useEffect(() => { cargar(); }, [cargar]);
+
+    const handleToggleActivo = async (u) => {
+        try {
+            await alternarActivoUsuario(u.id);
+            exito(u.is_active ? "Usuario desactivado." : "Usuario activado.");
+            cargar();
+        } catch (err) {
+            peligro(err.response?.data?.message || "No se pudo cambiar el estado del usuario.");
+        }
+    };
+
+    const handleCambiarRol = async (u, nuevoRol) => {
+        if (!nuevoRol) return;
+        try {
+            await cambiarRolUsuario(u.id, nuevoRol);
+            exito("Rol actualizado.");
+            cargar();
+        } catch (err) {
+            peligro(err.response?.data?.message || "No se pudo cambiar el rol.");
+        }
+    };
+
+    if (cargando) return <LoadingScreen indeterminado />;
+
+    return (
+        <>
+            {error && <div style={{ color: "#d9534f", marginBottom: "1rem" }}>{error}</div>}
+            <div className="table-responsive">
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Correo</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {datosPagina.length > 0 ? datosPagina.map((u) => (
+                            <tr key={u.id}>
+                                <td>{u.name} {u.last_name}</td>
+                                <td>{u.email}</td>
+                                <td>
+                                    <Select
+                                        id={`rol-${u.id}`} 
+                                        name={`rol-${u.id}`}
+                                        value={u.roles?.[0]?.name || ""}
+                                        onChange={(e) => handleCambiarRol(u, e.target.value)}
+                                        opciones={[
+                                            { value: "", label: "Sin rol" }, 
+                                            ...roles.map(r => ({ valor: r.name, etiqueta: r.name }))
+                                        ]}
+                                    />
+                                </td>
+                                <td>
+                                    <span className={`badge ${u.is_active ? "badge-activo" : "badge-inactivo"}`}>
+                                        {u.is_active ? "Activo" : "Inactivo"}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div className="btn-container">
+                                        <BotonAccion
+                                            clase="btn-azul"
+                                            icono={contrasenaIcono}
+                                            titulo="Cambiar contraseña"
+                                            texto="Cambiar"
+                                            onClick={() => setUsuarioPassword(u)}
+                                        />
+                                        <Boton
+                                            clase={u.is_active ? "btn-borrar" : "btn-2"}
+                                            icono={u.is_active ? "fa-solid fa-ban" : "fa-solid fa-circle-check"}
+                                            titulo={u.is_active ? "Desactivar usuario" : "Activar usuario"}
+                                            texto={u.is_active ? "Desactivar" : "Activar"}
+                                            disabled={u.id === usuarioActual?.id}
+                                            onClick={() => handleToggleActivo(u)}
+                                        />
+                                    </div>
+                                </td>
+                            </tr>
+                        )) : (
+                            <tr>
+                                <td colSpan="5" style={{ textAlign: "center" }}>No hay usuarios registrados.</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>  
+            </div>
+            <div className="roles-actions">
+                <Paginacion
+                    paginaActual={paginaActual}
+                    totalPaginas={totalPaginas}
+                    setPaginaActual={setPaginaActual}
+                />
+            </div>
+            {usuarioPassword && (
+                <FormularioPassword
+                    usuario={usuarioPassword}
+                    onCancel={() => setUsuarioPassword(null)}
+                    onSuccess={() => exito("Contraseña actualizada correctamente.")}
+                />
+            )}
+        </>
+    );
+}
+
+// ---------- 3. Roles ----------
+function FormularioRol({ rolEditar, onCancel, onSuccess }) {
+    const [nombre, setNombre] = useState(rolEditar?.name || "");
+    const [grupos, setGrupos] = useState([]);
+    const [permisosSeleccionados, setPermisosSeleccionados] = useState(
+        rolEditar?.permissions?.map((p) => p.name) || []
+    );
+    const [error, setError] = useState(null);
+    const [cargando, setCargando] = useState(false);
+    const esEdicion = Boolean(rolEditar);
+    const esRolProtegido = rolEditar?.name === "Jefe de mina";
+
+    useEffect(() => {
+        obtenerPermisosDisponibles().then(setGrupos).catch(() => setGrupos([]));
+    }, []);
+
+    const togglePermiso = (nombrePermiso) => {
+        setPermisosSeleccionados((prev) =>
+            prev.includes(nombrePermiso) ? prev.filter((p) => p !== nombrePermiso) : [...prev, nombrePermiso]
+        );
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError(null);
+        setCargando(true);
+        try {
+            if (esEdicion) {
+                await actualizarRol(rolEditar.id, nombre, permisosSeleccionados);
+            } else {
+                await crearRol(nombre, permisosSeleccionados);
+            }
+            onSuccess();
+            onCancel();
+        } catch (err) {
+            setError(err.response?.data?.message || "No se pudo guardar el rol.");
+        } finally {
+            setCargando(false);
+        }
+    };
+
+    return (
+        <Form
+            titulo={esEdicion ? "Editar rol" : "Nuevo rol"}
+            descripcion="Define el nombre del rol y qué puede hacer dentro del sistema."
+            onCancel={onCancel}
+            onSubmit={handleSubmit}
+            textoBoton={cargando ? "Guardando..." : esEdicion ? "Actualizar" : "Crear"}
+        >
+            {error && <div className="col-span-6">{error}</div>}
+            <div className="col-span-6">
+                <Text
+                    label="Nombre del rol:" id="nombre" name="nombre"
+                    placeholder="Ej: Supervisor" value={nombre}
+                    onChange={(e) => setNombre(e.target.value)} required
+                />
+            </div>
+
+            <div className="col-span-6">
+                <label className="form-label">¿Qué puede hacer este rol?</label>
+                {esRolProtegido && (
+                    <p className="form-help-text">El rol Jefe de mina siempre tiene acceso a todo el sistema.</p>
+                )}
+            </div>
+
+            {!esRolProtegido && grupos.map((grupo) => (
+                <div className="col-span-6" key={grupo.modulo}>
+                    <p style={{ fontWeight: 600, marginBottom: "0.5rem" }}>{grupo.etiqueta}</p>
+                    <div className="form-grid">
+                        {grupo.permisos.map((permiso) => (
+                            <div className="col-span-3" key={permiso.name}>
+                                <Checkbox
+                                    id={`permiso-${permiso.name}`}
+                                    name={permiso.name}
+                                    label={permiso.etiqueta}
+                                    checked={permisosSeleccionados.includes(permiso.name)}
+                                    onChange={() => togglePermiso(permiso.name)}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            ))}
+        </Form>
+    );
+}
+
+function PanelRoles() {
+    const [roles, setRoles] = useState([]);
+    const [cargando, setCargando] = useState(true);
+    const [error, setError] = useState(null);
+    const [mostrarFormulario, setMostrarFormulario] = useState(false);
+    const [rolAEditar, setRolAEditar] = useState(null);
+    const { exito, peligro } = useToast();
+
+    const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(roles, 7);
+
+    const cargar = useCallback(async () => {
+        setCargando(true);
+        setError(null);
+        try {
+            const data = await obtenerRoles();
+            setRoles(Array.isArray(data) ? data : []);
+        } catch (err) {
+            console.error("Error al cargar roles:", err);
+            setError(err.response?.data?.message || "No se pudieron cargar los roles.");
+        } finally {
+            setCargando(false);
+        }
+    }, []);
+
+    useEffect(() => { cargar(); }, [cargar]);
+
+    const handleToggleActivo = async (r) => {
+        try {
+            await alternarActivoRol(r.id);
+            exito(r.is_active ? "Rol desactivado." : "Rol activado.");
+            cargar();
+        } catch (err) {
+            peligro(err.response?.data?.message || "No se pudo cambiar el estado del rol.");
+        }
+    };
+
+    const pedirConfirmacion = useConfirm();
+    const handleEliminar = async (r) => {
+        if (!(await pedirConfirmacion({
+            titulo: "Eliminar rol",
+            mensaje: `¿Eliminar el rol "${r.name}"? Esta acción no se puede deshacer.`,
+        }))) return;
+        try {
+            await eliminarRol(r.id);
+            exito("Rol eliminado.");
+            cargar();
+        } catch (err) {
+            peligro(err.response?.data?.message || "No se pudo eliminar el rol.");
+        }
+    };
+
+    if (cargando) return <LoadingScreen indeterminado />;
+
+    return (
+        <>
+            {error && <div style={{ color: "#d9534f", marginBottom: "1rem" }}>{error}</div>}
+            <div className="table-responsive">
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Usuarios con este rol</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {datosPagina.length > 0 ? datosPagina.map((r) => (
+                            <tr key={r.id}>
+                                <td>{r.name}</td>
+                                <td>{r.users_count}</td>
+                                <td>
+                                    <span className={`badge ${r.is_active ? "badge-activo" : "badge-inactivo"}`}>
+                                        {r.is_active ? "Activo" : "Inactivo"}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div className="btn-container">
+                                         
+                                        <BotonAccion
+                                            clase="btn-editar" icono={editarIcono} titulo="Editar rol"
+                                            onClick={() => { setRolAEditar(r); setMostrarFormulario(true); }}
+                                        />
+
+                                       
+                                        <BotonAccion
+                                            clase="btn-borrar" icono={borrarIcono} titulo="Eliminar rol"
+                                            onClick={() => handleEliminar(r)}
+                                        />
+
+                                           <Boton
+                                            clase={r.is_active ? "btn-borrar" : "btn-azul"}
+                                            icono={r.is_active ? "fa-solid fa-ban" : "fa-solid fa-circle-check"}
+                                            titulo={r.is_active ? "Desactivar rol" : "Activar rol"}
+                                            onClick={() => handleToggleActivo(r)}
+                                            texto={r.is_active ? "Desactivar" : "Activar"}
+                                        />
+                                    </div>
+                                </td>
+                            </tr>
+                        )) : (
+                            <tr>
+                                <td colSpan="4" style={{ textAlign: "center" }}>No hay roles registrados.</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+            <div className="roles-actions btn-container-page">
+                <Boton
+                    clase="btn-azul" 
+                    texto="Nuevo rol" 
+                    img={agregarIcon}
+                    onClick={() => { setRolAEditar(null); setMostrarFormulario(true); }}
+                    titulo="Añadir nuevo rol"
+                />
+                <Paginacion
+                    paginaActual={paginaActual}
+                    totalPaginas={totalPaginas}
+                    setPaginaActual={setPaginaActual}
+                />
+            </div>
+            {mostrarFormulario && (
+                <FormularioRol
+                    rolEditar={rolAEditar}
+                    onCancel={() => setMostrarFormulario(false)}
+                    onSuccess={cargar}
+                />
+            )}
+        </>
+    );
+}
+
+// ---------- 4. Backups ----------
+// (ahora vive en PanelBackups.jsx)
+
+// ---------- Panel principal ----------
+function AdministrationPanel() {
+    const { usuario } = useAuth();
+    const [tabActiva, setTabActiva] = useState("solicitudes");
+    const [conteoSolicitudes, setConteoSolicitudes] = useState(0);
+
+    const esAdministrador = usuario?.roles?.some((r) => r.name === "Jefe de mina");
+
+    if (!esAdministrador) {
+        return (
+            <div className="list-grid administration-grid">
+                <header className="bienvenida">
+                    <PageWelcome
+                        titulo="Panel de administración"
+                        descripcion="No tienes permisos para ver esta sección."
+                    />
+                </header>
+                <p>Esta sección es solo para usuarios con el rol <strong>Jefe de mina</strong>.</p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="list-grid administration-grid">
+            <header className="bienvenida">
+                <PageWelcome
+                    titulo="Panel de administración"
+                    descripcion="Gestiona solicitudes de cuenta, usuarios, roles y backups del sistema."
+                    mostrarHistorial={true}
+                />
+            </header>
+
+            <div className="btn-container admin-tabs">
+                {TABS.map((tab) => (
+                    <Boton
+                        
+                        key={tab.id}
+                        clase={tabActiva === tab.id ? "btn-azul" : "btn-2"}
+                        icono={tab.icono}
+                        texto={
+                            tab.id === "solicitudes" && conteoSolicitudes > 0
+                                ? `${tab.texto} (${conteoSolicitudes})`
+                                : tab.texto
+                        }
+                        titulo={tab.titulo}
+                        onClick={() => setTabActiva(tab.id)}
+                    />
+                ))}
+            </div>
+
+            <div className="admin-content">
+                {tabActiva === "solicitudes" && <PanelSolicitudes onCambioConteo={setConteoSolicitudes} />}
+                {tabActiva === "usuarios" && <PanelUsuarios />}
+                {tabActiva === "roles" && <PanelRoles />}
+                {tabActiva === "copias-seguridad" && <PanelBackups />}
+            </div>
+        </div>
+    );
+}
+
+export default AdministrationPanel;
