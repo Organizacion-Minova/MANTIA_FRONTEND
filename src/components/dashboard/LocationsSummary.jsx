@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { getNoDataMessage } from "./sectionMessages";
 
 export default function LocationsSummary({ locations, state }) {
@@ -12,20 +13,26 @@ export default function LocationsSummary({ locations, state }) {
       <ul className="locations-summary__list">
         {locations.map((loc) => (
           <li key={loc.id} className="locations-summary__item">
-            <div className="locations-summary__header">
-              <span>{loc.name}</span>
-              <strong>{loc.total} elementos</strong>
-            </div>
-            <ul className="locations-summary__breakdown">
-              {(loc.items ?? [])
-                .filter((item) => item.quantity > 0)
-                .map((item) => (
-                  <li key={item.key} className="locations-summary__breakdown-item">
-                    <span>{item.label}</span>
-                    <strong>{item.quantity}</strong>
-                  </li>
-                ))}
-            </ul>
+            <Link
+              to={`/ubications/cardubication/${loc.id}`}
+              className="locations-summary__link"
+              aria-label={`Ver máquinas, equipos y elementos de ${loc.name}`}
+            >
+              <div className="locations-summary__header">
+                <span>{loc.name}</span>
+                <strong>{loc.total} elementos</strong>
+              </div>
+              <ul className="locations-summary__breakdown">
+                {(loc.items ?? [])
+                  .filter((item) => item.quantity > 0)
+                  .map((item) => (
+                    <li key={item.key} className="locations-summary__breakdown-item">
+                      <span>{item.label}</span>
+                      <strong>{item.quantity}</strong>
+                    </li>
+                  ))}
+              </ul>
+            </Link>
           </li>
         ))}
       </ul>

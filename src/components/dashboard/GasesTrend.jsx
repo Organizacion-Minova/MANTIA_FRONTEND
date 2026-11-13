@@ -1,63 +1,102 @@
-import { STATUS_ICON } from "./statusIcons";
+import { useState } from "react";
+import {
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Title,
+  Tooltip,
+} from "chart.js";
+import annotationPlugin from "chartjs-plugin-annotation";
+import { Link } from "react-router-dom";
+import { Bar } from "react-chartjs-2";
+import {
+  formatearFecha,
+  getChartData,
+  getChartOptions,
+  limitesGases,
+} from "./gasChartConfig";
 import { getNoDataMessage } from "./sectionMessages";
+import paginacionDerecha from "../../assets/icons/paginacion-derecha.svg";
+import paginacionIzquierda from "../../assets/icons/paginacion-izquierda.svg";
 
-function buildPoints(values) {
-  const max = Math.max(...values);
-  const scale = max > 0 ? max : 1;
-
-  return values
-    .map((value, index) => {
-      const x = (index / (values.length - 1)) * 100;
-      const y = 30 - (value / scale) * 28;
-      return `${x},${y}`;
-    })
-    .join(" ");
-}
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, annotationPlugin);
 
 export default function GasesTrend({ gases, state }) {
-  let content;
+  const [locationIndex, setLocationIndex] = useState(0);
 
   if (gases == null) {
-    content = <p className="dashboard-block__empty">{getNoDataMessage(state)}</p>;
-  } else {
-    const values = (gases.readings ?? []).map(Number);
-    const latestStatus = gases.latestStatus;
-
-    if (values.length === 0) {
-      content = <p className="dashboard-block__empty">Sin mediciones registradas</p>;
-    } else {
-      content = (
-        <>
-          {values.length >= 2 ? (
-            <svg
-              viewBox="0 0 100 30"
-              className="gases-trend__sparkline"
-              preserveAspectRatio="none"
-              role="img"
-              aria-label={`Tendencia de las últimas ${values.length} mediciones de gases`}
-            >
-              <polyline points={buildPoints(values)} />
-            </svg>
-          ) : (
-            <p className="dashboard-block__empty">
-              Se necesitan al menos 2 mediciones para mostrar la tendencia
-            </p>
-          )}
-          {latestStatus && (
-            <div className={`gases-trend__latest gases-trend__latest--${latestStatus.status}`}>
-              <i className={STATUS_ICON[latestStatus.status]} aria-hidden="true"></i>
-              <span>{latestStatus.label}</span>
-            </div>
-          )}
-        </>
-      );
-    }
+    return (
+      <div className="gases-trend">
+        <h3 className="dashboard-block__title">Medición de gases</h3>
+        <p className="dashboard-block__empty">{getNoDataMessage(state)}</p>
+      </div>
+    );
   }
+
+  if (gases.length === 0) {
+    return (
+      <div className="gases-trend">
+        <h3 className="dashboard-block__title">Medición de gases</h3>
+        <p className="dashboard-block__empty">Sin mediciones registradas</p>
+      </div>
+    );
+  }
+
+  const currentLocationIndex = Math.min(locationIndex, gases.length - 1);
+  const location = gases[currentLocationIndex];
+  const registro = [{
+    fecha: location.measurement.date,
+    detalle: location.detail,
+  }];
 
   return (
     <div className="gases-trend">
-      <h3 className="dashboard-block__title">Medición de gases</h3>
-      {content}
+      <div className="gases-carousel__header">
+        <h3 className="dashboard-block__title">Medición de gases por ubicación</h3>
+        <nav className="gases-carousel__navigation" aria-label="Navegación de ubicaciones">
+          <button
+            type="button"
+            onClick={() => setLocationIndex(Math.max(currentLocationIndex - 1, 0))}
+            disabled={currentLocationIndex === 0}
+            aria-label="Ubicación anterior"
+          >
+            <img src={paginacionIzquierda} alt="" aria-hidden="true" />
+          </button>
+          <span aria-live="polite">{currentLocationIndex + 1} / {gases.length}</span>
+          <button
+            type="button"
+            onClick={() => setLocationIndex(Math.min(currentLocationIndex + 1, gases.length - 1))}
+            disabled={currentLocationIndex === gases.length - 1}
+            aria-label="Ubicación siguiente"
+          >
+            <img src={paginacionDerecha} alt="" aria-hidden="true" />
+          </button>
+        </nav>
+      </div>
+      <div className="gases-carousel__location">
+        <strong>{location.name}</strong>
+        <span>
+          Último registro: {formatearFecha(location.measurement.date)}
+          {location.measurement.time ? ` · ${location.measurement.time.slice(0, 5)}` : ""}
+        </span>
+      </div>
+      <div className="gases-carousel__charts">
+        {Object.entries(limitesGases).map(([gasKey, meta]) => (
+          <Link
+            className="gases-carousel__chart"
+            key={meta.campo}
+            to={`/gases/compare_gases?locationId=${location.id}&gas=${gasKey}`}
+            aria-label={`Ver gráfica de ${meta.label} de ${location.name} en el módulo de gases`}
+          >
+            <h4>{meta.label} <span>[{meta.unidad}]</span></h4>
+            <div className="gases-carousel__canvas">
+              <Bar options={getChartOptions(meta)} data={getChartData(meta, registro)} />
+            </div>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }

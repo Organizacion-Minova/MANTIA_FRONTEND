@@ -3,9 +3,10 @@ import SummaryCard from "./SummaryCard";
 
 const CARDS = [
   { dataKey: "machines", title: "Máquinas", totalLabel: "registros", to: "/machines" },
-  { dataKey: "equipments", title: "Equipos", totalLabel: "registros", to: "/equipment" },
-  { dataKey: "consumables", title: "Consumibles", totalLabel: "unidades", to: "/consumables/tools" },
-  { dataKey: "nonConsumables", title: "No consumibles", totalLabel: "unidades", to: "/noconsumables/tools" },
+  { dataKey: "equipmentsConsumables", title: "Equipos consumibles", totalLabel: "registros", to: "/equipment/consumables" },
+  { dataKey: "equipmentsNonConsumables", title: "Equipos no consumibles", totalLabel: "registros", to: "/equipment/noconsumables" },
+  { dataKey: "consumables", title: "Herramientas consumibles", totalLabel: "unidades", to: "/consumables/tools" },
+  { dataKey: "nonConsumables", title: "Herramientas no consumibles", totalLabel: "unidades", to: "/noconsumables/tools" },
 ];
 
 export default function DashboardSummarySection({ data, sections }) {

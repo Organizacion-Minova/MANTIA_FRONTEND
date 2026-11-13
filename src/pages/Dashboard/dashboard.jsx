@@ -36,8 +36,8 @@ export default function Dashboard() {
   return (
     <div className="dashboard-grid">
       <PageWelcome 
-        titulo="Panel poderoso de control OMG"
-        descripcion="Monitorea todas tus actividades 100% real no fake"
+        titulo="Panel de control"
+        descripcion="Monitorea las principales actividades"
         mostrarHistorial={true}
       />
    

@@ -421,6 +421,7 @@ export function CardUbication() {
                 tipoNombre: "Equipo",
                 codigo: e.codigo,
                 nombre: e.nombre,
+                categoria: e.categoria,
                 responsable: e.responsable,
                 estadoFiltro: e.estado,
                 estadoTexto: e.estado,
