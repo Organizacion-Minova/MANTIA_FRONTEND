@@ -59,8 +59,10 @@ const ORDEN_ESTADOS = [
 
 const TIPOS = [
     { valor: "maquinas", etiqueta: "Máquinas", dato: "maquinas" },
-    { valor: "equipos", etiqueta: "Equipos", dato: "equipos" },
-    { valor: "herramientas", etiqueta: "Herramientas", dato: "herramientas" },
+    { valor: "equipos-consumibles", etiqueta: "Equipos consumibles", dato: "equipos" },
+    { valor: "equipos-no-consumibles", etiqueta: "Equipos no consumibles", dato: "equipos" },
+    { valor: "herramientas-consumibles", etiqueta: "Herramientas consumibles", dato: "herramientas" },
+    { valor: "herramientas-no-consumibles", etiqueta: "Herramientas no consumibles", dato: "herramientas" },
     { valor: "gases", etiqueta: "Mediciones de gases", dato: "gases" },
 ];
 
@@ -252,7 +254,7 @@ function construirFila(item, filtroCondicion = "") {
                 item.tipoNombre,
                 o.codigo,
                 o.nombre,
-                "—",
+                item.categoria || "Sin especificar",
                 o.responsable,
                 <InsigniaEstado key="estado" estado={o.estado} />,
                 botonVer(
@@ -347,6 +349,7 @@ export function CardUbication() {
     const [cargando, setCargando] = useState(true);
     const [exportando, setExportando] = useState(false);
     const [filtroCondicion, setFiltroCondicion] = useState("");
+    const [filtroTipo, setFiltroTipo] = useState("");
 
     const { advertencia } = useToast();
 
@@ -389,6 +392,11 @@ export function CardUbication() {
         }
     };
 
+    const esUbicacionMina =
+        datos?.ubicacion?.categoria?.trim().toLowerCase() === "mina";
+    const filtroTipoActivo =
+        !esUbicacionMina && filtroTipo === "gases" ? "" : filtroTipo;
+
     // Todas las filas se agrupan en una sola lista.
     const items = useMemo(() => {
         if (!datos) return [];
@@ -405,6 +413,7 @@ export function CardUbication() {
             ...(datos.maquinas ?? []).map((m) => ({
                 ...base,
                 seccion: "maquinas",
+                tipoFiltro: "maquinas",
                 tipoNombre: "Máquina",
                 codigo: m.codigo,
                 nombre: m.nombre,
@@ -418,10 +427,17 @@ export function CardUbication() {
             ...(datos.equipos ?? []).map((e) => ({
                 ...base,
                 seccion: "equipos",
+                tipoFiltro: e.categoria === "Consumible"
+                    ? "equipos-consumibles"
+                    : e.categoria === "NoConsumible"
+                        ? "equipos-no-consumibles"
+                        : "equipos",
                 tipoNombre: "Equipo",
                 codigo: e.codigo,
                 nombre: e.nombre,
-                categoria: e.categoria,
+                categoria: e.categoria === "NoConsumible"
+                    ? "No consumible"
+                    : e.categoria ?? "",
                 responsable: e.responsable,
                 estadoFiltro: e.estado,
                 estadoTexto: e.estado,
@@ -431,6 +447,9 @@ export function CardUbication() {
             ...(datos.herramientas ?? []).map((h) => ({
                 ...base,
                 seccion: "herramientas",
+                tipoFiltro: h.consumible
+                    ? "herramientas-consumibles"
+                    : "herramientas-no-consumibles",
                 tipoNombre: "Herramienta",
                 nombre: h.nombre,
                 categoria: h.categoria ?? "",
@@ -454,9 +473,10 @@ export function CardUbication() {
                 origen: h,
             })),
 
-            ...(datos.gases ?? []).map((g) => ({
+            ...((esUbicacionMina ? datos.gases : []) ?? []).map((g) => ({
                 ...base,
                 seccion: "gases",
+                tipoFiltro: "gases",
                 tipoNombre: "Medición de gases",
                 responsable: g.responsable ?? "",
                 extra: (g.fuera_de_rango ?? []).join(" "),
@@ -471,7 +491,7 @@ export function CardUbication() {
                 origen: g,
             })),
         ];
-    }, [datos]);
+    }, [datos, esUbicacionMina]);
 
     const {
         busqueda,
@@ -488,18 +508,26 @@ export function CardUbication() {
                 ? TIPOS.filter(
                       (tipo) =>
                           datos[tipo.dato] !== null &&
-                          datos[tipo.dato] !== undefined
+                              datos[tipo.dato] !== undefined &&
+                              (tipo.valor !== "gases" || esUbicacionMina)
                   ).map(({ valor, etiqueta }) => ({
                       valor,
                       etiqueta,
                   }))
                 : [],
-        [datos]
+        [datos, esUbicacionMina]
     );
 
     const categoriasUnicas = useMemo(
         () =>
-            [...new Set(items.map((item) => item.categoria).filter(Boolean))]
+            [
+                ...new Set(
+                    items
+                        .filter((item) => item.seccion !== "equipos")
+                        .map((item) => item.categoria)
+                        .filter(Boolean)
+                ),
+            ]
                 .sort((a, b) => a.localeCompare(b))
                 .map((categoria) => ({
                     valor: categoria,
@@ -535,7 +563,11 @@ export function CardUbication() {
     }, [items]);
 
     // Filtro de estados para máquinas/equipos/gases y condiciones para herramientas.
-    const itemsFiltradosPorEstado = itemsFiltrados.filter((item) => {
+    const itemsFiltradosPorTipo = itemsFiltrados.filter(
+        (item) => !filtroTipoActivo || item.tipoFiltro === filtroTipoActivo
+    );
+
+    const itemsFiltradosPorEstado = itemsFiltradosPorTipo.filter((item) => {
         if (!filtroCondicion) return true;
 
         if (item.seccion === "herramientas") {
@@ -557,18 +589,20 @@ export function CardUbication() {
     const hayFiltros =
         busqueda.trim() !== "" ||
         filtroCondicion !== "" ||
+        filtroTipoActivo !== "" ||
         Object.values(filtrosEspeciales).some(Boolean);
 
     const claveFiltros =
         busqueda +
         JSON.stringify(filtrosEspeciales) +
-        filtroCondicion;
+        filtroCondicion +
+        filtroTipoActivo;
 
     const limpiarFiltros = () => {
         setBusqueda("");
-        setFiltroEspecial("seccion", "");
         setFiltroEspecial("categoria", "");
         setFiltroCondicion("");
+        setFiltroTipo("");
     };
 
     const botonRegresar = (
@@ -647,13 +681,8 @@ export function CardUbication() {
                                 <Select
                                     id="filtro-tipo"
                                     name="filtro-tipo"
-                                    value={filtrosEspeciales.seccion || ""}
-                                    onChange={(e) =>
-                                        setFiltroEspecial(
-                                            "seccion",
-                                            e.target.value
-                                        )
-                                    }
+                                    value={filtroTipoActivo}
+                                    onChange={(e) => setFiltroTipo(e.target.value)}
                                     opciones={[
                                         {
                                             valor: "",
@@ -758,7 +787,7 @@ export function CardUbication() {
                                 />
                             )}
 
-                            {resumen.mediciones_gases !== null && (
+                            {esUbicacionMina && resumen.mediciones_gases !== null && (
                                 <TarjetaResumen
                                     titulo="Mediciones de gases"
                                     valor={resumen.mediciones_gases}
@@ -766,29 +795,9 @@ export function CardUbication() {
                             )}
 
                             {(maquinas !== null || equipos !== null) && (
-                                <>
-                                    <TarjetaResumen
-                                        titulo="Activos"
-                                        valor={resumen.activos ?? 0}
-                                    />
-
-                                    <TarjetaResumen
-                                        titulo="En mantenimiento"
-                                        valor={resumen.en_mantenimiento}
-                                    />
-
-                                    <TarjetaResumen
-                                        titulo="Inactivos"
-                                        valor={resumen.inactivos ?? 0}
-                                    />
-                                </>
-                            )}
-
-                            {resumen.stock_bajo !== null && (
                                 <TarjetaResumen
-                                    titulo="Herramientas con stock bajo"
-                                    valor={resumen.stock_bajo}
-                                    alerta
+                                    titulo="Activos"
+                                    valor={resumen.activos ?? 0}
                                 />
                             )}
                         </div>

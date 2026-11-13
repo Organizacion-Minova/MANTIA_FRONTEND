@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Boton} from "../common/Button";
 import NotificacionItem from "./NotificacionItem";
 import "../../styles/Alerts/notificaciones-sistema.css";
@@ -76,6 +77,16 @@ function PanelNotificaciones({ abierto, animar, notificaciones, onMarcarTodas, o
                 )}
             </div>
 
+            <div className="alerts-footer">
+                <Link
+                    to="/alerts"
+                    className="btn-azul alerts-footer-link"
+                    onClick={onCerrar}
+                    title="Ir al apartado de alertas"
+                >
+                    Ver todas las alertas
+                </Link>
+            </div>
         </div>
     );
 }

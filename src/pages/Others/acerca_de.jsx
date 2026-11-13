@@ -173,28 +173,28 @@ const tecnologias = [
 
 const equipoDesarrollo = [
     {
-        nombre: "Dilan Santiago",
-        rol: "Frontend Developer",
+        nombre: "Santiago Garzon",
+        rol: "Frontend",
         imagen: "/santiago2.png",
     },
     {
-        nombre: "Kevin el papu",
-        rol: "Backend Developer",
+        nombre: "Kevin Castiblanco",
+        rol: "Backend",
         imagen: "/kev.jpeg",
     },
     {
-        nombre: "Leox Rodriguez",
-        rol: "Diseño",
+        nombre: "leonardo cuta",
+        rol: "Frontend",
         imagen: "/leox.jpeg",
     },
     {
-        nombre: "Alvaro Sebastian",
+        nombre: "Sebastian bohorquez",
         rol: "Base de datos",
         imagen: "/seba.jpeg",
     },
         {
         nombre: "daniela rojas",
-        rol: "Frontend Developer",
+        rol: "Frontend",
         imagen: "/mantia-log.png",
     },
 ];
