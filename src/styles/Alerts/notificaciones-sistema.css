@@ -259,6 +259,15 @@
 .alerts-vacio i { font-size: 1.6rem; }
 .alerts-vacio p { margin: 0; font-size: 0.813rem; }
 
+.alerts-footer-link {
+    width: 100%;
+    min-height: 2.5rem;
+    padding: 0.55rem 0.8rem;
+    border-radius: 0.75rem;
+    font-size: 0.82rem;
+}
+.alerts-footer-link:focus-visible { outline: 2px solid var(--secundario); outline-offset: 2px; }
+
 /* Cada alerta: ícono por nivel, título, hora y mensaje completo (hasta 2 líneas) */
 .alerta-item {
     --alerta-color: var(--sidebar);
