@@ -15,6 +15,13 @@ import {
 } from "../../api/notificaciones";
 import { mapearNotificacionBackend, rutaDeAlerta } from "../../utils/notificaciones";
 import verIcono from "../../assets/icons/ver.svg";
+import reestablecerFiltrosIcon from "../../assets/icons/reestablecerFiltros.svg";
+import excelIcon from "../../assets/icons/excel.svg"
+import pdfIcon from "../../assets/icons/pdf.svg"
+import excelIcon2 from "../../assets/icons/excel2.svg"
+import pdfIcon2 from "../../assets/icons/pdf2.svg"
+import marcarComoLeidaIconDark from "../../assets/icons/marcarcomoleidas.svg"
+import completarIcon from "../../assets/icons/confirmado2.svg"
 
 const NIVELES = [
     { valor: "danger", etiqueta: "Grave", clase: "badge-grave" },
@@ -98,16 +105,27 @@ function RangoFormModal({ tipo, onCancel, onSuccess }) {
             onCancel={onCancel}
             onSubmit={handleSubmit}
             textoBoton="Descargar"
-            iconoBoton="fa-solid fa-download"
+            iconoBoton='fa-solid fa-download'
             tituloBoton="Descargar"
         >
-            <div className="col-span-6">
-                <InputDate label="Fecha Inicio:" id="fecha_inicio" name="fecha_inicio" value={formData.fecha_inicio} onChange={handleChange} />
+            <div className="col-span-3">
+                <InputDate 
+                    label="Fecha Inicio:" 
+                    id="fecha_inicio" 
+                    name="fecha_inicio" 
+                    value={formData.fecha_inicio} onChange={handleChange} 
+                />
+            </div>
+            <div className="col-span-3">
+                <InputDate 
+                    label="Fecha Fin:" 
+                    id="fecha_fin" 
+                    name="fecha_fin" 
+                    value={formData.fecha_fin} 
+                    onChange={handleChange} 
+                />
             </div>
             <div className="col-span-6">
-                <InputDate label="Fecha Fin:" id="fecha_fin" name="fecha_fin" value={formData.fecha_fin} onChange={handleChange} />
-            </div>
-            <div className="col-span-12">
                 <Select
                     label="Nivel:"
                     id="nivel"
@@ -133,6 +151,20 @@ function Alertas() {
         busqueda, setBusqueda, rangoFecha, setRangoFecha,
         filtrosEspeciales, setFiltroEspecial, itemsFiltrados: alertasFiltradas,
     } = useSearch(alertas, CAMPOS_BUSQUEDA, "fecha");
+    const hayRangoFechaActivo = typeof rangoFecha === "string"
+        ? rangoFecha.trim() !== ""
+        : Object.values(rangoFecha || {}).some((v) => v !== "" && v != null);
+    const hayFiltros =
+        busqueda.trim() !== "" ||
+        hayRangoFechaActivo ||
+        Object.values(filtrosEspeciales).some((v) => v !== "" && v != null);
+
+    const handleBorrarFiltros = () => {
+        setBusqueda("");
+        setRangoFecha({ fecha_inicio: "", fecha_fin: "" });
+        Object.keys(filtrosEspeciales).forEach((campo) => setFiltroEspecial(campo, ""));
+        setPaginaActual(1);
+    };
 
     const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(alertasFiltradas, 7);
     useEffect(() => {
@@ -190,7 +222,7 @@ function Alertas() {
                     onRangoFechaChange={setRangoFecha}
                     placeholder="Buscar por categoría, nivel o mensaje"
                     filtrosAdicionales={
-                        <div className="btn-container">
+                        <>
                             <Select
                                 id="filtro-nivel" name="filtro-nivel"
                                 value={filtrosEspeciales.tipo || ""}
@@ -213,7 +245,16 @@ function Alertas() {
                                     { valor: "leida", etiqueta: "Leídas" },
                                 ]}
                             />
-                        </div>
+                            {hayFiltros && (
+                                <BotonAccion
+                                    clase='btn-borrar'
+                                    icono={reestablecerFiltrosIcon}
+                                    texto="Borrar filtros"
+                                    onClick={handleBorrarFiltros}
+                                    titulo="Quitar la búsqueda y todos los filtros"
+                                />
+                            )}
+                        </>
                     }
                 />
             </header>
@@ -241,12 +282,17 @@ function Alertas() {
                                         <td>
                                             <div className="btn-container__acciones">
                                                 {ruta && (
-                                                    <BotonLink link={ruta} clase="btn-azul" img={verIcono} titulo="Ir a la pantalla de esta alerta" />
+                                                    <BotonLink 
+                                                        link={ruta} 
+                                                        clase="btn-azul" 
+                                                        img={verIcono} 
+                                                        titulo="Ir a la pantalla de esta alerta" 
+                                                    />
                                                 )}
                                                 {!n.leida && (
                                                     <BotonAccion
                                                         clase="btn-editar"
-                                                        texto={<i className="fa-solid fa-check"></i>}
+                                                        icono={completarIcon}
                                                         onClick={() => handleMarcarLeida(n.id)}
                                                         titulo="Marcar como leída"
                                                     />
@@ -259,7 +305,7 @@ function Alertas() {
                         ) : (
                             <tr>
                                 <td colSpan="7" style={{ textAlign: "center" }}>
-                                    {busqueda || rangoFecha || Object.values(filtrosEspeciales).some(Boolean)
+                                    {hayFiltros
                                         ? "No se encontraron resultados"
                                         : "No hay alertas registradas"}
                                 </td>
@@ -270,15 +316,39 @@ function Alertas() {
             </div>
             <div className="btn-container-page">
                 <div className="btn-container">
-                    <Boton clase="btn-azul" icono="fa-solid fa-file-excel" texto="Exportar Excel"
-                        onClick={() => setShowRangoModal("excel")} titulo="Exportar en un archivo de Excel" />
-                    <Boton clase="btn-azul" icono="fa-solid fa-file-pdf" texto="Exportar PDF"
-                        onClick={() => setShowRangoModal("pdf")} titulo="Exportar en un archivo PDF" />
-                    <Boton clase="btn-azul" icono="fa-solid fa-check-double" texto="Marcar todas como leídas"
-                        onClick={handleMarcarTodas} disabled={sinLeer === 0} titulo="Marcar todas las alertas como leídas" />
+                    <Boton 
+                        clase="btn-azul" 
+ 
+                        img={marcarComoLeidaIconDark}
+                        texto="Marcar todas como leídas"
+                        onClick={handleMarcarTodas} 
+                        disabled={sinLeer === 0} 
+                        titulo="Marcar todas las alertas como leídas" 
+                    />
+                    <Boton 
+                        clase="btn-3" 
+                        img={excelIcon}
+                        imgDark={excelIcon2}
+                        texto="Exportar Excel"
+                        onClick={() => setShowRangoModal("excel")} 
+                        titulo="Exportar en un archivo de Excel" 
+                    />
+                    <Boton 
+                        clase="btn-3" 
+                        img={pdfIcon}
+                        imgDark={pdfIcon2}
+                        texto="Exportar PDF"
+                        onClick={() => setShowRangoModal("pdf")} 
+                        titulo="Exportar en un archivo PDF" 
+                    />
+                    
                 </div>
                 {showRangoModal && (
-                    <RangoFormModal tipo={showRangoModal} onCancel={() => setShowRangoModal(null)} onSuccess={() => setShowRangoModal(null)} />
+                    <RangoFormModal 
+                        tipo={showRangoModal} 
+                        onCancel={() => setShowRangoModal(null)} 
+                        onSuccess={() => setShowRangoModal(null)} 
+                    />
                 )}
                 <Paginacion paginaActual={paginaActual} totalPaginas={totalPaginas} setPaginaActual={setPaginaActual} />
             </div>

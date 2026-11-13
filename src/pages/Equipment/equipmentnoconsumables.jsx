@@ -384,7 +384,7 @@ useEffect(() => {
             onCancel={onCancel}
            onDiscard={!esEdicion && hayDatosIngresados ? handleDescartar : undefined}
             textoBoton="Guardar"
-            iconoBoton="fa-solid fa-floppy-disk"
+            iconoBoton={descargaIcon}
             onSubmit={handleSubmit}
             noValidate
         >
@@ -714,6 +714,7 @@ function EquiposNoConsumibles(){
                 
                 <thead>
                     <tr>
+                        <th>Código</th>
                         <th>Nombre</th>
                         <th>N° Serie</th>
                         <th>Responsable</th>
@@ -726,6 +727,7 @@ function EquiposNoConsumibles(){
                 <tbody>
                     {datosPagina.map((e) => (
                     <tr key={e.id}>
+                        <td>{e.code}</td>
                         <td>{e.name}</td>
                         <td>{e.serial_number}</td>
                         <td>{e.responsible}</td>
@@ -780,12 +782,12 @@ function EquiposNoConsumibles(){
             
            {mostrarFormulario && (
         <Formulario 
-        key={`${usuarioId}-${equiposEditar?.id || "nuevo"}`}
-        onCancel={() => setMostrarFormulario(false)} 
-        onGuardado={cargarEquipos} 
-        equiposEditar={equiposEditar}
-        usuarioId={usuarioId}
-        categoria={categoria}
+            key={`${usuarioId}-${equiposEditar?.id || "nuevo"}`}
+            onCancel={() => setMostrarFormulario(false)} 
+            onGuardado={cargarEquipos} 
+            equiposEditar={equiposEditar}
+            usuarioId={usuarioId}
+            categoria={categoria}
          />
     )}
         

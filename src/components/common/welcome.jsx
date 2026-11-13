@@ -44,6 +44,8 @@ function Searcher({ value, onChange, placeholder = "Buscar...", rangoFecha, onRa
         { valor: "mes", etiqueta: "Este mes" },
         { valor: "anio", etiqueta: "Este año" }
     ] }) {
+    const mostrarFiltroFecha = !!onRangoFechaChange && typeof rangoFecha === "string";
+
     return (
         <div className="search-filters-section">
             <div className="search-main">
@@ -59,13 +61,13 @@ function Searcher({ value, onChange, placeholder = "Buscar...", rangoFecha, onRa
                 </div>
 
 
-                {(onRangoFechaChange || filtrosAdicionales) && (
+                {(mostrarFiltroFecha || filtrosAdicionales) && (
                     <div className="searcher-filters-container">
-                        {onRangoFechaChange && (
+                        {mostrarFiltroFecha && (
                             <Select
                                 id="filtro-fecha"
                                 name="filtro-fecha"
-                                value={rangoFecha}
+                                value={rangoFecha ?? ""}
                                 onChange={(e) => onRangoFechaChange(e.target.value)}
                                 opciones={filtrosFechas}
                             />

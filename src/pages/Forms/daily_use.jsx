@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useParams } from "react-router-dom";
 import { Boton, BotonAccion, BotonLink } from "../../components/common/Button";
 import { PageWelcome,Searcher } from "../../components/common/welcome";
 import { Form, Text, Textarea, Time, Select } from '../../components/common/forms';
@@ -11,6 +12,10 @@ import { useRolesResponsables } from "../../hooks/useRolesResponsables";
 import { exportarUsoDiarioExcelUnitario, exportarUsoDiarioPdfUnitario } from "../../api/dailyuseapi";
 import { useConfirm } from "../../context/ConfirmContext.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
+import { useToast } from "../../context/ToastContext.jsx";
+import { validarGroserias, capitalizarPrimeraLetra } from "../../components/common/Validations";
+import { validarCamposRequeridos } from "../../components/common/requiredFields";
+import { mensajeDeError } from "../../utils/errores";
 import editarIcono from "../../assets/icons/editar.svg";
 import editarIconoDark from "../../assets/icons/editar-2.svg";
 import borrarIcono from "../../assets/icons/borrar.svg";
@@ -53,7 +58,7 @@ function horaParaInput(hora) {
     return hora ? hora.slice(0, 5) : "";
 }
 
-function Formulario({onCancel, onGuardado, registroEditar, usuarioId}){
+function Formulario({onCancel, onGuardado, registroEditar, usuarioId, maquinaIdFija}){
     const esEdicion= registroEditar!=null;
     const [borradorInicial] = useState(() => (
         esEdicion ? null : obtenerBorrador(usuarioId)
@@ -64,9 +69,11 @@ function Formulario({onCancel, onGuardado, registroEditar, usuarioId}){
     const [operationEnd, setOperationEnd] = useState(borradorInicial?.operationEnd ?? horaParaInput(registroEditar?.operation_end));
     const [responsible, setResponsible] = useState(borradorInicial?.responsible ?? registroEditar?.responsible ?? "");
     const [observations, setObservations] = useState(borradorInicial?.observations ?? registroEditar?.observations ?? "");
-    const [machineId, setMachineId] = useState(borradorInicial?.machineId ?? registroEditar?.machine_id ?? "");
+    const [machineId, setMachineId] = useState(
+        maquinaIdFija ?? borradorInicial?.machineId ?? registroEditar?.machine_id ?? ""
+    );
     const [machines, setMachines] = useState([]);
-    const [timeError, setTimeError] = useState("");
+    const { advertencia, peligro } = useToast();
     const opcionesResponsable = useRolesResponsables(registroEditar?.responsible);
     const hayDatosIngresados = [
         operatingStatus,
@@ -83,6 +90,10 @@ function Formulario({onCancel, onGuardado, registroEditar, usuarioId}){
                 setMachines(data);
             });
     }, []);
+
+    const maquinasFormulario = maquinaIdFija
+        ? machines.filter((machine) => String(machine.id) === String(maquinaIdFija))
+        : machines;
 
     useEffect(() => {
         if (esEdicion || !usuarioId) return;
@@ -125,15 +136,75 @@ function Formulario({onCancel, onGuardado, registroEditar, usuarioId}){
 
     const handleSubmit = async (e) =>{
         e.preventDefault();
+        if (!validarCamposRequeridos({
+            "Máquina": machineId,
+            "Estado de funcionamiento": operatingStatus,
+            "Hora de inicio": operationStart,
+            "Hora de fin": operationEnd,
+            "Responsable": responsible,
+        })) return;
+
+        const camposTexto = [
+            {
+                campo: "Estado de funcionamiento",
+                valor: operatingStatus,
+                original: registroEditar?.operating_status ?? "",
+            },
+            {
+                campo: "Responsable",
+                valor: responsible,
+                original: registroEditar?.responsible ?? "",
+            },
+            {
+                campo: "Observaciones",
+                valor: observations,
+                original: registroEditar?.observations ?? "",
+            },
+        ];
+        const camposTextoModificados = esEdicion
+            ? camposTexto.filter(({ valor, original }) => valor !== original)
+            : camposTexto;
+        const erroresGroserias = validarGroserias(
+            Object.fromEntries(camposTextoModificados.map(({ campo, valor }) => [campo, valor]))
+        );
+        if (Object.keys(erroresGroserias).length > 0) {
+            advertencia(
+                `No se permiten palabras inapropiadas en: ${Object.keys(erroresGroserias).join(", ")}.`,
+                "Revisa los datos"
+            );
+            return;
+        }
+
+        const camposConLongitudMinima = [
+            { nombre: "Estado de funcionamiento", valor: operatingStatus, minimo: 3 },
+            { nombre: "Responsable", valor: responsible, minimo: 3 },
+            { nombre: "Observaciones", valor: observations, minimo: 3, opcional: true },
+        ];
+        const camposInvalidos = camposConLongitudMinima.filter(({ nombre, valor, minimo, opcional }) => {
+            const longitud = Array.from(String(valor).trim()).length;
+            const original = camposTexto.find((campo) => campo.campo === nombre)?.original ?? "";
+            return (opcional && longitud === 0)
+                ? false
+                : longitud > 0 && longitud < minimo && (!esEdicion || valor !== original);
+        });
+        if (camposInvalidos.length > 0) {
+            advertencia(
+                camposInvalidos
+                    .map(({ nombre, minimo }) => `${nombre}: mínimo ${minimo} caracteres`)
+                    .join(". "),
+                "Mínimo de caracteres"
+            );
+            return;
+        }
+
         if (operationEnd < operationStart) {
-            setTimeError("La hora de fin no puede ser anterior a la hora de inicio.");
+            advertencia("La hora de fin no puede ser anterior a la hora de inicio.", "Revisa las horas");
             return;
         }
         if (operationEnd == operationStart) {
-            setTimeError("Las horas de inicio y fin no pueden ser iguales.");
+            advertencia("Las horas de inicio y fin no pueden ser iguales.", "Revisa las horas");
             return;
         }
-        setTimeError("");
 
         if (esEdicion){
             const sinCambios =
@@ -143,7 +214,7 @@ function Formulario({onCancel, onGuardado, registroEditar, usuarioId}){
                 operationEnd === horaParaInput(registroEditar.operation_end) &&
                 responsible === registroEditar.responsible &&
                 observations === registroEditar.observations &&
-                machineId === registroEditar.machine_id;
+                String(machineId) === String(registroEditar.machine_id);
             if (sinCambios) {
                 onCancel();
                 return;
@@ -151,11 +222,11 @@ function Formulario({onCancel, onGuardado, registroEditar, usuarioId}){
         }
         const formData = new FormData();
             formData.append("date", date);
-            formData.append("operating_status", operatingStatus);
+            formData.append("operating_status", capitalizarPrimeraLetra(operatingStatus.trim()));
             formData.append("operation_start", operationStart.length === 5 ? `${operationStart}:00` : operationStart);
             formData.append("operation_end", operationEnd.length === 5 ? `${operationEnd}:00` : operationEnd);
-            formData.append("responsible", responsible);
-            formData.append("observations", observations);
+            formData.append("responsible", capitalizarPrimeraLetra(responsible.trim()));
+            formData.append("observations", capitalizarPrimeraLetra(observations.trim()));
             formData.append("machine_id", machineId);
         try {
             if (esEdicion) {
@@ -168,6 +239,11 @@ function Formulario({onCancel, onGuardado, registroEditar, usuarioId}){
             onCancel();
         } catch (error) {
             console.error("Error al guardar el registro:", error);
+            if (error.response?.status === 422) {
+                advertencia(mensajeDeError(error, "Revisa los datos del registro."), "No se pudo guardar");
+            } else {
+                peligro(mensajeDeError(error, "No se pudo guardar el registro."), "No se pudo guardar");
+            }
         }
     }
 
@@ -200,9 +276,16 @@ function Formulario({onCancel, onGuardado, registroEditar, usuarioId}){
                     name="maquina"
                     value={machineId}
                     onChange={(e) => setMachineId(e.target.value)}
+                    disabled={Boolean(maquinaIdFija)}
                     opciones={[
-                        {valor:"",etiqueta:"Seleccione una maquina"},
-                        ...machines.map((m)=>({valor:m.id,etiqueta:m.name}))
+                        ...(maquinaIdFija
+                            ? (maquinasFormulario.length
+                                ? maquinasFormulario.map((machine) => ({ valor: machine.id, etiqueta: machine.name }))
+                                : [{ valor: maquinaIdFija, etiqueta: "Máquina seleccionada" }])
+                            : [
+                                { valor: "", etiqueta: "Seleccione una maquina" },
+                                ...maquinasFormulario.map((machine) => ({ valor: machine.id, etiqueta: machine.name })),
+                            ]),
                     ]}
                     required
                 />
@@ -215,6 +298,7 @@ function Formulario({onCancel, onGuardado, registroEditar, usuarioId}){
                     placeholder="Verifique el estado del funcionamiento"
                     value={operatingStatus}
                     onChange={(e) => setOperatingStatus(e.target.value)}
+                    maxLength={10}
                     required
                 />
             </div>
@@ -224,10 +308,7 @@ function Formulario({onCancel, onGuardado, registroEditar, usuarioId}){
                     id="inicioOperacion"
                     name="inicioOperacion"
                     value={operationStart}
-                    onChange={(e) => {
-                        setOperationStart(e.target.value);
-                        setTimeError("");
-                    }}
+                    onChange={(e) => setOperationStart(e.target.value)}
                     required
                 />
             </div>
@@ -237,13 +318,9 @@ function Formulario({onCancel, onGuardado, registroEditar, usuarioId}){
                     id="finOperacion"
                     name="finOperacion"
                     value={operationEnd}
-                    onChange={(e) => {
-                        setOperationEnd(e.target.value);
-                        setTimeError("");
-                    }}
+                    onChange={(e) => setOperationEnd(e.target.value)}
                     required 
                 />
-                {timeError && <p className="form-dropzone-error" role="alert">{timeError}</p>}
             </div>
             <div className="col-span-6">
                 <Select
@@ -258,37 +335,40 @@ function Formulario({onCancel, onGuardado, registroEditar, usuarioId}){
             </div>
             <div className="col-span-6">
                 <Textarea
-                    label="Observaciones"
+                    label="Observaciones (opcional):"
                     id="observaciones"
                     name="observaciones"
                     rows={4}
                     placeholder="Observaciones"
                     value={observations}
                     onChange={(e) => setObservations(e.target.value)}
-                    required
+                    maxLength={500}
                 />
             </div>
         </Form>
     )
 }
 export function UsoDiario(){
+    const { id: maquinaIdFija } = useParams();
     const { usuario } = useAuth();
     const usuarioId = usuario?.id;
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     let [registro, setRegistro] = useState([]);
     const [registroEditar, setRegistroEditar] = useState([]);
     let [maquinas, setMaquinas] = useState([]);
-    const [maquinaSeleccionada, setMaquinaSeleccionada] = useState("");
+    const [maquinaSeleccionada, setMaquinaSeleccionada] = useState(maquinaIdFija ?? "");
     const [cargando, setCargando]=useState(true)
 
-    const { busqueda, setBusqueda, itemsFiltrados}=useSearch(
+    const { busqueda, setBusqueda, rangoFecha, setRangoFecha, itemsFiltrados}=useSearch(
         registro,
-        ['date','responsible','observations','operating_status']
+        ['date','responsible','observations','operating_status'],
+        "date"
     )
-    const hayFiltros = busqueda.trim() !== "";
+    const hayFiltros = busqueda.trim() !== "" || rangoFecha.trim() !== "";
 
     const handleBorrarFiltros = () => {
         setBusqueda("");
+        setRangoFecha("");
         setPaginaActual(1);
     };
 
@@ -308,12 +388,14 @@ export function UsoDiario(){
     useEffect(() => {
         cargarRegistros();
     }, []);
-    const cargarMaquinas = async () => {
+    const cargarMaquinas = useCallback(async () => {
         setCargando(true);
         GetMachine()
             .then((data) => {
                 setMaquinas(data);
-                if (data.length > 0) {
+                if (maquinaIdFija) {
+                    setMaquinaSeleccionada(String(maquinaIdFija));
+                } else if (data.length > 0) {
                     setMaquinaSeleccionada(String(data[0].id));
                 }
             })
@@ -323,10 +405,10 @@ export function UsoDiario(){
             .finally(() => {
                 setCargando(false);
             });
-    };
+    }, [maquinaIdFija]);
     useEffect(() => {
         cargarMaquinas();
-    }, []);
+    }, [cargarMaquinas]);
     const pedirConfirmacion = useConfirm();
     const handleEliminarRegistro = async (id) => {
         let confirmacion = await pedirConfirmacion({
@@ -365,9 +447,12 @@ export function UsoDiario(){
     };
 
     const registrosFiltrados = itemsFiltrados.filter(
-        (r) => r.machine_id === Number(maquinaSeleccionada)
+        (r) => String(r.machine_id) === String(maquinaSeleccionada)
     );
     const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(registrosFiltrados, 7);
+    const maquinasVisibles = maquinaIdFija
+        ? maquinas.filter((machine) => String(machine.id) === String(maquinaIdFija))
+        : maquinas;
     if (cargando) 
         return <LoadingScreen indeterminado/>
 
@@ -385,6 +470,11 @@ export function UsoDiario(){
                         setBusqueda(e.target.value);
                         setPaginaActual(1);
                     }}
+                    rangoFecha={rangoFecha}
+                    onRangoFechaChange={(valor) => {
+                        setRangoFecha(valor);
+                        setPaginaActual(1);
+                    }}
                     placeholder="Buscar por fecha, responsable, observaciones o estado de funcionamiento"
                     filtrosAdicionales={
                         <>
@@ -394,7 +484,7 @@ export function UsoDiario(){
                                 icono={reestablecerFiltrosIcon}
                                 texto="Borrar filtros"
                                 onClick={handleBorrarFiltros}
-                                titulo="Quitar la búsqueda y todos los filtros"
+                                titulo="Quitar la búsqueda y el filtro de fechas"
                             />
                         )}
                     </>
@@ -419,7 +509,12 @@ export function UsoDiario(){
                                         setMaquinaSeleccionada(e.target.value);
                                         setPaginaActual(1);
                                     }}
-                                    opciones={maquinas.map((m) => ({ valor: m.id, etiqueta: m.name }))}
+                                    disabled={Boolean(maquinaIdFija)}
+                                    opciones={maquinaIdFija
+                                        ? (maquinasVisibles.length
+                                            ? maquinasVisibles.map((machine) => ({ valor: machine.id, etiqueta: machine.name }))
+                                            : [{ valor: maquinaIdFija, etiqueta: "Máquina seleccionada" }])
+                                        : maquinasVisibles.map((machine) => ({ valor: machine.id, etiqueta: machine.name }))}
                                 />
                             </td>
                         </tr>
@@ -485,15 +580,17 @@ export function UsoDiario(){
                         texto="Exportar Pdf"
                         onClick={handleExportarPdf}
                     />
-                     <div className="footer-btns">
-                        <BotonLink
-                            link={`/Machines`}
-                            clase="btn-regresar"
-                            img={izquierdaIcon}
-                            imgDark={izquierdaIcon2}
-                            texto="Regresar"
-                        />
-                    </div> 
+                    {maquinaIdFija && (
+                        <div className="footer-btns">
+                            <BotonLink
+                                link={`/machines/cardMachine/${maquinaIdFija}`}
+                                clase="btn-regresar"
+                                img={izquierdaIcon}
+                                imgDark={izquierdaIcon2}
+                                texto="Volver a la máquina"
+                            />
+                        </div>
+                    )}
                 </div>
                 <Paginacion
                     paginaActual={paginaActual}
@@ -508,6 +605,7 @@ export function UsoDiario(){
                     onGuardado={cargarRegistros}
                     registroEditar={registroEditar}
                     usuarioId={usuarioId}
+                    maquinaIdFija={maquinaIdFija}
                 />
             )}
         </div>

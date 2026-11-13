@@ -113,7 +113,7 @@ export function Text({ label, id, name, type = "text", placeholder, value, onCha
 }
 
 // Textarea
-export function Textarea({ label, id, name, rows = 3, placeholder, value, onChange, ayuda, required = false }) {
+export function Textarea({ label, id, name, rows = 3, placeholder, value, onChange, ayuda, required = false, maxLength }) {
     return (
         <div className="form-field-wrapper">
             <label htmlFor={id} className="form-label">
@@ -129,6 +129,7 @@ export function Textarea({ label, id, name, rows = 3, placeholder, value, onChan
                 onChange={onChange}
                 className="form-textarea"
                 required={required}
+                maxLength={maxLength}
                 />
             </div>
             {ayuda && <p className="form-help-text">{ayuda}</p>}
@@ -137,7 +138,7 @@ export function Textarea({ label, id, name, rows = 3, placeholder, value, onChan
 }
 
 // Select
-export function Select({ label, id, name, value, onChange, opciones = [], required = false }) {
+export function Select({ label, id, name, value, onChange, opciones = [], required = false, disabled = false }) {
     return (
         <div className="form-field-wrapper">
             {label && (
@@ -152,6 +153,7 @@ export function Select({ label, id, name, value, onChange, opciones = [], requir
                     value={value}
                     onChange={onChange}
                     required={required}
+                    disabled={disabled}
                     className="form-select"
                 >
                 {opciones.map((op, idx) => (
