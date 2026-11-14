@@ -96,7 +96,7 @@ export function ConfirmProvider({ children }) {
                             <button
                                 ref={confirmarRef}
                                 type="button"
-                                className={`btn-azul ${esPeligro ? "confirmar-peligro" : ""}`}
+                                className={`btn-azul ${esPeligro ? "btn-borrar" : ""}`}
                                 onClick={() => cerrar(true)}
                             >
                                 {dialogo.textoConfirmar}

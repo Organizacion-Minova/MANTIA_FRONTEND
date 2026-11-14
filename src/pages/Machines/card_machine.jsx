@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useToast } from "../../context/ToastContext";
 import { useConfirm } from "../../context/ConfirmContext";
+import { useAuth } from "../../context/AuthContext.jsx";
 import { PageWelcome } from "../../components/common/welcome"; 
 import { Boton,BotonLink, BotonAccion } from "../../components/common/Button";
 import { GetMachineById } from "../../api/machinesapi";
@@ -47,14 +48,71 @@ function etiquetaEstado(estado) {
     return "—";
 }
 
+const obtenerClaveBorradorConsumible = (usuarioId, machineId) =>
+    `mantia_borrador_consumible_maquina_${machineId}_${usuarioId}`;
+
+const obtenerBorradorConsumible = (usuarioId, machineId) => {
+    if (!usuarioId || !machineId) return null;
+
+    try {
+        const borrador = sessionStorage.getItem(obtenerClaveBorradorConsumible(usuarioId, machineId));
+        return borrador ? JSON.parse(borrador) : null;
+    } catch (error) {
+        console.error("Error al recuperar el borrador del consumible:", error);
+        return null;
+    }
+};
+
+const eliminarBorradorConsumible = (usuarioId, machineId) => {
+    if (!usuarioId || !machineId) return;
+
+    try {
+        sessionStorage.removeItem(obtenerClaveBorradorConsumible(usuarioId, machineId));
+    } catch (error) {
+        console.error("Error al eliminar el borrador del consumible:", error);
+    }
+};
+
 function FormularioConsumible({ machineId, consumibleEditar, onCancel, onGuardado }) {
     const esEdicion = consumibleEditar != null;
     const { advertencia, peligro } = useToast();
-    const [toolId, setToolId] = useState(esEdicion ? String(consumibleEditar.tool_id) : "");
-    const [marca, setMarca] = useState(consumibleEditar?.brand ?? "");
-    const [cantidad, setCantidad] = useState(consumibleEditar?.stock ?? 0);
-    const [observaciones, setObservaciones] = useState(consumibleEditar?.observations ?? "");
+    const pedirConfirmacion = useConfirm();
+    const { usuario } = useAuth();
+    const usuarioId = usuario?.id;
+    const [borradorInicial] = useState(() => (
+        esEdicion ? null : obtenerBorradorConsumible(usuarioId, machineId)
+    ));
+    const [toolId, setToolId] = useState(
+        esEdicion ? String(consumibleEditar.tool_id) : borradorInicial?.toolId ?? ""
+    );
+    const [marca, setMarca] = useState(borradorInicial?.marca ?? consumibleEditar?.brand ?? "");
+    const [cantidad, setCantidad] = useState(
+        borradorInicial?.cantidad ?? (esEdicion ? consumibleEditar?.stock ?? "" : "")
+    );
+    const [observaciones, setObservaciones] = useState(
+        borradorInicial?.observaciones ?? consumibleEditar?.observations ?? ""
+    );
     const [catalogo, setCatalogo] = useState([]);
+    const hayDatosIngresados = [toolId, marca, cantidad, observaciones]
+        .some((valor) => String(valor ?? "").trim() !== "");
+
+    useEffect(() => {
+        if (esEdicion || !usuarioId) return;
+
+        try {
+            if (!hayDatosIngresados) {
+                eliminarBorradorConsumible(usuarioId, machineId);
+                return;
+            }
+
+            sessionStorage.setItem(
+                obtenerClaveBorradorConsumible(usuarioId, machineId),
+                JSON.stringify({ toolId, marca, cantidad, observaciones })
+            );
+        } catch (error) {
+            console.error("Error al guardar el borrador del consumible:", error);
+        }
+    }, [esEdicion, usuarioId, machineId, hayDatosIngresados, toolId, marca, cantidad, observaciones]);
 
     // Solo al crear: consumibles que la máquina aún no tiene
     useEffect(() => {
@@ -70,6 +128,18 @@ function FormularioConsumible({ machineId, consumibleEditar, onCancel, onGuardad
               { valor: "", etiqueta: "Seleccione un consumible" },
               ...catalogo.map((t) => ({ valor: String(t.id), etiqueta: t.name })),
           ];
+
+    const handleDescartar = async () => {
+        const confirmar = await pedirConfirmacion({
+            titulo: "Descartar borrador",
+            mensaje: "¿Estás seguro de que deseas descartar este borrador? Se perderán todos los datos ingresados.",
+        });
+
+        if (!confirmar) return;
+
+        eliminarBorradorConsumible(usuarioId, machineId);
+        onCancel();
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -146,6 +216,7 @@ function FormularioConsumible({ machineId, consumibleEditar, onCancel, onGuardad
                 await UpdateMachineTool(consumibleEditar.id, payload);
             } else {
                 await CreateMachineTool({ ...payload, machine_id: machineId, tool_id: Number(toolId) });
+                eliminarBorradorConsumible(usuarioId, machineId);
             }
             onGuardado();
             onCancel();
@@ -165,6 +236,7 @@ function FormularioConsumible({ machineId, consumibleEditar, onCancel, onGuardad
             titulo={esEdicion ? "Editar consumible" : "Agregar consumible"}
             descripcion={esEdicion ? "Ingrese los datos que desea editar" : "Seleccione el consumible de la máquina"}
             onCancel={onCancel}
+            onDiscard={!esEdicion && hayDatosIngresados ? handleDescartar : undefined}
             textoBoton="Guardar"
             iconoBoton="fa-solid fa-floppy-disk"
             onSubmit={handleSubmit}
