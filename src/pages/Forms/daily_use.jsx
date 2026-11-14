@@ -450,6 +450,9 @@ export function UsoDiario(){
         (r) => String(r.machine_id) === String(maquinaSeleccionada)
     );
     const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(registrosFiltrados, 7);
+    const maquinaSeleccionadaActual = maquinas.find(
+        (machine) => String(machine.id) === String(maquinaSeleccionada)
+    );
     const maquinasVisibles = maquinaIdFija
         ? maquinas.filter((machine) => String(machine.id) === String(maquinaIdFija))
         : maquinas;
@@ -461,7 +464,7 @@ export function UsoDiario(){
             <header>
                 <PageWelcome
                     titulo={"USO DIARIO"}
-                    descripcion={"Este es el formato de uso diario de la"}
+                    descripcion={`Este es el formato de uso diario de ${maquinaSeleccionadaActual?.name ?? "la máquina seleccionada"}`}
                     mostrarHistorial={true}
                 />
                 <Searcher

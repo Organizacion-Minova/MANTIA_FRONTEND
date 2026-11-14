@@ -6,6 +6,9 @@ import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
 import { actualizarPerfil, cambiarPassword } from "../../api/profile";
 import { avatarPorDefecto } from "../../utils/avatar";
+import borrarIcono from "../../assets/icons/borrar.svg";
+import fotoIcono from "../../assets/icons/fotografia.svg"
+import llaveIcono from "../../assets/icons/llave.svg"
 
 const TIPOS_DOCUMENTO = [
     { valor: "", etiqueta: "Seleccione el tipo de documento" },
@@ -243,79 +246,81 @@ function PerfilEditor({ vista: vistaInicial = "datos", onCerrar }) {
             iconoBoton={vista === "datos" ? "fa-solid fa-floppy-disk" : "fa-solid fa-key"}
             tituloBoton={vista === "datos" ? "Guardar cambios del perfil" : "Guardar nueva contraseña"}
         >
-            <div className="col-span-6">
-                <div className="btn-container">
-                    <Boton
-                        clase={vista === "datos" ? "btn-azul" : "btn-2"}
-                        icono="fa-solid fa-user-pen"
-                        texto="Mis datos"
-                        titulo="Ver mis datos y mi foto"
-                        onClick={(e) => cambiarVista(e, "datos")}
-                    />
-                    <Boton
-                        clase={vista === "password" ? "btn-azul" : "btn-2"}
-                        icono="fa-solid fa-key"
-                        texto="Contraseña"
-                        titulo="Cambiar mi contraseña"
-                        onClick={(e) => cambiarVista(e, "password")}
-                    />
-                </div>
-            </div>
+            
 
             {vista === "datos" && (
                 <>
                     <div className="col-span-6">
                         <div className="avatar-section">
-                            <div className="avatar-wrap">
-                                <div
-                                    className="avatar-wrap-img"
-                                    ref={marcoRef}
-                                    onPointerDown={iniciarArrastre}
-                                    onPointerMove={moverArrastre}
-                                    onPointerUp={terminarArrastre}
-                                    onPointerCancel={terminarArrastre}
-                                    style={{ cursor: editando ? "grab" : "default", touchAction: "none" }}
-                                >
-                                    {imgSrc ? (
-                                        <img
-                                            src={imgSrc}
-                                            alt="Foto nueva de perfil"
-                                            draggable={false}
-                                            onLoad={alCargarImagen}
-                                            style={
-                                                editando
-                                                    ? { position: "absolute", left: "50%", top: "50%", width: g.w, height: g.h, maxWidth: "none", transform: `translate(calc(-50% + ${o.x}px), calc(-50% + ${o.y}px))`, userSelect: "none", pointerEvents: "none" }
-                                                    : { visibility: "hidden", position: "absolute" }
-                                            }
-                                        />
-                                    ) : (
-                                        <img
-                                            src={fotoGuardada || avatarPorDefecto(nombreCompleto)}
-                                            alt={`Foto de perfil de ${nombreCompleto}`}
-                                            draggable={false}
-                                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                                        />
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="btn-container" style={{ marginTop: "0.75rem" }}>
-                                <Boton
-                                    clase="btn-azul"
-                                    icono="fa-solid fa-camera"
-                                    texto={imgSrc || fotoGuardada ? "Cambiar foto" : "Elegir foto"}
-                                    titulo="Elegir una foto de tu equipo"
-                                    onClick={(e) => { e.preventDefault(); inputRef.current?.click(); }}
-                                />
+                            <div className="avatar-container">
                                 {(imgSrc || fotoGuardada) && (
                                     <Boton
-                                        clase="btn-2"
-                                        icono="fa-solid fa-trash"
-                                        texto="Quitar foto"
+                                        clase="btn-borrar avatar-remove-button"
+                                        img={borrarIcono}
                                         titulo="Quitar mi foto de perfil"
                                         onClick={quitarFotoActual}
                                     />
                                 )}
+                                <div className="avatar-wrap">
+                                    <div
+                                        className="avatar-wrap-img"
+                                        ref={marcoRef}
+                                        onPointerDown={iniciarArrastre}
+                                        onPointerMove={moverArrastre}
+                                        onPointerUp={terminarArrastre}
+                                        onPointerCancel={terminarArrastre}
+                                        style={{ cursor: editando ? "grab" : "default", touchAction: "none" }}
+                                    >
+                                        {imgSrc ? (
+                                            <img
+                                                src={imgSrc}
+                                                alt="Foto nueva de perfil"
+                                                draggable={false}
+                                                onLoad={alCargarImagen}
+                                                style={
+                                                    editando
+                                                        ? { position: "absolute", left: "50%", top: "50%", width: g.w, height: g.h, maxWidth: "none", transform: `translate(calc(-50% + ${o.x}px), calc(-50% + ${o.y}px))`, userSelect: "none", pointerEvents: "none" }
+                                                        : { visibility: "hidden", position: "absolute" }
+                                                }
+                                            />
+                                        ) : (
+                                            <img
+                                                src={fotoGuardada || avatarPorDefecto(nombreCompleto)}
+                                                alt={`Foto de perfil de ${nombreCompleto}`}
+                                                draggable={false}
+                                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                            />
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="col-span-6">
+                                <div className="btn-container__acciones" style={{marginTop:"10px"}}>
+                                    <Boton
+                                        // clase={vista === "password" ? "btn-azul" : "btn-2"}
+                                            clase="btn-azul"
+                                            img={llaveIcono}
+                                            texto="Nueva contraseña"
+                                            titulo="Cambiar mi contraseña"
+                                            onClick={(e) => cambiarVista(e, "password")}
+                                        />
+
+                                    <Boton
+                                        clase="btn-2"
+                                        img={fotoIcono}
+                                        texto={imgSrc || fotoGuardada ? "Nueva fotografia" : "Elegir foto"}
+                                        titulo="Elegir una foto de tu equipo"
+                                        onClick={(e) => { e.preventDefault(); inputRef.current?.click(); }}
+                                    />       
+                                </div>
+                                    {/* <Boton
+                                        clase={vista === "datos" ? "btn-azul" : "btn-2"}
+                                        icono="fa-solid fa-user-pen"
+                                        texto="Mis datos"
+                                        titulo="Ver mis datos y mi foto"
+                                        onClick={(e) => cambiarVista(e, "datos")}
+                                    /> */}
                             </div>
 
                             <input

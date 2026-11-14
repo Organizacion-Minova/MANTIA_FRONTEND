@@ -472,19 +472,21 @@ export function Consumibles(){
             </div>
             <div className="btn-container-page">
                 <div className="btn-container">
-                    <BotonLink
-                        link={`/consumables/tools`}
-                        clase="btn-azul"
-                        img={listaIcon}
-                        texto="Ver herramientas consumibles"
-                        titulo="Ver herramientas consumibles "
-                    />
+                  
                     <Boton
-                        clase="btn-2"
+                        clase="btn-azul"
                         img={agregarIcon}
                         texto="Agregar tipo herramienta"
                         onClick={handleAbrirCrear}
                         titulo="Agregar nueva categoría consumible"
+                    />
+
+                      <BotonLink
+                        link={`/consumables/tools`}
+                        clase="btn-2"
+                        img={listaIcon}
+                        texto="Ver herramientas consumibles"
+                        titulo="Ver herramientas consumibles "
                     />
                 </div>
                 <Paginacion
@@ -644,20 +646,21 @@ export function No_Consumibles(){
             </div>
             <div className="btn-container-page">
                 <div className="btn-container">
-                    <BotonLink
-                        link={`/noconsumables/tools`}
-                        clase="btn-azul"
-                        img={listaIcon}
-                        texto="Ver herramientas no consumibles"
-                        titulo="Ver herramientas no consumibles "
-                    />
                     <Boton
-                        clase="btn-2"
+                        clase="btn-azul"
                         img={agregarIcon}
                         texto="Agregar tipo herramienta"
                         onClick={handleAbrirCrear}
                         titulo="Agregar nueva categoría no consumible"
                     />
+                    <BotonLink
+                        link={`/noconsumables/tools`}
+                        clase="btn-2"
+                        img={listaIcon}
+                        texto="Ver herramientas no consumibles"
+                        titulo="Ver herramientas no consumibles "
+                    />
+                    
                 </div>
                 <Paginacion
                     paginaActual={paginaActual}

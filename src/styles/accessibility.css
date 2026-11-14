@@ -21,7 +21,6 @@
     display: flex;
 
 }
-
 /* ==============================
    HEADER DEL PANEL
    ============================== */
@@ -41,7 +40,7 @@
 }
 
 .header-accesibilidad .cerrar-accesibilidad:hover {
-    background: var(--rojo);
+    background: var(--hover-accesibilidad);
 }
 
 .texto-header {
@@ -97,6 +96,10 @@
     cursor: pointer;
 }
 
+.panel-accesibilidad button:hover:not(:disabled) {
+    background: var(--hover-accesibilidad);
+}
+
 .accessibility-option-icon {
     display: block;
     flex: 0 0 1.35rem;
@@ -128,6 +131,9 @@
     
 }
 .contenedor-texto:hover{transform: translateY(-0.125rem); }
+.panel-accesibilidad .contenedor-texto:hover {
+    background: var(--hover-accesibilidad);
+}
 
 
 
@@ -190,7 +196,7 @@
 .panel-accesibilidad .contenedor-texto.activo,
 .panel-accesibilidad button.activo{
 
-    background: var(--acento-mantia);
+    background: var(--hover-accesibilidad);
 
     color: var(--blanco);
 
@@ -199,7 +205,7 @@
 }
 
 .panel-accesibilidad .contenedor-texto .grupo-botones .btn-texto.activo{
-    background: var(--acento-mantia2);
+    background: var(--hover-accesibilidad);
     color: var(--blanco);
 
     border-color: var(--acento-mantia);
@@ -250,7 +256,7 @@ html.resaltar-enlaces body a {
 
 .grupo-daltonismo .btn-daltonismo.activo,
 .grupo-daltonismo .btn-daltonismo:hover {
-    background: var(--acento-mantia);
+    background: var(--hover-accesibilidad);
 }
 
 .grupo-daltonismo .btn-daltonismo:focus-visible {

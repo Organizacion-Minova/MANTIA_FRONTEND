@@ -32,7 +32,6 @@ const preferenciasDefecto = {
 function AccessibilityPanel({ onModoOscuroChange }) {
     const [abierto, setAbierto] = useState(false);
     const [textoActivo, setTextoActivo] = useState(false);
-    const [daltonismoActivo, setDaltonismoActivo] = useState(false);
     const [leyendo, setLeyendo] = useState(false);
 
     // Estado inicial perezoso: lee localStorage UNA sola vez, antes de cualquier efecto
@@ -40,6 +39,7 @@ function AccessibilityPanel({ onModoOscuroChange }) {
         const guardadas = localStorage.getItem("accesibilidad");
         return guardadas ? JSON.parse(guardadas) : preferenciasDefecto;
     });
+    const [daltonismoActivo, setDaltonismoActivo] = useState(() => Boolean(preferencias.daltonismo));
 
     // Único efecto: guardar y aplicar cada vez que cambian las preferencias
     useEffect(() => {
@@ -61,6 +61,15 @@ function AccessibilityPanel({ onModoOscuroChange }) {
     function alternarGrupoTexto() {
     if (tamanoModificado) return; // no se puede cerrar mientras el tamaño no sea el original
     setTextoActivo(!textoActivo);
+    }
+
+    function alternarGrupoDaltonismo() {
+        if (preferencias.daltonismo) {
+            setDaltonismoActivo(true);
+            return;
+        }
+
+        setDaltonismoActivo((activo) => !activo);
     }
 
     function aumentarTexto() {
@@ -94,6 +103,7 @@ function AccessibilityPanel({ onModoOscuroChange }) {
     }
 
     function alternarDaltonismo(tipo) {
+        setDaltonismoActivo(true);
         setPreferencias({
             ...preferencias,
             daltonismo: preferencias.daltonismo === tipo ? null : tipo,
@@ -244,14 +254,22 @@ function AccessibilityPanel({ onModoOscuroChange }) {
 
                 </div>
                 <div
-                    className={`contenedor-texto ${daltonismoActivo ? "daltonismo-activo" : ""}`}
+                    className={`contenedor-texto ${daltonismoActivo ? "activo daltonismo-activo" : ""}`}
                     id="grupoDaltonismo"
-                    onClick={() => setDaltonismoActivo(!daltonismoActivo)}
-                    title={daltonismoActivo ? "Cerrar opciones de daltonismo" : "Abrir opciones de daltonismo"}
+                    onClick={alternarGrupoDaltonismo}
+                    aria-expanded={daltonismoActivo}
+                    aria-controls="opcionesDaltonismo"
+                    title={
+                        preferencias.daltonismo
+                            ? "Desactiva el tipo seleccionado para cerrar las opciones"
+                            : daltonismoActivo
+                                ? "Cerrar opciones de daltonismo"
+                                : "Abrir opciones de daltonismo"
+                    }
                 >
                     <img className="accessibility-option-icon" src={eyeIcon} alt="" aria-hidden="true" />
                     <span>Daltonismo</span>
-                    <div className="grupo-botones grupo-daltonismo">
+                    <div className="grupo-botones grupo-daltonismo" id="opcionesDaltonismo">
                         <button
                             type="button"
                             className={`btn-daltonismo ${preferencias.daltonismo === "protanopia" ? "activo" : ""}`}
