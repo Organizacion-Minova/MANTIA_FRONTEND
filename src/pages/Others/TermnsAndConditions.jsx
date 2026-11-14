@@ -73,7 +73,7 @@ function TermnsAndConditions() {
           <span>Documentación legal</span>
         </div>
 
-        <div className="mt-legal__titulo-fila">
+        <div className="bienvenida">
           <PageWelcome
             titulo="Términos y condiciones"
             descripcion="Condiciones de acceso y uso de MANTIA CM. Documentación versión 1.0"

@@ -557,12 +557,12 @@ export default function ConstructorFormato({ editar = false }) {
                     titulo="Guardar el formato de inspección"/>
                 <div className="footer-btns">
                     <BotonLink 
-                        link={`/equipment/cardequipment/${id}/inspection/complete`} 
+                        link={`/equipment/cardequipment/${id}`} 
                         clase="btn-regresar" 
                         img={izquierdaIcon}
                         imgDark={izquierdaIcon2}
-                        texto="Regresar al formato" 
-                        titulo="Regresar al formato"/>
+                        texto="Regresar al equipo" 
+                        titulo="Regresar al equipo"/>
                 </div>
             </div>
         </div>

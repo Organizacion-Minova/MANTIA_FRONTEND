@@ -386,11 +386,7 @@ body {
 .mt-footer-full {
   position: relative;
   margin-top: 0;
-  background: linear-gradient(
-    180deg,
-    #05312F 0%,
-    #042523 100%
-  );
+  background: var(--fondo-index);
   color: var(--blanco);
   overflow: hidden;
   border-top: 3px solid var(--acento-mantia);

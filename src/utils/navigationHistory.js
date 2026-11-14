@@ -34,8 +34,13 @@ export const RUTAS_HISTORIAL = [
     },
 
     {
+        path: 'machines/cardMachine/:id/dailyuse',
+        titulo: "Completar Uso diario",
+    },
+        
+    {
         path: "/machines/cardMachine/:id/:kind/complete",
-        titulo: ({ kind }) => `Completar ${TIPOS[kind]?.titulo ?? kind} máquina`,
+        titulo: ({ kind }) => ` ${TIPOS[kind]?.titulo ?? kind} máquina`,
     },
 
      {
@@ -65,7 +70,7 @@ export const RUTAS_HISTORIAL = [
 
      {
         path: "preoperational/machines",
-        titulo: "Preoperacionales máquinas",
+        titulo: "Preoperacionales",
     },
 
      {
@@ -150,7 +155,7 @@ export const RUTAS_HISTORIAL = [
     
     {
         path: "/dailyuse",
-        titulo: "Uso diario",
+        titulo: "Completar uso diario",
     },
     {
         path: "/gases",

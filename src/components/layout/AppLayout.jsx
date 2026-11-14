@@ -38,13 +38,13 @@ import inspeccionIcon from "../../assets/icons/inspeccion.svg";
 import preoperacionalIcon from "../../assets/icons/preoperacional.svg";
 import acercaIcon from "../../assets/icons/acerca.svg";
 import ayudaIcon from "../../assets/icons/ayuda.svg";
-import cerrarSesionIcon from "../../assets/icons/cerrar-sesion.svg";
 import consumibleIcon from "../../assets/icons/consumibles.svg";
 import noconsumibleIcon from "../../assets/icons/no-consumibles.svg";
 import inspeccionMaquinaIcon from "../../assets/icons/InspeccionMaquina.svg";
 import EquipoConsumibleIcon from "../../assets/icons/equiposConsumibles.svg"; 
 import EquipoNoConsumibleIcon from "../../assets/icons/equiposNoConsumibles.svg"; 
 import alertasIcon from "../../assets/icons/campana.svg"; 
+import cerrarSesionIcon from "../../assets/icons/cerrar-sesion.svg"
 
 
 function AppLayout({ children }) {
@@ -69,6 +69,12 @@ function AppLayout({ children }) {
         setVistaPerfil(vista);
         setEditandoPerfil(true);
         setOpenPerfil(false);
+    };
+
+    const handleCerrarSesion = async () => {
+        setOpenPerfil(false);
+        await logout();
+        navigate("/login", { replace: true });
     };
     const herramientasRutaActiva = pathname.startsWith("/consumables/tools")
         || pathname.startsWith("/noconsumables/tools");
@@ -305,13 +311,22 @@ function AppLayout({ children }) {
                                 titulo="Editar mis datos y mi foto"
                                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); abrirPerfil("datos"); }}
                             />
+                        {isAuthenticated ? (
                             <Boton
-                                clase="btn-2"
-                                icono="fa-solid fa-key"
-                                texto="Cambiar contraseña"
-                                titulo="Cambiar mi contraseña"
-                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); abrirPerfil("password"); }}
+                                tipo="button"
+                                clase="btn-borrar"
+                                onClick={handleCerrarSesion}
+                                texto="Cerrar sesión"
+                                img={cerrarSesionIcon}
+                            
                             />
+                        ) : (
+                            <Link to="/login" className="perfil-login-link" title="Ir a iniciar sesión">
+                                <i className="fa-solid fa-arrow-right-to-bracket" aria-hidden="true" />
+                                <span>Iniciar sesión</span>
+                            </Link>
+                        )}
+                         
                         </div>
                     </div>
                 </nav>
@@ -559,20 +574,7 @@ function AppLayout({ children }) {
                             <span>Ayuda</span>
                         </NavLink>
                     </li>
-                    <li>
-                        {isAuthenticated ? (
-                            <a onClick={async () => { await logout(); navigate("/login"); }} style={{ cursor: "pointer" }}
-                            title="Cerrar sesión">
-                                <img className="sidebar__icon" src={cerrarSesionIcon} alt="" aria-hidden="true" />
-                                <span>Cerrar sesión</span>
-                            </a>
-                        ) : (
-                            <Link to="/login" title="Ir a iniciar sesión">
-                                <img className="sidebar__icon" src={cerrarSesionIcon} alt="" aria-hidden="true" />
-                                <span>Iniciar sesión</span>
-                            </Link>
-                        )}
-                    </li>
+                   
                 </ul>
             </aside>
 

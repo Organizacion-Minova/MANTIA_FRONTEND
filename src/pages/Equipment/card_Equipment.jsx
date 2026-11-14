@@ -115,7 +115,7 @@ export function CardEquipment() {
                                 <th>RESPONSABLE:</th>
                                 <td>{equipo.responsible}</td>
                                 <th>ESTADO:</th>
-                                <td>{equipo.status="active"?"Activo":"Inactivo"}</td>
+                                <td>{equipo.status}</td>
                             </tr>
                             <tr>
                                 <th>CONSUMIBLE:</th>
