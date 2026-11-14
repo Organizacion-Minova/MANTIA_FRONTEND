@@ -40,7 +40,7 @@
 }
 
 .header-accesibilidad .cerrar-accesibilidad:hover {
-    background: var(--hover-accesibilidad);
+    background: var(--rojo);
 }
 
 .texto-header {
