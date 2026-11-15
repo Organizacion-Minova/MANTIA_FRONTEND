@@ -544,3 +544,20 @@
     padding:0.9375rem ;
     border:2px solid var(--secundario);
 }
+
+
+.form-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+
+.form-container::-webkit-scrollbar-thumb {
+    background: var(--hover-editar);
+    border-radius: 8px;
+}
+
+.form-container::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+

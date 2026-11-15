@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Boton, BotonAccion, BotonLink } from "../../components/common/Button";
 import { PageWelcome,Searcher } from "../../components/common/welcome";
-import { Form, Text, Select } from "../../components/common/forms";
+import { Form, Text, Select,Textarea } from "../../components/common/forms";
 import { GetCategoryTools, GetTools, DeleteTool, CreateTool, UpdateTool } from "../../api/Toolsapi";
 import LoadingScreen from "../../components/LoadingScreen";
 import { usePaginacion, Paginacion   } from "../../components/common/Paginacion";

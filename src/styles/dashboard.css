@@ -46,20 +46,28 @@
 /*ESTILOS CARDSSSSSSSSSSSSSSSSSSSSSSS*/
 .dashboard-summary-section {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
   gap: var(--space-md);
+  min-width: 0;
 }
 
 .summary-card {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
+  min-width: 0;
   padding: var(--space-md);
   background-color: var(--contenedor);
   border-radius: 8px;
   text-decoration: none;
   color: inherit;
   transition: box-shadow 0.2s ease;
+}
+
+.summary-card__item span,
+.summary-card__highlight span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .summary-card:hover{
@@ -176,11 +184,6 @@
     font-size: 0.7rem;
   }
 
-  .summary-card__item span,
-  .summary-card__highlight span {
-    min-width: 0;
-    overflow-wrap: anywhere;
-  }
 }
 
 .summary-card__empty {
@@ -193,6 +196,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-md);
+  min-width: 0;
 }
 
 .dashboard-block__title {
@@ -298,8 +302,9 @@
 /* ULTIMA SECCION DE ESTILOS PARA EL DASHBOARD */
 .dashboard-lookup-section {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-md);
+  min-width: 0;
 }
 
 @media (max-width: 767px) {
@@ -510,4 +515,34 @@
   .gases-carousel__charts {
     grid-template-columns: 1fr;
   }
+}
+.attention-items__list::-webkit-scrollbar {
+    width: 8px;
+}
+
+
+.attention-items__list::-webkit-scrollbar-thumb {
+    background: var(--hover-editar);
+    border-radius: 8px;
+}
+
+.attention-items__list::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+.gases-carousel__charts::-webkit-scrollbar-thumb {
+    background: var(--hover-editar);
+    border-radius: 8px;
+}
+.gases-carousel__charts::-webkit-scrollbar {
+    width: 8px;
+}
+
+
+.locations-summary__list::-webkit-scrollbar-thumb {
+    background: var(--hover-editar);
+    border-radius: 8px;
+}
+.locations-summary__list::-webkit-scrollbar {
+    width: 8px;
 }

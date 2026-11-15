@@ -240,25 +240,88 @@
 /* ========================================================================================
    Estilos y componentes Sidebar
 ===================================== */
+/* Lista principal de grupos */
+.sidebar__groups {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
 
+/* Grupo de navegación */
+.sidebar__group {
+    list-style: none;
+    width: 100%;
+    margin-bottom: 1.15rem;
+}
+
+/* Título del grupo */
+.sidebar__group-title {
+    display: block;
+    padding: 0.65rem 1rem 0.45rem;
+    margin-bottom: 0.35rem;
+
+    color: var(--texto2);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.075em;
+    text-transform: uppercase;
+
+    opacity: 0.8;
+}
+
+/* Lista de enlaces */
+.sidebar__group-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.sidebar__group-links li {
+    width: 100%;
+}
 .sidebar {
-    margin-top: 4rem;
     width: 15rem;
-    height: 100%;
+    height: calc(100vh - 4rem);
     background: var(--sidebar);
     color: var(--blanco);
-    padding: 20px;
-    position: fixed; top: 0;left: 0;
+    position: fixed;
+    top: 4rem;
+    left: 0;
     transition: 0.5s;
     border-right: 2px solid var(--acento-mantia);
     z-index: 100;
     padding: 1.1rem 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--hover-principal) transparent;
+}
+
+
+
+.sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--hover-principal);
+    border-radius: 6px;
 }
 
 .sidebar a{
     display: flex;
     gap: 1.3rem;
-    justify-content: left !important;
+    justify-content: flex-start;
     align-items: center;
     padding: 0.65rem 0.7rem;
     text-decoration: none;
@@ -277,7 +340,15 @@
     border-radius: 0.5rem;
 }
 
-.sidebar li:hover { background:var(--hover-principal); }
+.sidebar__group-links > li {
+    position: relative;
+}
+
+.sidebar__group-links > li:hover,
+.sidebar .submenu > li:hover {
+    background: var(--hover-principal);
+}
+
 .sidebar li:has(> a.active) {
     background: rgba(25, 195, 166, .16);
     border-radius: 0.5rem;
@@ -314,23 +385,54 @@
     padding: 0.15rem;
     border-radius: 0.5rem;
 }
-.menu-desplegable .submenu{ display: none;  }
-.menu-desplegable.activo .submenu{ display: block; }
+.sidebar .menu-desplegable > .submenu{ display: none; }
+.sidebar .menu-desplegable.activo > .submenu{ display: block; }
+.sidebar .menu-desplegable:hover > .submenu{ display: block; }
 
 .flecha { transition: 0.3s; }
 .menu-desplegable.activo .flecha { transform: rotate(180deg); }
 
 /* Sidebar cerrado estilos */
-.sidebar.cerrado{ 
-    width: 4.5rem; 
-}
-.sidebar.cerrado a{
-    justify-content: center !important;
-}
-
-.sidebar li:hover .submenu{display:block; transition:.3s;}
 .sidebar.cerrado li{list-style:none; }
-.sidebar.cerrado span{display:none; list-style:none;}
+
+@media (min-width: 760px) {
+    .sidebar.cerrado {
+        width: 4.5rem;
+    }
+
+    .sidebar.cerrado span {
+        display: none;
+        list-style: none;
+    }
+
+    .sidebar.cerrado .sidebar__groups > .sidebar__group {
+        margin: 0 0 0.45rem;
+        padding: 0;
+    }
+
+    .sidebar.cerrado .sidebar__group-links > li {
+        margin: 0;
+        padding: 0;
+    }
+
+    .sidebar.cerrado .sidebar__group-links a {
+        box-sizing: border-box;
+        width: 100%;
+        gap: 0;
+        justify-content: center;
+        padding: 0.65rem 0;
+    }
+
+    .sidebar.cerrado .submenu {
+        margin: 0;
+        padding: 0;
+    }
+
+    .sidebar.cerrado .submenu > li {
+        margin: 0;
+        padding: 0;
+    }
+}
 
 /*Boton sidebar*/
 .menu-contenedor{
@@ -1014,3 +1116,4 @@ footer{
         font-size:1rem;
     }
 }
+

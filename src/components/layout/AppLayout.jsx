@@ -333,248 +333,209 @@ function AppLayout({ children }) {
             </header>
             {editandoPerfil && <PerfilEditor vista={vistaPerfil} onCerrar={() => setEditandoPerfil(false)} />}
             <aside className={`sidebar ${cerrado ? "cerrado" : ""}`} id="sidebar">
-                  <ul>
-                    <li>
-                        <NavLink 
-                            to="/dashboard"
-                            title="Ir al panel de control"
-                        >
-                            <img className="sidebar__icon" src={panelIcon} alt="" aria-hidden="true" />
-                            <span>Panel de control</span>
-                        </NavLink>
+                <ul className="sidebar__groups">
+                    <li className="sidebar__group">
+                        <span className="sidebar__group-title">Monitorear módulos</span>
+                        <ul className="sidebar__group-links">
+                            <li>
+                                <NavLink to="/dashboard" title="Ir al panel de control">
+                                    <img className="sidebar__icon" src={panelIcon} alt="" aria-hidden="true" />
+                                    <span>Panel de control</span>
+                                </NavLink>
+                            </li>
+                        </ul>
                     </li>
+
                     {tieneRol("Jefe de mina") && (
-                        <li>
-                            <NavLink
-                                to="/admin"
-                                title="Ir al panel de administración"
-                            >
-                                <img className="sidebar__icon" src={adminIcon} alt="" aria-hidden="true" />
-                                <span>Panel administración</span>
-                            </NavLink>
-                        </li>
-                    )}
-                    {isAuthenticated && (
-                        <>
-                            {tienePermiso("tool.view") && (
-                            <li className={`menu-desplegable ${herramientasAbierto || herramientasRutaActiva ? "activo" : ""}`}>
-
-                                <a className={`menu-titulo ${herramientasRutaActiva ? "active" : ""}`}
-                                    onClick={() => setHerramientasAbierto(!herramientasAbierto)}
-                                >
-                                    <img className="sidebar__icon" src={herramientasIcon} alt="" aria-hidden="true" />
-                                    <span>Herramientas</span>
-                                </a>
-
-                                <ul className="submenu">
-                                    <li>
-                                        <NavLink 
-                                             to="/consumables/tools"
-                                            title="Ir a consumibles"
-                                        >
-                                            <img className="sidebar__icon" src={consumibleIcon} alt="" aria-hidden="true" />
-                                            <span>Consumibles</span>
-                                        </NavLink>
-                                    </li>
-                                    <li>
-                                        <NavLink 
-                                            to="/noconsumables/tools"
-                                            title="Ir a no consumibles"
-                                        >
-                                            <img className="sidebar__icon" src={noconsumibleIcon} alt="" aria-hidden="true" />
-                                            <span>No consumibles</span>
-                                        </NavLink>
-                                    </li>
-                                </ul>
-                            </li>
-                            )}
-
-                            {tienePermiso("equipment.view") && (
-                                <li className={`menu-desplegable ${equiposAbierto || equiposRutaActiva ? "activo" : ""}`}>
-                                    <a 
-                                        onClick={() => setEquiposAbierto(!equiposAbierto)} 
-                                        className={`menu-titulo ${equiposRutaActiva ? "active" : ""}`}
-                                    >
-                                        <img className="sidebar__icon" src={equiposIcon} alt="" aria-hidden="true" />
-                                        <span>Equipos</span>
-                                    </a>
-
-                                    <ul className="submenu">
-                                        <li>
-                                            <NavLink 
-                                                to="/equipment/consumables"
-                                                title="Ir a equipos consumibles"
-                                            >
-                                                <img className="sidebar__icon" src={EquipoConsumibleIcon} alt="" aria-hidden="true" />
-                                                <span>Consumibles</span>
-                                            </NavLink>
-                                        </li>
-                                        <li>
-                                            <NavLink 
-                                                to="/equipment/noconsumables"
-                                                title=" Ir a equipos no consumibles"
-                                            >
-                                                <img 
-                                                    className="sidebar__icon" 
-                                                    src={EquipoNoConsumibleIcon} 
-                                                    alt="" 
-                                                    aria-hidden="true" 
-                                                />
-                                                <span>No consumibles</span>
-                                            </NavLink>
-                                        </li>
-                                    </ul>
-                                </li>
-                            )}
-                            {tienePermiso("machine.view") && (
-                            <li>
-                                <NavLink 
-                                    to="/machines"
-                                    title="Ir a máquinas"
-                                >
-                                    <img className="sidebar__icon" src={maquinasIcon} alt="" aria-hidden="true" />
-                                    <span>Máquinas</span>
-                                </NavLink>
-                                
-                            </li>
-                            )}
-                            {tienePermiso("location.view") && (
-                            <li>
-                                <NavLink 
-                                    to="/ubications"
-                                    title="Ir a ubicaciones"
-                                >
-                                    <img className="sidebar__icon" src={ubicacionesIcon} alt="" aria-hidden="true" />
-                                    <span>Ubicaciones</span>
-                                </NavLink>
-                            </li>
-                            )}
-                        </>
-                    )}
-                    
-                        {tienePermiso("gas-measurements.view") && (
-                            <li>
-                                <NavLink
-                                    to="/gases"
-                                    title="Ir al formato de medicion de gases"
-                                >
-                                    <img className="sidebar__icon" src={gasesIcon} alt="" aria-hidden="true" />
-                                    <span>Medición de gases</span>
-                                </NavLink>
-                            </li>
-                        )}
-                    
-                    {tienePermiso("inspection.view") && (
-                        <li className={`menu-desplegable ${formatosMaquinasAbierto || formatosMaquinasRutaActiva ? "activo" : ""}`}>
-                            <a
-                                className={`menu-titulo ${formatosMaquinasRutaActiva ? "active" : ""}`}
-                                onClick={() => setFormatosMaquinasAbierto(!formatosMaquinasAbierto)}
-                            >
-                                <img
-                                    className="sidebar__icon"
-                                    src={inspeccionMaquinaIcon}
-                                    alt=""
-                                    aria-hidden="true"
-                                />
-                                <span>Formatos Maquinas</span>
-                            </a>
-
-                            <ul className="submenu">
+                        <li className="sidebar__group">
+                            <span className="sidebar__group-title">Usuarios y copias</span>
+                            <ul className="sidebar__group-links">
                                 <li>
-                                    <NavLink 
-                                        to="/inspections/machines"
-                                        titulo="Ir al formato de inspección"
-                                        >
-                                        <img
-                                            className="sidebar__icon"
-                                            src={inspeccionIcon}
-                                            alt=""
-                                            aria-hidden="true"
-                                        />
-                                        <span>Inspeccion</span>
+                                    <NavLink to="/admin" title="Ir al panel de administración">
+                                        <img className="sidebar__icon" src={adminIcon} alt="" aria-hidden="true" />
+                                        <span>Panel administración</span>
                                     </NavLink>
                                 </li>
+                            </ul>
+                        </li>
+                    )}
 
-                                {tienePermiso("daily-use.view") && (
-                                    <li>
-                                        <NavLink
-                                            to="/dailyuse"
-                                            title="Ir al formato de uso diario"
+                    {isAuthenticated && (
+                        tienePermiso("tool.view")
+                        || tienePermiso("equipment.view")
+                        || tienePermiso("machine.view")
+                        || tienePermiso("location.view")
+                    ) && (
+                        <li className="sidebar__group">
+                            <span className="sidebar__group-title">Gestionar elementos</span>
+                            <ul className="sidebar__group-links">
+                                {tienePermiso("tool.view") && (
+                                    <li className={`menu-desplegable ${herramientasAbierto || herramientasRutaActiva ? "activo" : ""}`}>
+                                        <a
+                                            className={`menu-titulo ${herramientasRutaActiva ? "active" : ""}`}
+                                            onClick={() => setHerramientasAbierto(!herramientasAbierto)}
                                         >
-                                            <img className="sidebar__icon" src={diarioIcon} alt="" aria-hidden="true" />
-                                            <span>Uso diario</span>
+                                            <img className="sidebar__icon" src={herramientasIcon} alt="" aria-hidden="true" />
+                                            <span>Herramientas</span>
+                                        </a>
+                                        <ul className="submenu">
+                                            <li>
+                                                <NavLink to="/consumables/tools" title="Ir a consumibles">
+                                                    <img className="sidebar__icon" src={consumibleIcon} alt="" aria-hidden="true" />
+                                                    <span>Consumibles</span>
+                                                </NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink to="/noconsumables/tools" title="Ir a no consumibles">
+                                                    <img className="sidebar__icon" src={noconsumibleIcon} alt="" aria-hidden="true" />
+                                                    <span>No consumibles</span>
+                                                </NavLink>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                )}
+
+                                {tienePermiso("equipment.view") && (
+                                    <li className={`menu-desplegable ${equiposAbierto || equiposRutaActiva ? "activo" : ""}`}>
+                                        <a
+                                            onClick={() => setEquiposAbierto(!equiposAbierto)}
+                                            className={`menu-titulo ${equiposRutaActiva ? "active" : ""}`}
+                                        >
+                                            <img className="sidebar__icon" src={equiposIcon} alt="" aria-hidden="true" />
+                                            <span>Equipos</span>
+                                        </a>
+                                        <ul className="submenu">
+                                            <li>
+                                                <NavLink to="/equipment/consumables" title="Ir a equipos consumibles">
+                                                    <img className="sidebar__icon" src={EquipoConsumibleIcon} alt="" aria-hidden="true" />
+                                                    <span>Consumibles</span>
+                                                </NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink to="/equipment/noconsumables" title="Ir a equipos no consumibles">
+                                                    <img className="sidebar__icon" src={EquipoNoConsumibleIcon} alt="" aria-hidden="true" />
+                                                    <span>No consumibles</span>
+                                                </NavLink>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                )}
+
+                                {tienePermiso("machine.view") && (
+                                    <li>
+                                        <NavLink to="/machines" title="Ir a máquinas">
+                                            <img className="sidebar__icon" src={maquinasIcon} alt="" aria-hidden="true" />
+                                            <span>Máquinas</span>
                                         </NavLink>
                                     </li>
                                 )}
+                                {tienePermiso("location.view") && (
+                                    <li>
+                                        <NavLink to="/ubications" title="Ir a ubicaciones">
+                                            <img className="sidebar__icon" src={ubicacionesIcon} alt="" aria-hidden="true" />
+                                            <span>Ubicaciones</span>
+                                        </NavLink>
+                                    </li>
+                                )}
+                                {isAuthenticated && (
+                                <li>
+                                    <NavLink to="/alerts" title="Ir a alertas">
+                                        <img className="sidebar__icon" src={alertasIcon} alt="" aria-hidden="true" />
+                                        <span>Alertas</span>
+                                    </NavLink>
+                                </li>
+                            )}
+                            </ul>
+                        </li>
+                    )}
+
+                    {(tienePermiso("gas-measurements.view") || tienePermiso("inspection.view")) && (
+                        <li className="sidebar__group">
+                            <span className="sidebar__group-title">Gestionar formatos</span>
+                            <ul className="sidebar__group-links">
+                                {tienePermiso("gas-measurements.view") && (
+                                    <li>
+                                        <NavLink to="/gases" title="Ir al formato de medición de gases">
+                                            <img className="sidebar__icon" src={gasesIcon} alt="" aria-hidden="true" />
+                                            <span>Medición de gases</span>
+                                        </NavLink>
+                                    </li>
+                                )}
+
                                 {tienePermiso("inspection.view") && (
-                                    <li>
-                                        <NavLink
-                                            to="/preoperational/machines"
-                                            title="Ir al formato preoperacional"
+                                    <li className={`menu-desplegable ${formatosMaquinasAbierto || formatosMaquinasRutaActiva ? "activo" : ""}`}>
+                                        <a
+                                            className={`menu-titulo ${formatosMaquinasRutaActiva ? "active" : ""}`}
+                                            onClick={() => setFormatosMaquinasAbierto(!formatosMaquinasAbierto)}
                                         >
-                                            <img className="sidebar__icon" src={preoperacionalIcon} alt="" aria-hidden="true" />
-                                            <span>Preoperacional</span>
-                                        </NavLink>
+                                            <img className="sidebar__icon" src={inspeccionMaquinaIcon} alt="" aria-hidden="true" />
+                                            <span>Formatos Maquinas</span>
+                                        </a>
+                                        <ul className="submenu">
+                                            <li>
+                                                <NavLink to="/inspections/machines" title="Ir al formato de inspección">
+                                                    <img className="sidebar__icon" src={inspeccionIcon} alt="" aria-hidden="true" />
+                                                    <span>Inspeccion</span>
+                                                </NavLink>
+                                            </li>
+                                            {tienePermiso("daily-use.view") && (
+                                                <li>
+                                                    <NavLink to="/dailyuse" title="Ir al formato de uso diario">
+                                                        <img className="sidebar__icon" src={diarioIcon} alt="" aria-hidden="true" />
+                                                        <span>Uso diario</span>
+                                                    </NavLink>
+                                                </li>
+                                            )}
+                                            <li>
+                                                <NavLink to="/preoperational/machines" title="Ir al formato preoperacional">
+                                                    <img className="sidebar__icon" src={preoperacionalIcon} alt="" aria-hidden="true" />
+                                                    <span>Preoperacional</span>
+                                                </NavLink>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                )}
+
+                                {tienePermiso("inspection.view") && (
+                                    <li className={`menu-desplegable ${formatosEquiposAbierto || formatosEquiposRutaActiva ? "activo" : ""}`}>
+                                        <a
+                                            className={`menu-titulo ${formatosEquiposRutaActiva ? "active" : ""}`}
+                                            onClick={() => setFormatosEquiposAbierto(!formatosEquiposAbierto)}
+                                        >
+                                            <img className="sidebar__icon" src={inspeccionMaquinaIcon} alt="" aria-hidden="true" />
+                                            <span>Formatos Equipos</span>
+                                        </a>
+                                        <ul className="submenu">
+                                            <li>
+                                                <NavLink to="/inspections/equipment" title="Ir al formato de inspección">
+                                                    <img className="sidebar__icon" src={inspeccionIcon} alt="" aria-hidden="true" />
+                                                    <span>Inspeccion</span>
+                                                </NavLink>
+                                            </li>
+                                        </ul>
                                     </li>
                                 )}
                             </ul>
                         </li>
                     )}
-                    {tienePermiso("inspection.view") && (
-                    <li className={`menu-desplegable ${formatosEquiposAbierto || formatosEquiposRutaActiva ? "activo" : ""}`}>
-                            <a
-                                className={`menu-titulo ${formatosEquiposRutaActiva ? "active" : ""}`}
-                                onClick={() => setFormatosEquiposAbierto(!formatosEquiposAbierto)}
-                            >
-                                <img
-                                    className="sidebar__icon"
-                                    src={inspeccionMaquinaIcon}
-                                    alt=""
-                                    aria-hidden="true"
-                                />
-                                <span>Formatos Equipos</span>
-                            </a>
 
-                            <ul className="submenu">
-                                <li>
-                                    <NavLink 
-                                    to="/inspections/equipment"
-                                    title="Ir al formato de inspección"
-                                    >
-                                        <img
-                                            className="sidebar__icon"
-                                            src={inspeccionIcon}
-                                            alt=""
-                                            aria-hidden="true"
-                                        />
-                                        <span>Inspeccion</span>
-                                    </NavLink>
-                                </li>
-                            </ul>
-                        </li>
-                    )}
-                    {isAuthenticated && (
-                    <li>
-                        <NavLink to="/alerts" title="Ir a alertas">
-                            <img className="sidebar__icon" src={alertasIcon} alt="" aria-hidden="true" />
-                            <span>Alertas</span>
-                        </NavLink>
+                    <li className="sidebar__group">
+                        <span className="sidebar__group-title">Informacion y ayuda</span>
+                        <ul className="sidebar__group-links">
+                            <li>
+                                <NavLink to="/about" title="Ir a acerca de">
+                                    <img className="sidebar__icon" src={acercaIcon} alt="" aria-hidden="true" />
+                                    <span>Acerca de</span>
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/help" title="Ir a ayuda">
+                                    <img className="sidebar__icon" src={ayudaIcon} alt="" aria-hidden="true" />
+                                    <span>Ayuda</span>
+                                </NavLink>
+                            </li>
+                        </ul>
                     </li>
-                    )}
-
-                    <li>
-                        <NavLink to="/about" title="Ir a acerca de">
-                            <img className="sidebar__icon" src={acercaIcon} alt="" aria-hidden="true" />
-                            <span>Acerca de</span>
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink to="/help" title="Ir a ayuda">
-                            <img className="sidebar__icon" src={ayudaIcon} alt="" aria-hidden="true" />
-                            <span>Ayuda</span>
-                        </NavLink>
-                    </li>
-                   
                 </ul>
             </aside>
 
