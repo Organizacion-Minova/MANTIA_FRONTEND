@@ -384,7 +384,7 @@ useEffect(() => {
             onCancel={onCancel}
            onDiscard={!esEdicion && hayDatosIngresados ? handleDescartar : undefined}
             textoBoton="Guardar"
-            iconoBoton={descargaIcon}
+            iconoBoton="fa-solid fa-floppy-disk"
             onSubmit={handleSubmit}
             noValidate
         >

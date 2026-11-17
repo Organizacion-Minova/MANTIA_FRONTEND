@@ -76,6 +76,7 @@ function Formulario({ onCancel, onSuccess, categoriaEditar = null, usuarioId }) 
         estado: categoriaEditar ? categoriaEditar.status : 'active'
     }));
     const [cargando, setCargando] = useState(false);
+    const [error, setError] = useState(null); // error del servidor al guardar
     const { advertencia } = useToast(); 
     const pedirConfirmacion = useConfirm();
     const hayDatosIngresados = [formData.nombre, formData.descripcion]
@@ -150,6 +151,7 @@ function Formulario({ onCancel, onSuccess, categoriaEditar = null, usuarioId }) 
             textoBoton={cargando ? "Guardando..." : isEditing ? "Actualizar" : "Guardar"}
             iconoBoton="fa-solid fa-floppy-disk"
         >
+            {error && <p className="error-texto col-span-6" role="alert">{error}</p>}
             <div className="col-span-6">
                 <Text
                     label="Nombre:"

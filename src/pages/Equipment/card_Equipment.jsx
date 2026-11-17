@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import { PageWelcome } from "../../components/common/welcome"; 
 import { Boton, BotonLink } from "../../components/common/Button";
 import { GetEquipmentById } from "../../api/Equipmentsapi";
@@ -26,6 +27,7 @@ function obtenerUrlImagen(imagen) {
 
 export function CardEquipment() {
     const { id } = useParams();
+    const { tienePermiso } = useAuth();
     const [equipo, setEquipo] = useState(null);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(false);
@@ -137,6 +139,7 @@ export function CardEquipment() {
 
             </section>
                 <div className="btn-container">
+                    {tienePermiso("inspection.view") && (
                     <BotonLink
                         link={`/equipment/cardequipment/${id}/inspection`}
                         clase="btn-azul"
@@ -144,6 +147,7 @@ export function CardEquipment() {
                         texto="Inspección"
                         titulo="Ir a la inspección del equipo"
                     />
+                    )}
                     <Boton
                         clase="btn-3"
                         img={excelIcon}

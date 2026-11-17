@@ -18,6 +18,14 @@ export async function getUser() {
     return data;
 }
 
+// Sesión actual sin exigir login: devuelve el usuario o null (nunca un 401).
+// Se usa al abrir la página y en las revisiones periódicas, así las páginas
+// públicas no muestran errores de red antes de iniciar sesión.
+export async function getSession() {
+    const { data } = await api.get('/api/session');
+    return data?.user ?? null;
+}
+
 export async function logout() {
     await api.post('/api/logout');
 }
@@ -27,15 +35,6 @@ export async function register(userData) {
     const { data } = await api.post('/api/register', userData);
     return data;
 }
-
-export async function quickLogin(letra) {
-    await api.get('/sanctum/csrf-cookie');
-    const { data } = await api.post(`/api/dev-login/${letra}`);
-    // El wrapper no trae roles ni permisos: se piden completos
-    const { data: completo } = await api.get('/api/user');
-    return completo;
-}
-
 
 export async function GetCategoryMachine() {
     const { data } = await api.get("/api/machine-categories");

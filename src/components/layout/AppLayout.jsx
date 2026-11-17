@@ -346,7 +346,7 @@ function AppLayout({ children }) {
                         </ul>
                     </li>
 
-                    {tieneRol("Jefe de mina") && (
+                    {tieneRol("Superadministrador", "Jefe de mina") && (
                         <li className="sidebar__group">
                             <span className="sidebar__group-title">Usuarios y copias</span>
                             <ul className="sidebar__group-links">

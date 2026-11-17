@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 
 const navLinks = [
@@ -11,13 +11,7 @@ const loginIcon =
   "M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4 M10 17l5-5-5-5 M15 12H3";
 
 function TopbarPublic({ solid = false }) {
-  const { isAuthenticated, logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
+  const { isAuthenticated } = useAuth();
 
   return (
     
@@ -31,12 +25,7 @@ function TopbarPublic({ solid = false }) {
             </Link>
           ))}
         </nav> */}
-        {isAuthenticated ? (
-          <button className="mt-login-btn" onClick={handleLogout}>
-            <Icon />
-            Cerrar sesión
-          </button>
-        ) : (
+        {!isAuthenticated && (
           <Link to="/login" className="mt-login-btn">
             <Icon />
             Iniciar sesión

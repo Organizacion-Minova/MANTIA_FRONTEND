@@ -31,7 +31,6 @@ const ACCIONES = {
 // Estas pantallas ya muestran sus propios errores en el formulario
 const MANEJAN_SUS_ERRORES = [
     'login',
-    'dev-login',
     'register',
     'forgot-password',
     'reset-password',
@@ -111,6 +110,7 @@ api.get = (url, config = {}) => {
         config.signal ||
         config.cancelToken ||
         ruta.includes("/api/user") ||
+        ruta.includes("/api/session") ||
         ruta.includes("csrf-cookie")
     ) {
         return getOriginal(url, config);
@@ -153,7 +153,7 @@ function debeActualizarNotificaciones(url) {
     const recurso = partes[1];
 
     // El inicio de sesión genera una notificación desde el listener de Laravel.
-    if (recurso === "login" || recurso === "dev-login") return true;
+    if (recurso === "login") return true;
 
     return RECURSOS_QUE_GENERAN_ALERTAS.has(recurso);
 }
@@ -163,9 +163,9 @@ function mensajeExito(metodo, url) {
     const partes = segmentos(url);
     const recurso = partes[1];
 
-    if (recurso === 'login' || recurso === 'dev-login') return 'Sesión iniciada correctamente';
+    if (recurso === 'login') return 'Sesión iniciada correctamente';
     if (recurso === 'logout') return 'Sesión cerrada correctamente';
-    if (recurso === 'register') return 'Solicitud enviada. Tu cuenta quedará pendiente de aprobación del administrador.';
+    if (recurso === 'register') return 'Registro exitoso. Revisa tu correo y abre el enlace para activar tu cuenta.';
     if (recurso === 'forgot-password') return 'Te enviamos un código de recuperación al correo';
     if (recurso === 'reset-password') return 'Contraseña actualizada correctamente';
     if (recurso === 'admin' && partes[2] === 'approve') return 'Solicitud aprobada correctamente';
@@ -215,17 +215,20 @@ api.interceptors.response.use(
 
         if (esMutacion(method) && !esIgnorada(url)) {
             // El mensaje del registro es más largo, así que se deja más tiempo en pantalla
-            const duracion = segmentos(url)[1] === 'register' ? 7000 : undefined;
-            avisar('success', mensajeExito(method, url), 'Operación exitosa', duracion);
+            const recurso = segmentos(url)[1];
+            const duracion = recurso === 'register' ? 8000 : undefined;
+            // Registro y acciones del panel: el backend ya trae el texto exacto
+            const mensaje = (recurso === 'register' || recurso === 'admin') && typeof respuesta.data?.message === 'string'
+                ? respuesta.data.message
+                : mensajeExito(method, url);
+            avisar('success', mensaje, 'Operación exitosa', duracion);
 
-            // Refresca la campana al instante (el cierre de sesión no lo necesita)
-            if (segmentos(url)[1] !== 'logout') {
-                window.dispatchEvent(new Event('notificaciones:actualizar'));
-            }
         }
-          if (debeActualizarNotificaciones(url)) {
-                window.dispatchEvent(new Event('notificaciones:actualizar'));
-            }
+
+        // Refresca la campana una sola vez, y solo cuando un cambio pudo generar una alerta
+        if (esMutacion(method) && debeActualizarNotificaciones(url)) {
+            window.dispatchEvent(new Event('notificaciones:actualizar'));
+        }
         return respuesta;
     },
     (error) => {

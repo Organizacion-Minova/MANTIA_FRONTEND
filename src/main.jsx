@@ -1,4 +1,15 @@
 import { StrictMode, Suspense, lazy } from 'react'
+// Íconos (Font Awesome) y tipografías locales: la página funciona sin internet
+import '@fortawesome/fontawesome-free/css/all.min.css'
+import '@fontsource/archivo/400.css'
+import '@fontsource/archivo/500.css'
+import '@fontsource/archivo/600.css'
+import '@fontsource/archivo/700.css'
+import '@fontsource/archivo/800.css'
+import '@fontsource/barlow/400.css'
+import '@fontsource/barlow/500.css'
+import '@fontsource/barlow/600.css'
+import '@fontsource/barlow/700.css'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
@@ -85,23 +96,23 @@ createRoot(document.getElementById('root')).render(
               <Route path='machines' element={<RutaConPermiso permiso="machine.view"><Maquinas /></RutaConPermiso>} />
               <Route path='machines/categoriesmachines' element={<RutaConPermiso permiso="machine-category.update"><CategoriasMaquinas /></RutaConPermiso>} />
               <Route path='machines/cardMachine/:id' element={<RutaConPermiso permiso="machine.view"><CardMachine /></RutaConPermiso>} />
-              <Route path="machines/cardMachine/:id/:kind/complete" element={<LlenarRegistroMaquina />} />
-              <Route path="machines/cardMachine/:id/:kind/questions" element={<ConstructorFormatoMaquina />} />
-              <Route path="machines/cardMachine/:id/:kind/edit" element={<ConstructorFormatoMaquina editar />} />
-              <Route path="machines/cardMachine/:id/:kind/records" element={<RegistrosMaquina />} />
-              <Route path="machines/cardMachine/:id/:kind/records/:recordId" element={<VerRegistroMaquina />} />
+              <Route path="machines/cardMachine/:id/:kind/complete" element={<RutaConPermiso permiso="inspection.create"><LlenarRegistroMaquina /></RutaConPermiso>} />
+              <Route path="machines/cardMachine/:id/:kind/questions" element={<RutaConPermiso permiso="inspection.update"><ConstructorFormatoMaquina /></RutaConPermiso>} />
+              <Route path="machines/cardMachine/:id/:kind/edit" element={<RutaConPermiso permiso="inspection.update"><ConstructorFormatoMaquina editar /></RutaConPermiso>} />
+              <Route path="machines/cardMachine/:id/:kind/records" element={<RutaConPermiso permiso="inspection.view"><RegistrosMaquina /></RutaConPermiso>} />
+              <Route path="machines/cardMachine/:id/:kind/records/:recordId" element={<RutaConPermiso permiso="inspection.view"><VerRegistroMaquina /></RutaConPermiso>} />
               <Route path='equipment/consumables' element={<RutaConPermiso permiso="equipment.view"><EquiposConsumibles /></RutaConPermiso>} />
               <Route path='equipment/noconsumables' element={<RutaConPermiso permiso="equipment.view"><EquiposNoConsumibles /></RutaConPermiso>} />
               <Route path='equipment/cardequipment/:id' element={<RutaConPermiso permiso="equipment.view"><CardEquipment /></RutaConPermiso>} />
-              <Route path="equipment/cardequipment/:id/inspection" element={<InspeccionEquipo />} />
-              <Route path="equipment/cardequipment/:id/inspection/questions" element={<ConstructorFormato />} />
-              <Route path="equipment/cardequipment/:id/inspection/edit" element={<ConstructorFormato editar />} />
-              <Route path="equipment/cardequipment/:id/inspection/complete" element={<LlenarInspeccion />} />
-              <Route path="equipment/cardequipment/:id/inspection/records" element={<RegistrosInspeccion />} />
-              <Route path="equipment/cardequipment/:id/inspection/records/:inspectionId" element={<VerInspeccion />} />
-              <Route path="inspections/machines" element={<InspeccionesMaquinas kind="inspection" />} />
-              <Route path="preoperational/machines" element={<InspeccionesMaquinas kind="preoperational" />} />
-              <Route path="inspections/equipment" element={<InspeccionesEquipos />} />
+              <Route path="equipment/cardequipment/:id/inspection" element={<RutaConPermiso permiso="inspection.view"><InspeccionEquipo /></RutaConPermiso>} />
+              <Route path="equipment/cardequipment/:id/inspection/questions" element={<RutaConPermiso permiso="inspection.update"><ConstructorFormato /></RutaConPermiso>} />
+              <Route path="equipment/cardequipment/:id/inspection/edit" element={<RutaConPermiso permiso="inspection.update"><ConstructorFormato editar /></RutaConPermiso>} />
+              <Route path="equipment/cardequipment/:id/inspection/complete" element={<RutaConPermiso permiso="inspection.create"><LlenarInspeccion /></RutaConPermiso>} />
+              <Route path="equipment/cardequipment/:id/inspection/records" element={<RutaConPermiso permiso="inspection.view"><RegistrosInspeccion /></RutaConPermiso>} />
+              <Route path="equipment/cardequipment/:id/inspection/records/:inspectionId" element={<RutaConPermiso permiso="inspection.view"><VerInspeccion /></RutaConPermiso>} />
+              <Route path="inspections/machines" element={<RutaConPermiso permiso="inspection.view"><InspeccionesMaquinas kind="inspection" /></RutaConPermiso>} />
+              <Route path="preoperational/machines" element={<RutaConPermiso permiso="inspection.view"><InspeccionesMaquinas kind="preoperational" /></RutaConPermiso>} />
+              <Route path="inspections/equipment" element={<RutaConPermiso permiso="inspection.view"><InspeccionesEquipos /></RutaConPermiso>} />
               <Route path='consumables/tools/types' element={<RutaConPermiso permiso="category-tools.view"><Consumibles /></RutaConPermiso>} />
               <Route path='noconsumables/tools/types' element={<RutaConPermiso permiso="category-tools.view"><No_Consumibles /></RutaConPermiso>} />
               <Route path='consumables/tools' element={<RutaConPermiso permiso="tool.view"><ToolsConsumables /></RutaConPermiso>} />
@@ -112,7 +123,7 @@ createRoot(document.getElementById('root')).render(
               <Route path='gases' element={<RutaConPermiso permiso="gas-measurements.view"><Gases /></RutaConPermiso>} />
               <Route path='gases/compare_gases' element={<RutaConPermiso permiso="gas-measurements.view"><CompararGases /></RutaConPermiso>} />
               <Route path='gases/gas_format/:id' element={<RutaConPermiso permiso="gas-measurements.view"><FormatoGases /></RutaConPermiso>} />
-              <Route path='admin' element={<RutaConPermiso roles={["Jefe de mina"]}><AdministrationPanel /></RutaConPermiso>} />
+              <Route path='admin' element={<RutaConPermiso roles={["Superadministrador", "Jefe de mina"]}><AdministrationPanel /></RutaConPermiso>} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>

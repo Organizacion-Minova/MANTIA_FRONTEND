@@ -10,7 +10,8 @@ import AuthScene from "./AuthScene";
 import { useAuth } from "../../context/AuthContext.jsx";
 import LoadingScreen from "../../components/LoadingScreen.jsx";
 import { useToast } from "../../context/ToastContext.jsx";
-import Turnstile, { CAPTCHA_ACTIVO } from "../../components/Turnstile.jsx";
+import Captcha, { CAPTCHA_ACTIVO } from "../../components/Captcha.jsx";
+import { filtrarCorreo, validarCorreo } from "../../utils/validacionesUsuario";
 import verIcono from "../../assets/icons/ver-contrasena.svg"
 import verIconoDark from "../../assets/icons/ver-contrasena2.svg"
 import ocultarIcono from "../../assets/icons/ocultar.svg"
@@ -20,8 +21,7 @@ import ocultarIconoDark from "../../assets/icons/ocultar2.svg"
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-    const { login, loginConLetra } = useAuth();
+    const { login } = useAuth();
     const { peligro, advertencia, exito } = useToast();
     const [cargandoLogin, setCargandoLogin] = useState(false);
     const [captchaToken, setCaptchaToken] = useState("");
@@ -47,45 +47,45 @@ const Login = () => {
     const handleChange = (event) => {
         const { name, value } = event.target;
 
+        // Sin espacios y con el mismo límite que valida el servidor
         if (name === "email") {
-            setEmail(value);
+            setEmail(filtrarCorreo(value));
         }
 
         if (name === "password") {
-            setPassword(value);
+            setPassword(value.slice(0, 64));
         }
     };
 
     const handleSubmit = async (event) => {
-    event.preventDefault();
+        event.preventDefault();
 
-    const esLetraDev = /^[A-Za-z]$/.test(email.trim());
-
-    if (!esLetraDev && (!email.trim() || !password)) {
-        advertencia("Debes completar ambos campos.", "Campos incompletos");
-        return;
-    }
-
-    // El login rápido por letra (solo desarrollo) no usa captcha
-    if (!esLetraDev && CAPTCHA_ACTIVO && !captchaToken) {
-        advertencia("Completa la verificación de seguridad.", "Captcha pendiente");
-        return;
-    }
-
-    setCargandoLogin(true);
-    try {
-        if (esLetraDev) {
-            await loginConLetra(email.trim().toUpperCase());
-        } else {
-            await login(email, password, captchaToken);
+        if (!email.trim() || !password) {
+            advertencia("Debes completar ambos campos.", "Campos incompletos");
+            return;
         }
-        navigate("/dashboard");
-    } catch (err) {
-        peligro(err.message, "No se pudo iniciar sesión");
-        setCargandoLogin(false);
-        setReinicioCaptcha((n) => n + 1); // el captcha se usa una sola vez
-    }
-};
+
+        const errorCorreo = validarCorreo(email);
+        if (errorCorreo) {
+            advertencia(errorCorreo, "Correo inválido");
+            return;
+        }
+
+        if (CAPTCHA_ACTIVO && !captchaToken) {
+            advertencia("Escribe los 5 caracteres de la imagen de seguridad.", "Captcha pendiente");
+            return;
+        }
+
+        setCargandoLogin(true);
+        try {
+            await login(email.trim().toLowerCase(), password, captchaToken);
+            navigate("/dashboard");
+        } catch (err) {
+            peligro(err.message, "No se pudo iniciar sesión");
+            setCargandoLogin(false);
+            setReinicioCaptcha((n) => n + 1); // el captcha se usa una sola vez
+        }
+    };
 
     // 👇 AQUÍ VA — dentro del componente, antes del return del formulario
     if (cargandoLogin) {
@@ -110,7 +110,7 @@ const Login = () => {
                                 </label>
                                 <input
                                     id="email"
-                                    type="text"
+                                    type="email"
                                     name="email"
                                     value={email}
                                     onChange={handleChange}
@@ -138,7 +138,7 @@ const Login = () => {
                                     iconoDark={showPassword ? ocultarIconoDark : verIconoDark}
                                 />
                             </div>
-                            <Turnstile onToken={setCaptchaToken} reiniciar={reinicioCaptcha} />
+                            <Captcha onToken={setCaptchaToken} reiniciar={reinicioCaptcha} />
 
                             <Boton
                                 clase="btn-azul"
@@ -157,11 +157,12 @@ const Login = () => {
                                     <Link to="/register">Solicitar</Link>
                                 </span>
                                 <span>
-                                <strong>
                                     <Link to="/">
-                                         <i className="fa-solid fa-house"></i> Regresar al inicio
+                                        <i className="fa-solid fa-house"></i> Regresar al inicio
                                     </Link>
-                                </strong>
+                                </span>
+                                <span>
+                                    <Link to="/terms">Términos de uso</Link>
                                 </span>
                             </div>
                         </form>
