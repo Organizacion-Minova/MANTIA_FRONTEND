@@ -1,0 +1,103 @@
+.admin-branches-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.admin-branch-button {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    max-width: 100%;
+    min-width: 0;
+    padding: 0.35rem 0.5rem;
+    border: 1px solid var(--borde-contenedor);
+    border-radius: 0.5rem;
+    background: var(--contenedor);
+    color: var(--texto);
+    cursor: pointer;
+    line-height: 1.4;
+    text-align: left;
+}
+
+.admin-branch-button:hover {
+    background: var(--hover);
+}
+
+.admin-branch-button:focus-visible,
+.admin-test-detail:focus-visible {
+    outline: 2px solid var(--acento-mantia);
+    outline-offset: 2px;
+}
+
+.admin-branch-button strong {
+    overflow-wrap: anywhere;
+}
+
+.admin-branch-button .form-help-text {
+    margin: 0;
+}
+
+.table-responsive .admin-test-table {
+    min-width: 36rem;
+    table-layout: fixed;
+}
+
+.admin-test-table th:first-child,
+.admin-test-table td:first-child {
+    width: 64%;
+    text-align: left;
+}
+
+.admin-test-table th:nth-child(2) {
+    width: 22%;
+}
+
+.admin-test-table th:last-child {
+    width: 14%;
+}
+
+.admin-test-name {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.6rem;
+    min-width: 0;
+    line-height: 1.5;
+}
+
+.admin-test-name > span {
+    flex: 1 1 14rem;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.admin-test-detail {
+    display: inline-flex;
+    align-items: center;
+    width: auto;
+    height: auto;
+    flex: 0 0 auto;
+    padding: 0.1rem 0.2rem;
+    border: 0;
+    background: none;
+    color: var(--secundario);
+    cursor: pointer;
+    font: inherit;
+    line-height: 1.4;
+    text-decoration: underline;
+}
+
+.admin-test-message {
+    max-height: 15rem;
+    overflow: auto;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    background: var(--fondo);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    text-align: left;
+}

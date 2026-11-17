@@ -4,13 +4,27 @@ import "../../styles/global.css";
 import "../../styles/Components.modules.css";
 import "../../styles/animations/login.css";
 import { Link, useNavigate } from "react-router-dom";
-import { Boton } from "../../components/common/Button";
+import { Boton, BotonAccion } from "../../components/common/Button";
 import loginImage from "../../assets/img/Mantia2..png";
 import AuthScene from "./AuthScene";
 import api from "../../api/axios";
 import { useToast } from "../../context/ToastContext.jsx";
 import { mensajeDeError } from "../../utils/errores";
-import Turnstile, { CAPTCHA_ACTIVO } from "../../components/Turnstile.jsx";
+import Captcha, { CAPTCHA_ACTIVO } from "../../components/Captcha.jsx";
+import RequisitosContrasena from "../../components/common/RequisitosContrasena.jsx";
+import {
+    filtrarCorreo, filtrarCodigo, filtrarContrasena,
+    validarCorreo, validarCodigo, validarContrasena, validarConfirmacion, erroresDelServidor,
+} from "../../utils/validacionesUsuario";
+import verIcono from "../../assets/icons/ver-contrasena.svg";
+import verIconoDark from "../../assets/icons/ver-contrasena2.svg";
+import ocultarIcono from "../../assets/icons/ocultar.svg";
+import ocultarIconoDark from "../../assets/icons/ocultar2.svg";
+
+function ErrorCampo({ mensaje, id }) {
+    if (!mensaje) return null;
+    return <p id={id} className="error-texto" role="alert">{mensaje}</p>;
+}
 
 const ResetPassword = () => {
     const navigate = useNavigate();
@@ -20,9 +34,12 @@ const ResetPassword = () => {
     const [code, setCode] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [mostrarPassword, setMostrarPassword] = useState(false);
+    const [mostrarConfirmPassword, setMostrarConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [captchaToken, setCaptchaToken] = useState("");
     const [reinicioCaptcha, setReinicioCaptcha] = useState(0);
+    const [errores, setErrores] = useState({});
 
     // Los avisos de éxito (código enviado / contraseña actualizada) los muestra api/axios.js.
     // Aquí solo se avisan los errores y las validaciones locales.
@@ -31,26 +48,27 @@ const ResetPassword = () => {
     const handleSendCode = async (e) => {
         e.preventDefault();
 
-        if (!email.trim()) {
-            advertencia("Ingresa tu correo electrónico.", "Campo incompleto");
-            return;
-        }
-        if (!/^\S+@\S+\.\S+$/.test(email.trim())) {
-            advertencia("Ingresa un correo electrónico válido.", "Correo inválido");
+        const errorCorreo = validarCorreo(email);
+        setErrores({ email: errorCorreo });
+        if (errorCorreo) {
+            advertencia(errorCorreo, email.trim() ? "Correo inválido" : "Campo incompleto");
+            document.getElementById("email")?.focus();
             return;
         }
 
         if (CAPTCHA_ACTIVO && !captchaToken) {
-            advertencia("Completa la verificación de seguridad.", "Captcha pendiente");
+            advertencia("Escribe los 5 caracteres de la imagen de seguridad.", "Captcha pendiente");
             return;
         }
 
         try {
             setLoading(true);
             await api.get('/sanctum/csrf-cookie');
-            await api.post('/api/forgot-password', { email: email.trim(), captcha_token: captchaToken });
+            await api.post('/api/forgot-password', { email: email.trim().toLowerCase(), captcha_token: captchaToken });
+            setCode("");
             setStep(2);
         } catch (err) {
+            setErrores(erroresDelServidor(err));
             setReinicioCaptcha((n) => n + 1); // el captcha se usa una sola vez
             peligro(
                 mensajeDeError(err, "No se pudo enviar el código. Verifica el correo."),
@@ -65,8 +83,11 @@ const ResetPassword = () => {
     const handleVerifyCode = (e) => {
         e.preventDefault();
 
-        if (!/^\d{6}$/.test(code.trim())) {
-            advertencia("El código debe tener exactamente 6 dígitos.", "Código inválido");
+        const errorCodigo = validarCodigo(code);
+        setErrores({ code: errorCodigo });
+        if (errorCodigo) {
+            advertencia(errorCodigo, "Código inválido");
+            document.getElementById("code")?.focus();
             return;
         }
 
@@ -77,27 +98,41 @@ const ResetPassword = () => {
     const handleResetPassword = async (e) => {
         e.preventDefault();
 
-        if (password.length < 8) {
-            advertencia("La contraseña debe tener al menos 8 caracteres.", "Contraseña muy corta");
+        const encontrados = {
+            password: validarContrasena(password, "La nueva contraseña"),
+            confirmPassword: validarConfirmacion(password, confirmPassword),
+        };
+        setErrores(encontrados);
+        if (encontrados.password) {
+            advertencia(encontrados.password, "Contraseña no válida");
+            document.getElementById("password")?.focus();
             return;
         }
-
-        if (password !== confirmPassword) {
-            peligro("Las contraseñas no coinciden.", "Contraseñas distintas");
+        if (encontrados.confirmPassword) {
+            peligro(encontrados.confirmPassword, "Contraseñas distintas");
+            document.getElementById("confirmPassword")?.focus();
             return;
         }
 
         try {
             setLoading(true);
             await api.post('/api/reset-password', {
-                email: email.trim(),
-                code: code.trim(),
-                password
+                email: email.trim().toLowerCase(),
+                code,
+                password,
+                password_confirmation: confirmPassword,
             });
             setTimeout(() => {
                 navigate("/login");
             }, 3000);
         } catch (err) {
+            const delServidor = erroresDelServidor(err);
+            setErrores(delServidor);
+            // Si el problema es el código (inválido o vencido), se vuelve al paso del código
+            if (delServidor.code || err.response?.status === 400) {
+                setCode("");
+                setStep(2);
+            }
             peligro(
                 mensajeDeError(err, "Código inválido o expirado."),
                 "No se pudo restablecer la contraseña"
@@ -132,13 +167,17 @@ const ResetPassword = () => {
                                             type="email"
                                             name="email"
                                             placeholder="usuario@ejemplo.com"
+                                            autoComplete="email"
+                                            maxLength={100}
                                             value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
+                                            onChange={(e) => { setEmail(filtrarCorreo(e.target.value)); setErrores({}); }}
                                             required
+                                            aria-invalid={errores.email ? true : undefined}
                                         />
+                                        <ErrorCampo id="email-error" mensaje={errores.email} />
                                     </div>
 
-                                    <Turnstile onToken={setCaptchaToken} reiniciar={reinicioCaptcha} />
+                                    <Captcha onToken={setCaptchaToken} reiniciar={reinicioCaptcha} />
 
                                     <Boton
                                         clase="btn-azul"
@@ -149,6 +188,9 @@ const ResetPassword = () => {
                                     <div className="links-footer">
                                         <span>
                                             <Link to="/login">Volver al Inicio de Sesión</Link>
+                                        </span>
+                                        <span>
+                                        <Link to="/terms">Términos de uso</Link>
                                         </span>
                                     </div>
                                 </form>
@@ -169,12 +211,18 @@ const ResetPassword = () => {
                                             type="text"
                                             name="code"
                                             placeholder="Ej: 485920"
+                                            inputMode="numeric"
+                                            autoComplete="one-time-code"
+                                            pattern="[0-9]*"
                                             maxLength={6}
                                             value={code}
-                                            onChange={(e) => setCode(e.target.value)}
+                                            onChange={(e) => { setCode(filtrarCodigo(e.target.value)); setErrores({}); }}
+                                            onPaste={(e) => { e.preventDefault(); setCode(filtrarCodigo(e.clipboardData.getData("text"))); }}
                                             required
+                                            aria-invalid={errores.code ? true : undefined}
                                             style={{ letterSpacing: "4px", fontWeight: "bold", textAlign: "center" }}
                                         />
+                                        <ErrorCampo id="code-error" mensaje={errores.code} />
                                     </div>
 
                                     <Boton
@@ -204,30 +252,53 @@ const ResetPassword = () => {
                                 </p>
 
                                 <form onSubmit={handleResetPassword} noValidate>
-                                    <div className="input-box">
+                                    <div className="input-box password-box">
                                         <label htmlFor="password">Nueva Contraseña:</label>
                                         <input
                                             id="password"
-                                            type="password"
+                                            type={mostrarPassword ? "text" : "password"}
                                             name="password"
                                             placeholder="Mínimo 8 caracteres"
+                                            autoComplete="new-password"
+                                            maxLength={64}
                                             value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
+                                            onChange={(e) => { setPassword(filtrarContrasena(e.target.value)); setErrores((p) => ({ ...p, password: undefined })); }}
                                             required
+                                            aria-invalid={errores.password ? true : undefined}
                                         />
+                                        <BotonAccion
+                                            clase="btn-toggle-password"
+                                            onClick={() => setMostrarPassword((visible) => !visible)}
+                                            ariaLabel={mostrarPassword ? "Ocultar contraseña" : "Ver contraseña"}
+                                            icono={mostrarPassword ? ocultarIcono : verIcono}
+                                            iconoDark={mostrarPassword ? ocultarIconoDark : verIconoDark}
+                                        />
+                                        <ErrorCampo id="password-error" mensaje={errores.password} />
+                                        <RequisitosContrasena valor={password} />
                                     </div>
 
-                                    <div className="input-box">
+                                    <div className="input-box password-box">
                                         <label htmlFor="confirmPassword">Confirmar Nueva Contraseña:</label>
                                         <input
                                             id="confirmPassword"
-                                            type="password"
+                                            type={mostrarConfirmPassword ? "text" : "password"}
                                             name="confirmPassword"
                                             placeholder="Repite tu contraseña"
+                                            autoComplete="new-password"
+                                            maxLength={64}
                                             value={confirmPassword}
-                                            onChange={(e) => setConfirmPassword(e.target.value)}
+                                            onChange={(e) => { setConfirmPassword(filtrarContrasena(e.target.value)); setErrores((p) => ({ ...p, confirmPassword: undefined })); }}
                                             required
+                                            aria-invalid={errores.confirmPassword ? true : undefined}
                                         />
+                                        <BotonAccion
+                                            clase="btn-toggle-password"
+                                            onClick={() => setMostrarConfirmPassword((visible) => !visible)}
+                                            ariaLabel={mostrarConfirmPassword ? "Ocultar contraseña" : "Ver contraseña"}
+                                            icono={mostrarConfirmPassword ? ocultarIcono : verIcono}
+                                            iconoDark={mostrarConfirmPassword ? ocultarIconoDark : verIconoDark}
+                                        />
+                                        <ErrorCampo id="confirmPassword-error" mensaje={errores.confirmPassword} />
                                     </div>
 
                                     <Boton

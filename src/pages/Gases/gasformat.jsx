@@ -274,7 +274,6 @@ export function FormatoGases() {
         setBusqueda("");
         setFiltroEspecial("ubicacion", "");
         setFiltroEspecial("responsible_name", "");
-        setPaginaActual(1);
     };
 
     const cargarDatos = async (avisar = false) => {

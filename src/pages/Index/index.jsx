@@ -5,6 +5,7 @@ import TopbarPublic from "../../components/layout/TopbarPublic.jsx";
 import FooterPublic from "../../components/layout/FooterPublic.jsx";
 import { useState, useEffect, useRef } from "react";
 import AccessibilityPanel from "../../components/accessibility/AccessibilityPanel";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 
 
@@ -118,8 +119,20 @@ export default function MantiaInicio() {
   const [current, setCurrent] = useState(0);
 
   const timerRef = useRef(null);
-
+  const cierreSesionRef = useRef(false);
+  const { isAuthenticated, logout } = useAuth();
   const total = slides.length;
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      cierreSesionRef.current = false;
+      return;
+    }
+
+    if (cierreSesionRef.current) return;
+    cierreSesionRef.current = true;
+    void logout();
+  }, [isAuthenticated, logout]);
 
   // Reiniciar el temporizador automático.
   const resetAuto = () => {

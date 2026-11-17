@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
-import { login as loginRequest, logout as logoutRequest, getUser, quickLogin } from "../api/auth";
+import { login as loginRequest, logout as logoutRequest, getSession } from "../api/auth";
 import { mensajeDeError } from "../utils/errores";
 import { limpiarChatIA } from "../components/IAMantia/chatStore.js";
 const AuthContext = createContext(null);
@@ -8,7 +8,8 @@ export function AuthProvider({ children }) {
     const [usuario, setUsuario] = useState(null);
     const [cargando, setCargando] = useState(true);
 
-    // Comparte una única petición GET /api/user cuando varios procesos la solicitan a la vez.
+    // Comparte una única petición GET /api/session cuando varios procesos la solicitan a la vez.
+    // /api/session responde 200 con user = null si no hay sesión: así no aparece un 401 en la consola.
     const solicitudUsuarioRef = useRef(null);
 
     // Identifica cambios de sesión para ignorar respuestas antiguas que lleguen tarde.
@@ -24,7 +25,7 @@ export function AuthProvider({ children }) {
             return solicitudUsuarioRef.current;
         }
 
-        const solicitud = getUser().finally(() => {
+        const solicitud = getSession().finally(() => {
             if (solicitudUsuarioRef.current === solicitud) {
                 solicitudUsuarioRef.current = null;
             }
@@ -47,17 +48,6 @@ export function AuthProvider({ children }) {
 
             // Deja pasar el mensaje real del backend (cuenta pendiente, rechazada, 422, sin conexión...).
             throw new Error(mensajeDeError(err, "No se pudo iniciar sesión."));
-        }
-    }
-
-    async function loginConLetra(letra) {
-        try {
-            const data = await quickLogin(letra);
-            versionSesionRef.current += 1;
-            setUsuario(data);
-            ultimaRevisionRef.current = Date.now();
-        } catch (err) {
-            throw new Error("Esa letra no corresponde a ningún desarrollador.");
         }
     }
 
@@ -144,6 +134,7 @@ export function AuthProvider({ children }) {
                 const nuevo = await obtenerUsuarioCompartido();
                 if (!activo || versionSesionRef.current !== versionActual) return;
 
+                // null = la sesión expiró o la cuenta se desactivó
                 setUsuario((previo) => (
                     JSON.stringify(previo) === JSON.stringify(nuevo) ? previo : nuevo
                 ));
@@ -166,7 +157,7 @@ export function AuthProvider({ children }) {
         };
     }, [isAuthenticated, obtenerUsuarioCompartido]);
 
-    // Permisos y roles que llegan desde el backend (GET /api/user).
+    // Permisos y roles que llegan desde el backend (GET /api/session o /api/user).
     const permisos = usuario?.permission_names ?? [];
     const roles = (usuario?.roles ?? []).map((r) => r.name);
     const tienePermiso = (permiso) => permisos.includes(permiso);
@@ -176,7 +167,6 @@ export function AuthProvider({ children }) {
         usuario,
         isAuthenticated,
         login,
-        loginConLetra,
         logout,
         cargarUsuarioActual,
         cargando,

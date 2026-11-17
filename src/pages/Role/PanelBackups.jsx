@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { Boton } from "../../components/common/Button";
 import { Form, Text, Checkbox } from "../../components/common/forms";
@@ -6,44 +5,56 @@ import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
 import LoadingScreen from "../../components/LoadingScreen";
 import {
-    obtenerOpcionesBackup, obtenerBackups, crearBackup,
+    obtenerBackups, crearPrimerBackup, crearBackup,
     descargarBackup, eliminarBackup, restaurarBackup,
 } from "../../api/admin";
-import { usePaginacion,Paginacion } from "../../components/common/Paginacion";
-
+import { usePaginacion, Paginacion } from "../../components/common/Paginacion";
+import { erroresDelServidor } from "../../utils/validacionesUsuario";
 
 const ACCIONES = {
+    generar: {
+        titulo: "Generar copia de seguridad general",
+        descripcion: "Se respaldará TODA la información del sistema.",
+        boton: "Generar",
+        icono: "fa-solid fa-database",
+    },
     descargar: {
         titulo: "Descargar copia de seguridad",
-        descripcion: "Escribe tu contraseña para descargar este archivo.",
+        descripcion: "Escribe la clave administrativa configurada en el servidor para descargar este archivo.",
         boton: "Descargar",
         icono: "fa-solid fa-download",
     },
     restaurar: {
         titulo: "Restaurar copia de seguridad",
-        descripcion: "Los datos actuales de las tablas incluidas serán reemplazados por los de la copia. Escribe tu contraseña para continuar.",
+        descripcion: "TODOS los datos actuales del sistema serán reemplazados por los de esta copia. Escribe la clave administrativa del servidor para continuar.",
         boton: "Restaurar",
         icono: "fa-solid fa-rotate-left",
     },
     eliminar: {
         titulo: "Eliminar copia de seguridad",
-        descripcion: "La copia se borrará y no se podrá recuperar. Escribe tu contraseña para continuar.",
+        descripcion: "La copia se borrará y no se podrá recuperar. Escribe la clave administrativa del servidor para continuar.",
         boton: "Eliminar",
         icono: "fa-solid fa-trash",
     },
 };
 
+function ErrorCampo({ mensaje }) {
+    if (!mensaje) return null;
+    return <p className="error-texto col-span-6" role="alert">{mensaje}</p>;
+}
+
 function PanelBackups() {
-    const [opciones, setOpciones] = useState([]);
-    const [seleccionadas, setSeleccionadas] = useState([]);
     const [backups, setBackups] = useState([]);
+    const [primerBackup, setPrimerBackup] = useState(true);
+    const [claveAdminConfigurada, setClaveAdminConfigurada] = useState(false);
+    const [resumen, setResumen] = useState(null);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
-    const [generando, setGenerando] = useState(false);
     const [accion, setAccion] = useState(null); // { tipo, archivo }
-    const [password, setPassword] = useState("");
+    const [credencial, setCredencial] = useState("");
+    const [errorCredencial, setErrorCredencial] = useState(null);
     const [confirmaRestaurar, setConfirmaRestaurar] = useState(false);
-    const { peligro, advertencia } = useToast();
+    const { advertencia } = useToast();
     const { cargarUsuarioActual } = useAuth();
 
     const { datosPagina, paginaActual, totalPaginas, setPaginaActual } = usePaginacion(backups, 7);
@@ -52,9 +63,11 @@ function PanelBackups() {
         setCargando(true);
         setError(null);
         try {
-            const [listaOpciones, listaBackups] = await Promise.all([obtenerOpcionesBackup(), obtenerBackups()]);
-            setOpciones(Array.isArray(listaOpciones) ? listaOpciones : []);
-            setBackups(Array.isArray(listaBackups) ? listaBackups : []);
+            const data = await obtenerBackups();
+            setBackups(Array.isArray(data.backups) ? data.backups : []);
+            setPrimerBackup(Boolean(data.primer_backup));
+            setClaveAdminConfigurada(Boolean(data.clave_admin_configurada));
+            setResumen(data.resumen ?? null);
         } catch (err) {
             console.error("Error al cargar copias de seguridad:", err);
             setError(err.response?.data?.message || "No se pudieron cargar las copias de seguridad.");
@@ -65,47 +78,33 @@ function PanelBackups() {
 
     useEffect(() => { cargar(); }, [cargar]);
 
-    const toggleTabla = (tabla) => {
-        setSeleccionadas((prev) =>
-            prev.includes(tabla) ? prev.filter((t) => t !== tabla) : [...prev, tabla]
-        );
-    };
-
-    // Los mensajes de éxito y de error de estas peticiones ya los muestra axios.
-    const handleGenerar = async () => {
-        if (seleccionadas.length === 0) {
-            peligro("Selecciona al menos una tabla para respaldar.");
-            return;
-        }
-        setGenerando(true);
-        try {
-            await crearBackup(seleccionadas);
-            setSeleccionadas([]);
-            cargar();
-        } catch {
-            // el aviso de error ya salió
-        } finally {
-            setGenerando(false);
-        }
-    };
-
-    const abrirConfirmacion = (tipo, archivo) => {
-        setPassword("");
+    const abrirAccion = (tipo, archivo = null) => {
+        setCredencial("");
+        setErrorCredencial(null);
         setConfirmaRestaurar(false);
         setAccion({ tipo, archivo });
     };
 
-    const cerrarConfirmacion = () => {
+    const cerrarAccion = () => {
         setAccion(null);
-        setPassword("");
+        setCredencial("");
+        setErrorCredencial(null);
         setConfirmaRestaurar(false);
     };
 
+    // Los avisos de éxito y de error de estas peticiones ya los muestra axios.
     const handleConfirmar = async (e) => {
         e.preventDefault();
 
-        if (!password) {
-            advertencia("Escribe tu contraseña para continuar.", "Contraseña requerida");
+        const esPrimerBackup = accion.tipo === "generar" && primerBackup;
+        const campoCredencial = esPrimerBackup ? "password" : "clave_admin";
+        const mensajeRequerido = esPrimerBackup
+            ? "Escribe la contraseña de inicio de sesión."
+            : "Escribe la clave administrativa configurada en el servidor.";
+
+        if (!credencial) {
+            setErrorCredencial(mensajeRequerido);
+            advertencia(mensajeRequerido, "Credencial requerida");
             return;
         }
         if (accion.tipo === "restaurar" && !confirmaRestaurar) {
@@ -114,53 +113,71 @@ function PanelBackups() {
         }
 
         try {
-            if (accion.tipo === "descargar") await descargarBackup(accion.archivo, password);
-            if (accion.tipo === "eliminar") await eliminarBackup(accion.archivo, password);
+            if (accion.tipo === "generar") {
+                if (esPrimerBackup) await crearPrimerBackup(credencial);
+                else await crearBackup(credencial);
+            }
+            if (accion.tipo === "descargar") await descargarBackup(accion.archivo, credencial);
+            if (accion.tipo === "eliminar") await eliminarBackup(accion.archivo, credencial);
             if (accion.tipo === "restaurar") {
-                await restaurarBackup(accion.archivo, password);
+                await restaurarBackup(accion.archivo, credencial);
                 await cargarUsuarioActual(); // los usuarios o roles pudieron cambiar
             }
-            cerrarConfirmacion();
-            cargar();
-        } catch {
-            setPassword(""); // contraseña incorrecta u otro error: el aviso ya salió
+            cerrarAccion();
+            await cargar();
+        } catch (err) {
+            setCredencial("");
+            const erroresServidor = erroresDelServidor(err);
+            setErrorCredencial(erroresServidor[campoCredencial] ?? err.response?.data?.message ?? null);
         }
     };
 
     if (cargando) return <LoadingScreen indeterminado />;
 
-    if (error) return <div className="col-span-6">{error}</div>;
+    if (error) return <p className="error-texto" role="alert">{error}</p>;
 
-    const info = accion ? ACCIONES[accion.tipo] : null;
+    const info = accion
+        ? {
+            ...ACCIONES[accion.tipo],
+            descripcion: accion.tipo === "generar"
+                ? (primerBackup
+                    ? "Se respaldará TODA la información del sistema. Confirma con la contraseña de inicio de sesión de tu cuenta."
+                    : "Se respaldará TODA la información del sistema. Escribe la clave administrativa configurada en el servidor.")
+                : ACCIONES[accion.tipo].descripcion,
+        }
+        : null;
+    const requierePasswordCuenta = accion?.tipo === "generar" && primerBackup;
 
     return (
         <>
             <div className="form-container" style={{ marginBottom: "1.5rem" }}>
-                <h3 className="form-title">Generar nueva copia de seguridad</h3>
+                <h3 className="form-title">Copia de seguridad general</h3>
                 <p className="form-description">
-                    Selecciona qué información quieres respaldar. Se incluyen automáticamente los datos que dependen de lo que elijas.
-                    La copia se guarda en JSON con los datos cifrados, y con una huella (hash) y una firma para detectar si alguien la modifica.
+                    Respalda TODA la información del sistema en un solo archivo: usuarios, roles, máquinas, equipos, herramientas,
+                    ubicaciones, formatos, inspecciones, mediciones de gases y uso diario.
+                    {resumen && ` Ahora mismo: ${resumen.tablas} tablas y ${resumen.registros} registros.`}
+                    {" "}La copia se guarda cifrada, con una huella (hash) y una firma para detectar si alguien la modifica.
                 </p>
-                <div className="form-grid">
-                    {opciones.map((op) => (
-                        <div className="col-span-3" key={op.tabla}>
-                            <Checkbox
-                                id={`tabla-${op.tabla}`}
-                                name={op.tabla}
-                                label={`${op.etiqueta} (${op.registros} registros)`}
-                                checked={seleccionadas.includes(op.tabla)}
-                                onChange={() => toggleTabla(op.tabla)}
-                            />
-                        </div>
-                    ))}
-                </div>
+
+                {primerBackup ? (
+                    <p className="form-description" role="status">
+                        <i className="fa-solid fa-lock" aria-hidden="true" /> La primera copia requiere tu contraseña de inicio de sesión. Después, las acciones de backup pedirán la clave interna del servidor.
+                    </p>
+                ) : claveAdminConfigurada ? (
+                    <p className="form-description" role="status">
+                        <i className="fa-solid fa-shield-halved" aria-hidden="true" /> Clave administrativa configurada. Se pedirá para crear copias adicionales, descargarlas, restaurarlas o eliminarlas.
+                    </p>
+                ) : (
+                    <p className="form-description error-texto" role="alert">
+                        La variable BACKUP_ADMIN_KEY no está configurada en el servidor. Configúrala en el .env para administrar copias después de generar la primera.
+                    </p>
+                )}
+
                 <div className="btn-container" style={{ marginTop: "1rem" }}>
                     <Boton
-                        clase="btn-azul"
-                        texto={generando ? "Generando..." : "Generar copia de seguridad"}
-                        icono="fa-solid fa-database"
-                        disabled={generando}
-                        onClick={(e) => { e.preventDefault(); handleGenerar(); }}
+                        clase="btn-azul" icono="fa-solid fa-database" texto={primerBackup ? "Generar primera copia" : "Generar copia general"}
+                        titulo="Generar una copia de seguridad de todo el sistema"
+                        onClick={(e) => { e.preventDefault(); abrirAccion("generar"); }}
                     />
                 </div>
             </div>
@@ -170,7 +187,7 @@ function PanelBackups() {
                     <thead>
                         <tr>
                             <th>Archivo</th>
-                            <th>Contenido</th>
+                            <th>Tipo</th>
                             <th>Creado por</th>
                             <th>Fecha</th>
                             <th>Tamaño</th>
@@ -182,7 +199,12 @@ function PanelBackups() {
                         {datosPagina.length > 0 ? datosPagina.map((b) => (
                             <tr key={b.archivo}>
                                 <td>{b.archivo}</td>
-                                <td>{(b.incluye ?? b.tablas)?.join(", ")}</td>
+                                <td>
+                                    <span className={`badge ${b.tipo === "general" ? "badge-activo" : "badge-inactivo"}`}>
+                                        {b.tipo === "general" ? "General" : "Parcial (anterior)"}
+                                    </span>
+                                    {b.registros != null && <div className="form-help-text">{b.registros} registros</div>}
+                                </td>
                                 <td>{b.creado_por}</td>
                                 <td>{new Date(b.creado_en).toLocaleString("es-CO")}</td>
                                 <td>{b.peso_kb} KB</td>
@@ -191,17 +213,17 @@ function PanelBackups() {
                                     <div className="btn-container">
                                         <Boton
                                             clase="btn-azul" icono="fa-solid fa-download" titulo="Descargar copia de seguridad"
-                                            onClick={(e) => { e.preventDefault(); abrirConfirmacion("descargar", b.archivo); }}
+                                            onClick={(e) => { e.preventDefault(); abrirAccion("descargar", b.archivo); }}
                                         />
                                         {b.hash && (
                                             <Boton
                                                 clase="btn-azul" icono="fa-solid fa-rotate-left" titulo="Restaurar copia de seguridad"
-                                                onClick={(e) => { e.preventDefault(); abrirConfirmacion("restaurar", b.archivo); }}
+                                                onClick={(e) => { e.preventDefault(); abrirAccion("restaurar", b.archivo); }}
                                             />
                                         )}
                                         <Boton
                                             clase="btn-2" icono="fa-solid fa-trash" titulo="Eliminar copia de seguridad"
-                                            onClick={(e) => { e.preventDefault(); abrirConfirmacion("eliminar", b.archivo); }}
+                                            onClick={(e) => { e.preventDefault(); abrirAccion("eliminar", b.archivo); }}
                                         />
                                     </div>
                                 </td>
@@ -226,31 +248,34 @@ function PanelBackups() {
                 <Form
                     titulo={info.titulo}
                     descripcion={info.descripcion}
-                    onCancel={cerrarConfirmacion}
+                    onCancel={cerrarAccion}
                     onSubmit={handleConfirmar}
                     textoBoton={info.boton}
                     iconoBoton={info.icono}
                     tituloBoton={info.boton}
+                    noValidate
                 >
-                    <div className="col-span-6">{accion.archivo}</div>
+                    {accion.archivo && <div className="col-span-6">{accion.archivo}</div>}
                     <div className="col-span-6">
                         <Text
-                            label="Tu contraseña:"
-                            id="password-backup"
-                            name="password-backup"
+                            label={requierePasswordCuenta ? "Contraseña de inicio de sesión:" : "Clave administrativa del servidor:"}
+                            id="credencial-backup"
+                            name={requierePasswordCuenta ? "password" : "clave_admin"}
                             type="password"
-                            placeholder="Escribe tu contraseña"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder={requierePasswordCuenta ? "Tu contraseña de inicio de sesión" : "BACKUP_ADMIN_KEY"}
+                            maxLength={requierePasswordCuenta ? 64 : 255}
+                            value={credencial}
+                            onChange={(e) => { setCredencial(e.target.value); setErrorCredencial(null); }}
                             required
                         />
+                        <ErrorCampo mensaje={errorCredencial} />
                     </div>
                     {accion.tipo === "restaurar" && (
                         <div className="col-span-6">
                             <Checkbox
                                 id="confirma-restaurar"
                                 name="confirma-restaurar"
-                                label="Entiendo que se reemplazarán los datos actuales"
+                                label="Entiendo que se reemplazarán TODOS los datos actuales"
                                 checked={confirmaRestaurar}
                                 onChange={() => setConfirmaRestaurar((v) => !v)}
                             />

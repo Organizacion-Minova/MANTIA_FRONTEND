@@ -45,7 +45,7 @@ function useUnSoloClic(onClick) {
     return { manejarClick, ocupado };
 }
 
-export function Boton( {clase, texto, onClick, icono, img, imgDark, disabled, key, titulo} ){
+export function Boton( {clase, texto, onClick, icono, img, imgDark, disabled, titulo} ){
     const { manejarClick, ocupado } = useUnSoloClic(onClick);
 
     return(
@@ -55,7 +55,6 @@ export function Boton( {clase, texto, onClick, icono, img, imgDark, disabled, ke
             onClick={manejarClick}
             disabled={disabled || ocupado}
             aria-busy={ocupado || undefined}
-            key={key}
             title={titulo}
         >
              {img ? (
@@ -84,11 +83,11 @@ export function Boton( {clase, texto, onClick, icono, img, imgDark, disabled, ke
     )
 }
 
-export function BotonAccion({ clase, texto, onClick, icono, iconoDark, iconoFa, disabled, key, titulo, ariaLabel }) {
+export function BotonAccion({ clase, texto, onClick, icono, iconoDark, iconoFa, disabled, titulo, ariaLabel }) {
     const { manejarClick, ocupado } = useUnSoloClic(onClick);
 
     return (
-        <button type="button" className={clase} onClick={onClick} disabled={disabled} key={key} title={titulo} aria-label={ariaLabel}>
+        <button type="button" className={clase} onClick={onClick} disabled={disabled} title={titulo} aria-label={ariaLabel}>
             {iconoFa ? (
                 <i className={iconoFa} aria-hidden="true"></i>
             ) : icono && (

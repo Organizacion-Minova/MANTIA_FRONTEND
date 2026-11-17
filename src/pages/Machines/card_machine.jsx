@@ -302,6 +302,9 @@ export function CardMachine() {
     const [errorMaquina, setErrorMaquina] = useState(null);
     const [maquinaCargadaId, setMaquinaCargadaId] = useState(null);
     const { peligro } = useToast();
+    const { tienePermiso } = useAuth();
+    // Los consumibles se agregan/editan/quitan con permiso de editar máquinas (el backend lo exige igual)
+    const puedeEditar = tienePermiso("machine.update");
     const pedirConfirmacion = useConfirm();
     const [items, setItems] = useState([]);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -499,7 +502,7 @@ export function CardMachine() {
                                     <th>Marca</th>
                                     <th>Cantidad</th>
                                     <th>Observaciones</th>
-                                    <th>Acciones</th>
+                                    <th>{puedeEditar ? "Acciones" : ""}</th>
                                 </tr>
                                 {datosPagina.map((i) => (
                                     <tr key={i.id}>
@@ -508,6 +511,7 @@ export function CardMachine() {
                                         <td>{i.stock}</td>
                                         <td>{i.observations}</td>
                                         <td>
+                                            {puedeEditar && (
                                             <div className="btn-container__acciones">
                                                 <BotonAccion
                                                     clase="btn-editar"
@@ -523,6 +527,7 @@ export function CardMachine() {
                                                     titulo="Quitar consumible"
                                                 />
                                             </div>
+                                            )}
                                         </td>
                                     </tr>
                                 ))}
@@ -541,6 +546,7 @@ export function CardMachine() {
                     </div>
                 </section>
                 <div className="btn-container">
+                    {puedeEditar && (
                      <Boton
                                 clase="btn-azul"
                                 img={agregarIcon}
@@ -548,25 +554,32 @@ export function CardMachine() {
                                 onClick={handleAbrirCrear}
                                 titulo="Agregar consumible a la máquina"
                             />
+                    )}
+                    {tienePermiso("inspection.create") && (
                     <BotonLink 
                         link={rutaForm(id, "inspection", "/complete")} 
                         clase="btn-2"
                         img={inspeccionIcon} 
                         texto="Inspección" 
                     />
+                    )}
 
+                    {tienePermiso("daily-use.view") && (
                     <BotonLink
                         link={`/machines/cardMachine/${id}/dailyuse`}
                         clase="btn-2"
                         img={usodiarioIcon} 
                         texto="Uso diario"
                     />
+                    )}
+                    {tienePermiso("inspection.create") && (
                     <BotonLink 
                         link={rutaForm(id, "preoperational", "/complete")} 
                         clase="btn-2"
                        img={preoperacionalIcon} 
                         texto="Preoperacional" 
                     />
+                    )}
                     
                     <Boton
                         clase="btn-3"

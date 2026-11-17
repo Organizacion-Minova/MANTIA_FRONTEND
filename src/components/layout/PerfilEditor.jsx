@@ -6,6 +6,11 @@ import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
 import { actualizarPerfil, cambiarPassword } from "../../api/profile";
 import { avatarPorDefecto } from "../../utils/avatar";
+import RequisitosContrasena from "../common/RequisitosContrasena.jsx";
+import {
+    REGLAS_DOCUMENTO, filtrarNombre, filtrarDocumento, filtrarContrasena,
+    validarNombre, validarDocumento, validarContrasena,
+} from "../../utils/validacionesUsuario";
 import borrarIcono from "../../assets/icons/borrar.svg";
 import fotoIcono from "../../assets/icons/fotografia.svg"
 import llaveIcono from "../../assets/icons/llave.svg"
@@ -154,16 +159,14 @@ function PerfilEditor({ vista: vistaInicial = "datos", onCerrar }) {
 
     // Los avisos de éxito y de error de las peticiones los muestra axios.
     const guardarDatos = async () => {
-        if (!nombre.trim() || !apellido.trim()) {
-            advertencia("El nombre y el apellido son obligatorios.", "Datos incompletos");
+        const errorNombre = validarNombre(nombre, "El nombre") || validarNombre(apellido, "El apellido");
+        if (errorNombre) {
+            advertencia(errorNombre, "Datos no válidos");
             return;
         }
-        if (!tipoDoc) {
-            advertencia("Selecciona el tipo de documento.", "Datos incompletos");
-            return;
-        }
-        if (!/^[A-Za-z0-9]{4,20}$/.test(numDoc.trim())) {
-            advertencia("El número de documento debe tener entre 4 y 20 letras o números, sin espacios.", "Documento no válido");
+        const errorDocumento = validarDocumento(tipoDoc, numDoc.trim());
+        if (errorDocumento) {
+            advertencia(errorDocumento, "Documento no válido");
             return;
         }
         if (archivo && !nat) {
@@ -198,8 +201,9 @@ function PerfilEditor({ vista: vistaInicial = "datos", onCerrar }) {
             advertencia("Completa los tres campos.", "Datos incompletos");
             return;
         }
-        if (nueva.length < 8) {
-            advertencia("La nueva contraseña debe tener mínimo 8 caracteres.", "Contraseña muy corta");
+        const errorNueva = validarContrasena(nueva, "La nueva contraseña");
+        if (errorNueva) {
+            advertencia(errorNueva, "Contraseña no válida");
             return;
         }
         if (nueva !== confirmacion) {
@@ -350,16 +354,16 @@ function PerfilEditor({ vista: vistaInicial = "datos", onCerrar }) {
                     </div>
 
                     <div className="col-span-3">
-                        <Text label="Nombre:" id="perfil-nombre" name="perfil-nombre" placeholder="Tu nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
+                        <Text label="Nombre:" id="perfil-nombre" name="perfil-nombre" placeholder="Tu nombre" value={nombre} maxLength={50} onChange={(e) => setNombre(filtrarNombre(e.target.value))} required />
                     </div>
                     <div className="col-span-3">
-                        <Text label="Apellido:" id="perfil-apellido" name="perfil-apellido" placeholder="Tu apellido" value={apellido} onChange={(e) => setApellido(e.target.value)} required />
+                        <Text label="Apellido:" id="perfil-apellido" name="perfil-apellido" placeholder="Tu apellido" value={apellido} maxLength={50} onChange={(e) => setApellido(filtrarNombre(e.target.value))} required />
                     </div>
                     <div className="col-span-3">
-                        <Select label="Tipo de documento:" id="perfil-tipo-doc" name="perfil-tipo-doc" value={tipoDoc} onChange={(e) => setTipoDoc(e.target.value)} opciones={TIPOS_DOCUMENTO} required />
+                        <Select label="Tipo de documento:" id="perfil-tipo-doc" name="perfil-tipo-doc" value={tipoDoc} onChange={(e) => { setTipoDoc(e.target.value); setNumDoc((n) => filtrarDocumento(n, e.target.value)); }} opciones={TIPOS_DOCUMENTO} required />
                     </div>
                     <div className="col-span-3">
-                        <Text label="Número de documento:" id="perfil-num-doc" name="perfil-num-doc" placeholder="Tu número de documento" value={numDoc} onChange={(e) => setNumDoc(e.target.value)} required />
+                        <Text label="Número de documento:" id="perfil-num-doc" name="perfil-num-doc" placeholder={REGLAS_DOCUMENTO[tipoDoc]?.ejemplo ?? "Tu número de documento"} maxLength={REGLAS_DOCUMENTO[tipoDoc]?.max ?? 12} value={numDoc} onChange={(e) => setNumDoc(filtrarDocumento(e.target.value, tipoDoc))} required />
                     </div>
                     <div className="col-span-6">
                         <Text label="Correo electrónico:" id="perfil-correo" name="perfil-correo" value={usuario?.email ?? ""} onChange={() => {}} disabled />
@@ -373,10 +377,11 @@ function PerfilEditor({ vista: vistaInicial = "datos", onCerrar }) {
                         <Text label="Contraseña actual:" id="perfil-pass-actual" name="perfil-pass-actual" type="password" placeholder="Tu contraseña actual" value={actual} onChange={(e) => setActual(e.target.value)} required />
                     </div>
                     <div className="col-span-6">
-                        <Text label="Nueva contraseña:" id="perfil-pass-nueva" name="perfil-pass-nueva" type="password" placeholder="Mínimo 8 caracteres" value={nueva} onChange={(e) => setNueva(e.target.value)} required />
+                        <Text label="Nueva contraseña:" id="perfil-pass-nueva" name="perfil-pass-nueva" type="password" placeholder="Mínimo 8 caracteres" maxLength={64} value={nueva} onChange={(e) => setNueva(filtrarContrasena(e.target.value))} required />
+                        <RequisitosContrasena valor={nueva} />
                     </div>
                     <div className="col-span-6">
-                        <Text label="Confirmar nueva contraseña:" id="perfil-pass-confirmar" name="perfil-pass-confirmar" type="password" placeholder="Repite la nueva contraseña" value={confirmacion} onChange={(e) => setConfirmacion(e.target.value)} required />
+                        <Text label="Confirmar nueva contraseña:" id="perfil-pass-confirmar" name="perfil-pass-confirmar" type="password" placeholder="Repite la nueva contraseña" maxLength={64} value={confirmacion} onChange={(e) => setConfirmacion(filtrarContrasena(e.target.value))} required />
                     </div>
                 </>
             )}

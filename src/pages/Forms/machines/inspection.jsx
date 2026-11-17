@@ -2,7 +2,9 @@ import { useState } from "react";
 import { PageWelcome } from "../../../components/common/welcome";
 import { Boton, BotonLink } from "../../../components/common/Button";
 import { Text, Select, Checkbox } from "../../../components/common/forms";
+import { useToast } from "../../../context/ToastContext";
 function AgregarInspeccion(){
+    const { info } = useToast();
     const [tituloFormato, setTituloFormato] = useState("");
     const [preguntas, setPreguntas] = useState([]);
 
@@ -39,7 +41,7 @@ function AgregarInspeccion(){
             preguntas: preguntas,
         };
         console.log("Formato guardado:", formatoFinal);
-        alert("Formulario guardado (revisa la consola por ahora)");
+        info("Formulario guardado (revisa la consola por ahora).", "Prototipo");
     };
 
     return (
