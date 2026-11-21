@@ -161,7 +161,7 @@ function PanelBackups() {
 
                 {primerBackup ? (
                     <p className="form-description" role="status">
-                        <i className="fa-solid fa-lock" aria-hidden="true" /> La primera copia requiere tu contraseña de inicio de sesión. Después, las acciones de backup pedirán la clave interna del servidor.
+                        <i className="fa-solid fa-lock" aria-hidden="true" /> La primera copia requiere tu contraseña de inicio de sesión. Después, las acciones de copia de seguridad pedirán la clave interna del servidor.
                     </p>
                 ) : claveAdminConfigurada ? (
                     <p className="form-description" role="status">
@@ -230,11 +230,12 @@ function PanelBackups() {
                             </tr>
                         )) : (
                             <tr>
-                                <td colSpan="7" style={{ textAlign: "center" }}>Aún no se ha generado ningún backup.</td>
+                                <td colSpan="7" style={{ textAlign: "center" }}>Aún no se ha generado ninguna copia de seguridad.</td>
                             </tr>
                         )}
                     </tbody>
                 </table>
+
                 <div className="roles-actions">
                     <Paginacion
                         paginaActual={paginaActual}
@@ -242,6 +243,7 @@ function PanelBackups() {
                         setPaginaActual={setPaginaActual}
                     />
                 </div>
+               
             </div>
 
             {accion && (

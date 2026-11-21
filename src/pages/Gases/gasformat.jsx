@@ -488,7 +488,9 @@ export function FormatoGases() {
                             <th>1</th>
                             <th>0.2</th>
                         </tr>
+                        
                         <tr>
+                           
                             <td colSpan="6">
                                 <Dropzone
                                     label="FIRMA DE JEFE DE MINA:"
@@ -502,7 +504,7 @@ export function FormatoGases() {
                                     onRemove={() => guardarCabecera({ chief_signature: null })}
                                 />
                             </td>
-                            <td colSpan="4">
+                            <td colSpan="5">
                                 <Dropzone
                                     label="Vo. Bo. LÍDER SST:"
                                     id="firmaResponsable"
@@ -514,7 +516,8 @@ export function FormatoGases() {
                                     onChange={handleFirma('sst_signature')}
                                     onRemove={() => guardarCabecera({ sst_signature: null })}
                                 />
-                            </td>
+                            </td> 
+                           
                         </tr>
                     </tbody>
                 </table>

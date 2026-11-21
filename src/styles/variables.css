@@ -39,6 +39,7 @@
     #05312F 0%,
     #042523 100%
   );
+    --fondo-overlay:rgba(0, 0, 0, 0.45);
     --hover-principal: rgba(25, 195, 166, .16);
     --hover-editar: rgba(24, 166, 143, 0.16);
      --hover-accesibilidad: rgba(1, 108, 33, 0.303);

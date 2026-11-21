@@ -12,14 +12,14 @@ const CARDS = [
 export default function DashboardSummarySection({ data, sections }) {
   return (
     <section className="dashboard-summary-section">
-      {CARDS.filter(({ dataKey }) => sections[dataKey] !== undefined).map(({ dataKey, title, totalLabel, to }) => (
+      {CARDS.filter(({ dataKey, title, to, totalLabel}) => sections[dataKey] !== undefined).map(({ dataKey, title, totalLabel, to }) => (
         <SummaryCard
           key={dataKey}
           title={title}
           to={to}
+          totalLabel={totalLabel}
           summary={data[dataKey]}
           state={sections[dataKey]}
-          totalLabel={totalLabel}
         />
       ))}
     </section>

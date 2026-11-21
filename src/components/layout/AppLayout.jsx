@@ -520,7 +520,7 @@ function AppLayout({ children }) {
                     )}
 
                     <li className="sidebar__group">
-                        <span className="sidebar__group-title">Informacion y ayuda</span>
+                        <span className="sidebar__group-title">InformaciÓn y ayuda</span>
                         <ul className="sidebar__group-links">
                             <li>
                                 <NavLink to="/about" title="Ir a acerca de">

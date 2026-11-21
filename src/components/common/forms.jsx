@@ -6,7 +6,7 @@ import '../../styles/Form/form.css';
 import BorrarIcono from '../../assets/icons/borrar.svg';
 
 // Base del formulario
-export function Form({ titulo, descripcion, onSubmit, onCancel, onDiscard, children, textoBoton = "Guardar",textoBotonDescartar = "Descartar borrador", iconoBoton = "fa-solid fa-floppy-disk", tituloBoton = "Guardar", noValidate = false }) {
+export function Form({ titulo, descripcion, onSubmit, onCancel, onDiscard, children, textoBoton = "Guardar",textoBotonDescartar = "Descartar borrador", iconoBoton = "fa-solid fa-floppy-disk", tituloBoton = "Guardar", noValidate = false, overlayClassName = "" }) {
     // Evita que varios clics en "Guardar" manden la misma petición varias veces:
     // mientras el guardado anterior no termina, los demás envíos se ignoran.
     // Se usa un ref porque el estado no alcanza a cambiar entre dos clics muy seguidos.
@@ -30,7 +30,7 @@ export function Form({ titulo, descripcion, onSubmit, onCancel, onDiscard, child
         
 
     return (
-        <div className="form-modal-overlay" >
+        <div className={`form-modal-overlay ${overlayClassName}`.trim()}>
             <form onSubmit={manejarEnvio} className="form-container" onClick={(e) => e.stopPropagation()} noValidate={noValidate}>
                 {onCancel && (
                 <button
