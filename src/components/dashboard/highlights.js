@@ -21,5 +21,5 @@ const HIGHLIGHTS = {
 export function getHighlight(key, value) {
   const config = HIGHLIGHTS[key];
   if (!config) return null;
-  return { key, icon: config.icon, text: config.text(value) };
+  return { key, icon: config.icon, status: config.status ?? null, text: config.text(value) };
 }

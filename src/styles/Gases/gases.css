@@ -14,6 +14,7 @@
     grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
     gap: 1.25rem;
     width: 100%;
+    min-width: 0;
 }
 
 .card-mini-grafica {
@@ -29,10 +30,22 @@
     cursor: pointer;
 }
 
+@media (max-width: 767px) {
+    .grid-multigas {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .grid-multigas > .card-mini-grafica,
+    .grid-multigas .contenedor-canvas-mini {
+        min-width: 0;
+    }
+}
+
 .card-mini-grafica:hover {
     transform: translateY(-2px);
     border-color: var(--secundario);
 }
+
 
 .card-mini-grafica h3 {
     font-family: var(--fuente-principal);

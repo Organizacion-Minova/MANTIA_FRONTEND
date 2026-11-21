@@ -106,7 +106,7 @@
     herramientas maquinas y equipos
 ============================================*/
 .list-grid{
-
+   
     display:grid;
     gap:1rem;
 
@@ -145,14 +145,13 @@
 }   
 
 @media (max-width:990px){
-
+  
     .list-grid{
-
         grid-template: 
-        "bienvenida"
-        "table"
+        "bienvenida" 
+        "table" 
         "botones"
-        auto;
+        / 1fr;
         .welcome{
             flex-direction:column;
              align-items:center;

@@ -45,7 +45,7 @@ function PerfilEditor({ vista: vistaInicial = "datos", onCerrar }) {
     const { usuario, cargarUsuarioActual } = useAuth();
     const { advertencia } = useToast();
 
-    const [vista, setVista] = useState(vistaInicial);
+    const [cambiandoContrasena, setCambiandoContrasena] = useState(vistaInicial === "password");
 
     // Datos personales
     const [nombre, setNombre] = useState(usuario?.name ?? "");
@@ -196,7 +196,15 @@ function PerfilEditor({ vista: vistaInicial = "datos", onCerrar }) {
         }
     };
 
-    const guardarPassword = async () => {
+    const cerrarCambioContrasena = () => {
+        setCambiandoContrasena(false);
+        setActual("");
+        setNueva("");
+        setConfirmacion("");
+    };
+
+    const guardarPassword = async (e) => {
+        e.preventDefault();
         if (!actual || !nueva || !confirmacion) {
             advertencia("Completa los tres campos.", "Datos incompletos");
             return;
@@ -217,43 +225,30 @@ function PerfilEditor({ vista: vistaInicial = "datos", onCerrar }) {
 
         try {
             await cambiarPassword(actual, nueva, confirmacion);
-            onCerrar();
+            cerrarCambioContrasena();
         } catch {
             setActual("");
         }
     };
 
-    const handleSubmit = async (e) => {
+    const guardarDatosFormulario = async (e) => {
         e.preventDefault();
-        if (vista === "datos") await guardarDatos();
-        else await guardarPassword();
-    };
-
-    const cambiarVista = (e, nuevaVista) => {
-        e.preventDefault();
-        setVista(nuevaVista);
+        await guardarDatos();
     };
 
     const nombreCompleto = `${nombre} ${apellido}`.trim();
 
     return (
+        <>
         <Form
-            titulo={vista === "datos" ? "Mi perfil" : "Cambiar contraseña"}
-            descripcion={
-                vista === "datos"
-                    ? "Actualiza tus datos y tu foto. Arrastra la imagen para acomodarla dentro del círculo."
-                    : "Escribe tu contraseña actual y la nueva. Se cerrarán tus otras sesiones abiertas."
-            }
+            titulo="Mi perfil"
+            descripcion="Actualiza tus datos y tu foto. Arrastra la imagen para acomodarla dentro del círculo."
             onCancel={onCerrar}
-            onSubmit={handleSubmit}
-            textoBoton={vista === "datos" ? "Guardar cambios" : "Cambiar contraseña"}
-            iconoBoton={vista === "datos" ? "fa-solid fa-floppy-disk" : "fa-solid fa-key"}
-            tituloBoton={vista === "datos" ? "Guardar cambios del perfil" : "Guardar nueva contraseña"}
+            onSubmit={guardarDatosFormulario}
+            textoBoton="Guardar cambios"
+            iconoBoton="fa-solid fa-floppy-disk"
+            tituloBoton="Guardar cambios del perfil"
         >
-            
-
-            {vista === "datos" && (
-                <>
                     <div className="col-span-6">
                         <div className="avatar-section">
                             <div className="avatar-container">
@@ -307,7 +302,10 @@ function PerfilEditor({ vista: vistaInicial = "datos", onCerrar }) {
                                             img={llaveIcono}
                                             texto="Nueva contraseña"
                                             titulo="Cambiar mi contraseña"
-                                            onClick={(e) => cambiarVista(e, "password")}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                setCambiandoContrasena(true);
+                                            }}
                                         />
 
                                     <Boton
@@ -318,13 +316,6 @@ function PerfilEditor({ vista: vistaInicial = "datos", onCerrar }) {
                                         onClick={(e) => { e.preventDefault(); inputRef.current?.click(); }}
                                     />       
                                 </div>
-                                    {/* <Boton
-                                        clase={vista === "datos" ? "btn-azul" : "btn-2"}
-                                        icono="fa-solid fa-user-pen"
-                                        texto="Mis datos"
-                                        titulo="Ver mis datos y mi foto"
-                                        onClick={(e) => cambiarVista(e, "datos")}
-                                    /> */}
                             </div>
 
                             <input
@@ -368,11 +359,18 @@ function PerfilEditor({ vista: vistaInicial = "datos", onCerrar }) {
                     <div className="col-span-6">
                         <Text label="Correo electrónico:" id="perfil-correo" name="perfil-correo" value={usuario?.email ?? ""} onChange={() => {}} disabled />
                     </div>
-                </>
-            )}
-
-            {vista === "password" && (
-                <>
+        </Form>
+        {cambiandoContrasena && (
+            <Form
+                titulo="Cambiar contraseña"
+                descripcion="Escribe tu contraseña actual y la nueva. Se cerrarán tus otras sesiones abiertas."
+                onCancel={cerrarCambioContrasena}
+                onSubmit={guardarPassword}
+                textoBoton="Cambiar contraseña"
+                iconoBoton="fa-solid fa-key"
+                tituloBoton="Guardar nueva contraseña"
+                overlayClassName="form-modal-overlay--nested"
+            >
                     <div className="col-span-6">
                         <Text label="Contraseña actual:" id="perfil-pass-actual" name="perfil-pass-actual" type="password" placeholder="Tu contraseña actual" value={actual} onChange={(e) => setActual(e.target.value)} required />
                     </div>
@@ -383,9 +381,9 @@ function PerfilEditor({ vista: vistaInicial = "datos", onCerrar }) {
                     <div className="col-span-6">
                         <Text label="Confirmar nueva contraseña:" id="perfil-pass-confirmar" name="perfil-pass-confirmar" type="password" placeholder="Repite la nueva contraseña" maxLength={64} value={confirmacion} onChange={(e) => setConfirmacion(filtrarContrasena(e.target.value))} required />
                     </div>
-                </>
-            )}
-        </Form>
+            </Form>
+        )}
+        </>
     );
 }
 
